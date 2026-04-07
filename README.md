@@ -57,11 +57,11 @@
 | GetStaticInfo | 2201 | ✅ 完成 | 获取股票静态信息 |
 | GetPlateSet | 2202 | ✅ 完成 | 获取板块集合 |
 | GetPlateSecurity | 2203 | ✅ 完成 | 获取板块成分股 |
-| GetOwnerPlate | 2204 | ⏳ 规划中 | 获取所属板块 |
-| GetReference | 2205 | ⏳ 规划中 | 获取正股相关数据 |
+| GetOwnerPlate | 2204 | ✅ 完成 | 获取所属板块 |
+| GetReference | 2205 | ✅ 完成 | 获取正股相关数据 |
 | GetTradeDate | 2206 | ✅ 完成 | 获取交易日 |
 | RequestTradeDate | 2207 | ⏳ 规划中 | 请求交易日 |
-| GetMarketState | 2208 | ⏳ 规划中 | 获取市场状态 |
+| GetMarketState | 2208 | ✅ 完成 | 获取市场状态 |
 | GetSuspend | 2209 | ⏳ 规划中 | 获取停牌信息 |
 | GetCodeChange | 2210 | ⏳ 规划中 | 获取代码变更信息 |
 | GetFutureInfo | 2211 | ⏳ 规划中 | 获取期货信息 |
@@ -94,7 +94,7 @@
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
 | Subscribe (Qot_Sub) | 3001 | ✅ 完成 | 订阅实时行情 |
-| GetSubInfo | 3002 | ⏳ 规划中 | 获取订阅信息 |
+| GetSubInfo | 3002 | ✅ 完成 | 获取订阅信息 |
 | RegQotPush | 3003 | ⏳ 规划中 | 注册行情推送 |
 
 ##### 推送通知 (Push Notifications)
