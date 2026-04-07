@@ -11,27 +11,35 @@ import (
 
 	"github.com/futuopen/ftapi4go/pb/common"
 	"github.com/futuopen/ftapi4go/pb/initconnect"
-)
-
-var (
-	ErrNotConnected = errors.New("not connected")
+	"github.com/futuopen/ftapi4go/pb/keepalive"
 )
 
 const (
-	ProtoID_InitConnect = 1001
+	ProtoID_InitConnect    = 1001
+	ProtoID_KeepAlive      = 1002
+	ProtoID_GetGlobalState = 1004
+)
+
+const (
+	DefaultTimeout           = 30 * time.Second
+	DefaultKeepAliveInterval = 30 * time.Second
 )
 
 type Client struct {
-	conn       *Conn
-	mu         sync.RWMutex
-	connID     uint64
-	aesKey     string
-	serialNo   uint32
-	serialMu   sync.Mutex
-	handlers   map[uint32]Handler
-	handlersMu sync.RWMutex
-	ctx        context.Context
-	cancel     context.CancelFunc
+	conn              *Conn
+	mu                sync.RWMutex
+	connID            uint64
+	aesKey            string
+	serverVer         int32
+	keepAliveInterval int32
+	serialNo          uint32
+	serialMu          sync.Mutex
+	handlers          map[uint32]Handler
+	handlersMu        sync.RWMutex
+	ctx               context.Context
+	cancel            context.CancelFunc
+	wg                sync.WaitGroup
+	connected         bool
 }
 
 type Handler func(protoID uint32, body []byte)
@@ -55,12 +63,14 @@ func (c *Client) Connect(addr string) error {
 	clientID := "futuapi4go"
 	recvNotify := true
 	packetEncAlgo := int32(-1)
+	programmingLanguage := "Go"
 
 	req := &initconnect.C2S{
-		ClientVer:     &clientVer,
-		ClientID:      &clientID,
-		RecvNotify:    &recvNotify,
-		PacketEncAlgo: &packetEncAlgo,
+		ClientVer:           &clientVer,
+		ClientID:            &clientID,
+		RecvNotify:          &recvNotify,
+		PacketEncAlgo:       &packetEncAlgo,
+		ProgrammingLanguage: &programmingLanguage,
 	}
 
 	pkt := &initconnect.Request{
@@ -69,15 +79,17 @@ func (c *Client) Connect(addr string) error {
 
 	body, err := proto.Marshal(pkt)
 	if err != nil {
+		c.conn.Close()
 		return fmt.Errorf("marshal request: %w", err)
 	}
 
 	serialNo := c.nextSerialNo()
 	if err := c.conn.WritePacket(ProtoID_InitConnect, serialNo, body); err != nil {
+		c.conn.Close()
 		return fmt.Errorf("write packet: %w", err)
 	}
 
-	c.conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+	c.conn.SetReadDeadline(time.Now().Add(DefaultTimeout))
 	respPkt, err := c.conn.ReadPacket()
 	if err != nil {
 		c.conn.Close()
@@ -104,9 +116,72 @@ func (c *Client) Connect(addr string) error {
 	c.mu.Lock()
 	c.connID = s2c.GetConnID()
 	c.aesKey = s2c.GetConnAESKey()
+	c.serverVer = s2c.GetServerVer()
+	c.keepAliveInterval = s2c.GetKeepAliveInterval()
+	c.connected = true
 	c.mu.Unlock()
 
+	c.wg.Add(1)
 	go c.readLoop()
+
+	if c.keepAliveInterval > 0 {
+		interval := time.Duration(c.keepAliveInterval) * time.Second
+		if interval < DefaultKeepAliveInterval {
+			interval = DefaultKeepAliveInterval
+		}
+		c.wg.Add(1)
+		go c.keepAliveLoop(interval)
+	}
+
+	return nil
+}
+
+func (c *Client) keepAliveLoop(interval time.Duration) {
+	defer c.wg.Done()
+
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-c.ctx.Done():
+			return
+		case <-ticker.C:
+			if err := c.keepAlive(); err != nil {
+				fmt.Printf("keepalive error: %v\n", err)
+			}
+		}
+	}
+}
+
+func (c *Client) keepAlive() error {
+	req := &keepalive.C2S{}
+	pkt := &keepalive.Request{C2S: req}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return err
+	}
+
+	serialNo := c.nextSerialNo()
+	if err := c.conn.WritePacket(ProtoID_KeepAlive, serialNo, body); err != nil {
+		return err
+	}
+
+	c.conn.SetReadDeadline(time.Now().Add(10 * time.Second))
+	respPkt, err := c.conn.ReadPacket()
+	if err != nil {
+		return err
+	}
+
+	var rsp keepalive.Response
+	if err := proto.Unmarshal(respPkt.Body, &rsp); err != nil {
+		return err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return fmt.Errorf("keepalive failed: retType=%d", rsp.GetRetType())
+	}
 
 	return nil
 }
@@ -120,6 +195,8 @@ func (c *Client) nextSerialNo() uint32 {
 }
 
 func (c *Client) readLoop() {
+	defer c.wg.Done()
+
 	for {
 		select {
 		case <-c.ctx.Done():
@@ -130,7 +207,12 @@ func (c *Client) readLoop() {
 		c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 		pkt, err := c.conn.ReadPacket()
 		if err != nil {
-			fmt.Printf("read error: %v\n", err)
+			c.mu.Lock()
+			if c.connected {
+				c.connected = false
+				fmt.Printf("connection lost: %v\n", err)
+			}
+			c.mu.Unlock()
 			continue
 		}
 
@@ -152,6 +234,7 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 
 func (c *Client) Close() error {
 	c.cancel()
+	c.wg.Wait()
 	if c.conn != nil {
 		return c.conn.Close()
 	}
@@ -168,6 +251,18 @@ func (c *Client) GetAESKey() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.aesKey
+}
+
+func (c *Client) GetServerVer() int32 {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.serverVer
+}
+
+func (c *Client) IsConnected() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.connected
 }
 
 func (c *Client) Conn() *Conn {
@@ -193,7 +288,7 @@ func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) e
 		return err
 	}
 
-	c.conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+	c.conn.SetReadDeadline(time.Now().Add(DefaultTimeout))
 	pkt, err := c.conn.ReadPacket()
 	if err != nil {
 		return fmt.Errorf("read response: %w", err)

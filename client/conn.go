@@ -14,11 +14,10 @@ import (
 )
 
 const (
-	HeaderLen      = 46
-	MagicBytes     = "FT"
-	ProtoVersion   = 1
-	MaxPacketSize  = 10 * 1024 * 1024
-	DefaultTimeout = 30 * time.Second
+	HeaderLen     = 46
+	MagicBytes    = "FT"
+	ProtoVersion  = 1
+	MaxPacketSize = 10 * 1024 * 1024
 )
 
 var (
@@ -58,7 +57,7 @@ func NewConn(conn net.Conn) *Conn {
 }
 
 func (c *Conn) Dial(addr string) error {
-	conn, err := net.DialTimeout("tcp", addr, DefaultTimeout)
+	conn, err := net.DialTimeout("tcp", addr, 30*time.Second)
 	if err != nil {
 		return err
 	}
