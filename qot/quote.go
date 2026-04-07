@@ -27,6 +27,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetusersecurity"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetwarrant"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesthistorykl"
+	"gitee.com/shing1211/futuapi4go/pb/qotrequesttradedate"
 	"gitee.com/shing1211/futuapi4go/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pb/qotsub"
 )
@@ -54,6 +55,7 @@ const (
 	ProtoID_GetUserSecurity         = 2401
 	ProtoID_GetPriceReminder        = 2404
 	ProtoID_GetTradeDate            = 2206
+	ProtoID_RequestTradeDate        = 2207
 	ProtoID_Subscribe               = 3001
 )
 
@@ -762,6 +764,61 @@ func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateRes
 	}
 
 	return &GetTradeDateResponse{
+		TradeDateList: s2c.GetTradeDateList(),
+	}, nil
+}
+
+type RequestTradeDateRequest struct {
+	Market    int32
+	BeginTime string
+	EndTime   string
+	Security  *qotcommon.Security
+}
+
+type RequestTradeDateResponse struct {
+	TradeDateList []*qotrequesttradedate.TradeDate
+}
+
+func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*RequestTradeDateResponse, error) {
+	c2s := &qotrequesttradedate.C2S{
+		Market:    &req.Market,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+		Security:  req.Security,
+	}
+
+	pkt := &qotrequesttradedate.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_RequestTradeDate, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotrequesttradedate.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("RequestTradeDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("RequestTradeDate: s2c is nil")
+	}
+
+	return &RequestTradeDateResponse{
 		TradeDateList: s2c.GetTradeDateList(),
 	}, nil
 }

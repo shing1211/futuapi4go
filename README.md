@@ -60,7 +60,7 @@
 | GetOwnerPlate | 2204 | ✅ 完成 | 获取所属板块 |
 | GetReference | 2205 | ✅ 完成 | 获取正股相关数据 |
 | GetTradeDate | 2206 | ✅ 完成 | 获取交易日 |
-| RequestTradeDate | 2207 | ⏳ 规划中 | 请求交易日 |
+| RequestTradeDate | 2207 | ✅ 完成 | 请求交易日 |
 | GetMarketState | 2208 | ✅ 完成 | 获取市场状态 |
 | GetSuspend | 2209 | ⏳ 规划中 | 获取停牌信息 |
 | GetCodeChange | 2210 | ⏳ 规划中 | 获取代码变更信息 |
