@@ -9,9 +9,9 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/futuopen/ftapi4go/pb/common"
-	"github.com/futuopen/ftapi4go/pb/initconnect"
-	"github.com/futuopen/ftapi4go/pb/keepalive"
+	"gitee.com/shing1211/futuapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/initconnect"
+	"gitee.com/shing1211/futuapi4go/pb/keepalive"
 )
 
 const (

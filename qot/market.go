@@ -6,12 +6,12 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
-	"github.com/futuopen/ftapi4go/pb/common"
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
-	"github.com/futuopen/ftapi4go/pb/qotgetmarketstate"
-	"github.com/futuopen/ftapi4go/pb/qotgetownerplate"
-	"github.com/futuopen/ftapi4go/pb/qotgetreference"
-	"github.com/futuopen/ftapi4go/pb/qotgetsubinfo"
+	"gitee.com/shing1211/futuapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetmarketstate"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetownerplate"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetreference"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetsubinfo"
 )
 
 const (

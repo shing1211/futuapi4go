@@ -6,10 +6,10 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
-	"github.com/futuopen/ftapi4go/pb/common"
-	"github.com/futuopen/ftapi4go/pb/getdelaystatistics"
-	"github.com/futuopen/ftapi4go/pb/getglobalstate"
-	"github.com/futuopen/ftapi4go/pb/getuserinfo"
+	"gitee.com/shing1211/futuapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/getdelaystatistics"
+	"gitee.com/shing1211/futuapi4go/pb/getglobalstate"
+	"gitee.com/shing1211/futuapi4go/pb/getuserinfo"
 )
 
 const (

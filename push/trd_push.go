@@ -3,9 +3,9 @@ package push
 import (
 	"google.golang.org/protobuf/proto"
 
-	"github.com/futuopen/ftapi4go/pb/trdcommon"
-	"github.com/futuopen/ftapi4go/pb/trdupdateorder"
-	"github.com/futuopen/ftapi4go/pb/trdupdateorderfill"
+	"gitee.com/shing1211/futuapi4go/pb/trdcommon"
+	"gitee.com/shing1211/futuapi4go/pb/trdupdateorder"
+	"gitee.com/shing1211/futuapi4go/pb/trdupdateorderfill"
 )
 
 const (

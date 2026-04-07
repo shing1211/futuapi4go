@@ -1,4 +1,4 @@
-module github.com/futuopen/ftapi4go/pb
+module gitee.com/shing1211/futuapi4go/pb
 
 go 1.26.1
 

@@ -7,8 +7,8 @@
 package qotgetusersecuritygroup
 
 import (
-	_ "github.com/futuopen/ftapi4go/pb/common"
-	_ "github.com/futuopen/ftapi4go/pb/qotcommon"
+	_ "gitee.com/shing1211/futuapi4go/pb/common"
+	_ "gitee.com/shing1211/futuapi4go/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

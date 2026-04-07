@@ -3,13 +3,13 @@ package push
 import (
 	"google.golang.org/protobuf/proto"
 
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
-	"github.com/futuopen/ftapi4go/pb/qotupdatebasicqot"
-	"github.com/futuopen/ftapi4go/pb/qotupdatebroker"
-	"github.com/futuopen/ftapi4go/pb/qotupdatekl"
-	"github.com/futuopen/ftapi4go/pb/qotupdateorderbook"
-	"github.com/futuopen/ftapi4go/pb/qotupdatert"
-	"github.com/futuopen/ftapi4go/pb/qotupdateticker"
+	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdatebasicqot"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdatebroker"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdatekl"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdateorderbook"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdatert"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdateticker"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
 	"gitee.com/shing1211/futuapi4go/qot"
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
+	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
 )
 
 func main() {

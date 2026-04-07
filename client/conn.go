@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/futuopen/ftapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/common"
 )
 
 const (
