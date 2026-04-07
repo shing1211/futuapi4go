@@ -131,9 +131,9 @@
 | PlaceOrder | 5001 | ✅ 完成 | 下单 |
 | ModifyOrder | 5002 | ✅ 完成 | 修改订单 |
 | GetOrderList | 5003 | ✅ 完成 | 查询订单列表 |
-| GetHistoryOrderList | 5004 | ⏳ 规划中 | 查询历史订单 |
+| GetHistoryOrderList | 5004 | ✅ 完成 | 查询历史订单 |
 | GetOrderFillList | 5005 | ✅ 完成 | 查询成交列表 |
-| GetHistoryOrderFillList | 5006 | ⏳ 规划中 | 查询历史成交 |
+| GetHistoryOrderFillList | 5006 | ✅ 完成 | 查询历史成交 |
 
 #### 3.3 持仓管理
 

@@ -11,6 +11,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/trdcommon"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetacclist"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetfunds"
+	"gitee.com/shing1211/futuapi4go/pb/trdgethistoryorderfilllist"
+	"gitee.com/shing1211/futuapi4go/pb/trdgethistoryorderlist"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetmarginratio"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetmaxtrdqtys"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetorderfee"
@@ -23,17 +25,19 @@ import (
 )
 
 const (
-	ProtoID_GetAccList       = 4001
-	ProtoID_UnlockTrade      = 4002
-	ProtoID_GetFunds         = 4003
-	ProtoID_GetOrderFee      = 4004
-	ProtoID_GetMarginRatio   = 4005
-	ProtoID_GetMaxTrdQtys    = 4006
-	ProtoID_GetPositionList  = 6001
-	ProtoID_GetOrderList     = 5003
-	ProtoID_GetOrderFillList = 5005
-	ProtoID_PlaceOrder       = 5001
-	ProtoID_ModifyOrder      = 5002
+	ProtoID_GetAccList              = 4001
+	ProtoID_UnlockTrade             = 4002
+	ProtoID_GetFunds                = 4003
+	ProtoID_GetOrderFee             = 4004
+	ProtoID_GetMarginRatio          = 4005
+	ProtoID_GetMaxTrdQtys           = 4006
+	ProtoID_GetPositionList         = 6001
+	ProtoID_GetOrderList            = 5003
+	ProtoID_GetOrderFillList        = 5005
+	ProtoID_GetHistoryOrderList     = 5004
+	ProtoID_GetHistoryOrderFillList = 5006
+	ProtoID_PlaceOrder              = 5001
+	ProtoID_ModifyOrder             = 5002
 )
 
 type Acc struct {
@@ -854,5 +858,121 @@ func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtys
 			LongRequiredIM:      m.GetLongRequiredIM(),
 			ShortRequiredIM:     m.GetShortRequiredIM(),
 		},
+	}, nil
+}
+
+type GetHistoryOrderListRequest struct {
+	AccID            uint64
+	TrdMarket        int32
+	FilterConditions *trdcommon.TrdFilterConditions
+	FilterStatusList []int32
+}
+
+type GetHistoryOrderListResponse struct {
+	OrderList []*trdcommon.Order
+}
+
+func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*GetHistoryOrderListResponse, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &req.TrdMarket,
+	}
+
+	c2s := &trdgethistoryorderlist.C2S{
+		Header:           header,
+		FilterConditions: req.FilterConditions,
+		FilterStatusList: req.FilterStatusList,
+	}
+
+	pkt := &trdgethistoryorderlist.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetHistoryOrderList, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdgethistoryorderlist.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetHistoryOrderList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHistoryOrderList: s2c is nil")
+	}
+
+	return &GetHistoryOrderListResponse{
+		OrderList: s2c.GetOrderList(),
+	}, nil
+}
+
+type GetHistoryOrderFillListRequest struct {
+	AccID            uint64
+	TrdMarket        int32
+	FilterConditions *trdcommon.TrdFilterConditions
+}
+
+type GetHistoryOrderFillListResponse struct {
+	OrderFillList []*trdcommon.OrderFill
+}
+
+func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequest) (*GetHistoryOrderFillListResponse, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &req.TrdMarket,
+	}
+
+	c2s := &trdgethistoryorderfilllist.C2S{
+		Header:           header,
+		FilterConditions: req.FilterConditions,
+	}
+
+	pkt := &trdgethistoryorderfilllist.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetHistoryOrderFillList, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdgethistoryorderfilllist.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetHistoryOrderFillList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHistoryOrderFillList: s2c is nil")
+	}
+
+	return &GetHistoryOrderFillListResponse{
+		OrderFillList: s2c.GetOrderFillList(),
 	}, nil
 }
