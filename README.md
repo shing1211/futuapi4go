@@ -35,6 +35,7 @@
 | 测试工具 | 🔄 开发中 | OpenD 模拟器 |
 
 📋 **完整实现清单**: [IMPLEMENTATION.md](IMPLEMENTATION.md)
+🧪 **OpenD 模拟器**: [SIMULATOR.md](SIMULATOR.md)
 
 ---
 
