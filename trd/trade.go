@@ -21,6 +21,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/trdgetpositionlist"
 	"gitee.com/shing1211/futuapi4go/pb/trdmodifyorder"
 	"gitee.com/shing1211/futuapi4go/pb/trdplaceorder"
+	"gitee.com/shing1211/futuapi4go/pb/trdreconfirmorder"
+	"gitee.com/shing1211/futuapi4go/pb/trdsubaccpush"
 	"gitee.com/shing1211/futuapi4go/pb/trdunlocktrade"
 )
 
@@ -38,6 +40,8 @@ const (
 	ProtoID_GetHistoryOrderFillList = 5006
 	ProtoID_PlaceOrder              = 5001
 	ProtoID_ModifyOrder             = 5002
+	ProtoID_ReconfirmOrder          = 7004
+	ProtoID_SubAccPush              = 7005
 )
 
 type Acc struct {
@@ -974,5 +978,100 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 
 	return &GetHistoryOrderFillListResponse{
 		OrderFillList: s2c.GetOrderFillList(),
+	}, nil
+}
+
+type SubAccPushRequest struct {
+	AccIDList []uint64
+}
+
+func SubAccPush(c *futuapi.Client, req *SubAccPushRequest) error {
+	c2s := &trdsubaccpush.C2S{
+		AccIDList: req.AccIDList,
+	}
+
+	pkt := &trdsubaccpush.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_SubAccPush, serialNo, body); err != nil {
+		return err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return err
+	}
+
+	var rsp trdsubaccpush.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return fmt.Errorf("SubAccPush failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	return nil
+}
+
+type ReconfirmOrderRequest struct {
+	PacketID        *common.PacketID
+	Header          *trdcommon.TrdHeader
+	OrderID         uint64
+	ReconfirmReason int32
+}
+
+type ReconfirmOrderResponse struct {
+	Header  *trdcommon.TrdHeader
+	OrderID uint64
+}
+
+func ReconfirmOrder(c *futuapi.Client, req *ReconfirmOrderRequest) (*ReconfirmOrderResponse, error) {
+	c2s := &trdreconfirmorder.C2S{
+		PacketID:        req.PacketID,
+		Header:          req.Header,
+		OrderID:         &req.OrderID,
+		ReconfirmReason: &req.ReconfirmReason,
+	}
+
+	pkt := &trdreconfirmorder.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_ReconfirmOrder, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdreconfirmorder.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("ReconfirmOrder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("ReconfirmOrder: s2c is nil")
+	}
+
+	return &ReconfirmOrderResponse{
+		Header:  s2c.GetHeader(),
+		OrderID: s2c.GetOrderID(),
 	}, nil
 }

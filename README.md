@@ -46,7 +46,7 @@
 | GetOrderBook | 2106 | ✅ 完成 | 获取订单簿(档口) |
 | GetTicker | 2107 | ✅ 完成 | 获取逐笔成交 |
 | GetRT | 2108 | ✅ 完成 | 获取实时分时数据 |
-| GetMarketSnapshot | 2109 | ⏳ 规划中 | 获取市场快照 |
+| GetMarketSnapshot | 2109 | ❌ 已废弃 | 市场快照(被GetSecuritySnapshot 2110替代) |
 | GetSecuritySnapshot | 2110 | ✅ 完成 | 获取股票快照 |
 | GetBroker | 2111 | ✅ 完成 | 获取买卖队列(经纪商) |
 
@@ -63,10 +63,10 @@
 | RequestTradeDate | 2207 | ✅ 完成 | 请求交易日 |
 | GetMarketState | 2208 | ✅ 完成 | 获取市场状态 |
 | GetSuspend | 2209 | ✅ 完成 | 获取停牌信息 |
-| GetCodeChange | 2210 | ⏳ 规划中 | 获取代码变更信息 |
-| GetFutureInfo | 2211 | ⏳ 规划中 | 获取期货信息 |
-| GetIpoList | 2212 | ⏳ 规划中 | 获取IPO列表 |
-| GetHoldingChangeList | 2213 | ⏳ 规划中 | 获取持仓变化列表 |
+| GetCodeChange | 2210 | ✅ 完成 | 获取代码变更信息 |
+| GetFutureInfo | 2211 | ✅ 完成 | 获取期货信息 |
+| GetIpoList | 2212 | ✅ 完成 | 获取IPO列表 |
+| GetHoldingChangeList | 2213 | ✅ 完成 | 获取持仓变化列表 |
 
 #### 2.4 高级数据
 
@@ -84,10 +84,10 @@
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
 | GetUserSecurity | 2401 | ✅ 完成 | 获取用户自选股 |
-| GetUserSecurityGroup | 2402 | ⏳ 规划中 | 获取用户自选股分组 |
-| ModifyUserSecurity | 2403 | ⏳ 规划中 | 修改用户自选股 |
+| GetUserSecurityGroup | 2402 | ✅ 完成 | 获取用户自选股分组 |
+| ModifyUserSecurity | 2403 | ✅ 完成 | 修改用户自选股 |
 | GetPriceReminder | 2404 | ✅ 完成 | 获取价格提醒 |
-| SetPriceReminder | 2405 | ⏳ 规划中 | 设置价格提醒 |
+| SetPriceReminder | 2405 | ✅ 完成 | 设置价格提醒 |
 
 #### 2.6 订阅与推送
 
@@ -95,7 +95,7 @@
 |-----|---------|------|------|
 | Subscribe (Qot_Sub) | 3001 | ✅ 完成 | 订阅实时行情 |
 | GetSubInfo | 3002 | ✅ 完成 | 获取订阅信息 |
-| RegQotPush | 3003 | ⏳ 规划中 | 注册行情推送 |
+| RegQotPush | 3003 | ✅ 完成 | 注册行情推送 |
 
 ##### 推送通知 (Push Notifications)
 
@@ -107,7 +107,7 @@
 | Qot_UpdateTicker (3104) | ✅ 完成 | 逐笔成交推送 |
 | Qot_UpdateRT (3105) | ✅ 完成 | 分时数据推送 |
 | Qot_UpdateBroker (3106) | ✅ 完成 | 经纪商队列推送 |
-| Qot_UpdatePriceReminder (3107) | ⏳ 规划中 | 价格提醒推送 |
+| Qot_UpdatePriceReminder (3107) | ✅ 完成 | 价格提醒推送 |
 | Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
 | Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
 
@@ -147,9 +147,9 @@
 |---------|------|------|
 | Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
 | Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
-| Trd_Notify (7003) | ⏳ 规划中 | 交易通知推送 |
-| Trd_ReconfirmOrder (7004) | ⏳ 规划中 | 订单确认推送 |
-| Trd_SubAccPush (7005) | ⏳ 规划中 | 账户推送订阅 |
+| Trd_Notify (7003) | ✅ 完成 | 交易通知推送 |
+| Trd_ReconfirmOrder (7004) | ✅ 完成 | 订单确认推送 |
+| Trd_SubAccPush (7005) | ✅ 完成 | 账户推送订阅 |
 
 ### 阶段四：系统与工具 (System) ✅ 完成
 
@@ -158,8 +158,8 @@
 | GetGlobalState | 1004 | ✅ 完成 | 获取全局状态 |
 | GetUserInfo | 1005 | ✅ 完成 | 获取用户信息 |
 | GetDelayStatistics | 1006 | ✅ 完成 | 获取延迟统计 |
-| Verification | 8001 | ⏳ 规划中 | 验证接口 |
-| RequestRehab | 2214 | ⏳ 规划中 | 请求复权数据 |
+| Verification | 8001 | ✅ 完成 | 验证接口 |
+| RequestRehab | 2214 | ✅ 完成 | 请求复权数据 |
 
 ### 阶段五：高级功能 (Advanced Features) 🔄 进行中
 

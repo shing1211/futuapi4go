@@ -4,6 +4,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"gitee.com/shing1211/futuapi4go/pb/trdcommon"
+	"gitee.com/shing1211/futuapi4go/pb/trdnotify"
 	"gitee.com/shing1211/futuapi4go/pb/trdupdateorder"
 	"gitee.com/shing1211/futuapi4go/pb/trdupdateorderfill"
 )
@@ -45,5 +46,21 @@ func ParseUpdateOrderFill(body []byte) (*UpdateOrderFill, error) {
 	return &UpdateOrderFill{
 		Header:    rsp.GetHeader(),
 		OrderFill: rsp.GetOrderFill(),
+	}, nil
+}
+
+type Notify struct {
+	Header *trdcommon.TrdHeader
+	Type   int32
+}
+
+func ParseTrdNotify(body []byte) (*Notify, error) {
+	var rsp trdnotify.S2C
+	if err := proto.Unmarshal(body, &rsp); err != nil {
+		return nil, err
+	}
+	return &Notify{
+		Header: rsp.GetHeader(),
+		Type:   rsp.GetType(),
 	}, nil
 }

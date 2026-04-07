@@ -8,17 +8,19 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotupdatebroker"
 	"gitee.com/shing1211/futuapi4go/pb/qotupdatekl"
 	"gitee.com/shing1211/futuapi4go/pb/qotupdateorderbook"
+	"gitee.com/shing1211/futuapi4go/pb/qotupdatepricereminder"
 	"gitee.com/shing1211/futuapi4go/pb/qotupdatert"
 	"gitee.com/shing1211/futuapi4go/pb/qotupdateticker"
 )
 
 const (
-	ProtoID_Qot_UpdateBasicQot  = 3101
-	ProtoID_Qot_UpdateKL        = 3102
-	ProtoID_Qot_UpdateOrderBook = 3103
-	ProtoID_Qot_UpdateTicker    = 3104
-	ProtoID_Qot_UpdateRT        = 3105
-	ProtoID_Qot_UpdateBroker    = 3106
+	ProtoID_Qot_UpdateBasicQot      = 3101
+	ProtoID_Qot_UpdateKL            = 3102
+	ProtoID_Qot_UpdateOrderBook     = 3103
+	ProtoID_Qot_UpdateTicker        = 3104
+	ProtoID_Qot_UpdateRT            = 3105
+	ProtoID_Qot_UpdateBroker        = 3106
+	ProtoID_Qot_UpdatePriceReminder = 3107
 )
 
 type UpdateBasicQot struct {
@@ -156,5 +158,39 @@ func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
 		Name:          rsp.GetName(),
 		AskBrokerList: rsp.GetBrokerAskList(),
 		BidBrokerList: rsp.GetBrokerBidList(),
+	}, nil
+}
+
+type UpdatePriceReminder struct {
+	Security     *qotcommon.Security
+	Name         string
+	Price        float64
+	ChangeRate   float64
+	MarketStatus int32
+	Content      string
+	Note         string
+	Key          int64
+	Type         int32
+	SetValue     float64
+	CurValue     float64
+}
+
+func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
+	var rsp qotupdatepricereminder.S2C
+	if err := proto.Unmarshal(body, &rsp); err != nil {
+		return nil, err
+	}
+	return &UpdatePriceReminder{
+		Security:     rsp.GetSecurity(),
+		Name:         rsp.GetName(),
+		Price:        rsp.GetPrice(),
+		ChangeRate:   rsp.GetChangeRate(),
+		MarketStatus: rsp.GetMarketStatus(),
+		Content:      rsp.GetContent(),
+		Note:         rsp.GetNote(),
+		Key:          rsp.GetKey(),
+		Type:         rsp.GetType(),
+		SetValue:     rsp.GetSetValue(),
+		CurValue:     rsp.GetCurValue(),
 	}, nil
 }

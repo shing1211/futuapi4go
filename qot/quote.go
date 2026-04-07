@@ -13,6 +13,10 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetbroker"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetcapitaldistribution"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetcapitalflow"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetcodechange"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetfutureinfo"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetholdingchangelist"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetipolist"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetkl"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetoptionchain"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetorderbook"
@@ -26,9 +30,14 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetticker"
 	"gitee.com/shing1211/futuapi4go/pb/qotgettradedate"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetusersecurity"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetusersecuritygroup"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetwarrant"
+	"gitee.com/shing1211/futuapi4go/pb/qotmodifyusersecurity"
+	"gitee.com/shing1211/futuapi4go/pb/qotregqotpush"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesthistorykl"
+	"gitee.com/shing1211/futuapi4go/pb/qotrequestrehab"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesttradedate"
+	"gitee.com/shing1211/futuapi4go/pb/qotsetpricereminder"
 	"gitee.com/shing1211/futuapi4go/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pb/qotsub"
 )
@@ -48,6 +57,14 @@ const (
 	ProtoID_GetPlateSet             = 2202
 	ProtoID_GetPlateSecurity        = 2203
 	ProtoID_GetSuspend              = 2209
+	ProtoID_GetCodeChange           = 2210
+	ProtoID_GetFutureInfo           = 2211
+	ProtoID_GetIpoList              = 2212
+	ProtoID_GetHoldingChangeList    = 2213
+	ProtoID_RequestRehab            = 2214
+	ProtoID_GetUserSecurityGroup    = 2402
+	ProtoID_ModifyUserSecurity      = 2403
+	ProtoID_SetPriceReminder        = 2405
 	ProtoID_GetCapitalFlow          = 2301
 	ProtoID_GetCapitalDistribution  = 2302
 	ProtoID_StockFilter             = 2303
@@ -59,6 +76,7 @@ const (
 	ProtoID_GetTradeDate            = 2206
 	ProtoID_RequestTradeDate        = 2207
 	ProtoID_Subscribe               = 3001
+	ProtoID_RegQotPush              = 3003
 )
 
 type BasicQot struct {
@@ -1839,4 +1857,666 @@ func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse,
 	}
 
 	return result, nil
+}
+
+type GetFutureInfoRequest struct {
+	SecurityList []*qotcommon.Security
+}
+
+type FutureInfo struct {
+	Name               string
+	Security           *qotcommon.Security
+	LastTradeTime      string
+	LastTradeTimestamp float64
+	Owner              *qotcommon.Security
+	OwnerOther         string
+	Exchange           string
+	ContractType       string
+	ContractSize       float64
+	ContractSizeUnit   string
+	QuoteCurrency      string
+	MinVar             float64
+	MinVarUnit         string
+	QuoteUnit          string
+	TradeTimeList      []*qotgetfutureinfo.TradeTime
+	TimeZone           string
+	ExchangeFormatUrl  string
+	Origin             *qotcommon.Security
+}
+
+type GetFutureInfoResponse struct {
+	FutureInfoList []*FutureInfo
+}
+
+func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfoResponse, error) {
+	c2s := &qotgetfutureinfo.C2S{
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &qotgetfutureinfo.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetFutureInfo, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetfutureinfo.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetFutureInfo failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetFutureInfo: s2c is nil")
+	}
+
+	result := &GetFutureInfoResponse{
+		FutureInfoList: make([]*FutureInfo, 0, len(s2c.GetFutureInfoList())),
+	}
+
+	for _, fi := range s2c.GetFutureInfoList() {
+		result.FutureInfoList = append(result.FutureInfoList, &FutureInfo{
+			Name:               fi.GetName(),
+			Security:           fi.GetSecurity(),
+			LastTradeTime:      fi.GetLastTradeTime(),
+			LastTradeTimestamp: fi.GetLastTradeTimestamp(),
+			Owner:              fi.GetOwner(),
+			OwnerOther:         fi.GetOwnerOther(),
+			Exchange:           fi.GetExchange(),
+			ContractType:       fi.GetContractType(),
+			ContractSize:       fi.GetContractSize(),
+			ContractSizeUnit:   fi.GetContractSizeUnit(),
+			QuoteCurrency:      fi.GetQuoteCurrency(),
+			MinVar:             fi.GetMinVar(),
+			MinVarUnit:         fi.GetMinVarUnit(),
+			QuoteUnit:          fi.GetQuoteUnit(),
+			TradeTimeList:      fi.GetTradeTime(),
+			TimeZone:           fi.GetTimeZone(),
+			ExchangeFormatUrl:  fi.GetExchangeFormatUrl(),
+			Origin:             fi.GetOrigin(),
+		})
+	}
+
+	return result, nil
+}
+
+type GetCodeChangeRequest struct {
+	SecurityList   []*qotcommon.Security
+	TimeFilterList []*qotgetcodechange.TimeFilter
+	TypeList       []int32
+}
+
+type CodeChangeInfo struct {
+	Type               int32
+	Security           *qotcommon.Security
+	RelatedSecurity    *qotcommon.Security
+	PublicTime         string
+	PublicTimestamp    float64
+	EffectiveTime      string
+	EffectiveTimestamp float64
+	EndTime            string
+	EndTimestamp       float64
+}
+
+type GetCodeChangeResponse struct {
+	CodeChangeList []*CodeChangeInfo
+}
+
+func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChangeResponse, error) {
+	c2s := &qotgetcodechange.C2S{
+		SecurityList:   req.SecurityList,
+		TimeFilterList: req.TimeFilterList,
+		TypeList:       req.TypeList,
+	}
+
+	pkt := &qotgetcodechange.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetCodeChange, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetcodechange.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetCodeChange failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetCodeChange: s2c is nil")
+	}
+
+	result := &GetCodeChangeResponse{
+		CodeChangeList: make([]*CodeChangeInfo, 0, len(s2c.GetCodeChangeList())),
+	}
+
+	for _, cc := range s2c.GetCodeChangeList() {
+		result.CodeChangeList = append(result.CodeChangeList, &CodeChangeInfo{
+			Type:               cc.GetType(),
+			Security:           cc.GetSecurity(),
+			RelatedSecurity:    cc.GetRelatedSecurity(),
+			PublicTime:         cc.GetPublicTime(),
+			PublicTimestamp:    cc.GetPublicTimestamp(),
+			EffectiveTime:      cc.GetEffectiveTime(),
+			EffectiveTimestamp: cc.GetEffectiveTimestamp(),
+			EndTime:            cc.GetEndTime(),
+			EndTimestamp:       cc.GetEndTimestamp(),
+		})
+	}
+
+	return result, nil
+}
+
+type GetIpoListRequest struct {
+	Market int32
+}
+
+type BasicIpoData struct {
+	Security      *qotcommon.Security
+	Name          string
+	ListTime      string
+	ListTimestamp float64
+}
+
+type CNIpoExData struct {
+	ApplyCode              string
+	IssueSize              int64
+	OnlineIssueSize        int64
+	ApplyUpperLimit        int64
+	ApplyLimitMarketValue  int64
+	IsEstimateIpoPrice     bool
+	IpoPrice               float64
+	IndustryPeRate         float64
+	IsEstimateWinningRatio bool
+	WinningRatio           float64
+	IssuePeRate            float64
+	ApplyTime              string
+	ApplyTimestamp         float64
+	WinningTime            string
+	WinningTimestamp       float64
+	IsHasWon               bool
+	WinningNumDataList     []*qotgetipolist.WinningNumData
+}
+
+type HKIpoExData struct {
+	IpoPriceMin       float64
+	IpoPriceMax       float64
+	ListPrice         float64
+	LotSize           int32
+	EntrancePrice     float64
+	IsSubscribeStatus bool
+	ApplyEndTime      string
+	ApplyEndTimestamp float64
+}
+
+type USIpoExData struct {
+	IpoPriceMin float64
+	IpoPriceMax float64
+	IssueSize   int64
+}
+
+type IpoData struct {
+	Basic    *BasicIpoData
+	CnExData *CNIpoExData
+	HkExData *HKIpoExData
+	UsExData *USIpoExData
+}
+
+type GetIpoListResponse struct {
+	IpoList []*IpoData
+}
+
+func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse, error) {
+	c2s := &qotgetipolist.C2S{
+		Market: &req.Market,
+	}
+
+	pkt := &qotgetipolist.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetIpoList, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetipolist.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetIpoList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetIpoList: s2c is nil")
+	}
+
+	result := &GetIpoListResponse{
+		IpoList: make([]*IpoData, 0, len(s2c.GetIpoList())),
+	}
+
+	for _, ipo := range s2c.GetIpoList() {
+		ipoData := &IpoData{}
+
+		if basic := ipo.GetBasic(); basic != nil {
+			ipoData.Basic = &BasicIpoData{
+				Security:      basic.GetSecurity(),
+				Name:          basic.GetName(),
+				ListTime:      basic.GetListTime(),
+				ListTimestamp: basic.GetListTimestamp(),
+			}
+		}
+
+		if cnEx := ipo.GetCnExData(); cnEx != nil {
+			ipoData.CnExData = &CNIpoExData{
+				ApplyCode:              cnEx.GetApplyCode(),
+				IssueSize:              cnEx.GetIssueSize(),
+				OnlineIssueSize:        cnEx.GetOnlineIssueSize(),
+				ApplyUpperLimit:        cnEx.GetApplyUpperLimit(),
+				ApplyLimitMarketValue:  cnEx.GetApplyLimitMarketValue(),
+				IsEstimateIpoPrice:     cnEx.GetIsEstimateIpoPrice(),
+				IpoPrice:               cnEx.GetIpoPrice(),
+				IndustryPeRate:         cnEx.GetIndustryPeRate(),
+				IsEstimateWinningRatio: cnEx.GetIsEstimateWinningRatio(),
+				WinningRatio:           cnEx.GetWinningRatio(),
+				IssuePeRate:            cnEx.GetIssuePeRate(),
+				ApplyTime:              cnEx.GetApplyTime(),
+				ApplyTimestamp:         cnEx.GetApplyTimestamp(),
+				WinningTime:            cnEx.GetWinningTime(),
+				WinningTimestamp:       cnEx.GetWinningTimestamp(),
+				IsHasWon:               cnEx.GetIsHasWon(),
+				WinningNumDataList:     cnEx.GetWinningNumData(),
+			}
+		}
+
+		if hkEx := ipo.GetHkExData(); hkEx != nil {
+			ipoData.HkExData = &HKIpoExData{
+				IpoPriceMin:       hkEx.GetIpoPriceMin(),
+				IpoPriceMax:       hkEx.GetIpoPriceMax(),
+				ListPrice:         hkEx.GetListPrice(),
+				LotSize:           hkEx.GetLotSize(),
+				EntrancePrice:     hkEx.GetEntrancePrice(),
+				IsSubscribeStatus: hkEx.GetIsSubscribeStatus(),
+				ApplyEndTime:      hkEx.GetApplyEndTime(),
+				ApplyEndTimestamp: hkEx.GetApplyEndTimestamp(),
+			}
+		}
+
+		if usEx := ipo.GetUsExData(); usEx != nil {
+			ipoData.UsExData = &USIpoExData{
+				IpoPriceMin: usEx.GetIpoPriceMin(),
+				IpoPriceMax: usEx.GetIpoPriceMax(),
+				IssueSize:   usEx.GetIssueSize(),
+			}
+		}
+
+		result.IpoList = append(result.IpoList, ipoData)
+	}
+
+	return result, nil
+}
+
+type GetHoldingChangeListRequest struct {
+	Security       *qotcommon.Security
+	HolderCategory int32
+	BeginTime      string
+	EndTime        string
+}
+
+type GetHoldingChangeListResponse struct {
+	Security          *qotcommon.Security
+	HoldingChangeList []*qotcommon.ShareHoldingChange
+}
+
+func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (*GetHoldingChangeListResponse, error) {
+	c2s := &qotgetholdingchangelist.C2S{
+		Security:       req.Security,
+		HolderCategory: &req.HolderCategory,
+		BeginTime:      &req.BeginTime,
+		EndTime:        &req.EndTime,
+	}
+
+	pkt := &qotgetholdingchangelist.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetHoldingChangeList, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetholdingchangelist.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetHoldingChangeList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHoldingChangeList: s2c is nil")
+	}
+
+	return &GetHoldingChangeListResponse{
+		Security:          s2c.GetSecurity(),
+		HoldingChangeList: s2c.GetHoldingChangeList(),
+	}, nil
+}
+
+type GetUserSecurityGroupRequest struct {
+	GroupType int32
+}
+
+type UserSecurityGroupData struct {
+	GroupName string
+	GroupType int32
+}
+
+type GetUserSecurityGroupResponse struct {
+	GroupList []*UserSecurityGroupData
+}
+
+func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (*GetUserSecurityGroupResponse, error) {
+	c2s := &qotgetusersecuritygroup.C2S{
+		GroupType: &req.GroupType,
+	}
+
+	pkt := &qotgetusersecuritygroup.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetUserSecurityGroup, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetusersecuritygroup.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetUserSecurityGroup failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetUserSecurityGroup: s2c is nil")
+	}
+
+	result := &GetUserSecurityGroupResponse{
+		GroupList: make([]*UserSecurityGroupData, 0, len(s2c.GetGroupList())),
+	}
+
+	for _, g := range s2c.GetGroupList() {
+		result.GroupList = append(result.GroupList, &UserSecurityGroupData{
+			GroupName: g.GetGroupName(),
+			GroupType: g.GetGroupType(),
+		})
+	}
+
+	return result, nil
+}
+
+type ModifyUserSecurityRequest struct {
+	GroupName    string
+	Op           int32
+	SecurityList []*qotcommon.Security
+}
+
+type ModifyUserSecurityResponse struct {
+	RetType int32
+	RetMsg  string
+}
+
+func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*ModifyUserSecurityResponse, error) {
+	c2s := &qotmodifyusersecurity.C2S{
+		GroupName:    &req.GroupName,
+		Op:           &req.Op,
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &qotmodifyusersecurity.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_ModifyUserSecurity, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotmodifyusersecurity.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	return &ModifyUserSecurityResponse{
+		RetType: rsp.GetRetType(),
+		RetMsg:  rsp.GetRetMsg(),
+	}, nil
+}
+
+type SetPriceReminderRequest struct {
+	Security *qotcommon.Security
+	Op       int32
+	Key      int64
+	Type     int32
+	Freq     int32
+	Value    float64
+	Note     string
+}
+
+type SetPriceReminderResponse struct {
+	Key int64
+}
+
+func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPriceReminderResponse, error) {
+	c2s := &qotsetpricereminder.C2S{
+		Security: req.Security,
+		Op:       &req.Op,
+		Key:      &req.Key,
+		Type:     &req.Type,
+		Freq:     &req.Freq,
+		Value:    &req.Value,
+		Note:     &req.Note,
+	}
+
+	pkt := &qotsetpricereminder.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_SetPriceReminder, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotsetpricereminder.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("SetPriceReminder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("SetPriceReminder: s2c is nil")
+	}
+
+	return &SetPriceReminderResponse{
+		Key: s2c.GetKey(),
+	}, nil
+}
+
+type RegQotPushRequest struct {
+	SecurityList  []*qotcommon.Security
+	SubTypeList   []int32
+	RehabTypeList []int32
+	IsRegOrUnReg  bool
+	IsFirstPush   bool
+}
+
+type RegQotPushResponse struct {
+	RetType int32
+	RetMsg  string
+}
+
+func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
+	c2s := &qotregqotpush.C2S{
+		SecurityList:  req.SecurityList,
+		SubTypeList:   req.SubTypeList,
+		RehabTypeList: req.RehabTypeList,
+		IsRegOrUnReg:  &req.IsRegOrUnReg,
+		IsFirstPush:   &req.IsFirstPush,
+	}
+
+	pkt := &qotregqotpush.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_RegQotPush, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotregqotpush.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	return &RegQotPushResponse{
+		RetType: rsp.GetRetType(),
+		RetMsg:  rsp.GetRetMsg(),
+	}, nil
+}
+
+type RequestRehabRequest struct {
+	Security *qotcommon.Security
+}
+
+type RequestRehabResponse struct {
+	RehabList []*qotcommon.Rehab
+}
+
+func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabResponse, error) {
+	c2s := &qotrequestrehab.C2S{
+		Security: req.Security,
+	}
+
+	pkt := &qotrequestrehab.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_RequestRehab, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotrequestrehab.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("RequestRehab failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("RequestRehab: s2c is nil")
+	}
+
+	return &RequestRehabResponse{
+		RehabList: s2c.GetRehabList(),
+	}, nil
 }

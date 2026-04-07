@@ -10,12 +10,14 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/getdelaystatistics"
 	"gitee.com/shing1211/futuapi4go/pb/getglobalstate"
 	"gitee.com/shing1211/futuapi4go/pb/getuserinfo"
+	"gitee.com/shing1211/futuapi4go/pb/verification"
 )
 
 const (
 	ProtoID_GetGlobalState     = 1004
 	ProtoID_GetUserInfo        = 1005
 	ProtoID_GetDelayStatistics = 1006
+	ProtoID_Verification       = 8001
 )
 
 type GetGlobalStateResponse struct {
@@ -183,4 +185,46 @@ func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) 
 		ReqReplyStatisticsList:   s2c.GetReqReplyStatisticsList(),
 		PlaceOrderStatisticsList: s2c.GetPlaceOrderStatisticsList(),
 	}, nil
+}
+
+type VerificationRequest struct {
+	Type verification.VerificationType
+	Op   verification.VerificationOp
+	Code string
+}
+
+func Verification(c *futuapi.Client, req *VerificationRequest) error {
+	c2s := &verification.C2S{
+		Type: func() *int32 { v := int32(req.Type); return &v }(),
+		Op:   func() *int32 { v := int32(req.Op); return &v }(),
+		Code: &req.Code,
+	}
+
+	pkt := &verification.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_Verification, serialNo, body); err != nil {
+		return err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return err
+	}
+
+	var rsp verification.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return fmt.Errorf("Verification failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	return nil
 }
