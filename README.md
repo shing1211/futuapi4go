@@ -74,10 +74,10 @@
 |-----|---------|------|------|
 | GetCapitalFlow | 2301 | ✅ 完成 | 获取资金流向 |
 | GetCapitalDistribution | 2302 | ✅ 完成 | 获取资金分布 |
-| StockFilter | 2303 | ⏳ 规划中 | 股票筛选 |
-| GetOptionChain | 2304 | ⏳ 规划中 | 获取期权链 |
+| StockFilter | 2303 | ✅ 完成 | 股票筛选 |
+| GetOptionChain | 2304 | ✅ 完成 | 获取期权链 |
 | GetOptionExpirationDate | 2305 | ✅ 完成 | 获取期权到期日 |
-| GetWarrant | 2306 | ⏳ 规划中 | 获取窝轮信息 |
+| GetWarrant | 2306 | ✅ 完成 | 获取窝轮信息 |
 
 #### 2.5 用户数据
 
@@ -247,6 +247,11 @@ futuapi4go/
 ├── proto/            # Protobuf定义文件
 └── examples/         # 使用示例
 ```
+
+## 文档
+
+- [用户指南](USER_GUIDE.md) - SDK 使用教程、API 调用示例、常见问题
+- [开发者指南](DEVELOPER.md) - 项目架构、代码规范、贡献流程
 
 ## 贡献
 

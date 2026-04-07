@@ -25,6 +25,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetticker"
 	"gitee.com/shing1211/futuapi4go/pb/qotgettradedate"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetusersecurity"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetwarrant"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesthistorykl"
 	"gitee.com/shing1211/futuapi4go/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pb/qotsub"
@@ -49,6 +50,7 @@ const (
 	ProtoID_StockFilter             = 2303
 	ProtoID_GetOptionChain          = 2304
 	ProtoID_GetOptionExpirationDate = 2305
+	ProtoID_GetWarrant              = 2306
 	ProtoID_GetUserSecurity         = 2401
 	ProtoID_GetPriceReminder        = 2404
 	ProtoID_GetTradeDate            = 2206
@@ -1476,6 +1478,225 @@ func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterRespon
 			AccumulateDataList:      d.GetAccumulateDataList(),
 			FinancialDataList:       d.GetFinancialDataList(),
 			CustomIndicatorDataList: d.GetCustomIndicatorDataList(),
+		})
+	}
+
+	return result, nil
+}
+
+type GetWarrantRequest struct {
+	Begin                 int32
+	Num                   int32
+	SortField             int32
+	Ascend                bool
+	Owner                 *qotcommon.Security
+	TypeList              []int32
+	IssuerList            []int32
+	MaturityTimeMin       string
+	MaturityTimeMax       string
+	IpoPeriod             int32
+	PriceType             int32
+	Status                int32
+	CurPriceMin           float64
+	CurPriceMax           float64
+	StrikePriceMin        float64
+	StrikePriceMax        float64
+	StreetMin             float64
+	StreetMax             float64
+	ConversionMin         float64
+	ConversionMax         float64
+	VolMin                uint64
+	VolMax                uint64
+	PremiumMin            float64
+	PremiumMax            float64
+	LeverageRatioMin      float64
+	LeverageRatioMax      float64
+	DeltaMin              float64
+	DeltaMax              float64
+	ImpliedMin            float64
+	ImpliedMax            float64
+	RecoveryPriceMin      float64
+	RecoveryPriceMax      float64
+	PriceRecoveryRatioMin float64
+	PriceRecoveryRatioMax float64
+}
+
+type WarrantData struct {
+	Stock              *qotcommon.Security
+	Owner              *qotcommon.Security
+	Type               int32
+	Issuer             int32
+	MaturityTime       string
+	MaturityTimestamp  float64
+	ListTime           string
+	ListTimestamp      float64
+	LastTradeTime      string
+	LastTradeTimestamp float64
+	RecoveryPrice      float64
+	ConversionRatio    float64
+	LotSize            int32
+	StrikePrice        float64
+	LastClosePrice     float64
+	Name               string
+	CurPrice           float64
+	PriceChangeVal     float64
+	ChangeRate         float64
+	Status             int32
+	BidPrice           float64
+	AskPrice           float64
+	BidVol             int64
+	AskVol             int64
+	Volume             int64
+	Turnover           float64
+	Score              float64
+	Premium            float64
+	BreakEvenPoint     float64
+	Leverage           float64
+	Ipop               float64
+	PriceRecoveryRatio float64
+	ConversionPrice    float64
+	StreetRate         float64
+	StreetVol          int64
+	Amplitude          float64
+	IssueSize          int64
+	HighPrice          float64
+	LowPrice           float64
+	ImpliedVolatility  float64
+	Delta              float64
+	EffectiveLeverage  float64
+	UpperStrikePrice   float64
+	LowerStrikePrice   float64
+	InLinePriceStatus  int32
+}
+
+type GetWarrantResponse struct {
+	LastPage        bool
+	AllCount        int32
+	WarrantDataList []*WarrantData
+}
+
+func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse, error) {
+	c2s := &qotgetwarrant.C2S{
+		Begin:                 &req.Begin,
+		Num:                   &req.Num,
+		SortField:             &req.SortField,
+		Ascend:                &req.Ascend,
+		Owner:                 req.Owner,
+		TypeList:              req.TypeList,
+		IssuerList:            req.IssuerList,
+		MaturityTimeMin:       &req.MaturityTimeMin,
+		MaturityTimeMax:       &req.MaturityTimeMax,
+		IpoPeriod:             &req.IpoPeriod,
+		PriceType:             &req.PriceType,
+		Status:                &req.Status,
+		CurPriceMin:           &req.CurPriceMin,
+		CurPriceMax:           &req.CurPriceMax,
+		StrikePriceMin:        &req.StrikePriceMin,
+		StrikePriceMax:        &req.StrikePriceMax,
+		StreetMin:             &req.StreetMin,
+		StreetMax:             &req.StreetMax,
+		ConversionMin:         &req.ConversionMin,
+		ConversionMax:         &req.ConversionMax,
+		VolMin:                &req.VolMin,
+		VolMax:                &req.VolMax,
+		PremiumMin:            &req.PremiumMin,
+		PremiumMax:            &req.PremiumMax,
+		LeverageRatioMin:      &req.LeverageRatioMin,
+		LeverageRatioMax:      &req.LeverageRatioMax,
+		DeltaMin:              &req.DeltaMin,
+		DeltaMax:              &req.DeltaMax,
+		ImpliedMin:            &req.ImpliedMin,
+		ImpliedMax:            &req.ImpliedMax,
+		RecoveryPriceMin:      &req.RecoveryPriceMin,
+		RecoveryPriceMax:      &req.RecoveryPriceMax,
+		PriceRecoveryRatioMin: &req.PriceRecoveryRatioMin,
+		PriceRecoveryRatioMax: &req.PriceRecoveryRatioMax,
+	}
+
+	pkt := &qotgetwarrant.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetWarrant, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetwarrant.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetWarrant failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetWarrant: s2c is nil")
+	}
+
+	result := &GetWarrantResponse{
+		LastPage:        s2c.GetLastPage(),
+		AllCount:        s2c.GetAllCount(),
+		WarrantDataList: make([]*WarrantData, 0, len(s2c.GetWarrantDataList())),
+	}
+
+	for _, w := range s2c.GetWarrantDataList() {
+		result.WarrantDataList = append(result.WarrantDataList, &WarrantData{
+			Stock:              w.GetStock(),
+			Owner:              w.GetOwner(),
+			Type:               w.GetType(),
+			Issuer:             w.GetIssuer(),
+			MaturityTime:       w.GetMaturityTime(),
+			MaturityTimestamp:  w.GetMaturityTimestamp(),
+			ListTime:           w.GetListTime(),
+			ListTimestamp:      w.GetListTimestamp(),
+			LastTradeTime:      w.GetLastTradeTime(),
+			LastTradeTimestamp: w.GetLastTradeTimestamp(),
+			RecoveryPrice:      w.GetRecoveryPrice(),
+			ConversionRatio:    w.GetConversionRatio(),
+			LotSize:            w.GetLotSize(),
+			StrikePrice:        w.GetStrikePrice(),
+			LastClosePrice:     w.GetLastClosePrice(),
+			Name:               w.GetName(),
+			CurPrice:           w.GetCurPrice(),
+			PriceChangeVal:     w.GetPriceChangeVal(),
+			ChangeRate:         w.GetChangeRate(),
+			Status:             w.GetStatus(),
+			BidPrice:           w.GetBidPrice(),
+			AskPrice:           w.GetAskPrice(),
+			BidVol:             w.GetBidVol(),
+			AskVol:             w.GetAskVol(),
+			Volume:             w.GetVolume(),
+			Turnover:           w.GetTurnover(),
+			Score:              w.GetScore(),
+			Premium:            w.GetPremium(),
+			BreakEvenPoint:     w.GetBreakEvenPoint(),
+			Leverage:           w.GetLeverage(),
+			Ipop:               w.GetIpop(),
+			PriceRecoveryRatio: w.GetPriceRecoveryRatio(),
+			ConversionPrice:    w.GetConversionPrice(),
+			StreetRate:         w.GetStreetRate(),
+			StreetVol:          w.GetStreetVol(),
+			Amplitude:          w.GetAmplitude(),
+			IssueSize:          w.GetIssueSize(),
+			HighPrice:          w.GetHighPrice(),
+			LowPrice:           w.GetLowPrice(),
+			ImpliedVolatility:  w.GetImpliedVolatility(),
+			Delta:              w.GetDelta(),
+			EffectiveLeverage:  w.GetEffectiveLeverage(),
+			UpperStrikePrice:   w.GetUpperStrikePrice(),
+			LowerStrikePrice:   w.GetLowerStrikePrice(),
+			InLinePriceStatus:  w.GetInLinePriceStatus(),
 		})
 	}
 
