@@ -151,13 +151,13 @@
 | Trd_ReconfirmOrder (7004) | ⏳ 规划中 | 订单确认推送 |
 | Trd_SubAccPush (7005) | ⏳ 规划中 | 账户推送订阅 |
 
-### 阶段四：系统与工具 (System) ⏳ 规划中
+### 阶段四：系统与工具 (System) ✅ 完成
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetGlobalState | 1004 | ⏳ 规划中 | 获取全局状态 |
-| GetUserInfo | 1005 | ⏳ 规划中 | 获取用户信息 |
-| GetDelayStatistics | 1006 | ⏳ 规划中 | 获取延迟统计 |
+| GetGlobalState | 1004 | ✅ 完成 | 获取全局状态 |
+| GetUserInfo | 1005 | ✅ 完成 | 获取用户信息 |
+| GetDelayStatistics | 1006 | ✅ 完成 | 获取延迟统计 |
 | Verification | 8001 | ⏳ 规划中 | 验证接口 |
 | RequestRehab | 2214 | ⏳ 规划中 | 请求复权数据 |
 
@@ -238,6 +238,8 @@ futuapi4go/
 │   └── quote.go      # 行情查询接口
 ├── trd/              # 交易API
 │   └── trade.go      # 交易接口
+├── sys/              # 系统API
+│   └── system.go      # 系统接口
 ├── push/             # 推送通知处理
 │   ├── qot_push.go   # Qot推送解析
 │   └── trd_push.go   # Trd推送解析
