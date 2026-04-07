@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-04-07
+
+### Added
+
+#### OpenD 模拟器 (Simulator)
+- TCP 服务器核心 (46字节协议头, LittleEndian)
+- 系统 API 处理器 (4): InitConnect, KeepAlive, GetGlobalState, GetUserInfo
+- Qot 行情处理器 (42): 覆盖所有 Qot API
+- Trd 交易处理器 (13): 覆盖所有交易 API
+- 模拟器示例程序 (examples/simulator/main.go)
+
+### Fixed
+
+#### SDK Bug Fixes
+- qot/quote.go: Subscribe - 添加缺失的 retType 错误检查
+- qot/quote.go: ModifyUserSecurity - 添加缺失的 retType 错误检查
+- qot/quote.go: RegQotPush - 添加缺失的 retType 错误检查
+
+### Documentation
+- 更新 IMPLEMENTATION.md 添加模拟器统计
+- 更新 SIMULATOR.md 完整实现状态
+- 更新 README.md 项目状态
+
 ## [0.2.0] - 2026-04-07
 
 ### Added

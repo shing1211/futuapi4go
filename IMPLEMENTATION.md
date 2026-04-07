@@ -11,7 +11,7 @@
 | 阶段三：交易接口 (Trd) | ✅ 完成 | 17 |
 | 阶段四：系统与工具 | ✅ 完成 | 5 |
 | 阶段五：高级功能 | ✅ 完成 | 6 |
-| 阶段六：测试工具 | 🔄 开发中 | - |
+| 阶段六：OpenD 模拟器 | ✅ 完成 | 59 handlers |
 
 ---
 
@@ -182,10 +182,10 @@
 
 | 功能 | 状态 | 说明 |
 |------|------|------|
-| TCP 服务器核心 | ✅ 完成 | 协议解析与分发 |
-| 系统 API 处理器 | ✅ 部分 | InitConnect, KeepAlive, GetGlobalState, GetUserInfo |
-| Qot 行情处理器 | ⏳ 待实现 | 37 个 API 处理器 |
-| Trd 交易处理器 | ⏳ 待实现 | 17 个 API 处理器 |
+| TCP 服务器核心 | ✅ 完成 | 46字节协议头, LittleEndian |
+| 系统 API 处理器 | ✅ 完成 | InitConnect, KeepAlive, GetGlobalState, GetUserInfo (4) |
+| Qot 行情处理器 | ✅ 完成 | 42 个 API 处理器 |
+| Trd 交易处理器 | ✅ 完成 | 13 个 API 处理器 |
 | 推送模拟 | ⏳ 待实现 | 11 个推送处理器 |
 | 可配置模拟数据 | ⏳ 待实现 | JSON/YAML 配置 |
 
@@ -209,6 +209,7 @@
 | 已实现 APIs | 71 |
 | 已实现 Push Handlers | 11 |
 | 已实现系统功能 | 6 |
+| Simulator Handlers | 59 |
 | 代码正确性验证 | ✅ 通过 |
 | 编译验证 | ✅ 通过 |
 | 文档完整度 | 100% |
