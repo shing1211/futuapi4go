@@ -178,4 +178,3 @@ MIT License
 ## 致谢
 
 - [富途](https://www.futunn.com/) - 提供 OpenAPI
-- [ftapi4go](https://github.com/futuopen/ftapi4go) - Protobuf 定义参考
