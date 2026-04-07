@@ -12,8 +12,13 @@ import (
 	"github.com/futuopen/ftapi4go/pb/qotgetbroker"
 	"github.com/futuopen/ftapi4go/pb/qotgetkl"
 	"github.com/futuopen/ftapi4go/pb/qotgetorderbook"
+	"github.com/futuopen/ftapi4go/pb/qotgetplatesecurity"
+	"github.com/futuopen/ftapi4go/pb/qotgetplateset"
 	"github.com/futuopen/ftapi4go/pb/qotgetrt"
+	"github.com/futuopen/ftapi4go/pb/qotgetstaticinfo"
 	"github.com/futuopen/ftapi4go/pb/qotgetticker"
+	"github.com/futuopen/ftapi4go/pb/qotgettradedate"
+	"github.com/futuopen/ftapi4go/pb/qotsub"
 )
 
 const (
@@ -25,6 +30,11 @@ const (
 	ProtoID_GetRT             = 2108
 	ProtoID_GetMarketSnapshot = 2109
 	ProtoID_GetBroker         = 2111
+	ProtoID_GetStaticInfo     = 2201
+	ProtoID_GetPlateSet       = 2202
+	ProtoID_GetPlateSecurity  = 2203
+	ProtoID_GetTradeDate      = 2206
+	ProtoID_Subscribe         = 3001
 )
 
 type BasicQot struct {
@@ -516,4 +526,292 @@ func GetBroker(c *futuapi.Client, req *GetBrokerRequest) (*GetBrokerResponse, er
 	}
 
 	return result, nil
+}
+
+type GetStaticInfoRequest struct {
+	Market       int32
+	SecType      int32
+	SecurityList []*qotcommon.Security
+}
+
+type GetStaticInfoResponse struct {
+	StaticInfoList []*qotcommon.SecurityStaticInfo
+}
+
+func GetStaticInfo(c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfoResponse, error) {
+	c2s := &qotgetstaticinfo.C2S{
+		Market:       &req.Market,
+		SecType:      &req.SecType,
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &qotgetstaticinfo.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetStaticInfo, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetstaticinfo.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetStaticInfo failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetStaticInfo: s2c is nil")
+	}
+
+	return &GetStaticInfoResponse{
+		StaticInfoList: s2c.GetStaticInfoList(),
+	}, nil
+}
+
+type Plate struct {
+	Plate *qotcommon.Security
+	Name  string
+}
+
+type GetPlateSetRequest struct {
+	Market int32
+}
+
+type GetPlateSetResponse struct {
+	PlateSetList []*Plate
+}
+
+func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetResponse, error) {
+	c2s := &qotgetplateset.C2S{
+		Market: &req.Market,
+	}
+
+	pkt := &qotgetplateset.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetPlateSet, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetplateset.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetPlateSet failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetPlateSet: s2c is nil")
+	}
+
+	result := &GetPlateSetResponse{
+		PlateSetList: make([]*Plate, 0, len(s2c.GetPlateInfoList())),
+	}
+
+	for _, p := range s2c.GetPlateInfoList() {
+		result.PlateSetList = append(result.PlateSetList, &Plate{
+			Plate: p.GetPlate(),
+			Name:  p.GetName(),
+		})
+	}
+
+	return result, nil
+}
+
+type GetPlateSecurityRequest struct {
+	Plate *qotcommon.Security
+}
+
+type GetPlateSecurityResponse struct {
+	StaticInfoList []*qotcommon.SecurityStaticInfo
+}
+
+func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlateSecurityResponse, error) {
+	c2s := &qotgetplatesecurity.C2S{
+		Plate: req.Plate,
+	}
+
+	pkt := &qotgetplatesecurity.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetPlateSecurity, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetplatesecurity.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetPlateSecurity failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetPlateSecurity: s2c is nil")
+	}
+
+	return &GetPlateSecurityResponse{
+		StaticInfoList: s2c.GetStaticInfoList(),
+	}, nil
+}
+
+type GetTradeDateRequest struct {
+	Market    int32
+	BeginTime string
+	EndTime   string
+}
+
+type GetTradeDateResponse struct {
+	TradeDateList []*qotgettradedate.TradeDate
+}
+
+func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateResponse, error) {
+	c2s := &qotgettradedate.C2S{
+		Market:    &req.Market,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+	}
+
+	pkt := &qotgettradedate.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetTradeDate, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgettradedate.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetTradeDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetTradeDate: s2c is nil")
+	}
+
+	return &GetTradeDateResponse{
+		TradeDateList: s2c.GetTradeDateList(),
+	}, nil
+}
+
+type SubType int32
+
+const (
+	SubType_Basic     SubType = 1
+	SubType_OrderBook SubType = 2
+	SubType_Ticker    SubType = 3
+	SubType_KL        SubType = 4
+	SubType_RT        SubType = 5
+	SubType_Broker    SubType = 6
+)
+
+type SubscribeRequest struct {
+	SecurityList         []*qotcommon.Security
+	SubTypeList          []SubType
+	IsSubOrUnSub         bool
+	IsRegOrUnRegPush     bool
+	RegPushRehabTypeList []int32
+	IsFirstPush          bool
+	IsUnsubAll           bool
+}
+
+type SubscribeResponse struct {
+	RetType int32
+	RetMsg  string
+}
+
+func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
+	subTypeList := make([]int32, len(req.SubTypeList))
+	for i, st := range req.SubTypeList {
+		subTypeList[i] = int32(st)
+	}
+
+	c2s := &qotsub.C2S{
+		SecurityList:         req.SecurityList,
+		SubTypeList:          subTypeList,
+		IsSubOrUnSub:         &req.IsSubOrUnSub,
+		IsRegOrUnRegPush:     &req.IsRegOrUnRegPush,
+		RegPushRehabTypeList: req.RegPushRehabTypeList,
+		IsFirstPush:          &req.IsFirstPush,
+		IsUnsubAll:           &req.IsUnsubAll,
+	}
+
+	pkt := &qotsub.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_Subscribe, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotsub.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	return &SubscribeResponse{
+		RetType: rsp.GetRetType(),
+		RetMsg:  rsp.GetRetMsg(),
+	}, nil
 }
