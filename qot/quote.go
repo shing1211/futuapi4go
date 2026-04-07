@@ -14,6 +14,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetcapitaldistribution"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetcapitalflow"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetkl"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetoptionchain"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetorderbook"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetplatesecurity"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetplateset"
@@ -44,6 +45,7 @@ const (
 	ProtoID_GetPlateSecurity        = 2203
 	ProtoID_GetCapitalFlow          = 2301
 	ProtoID_GetCapitalDistribution  = 2302
+	ProtoID_GetOptionChain          = 2304
 	ProtoID_GetOptionExpirationDate = 2305
 	ProtoID_GetUserSecurity         = 2401
 	ProtoID_GetPriceReminder        = 2404
@@ -1293,6 +1295,95 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 			OptionExpiryDateDistance: d.GetOptionExpiryDateDistance(),
 			Cycle:                    d.GetCycle(),
 		})
+	}
+
+	return result, nil
+}
+
+type GetOptionChainRequest struct {
+	Owner           *qotcommon.Security
+	IndexOptionType int32
+	Type            int32
+	Condition       int32
+	BeginTime       string
+	EndTime         string
+	DataFilter      *qotgetoptionchain.DataFilter
+}
+
+type OptionItem struct {
+	Call *qotcommon.SecurityStaticInfo
+	Put  *qotcommon.SecurityStaticInfo
+}
+
+type OptionChain struct {
+	StrikeTime      string
+	StrikeTimestamp float64
+	Option          []*OptionItem
+}
+
+type GetOptionChainResponse struct {
+	OptionChain []*OptionChain
+}
+
+func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
+	c2s := &qotgetoptionchain.C2S{
+		Owner:           req.Owner,
+		IndexOptionType: &req.IndexOptionType,
+		Type:            &req.Type,
+		Condition:       &req.Condition,
+		BeginTime:       &req.BeginTime,
+		EndTime:         &req.EndTime,
+		DataFilter:      req.DataFilter,
+	}
+
+	pkt := &qotgetoptionchain.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetOptionChain, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetoptionchain.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetOptionChain failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetOptionChain: s2c is nil")
+	}
+
+	result := &GetOptionChainResponse{
+		OptionChain: make([]*OptionChain, 0, len(s2c.GetOptionChain())),
+	}
+
+	for _, oc := range s2c.GetOptionChain() {
+		chain := &OptionChain{
+			StrikeTime:      oc.GetStrikeTime(),
+			StrikeTimestamp: oc.GetStrikeTimestamp(),
+			Option:          make([]*OptionItem, 0, len(oc.GetOption())),
+		}
+		for _, opt := range oc.GetOption() {
+			chain.Option = append(chain.Option, &OptionItem{
+				Call: opt.GetCall(),
+				Put:  opt.GetPut(),
+			})
+		}
+		result.OptionChain = append(result.OptionChain, chain)
 	}
 
 	return result, nil
