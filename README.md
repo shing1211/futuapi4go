@@ -4,143 +4,34 @@
   <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go" alt="Go Version">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
   <img src="https://img.shields.io/badge/Platform-Futu%20OpenD-blue.svg" alt="Platform">
-  <img src="https://img.shields.io/badge/Alpha-WIP-orange.svg" alt="Status">
+  <img src="https://img.shields.io/badge/Version-0.2.0-blue.svg" alt="Version">
 </p>
 
 > 🚀 Go 语言实现的富途 OpenD API SDK —— 为量化交易者打造的世界级 Golang 交易接口
 
 ## 实现进度总览
 
-| 阶段 | 状态 | APIs |
+| 模块 | 状态 | APIs |
 |------|------|------|
-| 核心架构 | ✅ 完成 | 8 |
-| 市场数据 (Qot) | ✅ 完成 | 42 |
-| 交易接口 (Trd) | ✅ 完成 | 17 |
-| 系统与工具 | ✅ 完成 | 5 |
-| 高级功能 | 🔄 进行中 | - |
+| 核心架构 | ✅ 完成 | 连接、心跳、用户信息 |
+| 市场数据 (Qot) | ✅ 完成 | 42+ APIs |
+| 交易接口 (Trd) | ✅ 完成 | 17 APIs |
+| 系统与工具 | ✅ 完成 | 5 APIs |
+| 推送通知 | ✅ 完成 | 11 handlers |
+| 高级功能 | 🔄 进行中 | 自动重连、单元测试 |
 
 📋 **完整实现状态**: [IMPLEMENTATION.md](IMPLEMENTATION.md)
 
-### 阶段四：系统与工具 (System) ✅ 完成
-
-### 阶段五：高级功能 (Advanced Features) 🔄 进行中
-
 ---
 
-## 安装
-| GetSuspend | 2209 | ✅ 完成 | 获取停牌信息 |
-| GetCodeChange | 2210 | ✅ 完成 | 获取代码变更信息 |
-| GetFutureInfo | 2211 | ✅ 完成 | 获取期货信息 |
-| GetIpoList | 2212 | ✅ 完成 | 获取IPO列表 |
-| GetHoldingChangeList | 2213 | ✅ 完成 | 获取持仓变化列表 |
+## 特性
 
-#### 2.4 高级数据
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| GetCapitalFlow | 2301 | ✅ 完成 | 获取资金流向 |
-| GetCapitalDistribution | 2302 | ✅ 完成 | 获取资金分布 |
-| StockFilter | 2303 | ✅ 完成 | 股票筛选 |
-| GetOptionChain | 2304 | ✅ 完成 | 获取期权链 |
-| GetOptionExpirationDate | 2305 | ✅ 完成 | 获取期权到期日 |
-| GetWarrant | 2306 | ✅ 完成 | 获取窝轮信息 |
-
-#### 2.5 用户数据
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| GetUserSecurity | 2401 | ✅ 完成 | 获取用户自选股 |
-| GetUserSecurityGroup | 2402 | ✅ 完成 | 获取用户自选股分组 |
-| ModifyUserSecurity | 2403 | ✅ 完成 | 修改用户自选股 |
-| GetPriceReminder | 2404 | ✅ 完成 | 获取价格提醒 |
-| SetPriceReminder | 2405 | ✅ 完成 | 设置价格提醒 |
-
-#### 2.6 订阅与推送
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| Subscribe (Qot_Sub) | 3001 | ✅ 完成 | 订阅实时行情 |
-| GetSubInfo | 3002 | ✅ 完成 | 获取订阅信息 |
-| RegQotPush | 3003 | ✅ 完成 | 注册行情推送 |
-| RequestHistoryKLQuota | 3104 | ✅ 完成 | 获取历史K线额度使用明细 |
-
-##### 推送通知 (Push Notifications)
-
-| ProtoID | 状态 | 说明 |
-|---------|------|------|
-| Notify (1003) | ✅ 完成 | 系统通知推送 |
-| Qot_UpdateBasicQot (3101) | ✅ 完成 | 实时行情推送 |
-| Qot_UpdateKL (3102) | ✅ 完成 | K线推送 |
-| Qot_UpdateOrderBook (3103) | ✅ 完成 | 订单簿推送 |
-| Qot_UpdateTicker (3104) | ✅ 完成 | 逐笔成交推送 |
-| Qot_UpdateRT (3105) | ✅ 完成 | 分时数据推送 |
-| Qot_UpdateBroker (3106) | ✅ 完成 | 经纪商队列推送 |
-| Qot_UpdatePriceReminder (3107) | ✅ 完成 | 价格提醒推送 |
-| Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
-| Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
-| Trd_Notify (7003) | ✅ 完成 | 交易通知推送 |
-
-### 阶段三：交易接口 (Trd - Trading) 🔄 进行中
-
-#### 3.1 账户管理
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| GetAccList | 4001 | ✅ 完成 | 获取账户列表 |
-| UnlockTrade | 4002 | ✅ 完成 | 解锁交易密码 |
-| GetFunds | 4003 | ✅ 完成 | 获取资金信息 |
-| GetOrderFee | 4004 | ✅ 完成 | 获取订单费用 |
-| GetMarginRatio | 4005 | ✅ 完成 | 获取保证金比例 |
-| GetMaxTrdQtys | 4006 | ✅ 完成 | 获取最大交易数量 |
-
-#### 3.2 订单管理
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| PlaceOrder | 5001 | ✅ 完成 | 下单 |
-| ModifyOrder | 5002 | ✅ 完成 | 修改订单 |
-| GetOrderList | 5003 | ✅ 完成 | 查询订单列表 |
-| GetHistoryOrderList | 5004 | ✅ 完成 | 查询历史订单 |
-| GetOrderFillList | 5005 | ✅ 完成 | 查询成交列表 |
-| GetHistoryOrderFillList | 5006 | ✅ 完成 | 查询历史成交 |
-
-#### 3.3 持仓管理
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| GetPositionList | 6001 | ✅ 完成 | 获取持仓列表 |
-
-#### 3.4 交易推送
-
-| ProtoID | 状态 | 说明 |
-|---------|------|------|
-| Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
-| Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
-| Trd_Notify (7003) | ✅ 完成 | 交易通知推送 |
-| Trd_ReconfirmOrder (7004) | ✅ 完成 | 订单确认推送 |
-| Trd_SubAccPush (7005) | ✅ 完成 | 账户推送订阅 |
-
-### 阶段四：系统与工具 (System) ✅ 完成
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
-| GetGlobalState | 1004 | ✅ 完成 | 获取全局状态 |
-| GetUserInfo | 1005 | ✅ 完成 | 获取用户信息 |
-| GetDelayStatistics | 1006 | ✅ 完成 | 获取延迟统计 |
-| Verification | 8001 | ✅ 完成 | 验证接口 |
-| RequestRehab | 2214 | ✅ 完成 | 请求复权数据 |
-
-### 阶段五：高级功能 (Advanced Features) 🔄 进行中
-
-| 功能 | 状态 | 说明 |
-|------|------|------|
-| 连接保活 (KeepAlive) | ✅ 完成 | 自动心跳维持连接 |
-| 自动重连 | ⏳ 规划中 | 连接断开后自动重连 |
-| 请求重试 | ⏳ 规划中 | 超时自动重试机制 |
-| 并发控制 | ⏳ 规划中 | 请求并发限制 |
-| 日志系统 | ⏳ 规划中 | 可配置的日志输出 |
-| 连接池 | ⏳ 规划中 | 多连接管理 |
-| 单元测试 | ⏳ 规划中 | 核心功能测试覆盖 |
+- ✅ 完整的市场数据接口 - 实时行情、K线、订单簿、逐笔成交、板块信息
+- ✅ 交易功能支持 - 账户查询、订单管理、持仓查询、资金查询
+- ✅ TCP/推送机制 - 实时行情推送、订单状态推送
+- ✅ Protobuf 协议 - 高效的二进制序列化
+- ✅ 连接管理 - 自动心跳保活
+- ✅ 简洁的 API 设计 - 易于使用、类型安全
 
 ---
 
@@ -154,8 +45,10 @@ go get gitee.com/shing1211/futuapi4go
 
 | 组件 | 版本要求 |
 |------|----------|
-| **Golang** | 1.21+ (推荐 1.26+) |
-| **Futu OpenD** | 10.2.6208+ (最新版本) |
+| Golang | 1.21+ (推荐 1.26+) |
+| Futu OpenD | 10.2.6208+ |
+
+---
 
 ## 快速开始
 
@@ -172,17 +65,20 @@ import (
 )
 
 func main() {
+	// 1. 创建客户端
 	cli := futuapi.New()
+
+	// 2. 连接 OpenD
 	err := cli.Connect("127.0.0.1:11111")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cli.Close()
 
+	// 3. 查询行情
 	market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700"
 	securities := []*qotcommon.Security{
-		{Market: &market, Code: &code},
+		{Market: &market, Code: func() *string { s := "00700"; return &s }()},
 	}
 
 	result, err := qot.GetBasicQot(cli, securities)
@@ -190,11 +86,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// 4. 处理结果
 	for _, bq := range result {
-		fmt.Printf("%s %s: 现价=%.2f\n", bq.Security.GetCode(), bq.Name, bq.CurPrice)
+		fmt.Printf("%s %s: 现价=%.2f\n",
+			bq.Security.GetCode(), bq.Name, bq.CurPrice)
 	}
 }
 ```
+
+---
 
 ## 项目结构
 
@@ -203,38 +103,33 @@ futuapi4go/
 ├── client/           # 核心客户端
 │   ├── conn.go       # TCP连接与协议封装
 │   ├── client.go     # 主客户端
-│   └── errors.go     # 错误类型定义
+│   └── errors.go     # 错误类型
 ├── qot/              # 市场数据API
-│   └── quote.go      # 行情查询接口
+│   ├── quote.go      # 行情查询
+│   └── market.go     # 市场数据
 ├── trd/              # 交易API
 │   └── trade.go      # 交易接口
 ├── sys/              # 系统API
-│   └── system.go      # 系统接口
-├── push/             # 推送通知处理
-│   ├── qot_push.go   # Qot推送解析
-│   └── trd_push.go   # Trd推送解析
-├── pb/               # Protobuf生成的Go代码
-├── proto/            # Protobuf定义文件
+│   └── system.go     # 系统接口
+├── push/             # 推送处理
+│   ├── qot_push.go   # 行情推送
+│   └── trd_push.go   # 交易推送
+├── pb/               # Protobuf生成代码
+├── proto/            # Protobuf定义
 └── examples/         # 使用示例
 ```
 
+---
+
 ## 文档
 
-- [用户指南](USER_GUIDE.md) - SDK 使用教程、API 调用示例、常见问题
-- [开发者指南](DEVELOPER.md) - 项目架构、代码规范、贡献流程
+| 文档 | 说明 |
+|------|------|
+| [IMPLEMENTATION.md](IMPLEMENTATION.md) | 详细实现计划与状态 |
+| [USER_GUIDE.md](USER_GUIDE.md) | SDK 使用教程 |
+| [DEVELOPER.md](DEVELOPER.md) | 开发者指南 |
 
-### 文档概览
-
-| 文档 | 目标读者 | 内容 |
-|------|----------|------|
-| README.md | 所有人 | 项目介绍、功能列表、快速开始 |
-| USER_GUIDE.md | 量化交易者 | API 使用教程、代码示例、FAQ |
-| DEVELOPER.md | 贡献者 | 架构设计、代码规范、调试技巧 |
-
-**快速导航：**
-- 新用户 → [用户指南](USER_GUIDE.md#快速开始)
-- 开发者 → [开发者指南](DEVELOPER.md#项目架构)
-- API 状态 → 查看上方 [实现计划与状态](#阶段二市场数据-qot---market-data-🔄-进行中) 表格
+---
 
 ## 贡献
 
