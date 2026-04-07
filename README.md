@@ -27,9 +27,9 @@
 | TCP 连接层 | ✅ 完成 | 自定义二进制协议封装 |
 | InitConnect | ✅ 完成 | 连接初始化 |
 | KeepAlive 心跳 | ✅ 完成 | 自动维持连接 |
-| 全局状态 (GetGlobalState) | ⏳ 规划中 | 获取全局状态 |
-| 用户信息 (GetUserInfo) | ⏳ 规划中 | 获取用户信息 |
-| 延迟统计 (GetDelayStatistics) | ⏳ 规划中 | 获取延迟统计 |
+| 全局状态 (GetGlobalState) | ✅ 完成 | 获取全局状态 |
+| 用户信息 (GetUserInfo) | ✅ 完成 | 获取用户信息 |
+| 延迟统计 (GetDelayStatistics) | ✅ 完成 | 获取延迟统计 |
 | 错误处理 | ✅ 完成 | 统一的错误类型 |
 | Protobuf 定义 | ✅ 完成 | v10.2.6208 |
 
@@ -145,8 +145,8 @@
 
 | ProtoID | 状态 | 说明 |
 |---------|------|------|
-| Trd_UpdateOrder (7001) | ⏳ 规划中 | 订单状态推送 |
-| Trd_UpdateOrderFill (7002) | ⏳ 规划中 | 成交推送 |
+| Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
+| Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
 | Trd_Notify (7003) | ⏳ 规划中 | 交易通知推送 |
 | Trd_ReconfirmOrder (7004) | ⏳ 规划中 | 订单确认推送 |
 | Trd_SubAccPush (7005) | ⏳ 规划中 | 账户推送订阅 |
@@ -161,11 +161,11 @@
 | Verification | 8001 | ⏳ 规划中 | 验证接口 |
 | RequestRehab | 2214 | ⏳ 规划中 | 请求复权数据 |
 
-### 阶段五：高级功能 (Advanced Features) ⏳ 规划中
+### 阶段五：高级功能 (Advanced Features) 🔄 进行中
 
 | 功能 | 状态 | 说明 |
 |------|------|------|
-| 自动重连 | ⏳ 规划中 | 连接断开后自动重连 |
+| 自动重连 | 🔄 进行中 | 连接断开后自动重连 |
 | 请求重试 | ⏳ 规划中 | 超时自动重试机制 |
 | 并发控制 | ⏳ 规划中 | 请求并发限制 |
 | 日志系统 | ⏳ 规划中 | 可配置的日志输出 |
