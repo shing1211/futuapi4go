@@ -72,8 +72,8 @@
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetCapitalFlow | 2301 | ⏳ 规划中 | 获取资金流向 |
-| GetCapitalDistribution | 2302 | ⏳ 规划中 | 获取资金分布 |
+| GetCapitalFlow | 2301 | ✅ 完成 | 获取资金流向 |
+| GetCapitalDistribution | 2302 | ✅ 完成 | 获取资金分布 |
 | StockFilter | 2303 | ⏳ 规划中 | 股票筛选 |
 | GetOptionChain | 2304 | ⏳ 规划中 | 获取期权链 |
 | GetOptionExpirationDate | 2305 | ⏳ 规划中 | 获取期权到期日 |
@@ -83,10 +83,10 @@
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetUserSecurity | 2401 | ⏳ 规划中 | 获取用户自选股 |
+| GetUserSecurity | 2401 | ✅ 完成 | 获取用户自选股 |
 | GetUserSecurityGroup | 2402 | ⏳ 规划中 | 获取用户自选股分组 |
 | ModifyUserSecurity | 2403 | ⏳ 规划中 | 修改用户自选股 |
-| GetPriceReminder | 2404 | ⏳ 规划中 | 获取价格提醒 |
+| GetPriceReminder | 2404 | ✅ 完成 | 获取价格提醒 |
 | SetPriceReminder | 2405 | ⏳ 规划中 | 设置价格提醒 |
 
 #### 2.6 订阅与推送
@@ -120,9 +120,9 @@
 | GetAccList | 4001 | ✅ 完成 | 获取账户列表 |
 | UnlockTrade | 4002 | ✅ 完成 | 解锁交易密码 |
 | GetFunds | 4003 | ✅ 完成 | 获取资金信息 |
-| GetOrderFee | 4004 | ⏳ 规划中 | 获取订单费用 |
-| GetMarginRatio | 4005 | ⏳ 规划中 | 获取保证金比例 |
-| GetMaxTrdQtys | 4006 | ⏳ 规划中 | 获取最大交易数量 |
+| GetOrderFee | 4004 | ✅ 完成 | 获取订单费用 |
+| GetMarginRatio | 4005 | ✅ 完成 | 获取保证金比例 |
+| GetMaxTrdQtys | 4006 | ✅ 完成 | 获取最大交易数量 |
 
 #### 3.2 订单管理
 
@@ -198,7 +198,7 @@ import (
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
 	"gitee.com/shing1211/futuapi4go/qot"
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
+	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
 )
 
 func main() {
