@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	HeaderLen     = 46
+	HeaderLen     = 48
 	MagicBytes    = "FT"
 	ProtoVersion  = 1
 	MaxPacketSize = 10 * 1024 * 1024

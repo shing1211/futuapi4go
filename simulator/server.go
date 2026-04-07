@@ -13,10 +13,12 @@ import (
 
 	"gitee.com/shing1211/futuapi4go/pb/common"
 	"gitee.com/shing1211/futuapi4go/pb/initconnect"
+	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
+	"gitee.com/shing1211/futuapi4go/pb/trdcommon"
 )
 
 const (
-	HeaderLen     = 46
+	HeaderLen     = 48
 	MagicBytes    = "FT"
 	ProtoVersion  = 1
 	MaxPacketSize = 10 * 1024 * 1024
@@ -48,6 +50,11 @@ type Server struct {
 	running   bool
 	closeChan chan struct{}
 	wg        sync.WaitGroup
+
+	Securities map[string]*qotcommon.Security
+	Quotes     map[string]*qotcommon.BasicQot
+	Orders     map[uint64]*trdcommon.Order
+	Positions  map[string]*trdcommon.Position
 }
 
 func New(addr string) *Server {
@@ -55,6 +62,11 @@ func New(addr string) *Server {
 		addr:      addr,
 		handlers:  make(map[uint32]Handler),
 		closeChan: make(chan struct{}),
+
+		Securities: make(map[string]*qotcommon.Security),
+		Quotes:     make(map[string]*qotcommon.BasicQot),
+		Orders:     make(map[uint64]*trdcommon.Order),
+		Positions:  make(map[string]*trdcommon.Position),
 	}
 }
 
@@ -103,6 +115,8 @@ func (s *Server) handleConnection(conn net.Conn) {
 	defer s.wg.Done()
 	defer conn.Close()
 
+	fmt.Printf("New connection from %v\n", conn.RemoteAddr())
+
 	for {
 		pkt, err := s.readPacket(conn)
 		if err != nil {
@@ -136,8 +150,12 @@ func (s *Server) handleConnection(conn net.Conn) {
 
 func (s *Server) readPacket(conn net.Conn) (*Packet, error) {
 	header := make([]byte, HeaderLen)
-	if _, err := io.ReadFull(conn, header); err != nil {
-		return nil, fmt.Errorf("read header: %w", err)
+	n, err := conn.Read(header)
+	if err != nil {
+		return nil, fmt.Errorf("read header (n=%d): %w", n, err)
+	}
+	if n < HeaderLen {
+		return nil, fmt.Errorf("short header: got %d, want %d", n, HeaderLen)
 	}
 
 	var h Header
@@ -254,4 +272,29 @@ func EncodeResponse(msg proto.Message) ([]byte, error) {
 
 func NowTimestamp() float64 {
 	return float64(time.Now().Unix())
+}
+
+func (s *Server) AddSecurity(market int32, code string) {
+	key := fmt.Sprintf("%d.%s", market, code)
+	s.Securities[key] = &qotcommon.Security{Market: &market, Code: &code}
+	s.Quotes[key] = &qotcommon.BasicQot{
+		Security:       &qotcommon.Security{Market: &market, Code: &code},
+		CurPrice:       func() *float64 { p := 100.0; return &p }(),
+		OpenPrice:      func() *float64 { p := 99.0; return &p }(),
+		HighPrice:      func() *float64 { p := 102.0; return &p }(),
+		LowPrice:       func() *float64 { p := 98.0; return &p }(),
+		LastClosePrice: func() *float64 { p := 100.0; return &p }(),
+		Volume:         func() *int64 { v := int64(1000000); return &v }(),
+		Turnover:       func() *float64 { t := 100000000.0; return &t }(),
+		UpdateTime:     func() *string { t := "2026-04-07 10:30:00"; return &t }(),
+	}
+}
+
+func (s *Server) AddOrder(order *trdcommon.Order) {
+	s.Orders[order.GetOrderID()] = order
+}
+
+func (s *Server) GetQuote(market int32, code string) *qotcommon.BasicQot {
+	key := fmt.Sprintf("%d.%s", market, code)
+	return s.Quotes[key]
 }

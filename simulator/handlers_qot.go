@@ -54,33 +54,42 @@ func (s *Server) RegisterQotHandlers() {
 }
 
 func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
-	var req qotgetbasicqot.C2S
+	var req qotgetbasicqot.Request
 	if err := proto.Unmarshal(pkt.Body, &req); err != nil {
 		return s.errorResponse(pkt, err)
 	}
+	c2s := req.GetC2S()
 
 	retType := int32(common.RetType_RetType_Succeed)
 
 	bqList := make([]*qotcommon.BasicQot, 0)
 	for _, sec := range req.SecurityList {
-		name := fmt.Sprintf("Mock_%s", sec.GetCode())
-		price := 100.0
-		high := 105.0
-		low := 95.0
-		open := 99.0
-		vol := int64(1000000)
-		turn := 100000000.0
-		bq := &qotcommon.BasicQot{
-			Security:  sec,
-			Name:      &name,
-			CurPrice:  &price,
-			HighPrice: &high,
-			LowPrice:  &low,
-			OpenPrice: &open,
-			Volume:    &vol,
-			Turnover:  &turn,
+		market := sec.GetMarket()
+		code := sec.GetCode()
+		key := fmt.Sprintf("%d.%s", market, code)
+
+		if quote, ok := s.Quotes[key]; ok {
+			bqList = append(bqList, quote)
+		} else {
+			name := fmt.Sprintf("Mock_%s", code)
+			price := 100.0
+			high := 105.0
+			low := 95.0
+			open := 99.0
+			vol := int64(1000000)
+			turn := 100000000.0
+			bq := &qotcommon.BasicQot{
+				Security:  sec,
+				Name:      &name,
+				CurPrice:  &price,
+				HighPrice: &high,
+				LowPrice:  &low,
+				OpenPrice: &open,
+				Volume:    &vol,
+				Turnover:  &turn,
+			}
+			bqList = append(bqList, bq)
 		}
-		bqList = append(bqList, bq)
 	}
 
 	resp := &qotgetbasicqot.Response{
@@ -91,15 +100,16 @@ func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
 }
 
 func (s *Server) handleGetKL(pkt *Packet) (*Packet, error) {
-	var req qotgetkl.C2S
+	var req qotgetkl.Request
 	if err := proto.Unmarshal(pkt.Body, &req); err != nil {
 		return s.errorResponse(pkt, err)
 	}
+	c2s := req.GetC2S()
 
 	retType := int32(common.RetType_RetType_Succeed)
 	name := "Mock"
 
-	klList := make([]*qotcommon.KLine, 0, req.GetReqNum())
+	klList := make([]*qotcommon.KLine, 0, c2s.GetReqNum())
 	for i := int32(0); i < req.GetReqNum(); i++ {
 		timeStr := fmt.Sprintf("2026-01-%02d 15:00:00", i+1)
 		ts := float64(1735689600 + int64(i)*86400)

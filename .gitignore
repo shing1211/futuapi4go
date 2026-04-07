@@ -10,6 +10,8 @@
 
 # Output of go coverage
 *.out
+coverage.out
+*.cover
 
 # Go workspace file
 go.work
