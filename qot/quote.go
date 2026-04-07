@@ -15,26 +15,30 @@ import (
 	"github.com/futuopen/ftapi4go/pb/qotgetplatesecurity"
 	"github.com/futuopen/ftapi4go/pb/qotgetplateset"
 	"github.com/futuopen/ftapi4go/pb/qotgetrt"
+	"github.com/futuopen/ftapi4go/pb/qotgetsecuritysnapshot"
 	"github.com/futuopen/ftapi4go/pb/qotgetstaticinfo"
 	"github.com/futuopen/ftapi4go/pb/qotgetticker"
 	"github.com/futuopen/ftapi4go/pb/qotgettradedate"
+	"github.com/futuopen/ftapi4go/pb/qotrequesthistorykl"
 	"github.com/futuopen/ftapi4go/pb/qotsub"
 )
 
 const (
-	ProtoID_GetBasicQot       = 2101
-	ProtoID_GetKL             = 2102
-	ProtoID_GetHistoryKL      = 2103
-	ProtoID_GetOrderBook      = 2106
-	ProtoID_GetTicker         = 2107
-	ProtoID_GetRT             = 2108
-	ProtoID_GetMarketSnapshot = 2109
-	ProtoID_GetBroker         = 2111
-	ProtoID_GetStaticInfo     = 2201
-	ProtoID_GetPlateSet       = 2202
-	ProtoID_GetPlateSecurity  = 2203
-	ProtoID_GetTradeDate      = 2206
-	ProtoID_Subscribe         = 3001
+	ProtoID_GetBasicQot         = 2101
+	ProtoID_GetKL               = 2102
+	ProtoID_GetHistoryKL        = 2103
+	ProtoID_RequestHistoryKL    = 2104
+	ProtoID_GetOrderBook        = 2106
+	ProtoID_GetTicker           = 2107
+	ProtoID_GetRT               = 2108
+	ProtoID_GetMarketSnapshot   = 2109
+	ProtoID_GetSecuritySnapshot = 2110
+	ProtoID_GetBroker           = 2111
+	ProtoID_GetStaticInfo       = 2201
+	ProtoID_GetPlateSet         = 2202
+	ProtoID_GetPlateSecurity    = 2203
+	ProtoID_GetTradeDate        = 2206
+	ProtoID_Subscribe           = 3001
 )
 
 type BasicQot struct {
@@ -743,6 +747,124 @@ func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateRes
 
 	return &GetTradeDateResponse{
 		TradeDateList: s2c.GetTradeDateList(),
+	}, nil
+}
+
+type RequestHistoryKLRequest struct {
+	RehabType    int32
+	KlType       int32
+	Security     *qotcommon.Security
+	BeginTime    string
+	EndTime      string
+	MaxAckKLNum  int32
+	NextReqKey   []byte
+	ExtendedTime bool
+}
+
+type RequestHistoryKLResponse struct {
+	Security   *qotcommon.Security
+	Name       string
+	KLList     []*qotcommon.KLine
+	NextReqKey []byte
+}
+
+func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*RequestHistoryKLResponse, error) {
+	c2s := &qotrequesthistorykl.C2S{
+		RehabType:    &req.RehabType,
+		KlType:       &req.KlType,
+		Security:     req.Security,
+		BeginTime:    &req.BeginTime,
+		EndTime:      &req.EndTime,
+		MaxAckKLNum:  &req.MaxAckKLNum,
+		NextReqKey:   req.NextReqKey,
+		ExtendedTime: &req.ExtendedTime,
+	}
+
+	pkt := &qotrequesthistorykl.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_RequestHistoryKL, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotrequesthistorykl.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("RequestHistoryKL failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("RequestHistoryKL: s2c is nil")
+	}
+
+	return &RequestHistoryKLResponse{
+		Security:   s2c.GetSecurity(),
+		Name:       s2c.GetName(),
+		KLList:     s2c.GetKlList(),
+		NextReqKey: s2c.GetNextReqKey(),
+	}, nil
+}
+
+type GetSecuritySnapshotRequest struct {
+	SecurityList []*qotcommon.Security
+}
+
+type GetSecuritySnapshotResponse struct {
+	SnapshotList []*qotgetsecuritysnapshot.Snapshot
+}
+
+func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*GetSecuritySnapshotResponse, error) {
+	c2s := &qotgetsecuritysnapshot.C2S{
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &qotgetsecuritysnapshot.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetSecuritySnapshot, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetsecuritysnapshot.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetSecuritySnapshot failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetSecuritySnapshot: s2c is nil")
+	}
+
+	return &GetSecuritySnapshotResponse{
+		SnapshotList: s2c.GetSnapshotList(),
 	}, nil
 }
 
