@@ -41,19 +41,13 @@
 |-----|---------|------|------|
 | GetBasicQot | 2101 | ✅ 完成 | 获取实时行情 |
 | GetKL | 2102 | ✅ 完成 | 获取实时K线 |
-| GetHistoryKL | 2103 | ⏳ 规划中 | 获取历史K线 |
-| RequestHistoryKL | 2104 | ⏳ 规划中 | 请求历史K线(异步) |
-| RequestHistoryKLQuota | 2105 | ⏳ 规划中 | 获取历史K线额度 |
-
-#### 2.2 深度行情数据
-
-| API | ProtoID | 状态 | 说明 |
-|-----|---------|------|------|
+| GetHistoryKL | 2103 | ✅ 完成 | 获取历史K线 |
+| RequestHistoryKL | 2104 | ✅ 完成 | 请求历史K线(异步) |
 | GetOrderBook | 2106 | ✅ 完成 | 获取订单簿(档口) |
 | GetTicker | 2107 | ✅ 完成 | 获取逐笔成交 |
 | GetRT | 2108 | ✅ 完成 | 获取实时分时数据 |
 | GetMarketSnapshot | 2109 | ⏳ 规划中 | 获取市场快照 |
-| GetSecuritySnapshot | 2110 | ⏳ 规划中 | 获取股票快照 |
+| GetSecuritySnapshot | 2110 | ✅ 完成 | 获取股票快照 |
 | GetBroker | 2111 | ✅ 完成 | 获取买卖队列(经纪商) |
 
 #### 2.3 市场参考数据
@@ -107,13 +101,15 @@
 
 | ProtoID | 状态 | 说明 |
 |---------|------|------|
-| Qot_UpdateBasicQot (3101) | ⏳ 规划中 | 实时行情推送 |
-| Qot_UpdateKL (3102) | ⏳ 规划中 | K线推送 |
-| Qot_UpdateOrderBook (3103) | ⏳ 规划中 | 订单簿推送 |
-| Qot_UpdateTicker (3104) | ⏳ 规划中 | 逐笔成交推送 |
-| Qot_UpdateRT (3105) | ⏳ 规划中 | 分时数据推送 |
-| Qot_UpdateBroker (3106) | ⏳ 规划中 | 经纪商队列推送 |
+| Qot_UpdateBasicQot (3101) | ✅ 完成 | 实时行情推送 |
+| Qot_UpdateKL (3102) | ✅ 完成 | K线推送 |
+| Qot_UpdateOrderBook (3103) | ✅ 完成 | 订单簿推送 |
+| Qot_UpdateTicker (3104) | ✅ 完成 | 逐笔成交推送 |
+| Qot_UpdateRT (3105) | ✅ 完成 | 分时数据推送 |
+| Qot_UpdateBroker (3106) | ✅ 完成 | 经纪商队列推送 |
 | Qot_UpdatePriceReminder (3107) | ⏳ 规划中 | 价格提醒推送 |
+| Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
+| Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
 
 ### 阶段三：交易接口 (Trd - Trading) 🔄 进行中
 
@@ -241,6 +237,10 @@ futuapi4go/
 ├── qot/              # 市场数据API
 │   └── quote.go      # 行情查询接口
 ├── trd/              # 交易API
+│   └── trade.go      # 交易接口
+├── push/             # 推送通知处理
+│   ├── qot_push.go   # Qot推送解析
+│   └── trd_push.go   # Trd推送解析
 ├── pb/               # Protobuf生成的Go代码
 ├── proto/            # Protobuf定义文件
 └── examples/         # 使用示例
