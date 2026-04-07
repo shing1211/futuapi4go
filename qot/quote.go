@@ -1027,6 +1027,10 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 		return nil, err
 	}
 
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("Subscribe failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
 	return &SubscribeResponse{
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),
@@ -2357,6 +2361,10 @@ func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*Mod
 		return nil, err
 	}
 
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("ModifyUserSecurity failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
 	return &ModifyUserSecurityResponse{
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),
@@ -2466,6 +2474,10 @@ func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse,
 	var rsp qotregqotpush.Response
 	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
 		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("RegQotPush failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	return &RegQotPushResponse{

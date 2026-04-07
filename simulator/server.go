@@ -1,27 +1,41 @@
 package simulator
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
 	"sync"
+	"time"
 
 	"google.golang.org/protobuf/proto"
+
+	"gitee.com/shing1211/futuapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/initconnect"
 )
 
 const (
-	Magic      = 0x4654 // "FT" in big-endian
-	HeaderLen  = 14
-	MaxBodyLen = 10 * 1024 * 1024 // 10MB max
+	HeaderLen     = 46
+	MagicBytes    = "FT"
+	ProtoVersion  = 1
+	MaxPacketSize = 10 * 1024 * 1024
 )
 
-type Packet struct {
-	Magic    uint16
+type Header struct {
+	Magic    [2]byte
 	ProtoID  uint32
+	ProtoFmt common.ProtoFmt
+	ProtoVer uint16
 	SerialNo uint32
 	BodyLen  uint32
-	Body     []byte
+	BodySHA1 [20]byte
+	Reserved [8]byte
+}
+
+type Packet struct {
+	Header Header
+	Body   []byte
 }
 
 type Handler func(*Packet) (*Packet, error)
@@ -92,25 +106,25 @@ func (s *Server) handleConnection(conn net.Conn) {
 	for {
 		pkt, err := s.readPacket(conn)
 		if err != nil {
-			if err != io.EOF {
-				fmt.Printf("read error: %v\n", err)
+			if err == io.EOF {
+				return
 			}
+			fmt.Printf("read error: %v\n", err)
 			return
 		}
 
 		s.mu.RLock()
-		handler, ok := s.handlers[pkt.ProtoID]
+		handler, ok := s.handlers[pkt.Header.ProtoID]
 		s.mu.RUnlock()
 
 		var resp *Packet
-		if ok {
-			resp, err = handler(pkt)
+		if !ok {
+			resp, _ = s.errorResponse(pkt, fmt.Errorf("unsupported protoID: %d", pkt.Header.ProtoID))
 		} else {
-			resp = s.errorResponse(pkt, fmt.Errorf("unsupported protoID: %d", pkt.ProtoID))
-		}
-
-		if err != nil {
-			resp = s.errorResponse(pkt, err)
+			resp, err = handler(pkt)
+			if err != nil {
+				resp, _ = s.errorResponse(pkt, err)
+			}
 		}
 
 		if err := s.writePacket(conn, resp); err != nil {
@@ -123,57 +137,98 @@ func (s *Server) handleConnection(conn net.Conn) {
 func (s *Server) readPacket(conn net.Conn) (*Packet, error) {
 	header := make([]byte, HeaderLen)
 	if _, err := io.ReadFull(conn, header); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read header: %w", err)
 	}
 
-	magic := binary.BigEndian.Uint16(header[0:2])
-	if magic != Magic {
-		return nil, fmt.Errorf("invalid magic: 0x%04x", magic)
+	var h Header
+	if err := binary.Read(bytes.NewReader(header), binary.LittleEndian, &h); err != nil {
+		return nil, fmt.Errorf("decode header: %w", err)
 	}
 
-	protoID := binary.BigEndian.Uint32(header[2:6])
-	serialNo := binary.BigEndian.Uint32(header[6:10])
-	bodyLen := binary.BigEndian.Uint32(header[10:14])
-
-	if bodyLen > MaxBodyLen {
-		return nil, fmt.Errorf("body too large: %d", bodyLen)
+	if string(h.Magic[:]) != MagicBytes {
+		return nil, fmt.Errorf("invalid magic bytes")
 	}
 
-	body := make([]byte, bodyLen)
-	if bodyLen > 0 {
+	if h.BodyLen > MaxPacketSize {
+		return nil, fmt.Errorf("body too large: %d", h.BodyLen)
+	}
+
+	body := make([]byte, h.BodyLen)
+	if h.BodyLen > 0 {
 		if _, err := io.ReadFull(conn, body); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("read body: %w", err)
 		}
 	}
 
-	return &Packet{
-		Magic:    magic,
-		ProtoID:  protoID,
-		SerialNo: serialNo,
-		BodyLen:  bodyLen,
-		Body:     body,
-	}, nil
+	return &Packet{Header: h, Body: body}, nil
 }
 
 func (s *Server) writePacket(conn net.Conn, pkt *Packet) error {
-	header := make([]byte, HeaderLen)
-	binary.BigEndian.PutUint16(header[0:2], pkt.Magic)
-	binary.BigEndian.PutUint32(header[2:6], pkt.ProtoID)
-	binary.BigEndian.PutUint32(header[6:10], pkt.SerialNo)
-	binary.BigEndian.PutUint32(header[10:14], pkt.BodyLen)
+	pkt.Header.Magic = [2]byte{'F', 'T'}
+	pkt.Header.ProtoFmt = common.ProtoFmt_ProtoFmt_Protobuf
+	pkt.Header.ProtoVer = ProtoVersion
 
-	_, err := conn.Write(append(header, pkt.Body...))
-	return err
+	header := make([]byte, HeaderLen)
+	if err := binary.Write(bytes.NewBuffer(header[:0]), binary.LittleEndian, &pkt.Header); err != nil {
+		return fmt.Errorf("encode header: %w", err)
+	}
+
+	if _, err := conn.Write(header); err != nil {
+		return fmt.Errorf("write header: %w", err)
+	}
+
+	if len(pkt.Body) > 0 {
+		if _, err := conn.Write(pkt.Body); err != nil {
+			return fmt.Errorf("write body: %w", err)
+		}
+	}
+
+	return nil
 }
 
-func (s *Server) errorResponse(req *Packet, err error) *Packet {
-	return &Packet{
-		Magic:    Magic,
-		ProtoID:  req.ProtoID,
-		SerialNo: req.SerialNo,
-		BodyLen:  0,
-		Body:     nil,
+func (s *Server) errorResponse(req *Packet, err error) (*Packet, error) {
+	errMsg := err.Error()
+	retType := int32(common.RetType_RetType_Failed)
+	ret := &initconnect.Response{
+		RetType: &retType,
+		RetMsg:  &errMsg,
 	}
+
+	body, err := proto.Marshal(ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Packet{
+		Header: Header{
+			Magic:    [2]byte{'F', 'T'},
+			ProtoID:  req.Header.ProtoID,
+			ProtoFmt: common.ProtoFmt_ProtoFmt_Protobuf,
+			ProtoVer: ProtoVersion,
+			SerialNo: req.Header.SerialNo,
+			BodyLen:  uint32(len(body)),
+		},
+		Body: body,
+	}, nil
+}
+
+func (s *Server) successResponse(req *Packet, ret proto.Message) (*Packet, error) {
+	body, err := proto.Marshal(ret)
+	if err != nil {
+		return nil, fmt.Errorf("marshal response: %w", err)
+	}
+
+	return &Packet{
+		Header: Header{
+			Magic:    [2]byte{'F', 'T'},
+			ProtoID:  req.Header.ProtoID,
+			ProtoFmt: common.ProtoFmt_ProtoFmt_Protobuf,
+			ProtoVer: ProtoVersion,
+			SerialNo: req.Header.SerialNo,
+			BodyLen:  uint32(len(body)),
+		},
+		Body: body,
+	}, nil
 }
 
 func (s *Server) Stop() {
@@ -195,4 +250,8 @@ func DecodeRequest(body []byte, msg proto.Message) error {
 
 func EncodeResponse(msg proto.Message) ([]byte, error) {
 	return proto.Marshal(msg)
+}
+
+func NowTimestamp() float64 {
+	return float64(time.Now().Unix())
 }

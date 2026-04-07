@@ -6,6 +6,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"gitee.com/shing1211/futuapi4go/pb/common"
 	"gitee.com/shing1211/futuapi4go/pb/getglobalstate"
 	"gitee.com/shing1211/futuapi4go/pb/getuserinfo"
 	"gitee.com/shing1211/futuapi4go/pb/initconnect"
@@ -13,70 +14,49 @@ import (
 )
 
 func (s *Server) RegisterDefaultHandlers() {
-	// InitConnect (1001) - Connection initialization
 	s.RegisterHandler(1001, s.handleInitConnect)
-
-	// KeepAlive (1002) - Heartbeat
 	s.RegisterHandler(1002, s.handleKeepAlive)
-
-	// GetGlobalState (1004) - Get global state
 	s.RegisterHandler(1004, s.handleGetGlobalState)
-
-	// GetUserInfo (1005) - Get user info
 	s.RegisterHandler(1005, s.handleGetUserInfo)
 }
 
 func (s *Server) handleInitConnect(pkt *Packet) (*Packet, error) {
 	var req initconnect.C2S
 	if err := proto.Unmarshal(pkt.Body, &req); err != nil {
-		return s.errorResponse(pkt, fmt.Errorf("unmarshal request: %w", err)), nil
+		return s.errorResponse(pkt, fmt.Errorf("unmarshal request: %w", err))
 	}
 
 	connID := uint64(1234567890)
 	connAESKey := "mock_aes_key_12345"
 	serverVer := int32(10100)
 	keepAliveInterval := int32(30)
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &initconnect.S2C{
-		ConnID:            &connID,
-		ConnAESKey:        &connAESKey,
-		ServerVer:         &serverVer,
-		KeepAliveInterval: &keepAliveInterval,
+	resp := &initconnect.Response{
+		RetType: &retType,
+		S2C: &initconnect.S2C{
+			ConnID:            &connID,
+			ConnAESKey:        &connAESKey,
+			ServerVer:         &serverVer,
+			KeepAliveInterval: &keepAliveInterval,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
-	if err != nil {
-		return s.errorResponse(pkt, fmt.Errorf("marshal response: %w", err)), nil
-	}
-
-	return &Packet{
-		Magic:    Magic,
-		ProtoID:  pkt.ProtoID,
-		SerialNo: pkt.SerialNo,
-		BodyLen:  uint32(len(body)),
-		Body:     body,
-	}, nil
+	return s.successResponse(pkt, resp)
 }
 
 func (s *Server) handleKeepAlive(pkt *Packet) (*Packet, error) {
-	time := int64(1234567890)
+	now := time.Now().Unix()
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &keepalive.S2C{
-		Time: &time,
+	resp := &keepalive.Response{
+		RetType: &retType,
+		S2C: &keepalive.S2C{
+			Time: &now,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
-	if err != nil {
-		return s.errorResponse(pkt, fmt.Errorf("marshal response: %w", err)), nil
-	}
-
-	return &Packet{
-		Magic:    Magic,
-		ProtoID:  pkt.ProtoID,
-		SerialNo: pkt.SerialNo,
-		BodyLen:  uint32(len(body)),
-		Body:     body,
-	}, nil
+	return s.successResponse(pkt, resp)
 }
 
 func (s *Server) handleGetGlobalState(pkt *Packet) (*Packet, error) {
@@ -90,32 +70,25 @@ func (s *Server) handleGetGlobalState(pkt *Packet) (*Packet, error) {
 	serverBuildNo := int32(6208)
 	serverTime := time.Now().Unix()
 	connID := uint64(1234567890)
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &getglobalstate.S2C{
-		MarketHK:      &marketHK,
-		MarketUS:      &marketUS,
-		MarketSH:      &marketSH,
-		MarketSZ:      &marketSZ,
-		QotLogined:    &qotLogined,
-		TrdLogined:    &trdLogined,
-		ServerVer:     &serverVer,
-		ServerBuildNo: &serverBuildNo,
-		Time:          &serverTime,
-		ConnID:        &connID,
+	resp := &getglobalstate.Response{
+		RetType: &retType,
+		S2C: &getglobalstate.S2C{
+			MarketHK:      &marketHK,
+			MarketUS:      &marketUS,
+			MarketSH:      &marketSH,
+			MarketSZ:      &marketSZ,
+			QotLogined:    &qotLogined,
+			TrdLogined:    &trdLogined,
+			ServerVer:     &serverVer,
+			ServerBuildNo: &serverBuildNo,
+			Time:          &serverTime,
+			ConnID:        &connID,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
-	if err != nil {
-		return s.errorResponse(pkt, fmt.Errorf("marshal response: %w", err)), nil
-	}
-
-	return &Packet{
-		Magic:    Magic,
-		ProtoID:  pkt.ProtoID,
-		SerialNo: pkt.SerialNo,
-		BodyLen:  uint32(len(body)),
-		Body:     body,
-	}, nil
+	return s.successResponse(pkt, resp)
 }
 
 func (s *Server) handleGetUserInfo(pkt *Packet) (*Packet, error) {
@@ -126,27 +99,20 @@ func (s *Server) handleGetUserInfo(pkt *Packet) (*Packet, error) {
 	userID := int64(123456789)
 	subQuota := int32(100)
 	historyKLQuota := int32(100)
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &getuserinfo.S2C{
-		NickName:       &nickname,
-		HkQotRight:     &hkQotRight,
-		UsQotRight:     &usQotRight,
-		CnQotRight:     &cnQotRight,
-		UserID:         &userID,
-		SubQuota:       &subQuota,
-		HistoryKLQuota: &historyKLQuota,
+	resp := &getuserinfo.Response{
+		RetType: &retType,
+		S2C: &getuserinfo.S2C{
+			NickName:       &nickname,
+			HkQotRight:     &hkQotRight,
+			UsQotRight:     &usQotRight,
+			CnQotRight:     &cnQotRight,
+			UserID:         &userID,
+			SubQuota:       &subQuota,
+			HistoryKLQuota: &historyKLQuota,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
-	if err != nil {
-		return s.errorResponse(pkt, fmt.Errorf("marshal response: %w", err)), nil
-	}
-
-	return &Packet{
-		Magic:    Magic,
-		ProtoID:  pkt.ProtoID,
-		SerialNo: pkt.SerialNo,
-		BodyLen:  uint32(len(body)),
-		Body:     body,
-	}, nil
+	return s.successResponse(pkt, resp)
 }
