@@ -10,7 +10,7 @@
 | 系统 API | ✅ 已完成 | InitConnect, KeepAlive, GetGlobalState, GetUserInfo |
 | Qot 行情 API | ✅ 已完成 | 42 个 Handler 已注册 |
 | Trd 交易 API | ✅ 已完成 | 13 个 Handler 已注册 |
-| 推送模拟 | ⏳ 待实现 | |
+| 推送模拟 | ✅ 已完成 | 11 个 Push Handler 已注册 |
 
 ## 架构设计
 
@@ -20,6 +20,7 @@ simulator/
 ├── handlers.go       # 系统 API 处理器 (4 handlers)
 ├── handlers_qot.go    # 行情 API 处理器 (42 handlers)
 ├── handlers_trd.go    # 交易 API 处理器 (13 handlers)
+├── handlers_push.go   # 推送处理器 (11 handlers)
 └── simulator_test.go  # 测试
 ```
 
@@ -151,9 +152,9 @@ func main() {
 ## 下一步计划
 
 1. ✅ 实现 Qot 行情 API Handler 框架
-2. 🔄 完善存根 Handler，添加真实模拟数据
-3. ⏳ 实现 Trd 交易 API Handler
-4. ⏳ 添加推送模拟支持
+2. ✅ 完善存根 Handler，添加真实模拟数据
+3. ✅ 实现 Trd 交易 API Handler
+4. ✅ 添加推送模拟支持
 5. ⏳ 添加可配置模拟数据
 
 ---
