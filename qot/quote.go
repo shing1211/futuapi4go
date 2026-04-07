@@ -22,6 +22,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetrt"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetsecuritysnapshot"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetstaticinfo"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetsuspend"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetticker"
 	"gitee.com/shing1211/futuapi4go/pb/qotgettradedate"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetusersecurity"
@@ -46,6 +47,7 @@ const (
 	ProtoID_GetStaticInfo           = 2201
 	ProtoID_GetPlateSet             = 2202
 	ProtoID_GetPlateSecurity        = 2203
+	ProtoID_GetSuspend              = 2209
 	ProtoID_GetCapitalFlow          = 2301
 	ProtoID_GetCapitalDistribution  = 2302
 	ProtoID_StockFilter             = 2303
@@ -1755,6 +1757,85 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 			LowerStrikePrice:   w.GetLowerStrikePrice(),
 			InLinePriceStatus:  w.GetInLinePriceStatus(),
 		})
+	}
+
+	return result, nil
+}
+
+type GetSuspendRequest struct {
+	SecurityList []*qotcommon.Security
+	BeginTime    string
+	EndTime      string
+}
+
+type SuspendInfo struct {
+	Time      string
+	Timestamp float64
+}
+
+type SecuritySuspendInfo struct {
+	Security    *qotcommon.Security
+	SuspendList []*SuspendInfo
+}
+
+type GetSuspendResponse struct {
+	SecuritySuspendList []*SecuritySuspendInfo
+}
+
+func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse, error) {
+	c2s := &qotgetsuspend.C2S{
+		SecurityList: req.SecurityList,
+		BeginTime:    &req.BeginTime,
+		EndTime:      &req.EndTime,
+	}
+
+	pkt := &qotgetsuspend.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetSuspend, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetsuspend.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetSuspend failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetSuspend: s2c is nil")
+	}
+
+	result := &GetSuspendResponse{
+		SecuritySuspendList: make([]*SecuritySuspendInfo, 0, len(s2c.GetSecuritySuspendList())),
+	}
+
+	for _, ss := range s2c.GetSecuritySuspendList() {
+		info := &SecuritySuspendInfo{
+			Security:    ss.GetSecurity(),
+			SuspendList: make([]*SuspendInfo, 0, len(ss.GetSuspendList())),
+		}
+		for _, s := range ss.GetSuspendList() {
+			info.SuspendList = append(info.SuspendList, &SuspendInfo{
+				Time:      s.GetTime(),
+				Timestamp: s.GetTimestamp(),
+			})
+		}
+		result.SecuritySuspendList = append(result.SecuritySuspendList, info)
 	}
 
 	return result, nil

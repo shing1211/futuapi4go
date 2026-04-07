@@ -62,7 +62,7 @@
 | GetTradeDate | 2206 | ✅ 完成 | 获取交易日 |
 | RequestTradeDate | 2207 | ✅ 完成 | 请求交易日 |
 | GetMarketState | 2208 | ✅ 完成 | 获取市场状态 |
-| GetSuspend | 2209 | ⏳ 规划中 | 获取停牌信息 |
+| GetSuspend | 2209 | ✅ 完成 | 获取停牌信息 |
 | GetCodeChange | 2210 | ⏳ 规划中 | 获取代码变更信息 |
 | GetFutureInfo | 2211 | ⏳ 规划中 | 获取期货信息 |
 | GetIpoList | 2212 | ⏳ 规划中 | 获取IPO列表 |
