@@ -13,9 +13,9 @@
 
 - ✅ **完整的市场数据接口** - 实时行情、K线、订单簿、逐笔成交、板块信息
 - ✅ **交易功能支持** - 账户查询、订单管理、持仓查询、资金查询
-- ✅ **WebSocket 推送** - 实时行情推送、订单状态推送
+- ✅ **TCP/推送机制** - 实时行情推送、订单状态推送
 - ✅ **Protobuf 协议** - 高效的二进制序列化
-- ✅ **连接池管理** - 自动重连、心跳保活
+- ✅ **连接管理** - 自动重连、心跳保活
 - ✅ **简洁的 API 设计** - 易于使用、类型安全
 
 ## 实现计划与状态
@@ -26,53 +26,146 @@
 |------|------|------|
 | TCP 连接层 | ✅ 完成 | 自定义二进制协议封装 |
 | InitConnect | ✅ 完成 | 连接初始化 |
-| 心跳保活 (KeepAlive) | ✅ 完成 | 自动维持连接 |
+| KeepAlive 心跳 | ✅ 完成 | 自动维持连接 |
+| 全局状态 (GetGlobalState) | ⏳ 规划中 | 获取全局状态 |
+| 用户信息 (GetUserInfo) | ⏳ 规划中 | 获取用户信息 |
+| 延迟统计 (GetDelayStatistics) | ⏳ 规划中 | 获取延迟统计 |
 | 错误处理 | ✅ 完成 | 统一的错误类型 |
 | Protobuf 定义 | ✅ 完成 | v10.2.6208 |
 
 ### 阶段二：市场数据 (Qot - Market Data) 🔄 进行中
 
-| API | 状态 | 说明 |
-|-----|------|------|
-| GetBasicQot | ✅ 完成 | 获取实时行情 |
-| GetKL | ✅ 完成 | 获取实时K线 |
-| GetHistoryKL | ⏳ 规划中 | 获取历史K线 |
-| GetOrderBook | ⏳ 规划中 | 获取订单簿(档口) |
-| GetTicker | ⏳ 规划中 | 获取逐笔成交 |
-| GetRT | ⏳ 规划中 | 获取实时分时数据 |
-| GetMarketSnapshot | ⏳ 规划中 | 获取市场快照 |
-| GetBroker | ⏳ 规划中 | 获取买卖队列 |
-| Subscribe | ⏳ 规划中 | 订阅实时行情 |
-| Unsubscribe | ⏳ 规划中 | 取消订阅 |
+#### 2.1 基础行情查询
 
-### 阶段二点五：推送机制 (Push Mechanism) ⏳ 规划中
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetBasicQot | 2101 | ✅ 完成 | 获取实时行情 |
+| GetKL | 2102 | ✅ 完成 | 获取实时K线 |
+| GetHistoryKL | 2103 | ⏳ 规划中 | 获取历史K线 |
+| RequestHistoryKL | 2104 | ⏳ 规划中 | 请求历史K线(异步) |
+| RequestHistoryKLQuota | 2105 | ⏳ 规划中 | 获取历史K线额度 |
 
-> **注意**: Futu OpenD 主要通过 **TCP 长连接** 进行推送（与请求/响应共用同一连接），同时也支持 WebSocket 接口。
+#### 2.2 深度行情数据
 
-| 功能 | 状态 | 说明 |
-|------|------|------|
-| Push 数据接收 | 🔄 部分完成 | TCP连接已有readLoop处理推送 |
-| Push 路由分发 | ✅ 完成 | 根据ProtoID分发到handler |
-| 行情推送回调 | ⏳ 规划中 | 实时行情数据回调处理 |
-| 订单状态推送 | ⏳ 规划中 | 订单状态变更推送 |
-| 系统通知推送 | ⏳ 规划中 | 市场状态、需重新解锁等通知 |
-| WebSocket 支持 | ⏳ 规划中 | 可选：支持WebSocket接口 |
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetOrderBook | 2106 | ⏳ 规划中 | 获取订单簿(档口) |
+| GetTicker | 2107 | ⏳ 规划中 | 获取逐笔成交 |
+| GetRT | 2108 | ⏳ 规划中 | 获取实时分时数据 |
+| GetMarketSnapshot | 2109 | ⏳ 规划中 | 获取市场快照 |
+| GetSecuritySnapshot | 2110 | ⏳ 规划中 | 获取股票快照 |
+| GetBroker | 2111 | ⏳ 规划中 | 获取买卖队列(经纪商) |
+
+#### 2.3 市场参考数据
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetStaticInfo | 2201 | ⏳ 规划中 | 获取股票静态信息 |
+| GetPlateSet | 2202 | ⏳ 规划中 | 获取板块集合 |
+| GetPlateSecurity | 2203 | ⏳ 规划中 | 获取板块成分股 |
+| GetOwnerPlate | 2204 | ⏳ 规划中 | 获取所属板块 |
+| GetReference | 2205 | ⏳ 规划中 | 获取正股相关数据 |
+| GetTradeDate | 2206 | ⏳ 规划中 | 获取交易日 |
+| RequestTradeDate | 2207 | ⏳ 规划中 | 请求交易日 |
+| GetMarketState | 2208 | ⏳ 规划中 | 获取市场状态 |
+| GetSuspend | 2209 | ⏳ 规划中 | 获取停牌信息 |
+| GetCodeChange | 2210 | ⏳ 规划中 | 获取代码变更信息 |
+| GetFutureInfo | 2211 | ⏳ 规划中 | 获取期货信息 |
+| GetIpoList | 2212 | ⏳ 规划中 | 获取IPO列表 |
+| GetHoldingChangeList | 2213 | ⏳ 规划中 | 获取持仓变化列表 |
+
+#### 2.4 高级数据
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetCapitalFlow | 2301 | ⏳ 规划中 | 获取资金流向 |
+| GetCapitalDistribution | 2302 | ⏳ 规划中 | 获取资金分布 |
+| StockFilter | 2303 | ⏳ 规划中 | 股票筛选 |
+| GetOptionChain | 2304 | ⏳ 规划中 | 获取期权链 |
+| GetOptionExpirationDate | 2305 | ⏳ 规划中 | 获取期权到期日 |
+| GetWarrant | 2306 | ⏳ 规划中 | 获取窝轮信息 |
+
+#### 2.5 用户数据
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetUserSecurity | 2401 | ⏳ 规划中 | 获取用户自选股 |
+| GetUserSecurityGroup | 2402 | ⏳ 规划中 | 获取用户自选股分组 |
+| ModifyUserSecurity | 2403 | ⏳ 规划中 | 修改用户自选股 |
+| GetPriceReminder | 2404 | ⏳ 规划中 | 获取价格提醒 |
+| SetPriceReminder | 2405 | ⏳ 规划中 | 设置价格提醒 |
+
+#### 2.6 订阅与推送
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| Subscribe (Qot_Sub) | 3001 | ⏳ 规划中 | 订阅实时行情 |
+| GetSubInfo | 3002 | ⏳ 规划中 | 获取订阅信息 |
+| RegQotPush | 3003 | ⏳ 规划中 | 注册行情推送 |
+
+##### 推送通知 (Push Notifications)
+
+| ProtoID | 状态 | 说明 |
+|---------|------|------|
+| Qot_UpdateBasicQot (3101) | ⏳ 规划中 | 实时行情推送 |
+| Qot_UpdateKL (3102) | ⏳ 规划中 | K线推送 |
+| Qot_UpdateOrderBook (3103) | ⏳ 规划中 | 订单簿推送 |
+| Qot_UpdateTicker (3104) | ⏳ 规划中 | 逐笔成交推送 |
+| Qot_UpdateRT (3105) | ⏳ 规划中 | 分时数据推送 |
+| Qot_UpdateBroker (3106) | ⏳ 规划中 | 经纪商队列推送 |
+| Qot_UpdatePriceReminder (3107) | ⏳ 规划中 | 价格提醒推送 |
 
 ### 阶段三：交易接口 (Trd - Trading) ⏳ 规划中
 
-| API | 状态 | 说明 |
-|-----|------|------|
-| GetAccList | ⏳ 规划中 | 获取账户列表 |
-| UnlockTrade | ⏳ 规划中 | 解锁交易密码 |
-| GetFunds | ⏳ 规划中 | 获取资金信息 |
-| GetPositionList | ⏳ 规划中 | 获取持仓列表 |
-| GetOrderList | ⏳ 规划中 | 获取订单列表 |
-| GetOrderFillList | ⏳ 规划中 | 获取成交列表 |
-| PlaceOrder | ⏳ 规划中 | 下单 |
-| ModifyOrder | ⏳ 规划中 | 修改订单 |
-| CancelOrder | ⏳ 规划中 | 撤销订单 |
+#### 3.1 账户管理
 
-### 阶段四：高级功能 (Advanced Features) ⏳ 规划中
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetAccList | 4001 | ⏳ 规划中 | 获取账户列表 |
+| UnlockTrade | 4002 | ⏳ 规划中 | 解锁交易密码 |
+| GetFunds | 4003 | ⏳ 规划中 | 获取资金信息 |
+| GetOrderFee | 4004 | ⏳ 规划中 | 获取订单费用 |
+| GetMarginRatio | 4005 | ⏳ 规划中 | 获取保证金比例 |
+| GetMaxTrdQtys | 4006 | ⏳ 规划中 | 获取最大交易数量 |
+
+#### 3.2 订单管理
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| PlaceOrder | 5001 | ⏳ 规划中 | 下单 |
+| ModifyOrder | 5002 | ⏳ 规划中 | 修改订单 |
+| GetOrderList | 5003 | ⏳ 规划中 | 查询订单列表 |
+| GetHistoryOrderList | 5004 | ⏳ 规划中 | 查询历史订单 |
+| GetOrderFillList | 5005 | ⏳ 规划中 | 查询成交列表 |
+| GetHistoryOrderFillList | 5006 | ⏳ 规划中 | 查询历史成交 |
+
+#### 3.3 持仓管理
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetPositionList | 6001 | ⏳ 规划中 | 获取持仓列表 |
+
+#### 3.4 交易推送
+
+| ProtoID | 状态 | 说明 |
+|---------|------|------|
+| Trd_UpdateOrder (7001) | ⏳ 规划中 | 订单状态推送 |
+| Trd_UpdateOrderFill (7002) | ⏳ 规划中 | 成交推送 |
+| Trd_Notify (7003) | ⏳ 规划中 | 交易通知推送 |
+| Trd_ReconfirmOrder (7004) | ⏳ 规划中 | 订单确认推送 |
+| Trd_SubAccPush (7005) | ⏳ 规划中 | 账户推送订阅 |
+
+### 阶段四：系统与工具 (System) ⏳ 规划中
+
+| API | ProtoID | 状态 | 说明 |
+|-----|---------|------|------|
+| GetGlobalState | 1004 | ⏳ 规划中 | 获取全局状态 |
+| GetUserInfo | 1005 | ⏳ 规划中 | 获取用户信息 |
+| GetDelayStatistics | 1006 | ⏳ 规划中 | 获取延迟统计 |
+| Verification | 8001 | ⏳ 规划中 | 验证接口 |
+| RequestRehab | 2214 | ⏳ 规划中 | 请求复权数据 |
+
+### 阶段五：高级功能 (Advanced Features) ⏳ 规划中
 
 | 功能 | 状态 | 说明 |
 |------|------|------|
@@ -80,7 +173,7 @@
 | 请求重试 | ⏳ 规划中 | 超时自动重试机制 |
 | 并发控制 | ⏳ 规划中 | 请求并发限制 |
 | 日志系统 | ⏳ 规划中 | 可配置的日志输出 |
-| 性能优化 | ⏳ 规划中 | 连接池、批处理优化 |
+| 连接池 | ⏳ 规划中 | 多连接管理 |
 | 单元测试 | ⏳ 规划中 | 核心功能测试覆盖 |
 
 ---
@@ -98,16 +191,6 @@ go get gitee.com/shing1211/futuapi4go
 | **Golang** | 1.21+ (推荐 1.26+) |
 | **Futu OpenD** | 10.2.6208+ (最新版本) |
 
-> **注意**: Protobuf 定义文件基于 Futu OpenD v10.2.6208，请确保使用对应版本或更高版本的 OpenD 以获得最佳兼容性。
-
-### 安装 OpenD
-
-下载并安装 [富途 OpenD](https://www.futunn.com/download/openAPI)：
-
-1. 登录牛牛账号
-2. 启用「行情接口」和「交易接口」
-3. 记录 TCP 连接地址（默认 `127.0.0.1:11111`）
-
 ## 快速开始
 
 ```go
@@ -123,17 +206,13 @@ import (
 )
 
 func main() {
-	// 创建客户端
 	cli := futuapi.New()
-
-	// 连接到 OpenD (默认地址 127.0.0.1:11111)
 	err := cli.Connect("127.0.0.1:11111")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cli.Close()
 
-	// 查询港股腾讯控股实时行情
 	market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
 	code := "00700"
 	securities := []*qotcommon.Security{
@@ -146,14 +225,7 @@ func main() {
 	}
 
 	for _, bq := range result {
-		fmt.Printf("%s %s: 现价=%.2f 开=%.2f 高=%.2f 低=%.2f\n",
-			bq.Security.GetCode(),
-			bq.Name,
-			bq.CurPrice,
-			bq.OpenPrice,
-			bq.HighPrice,
-			bq.LowPrice,
-		)
+		fmt.Printf("%s %s: 现价=%.2f\n", bq.Security.GetCode(), bq.Name, bq.CurPrice)
 	}
 }
 ```
@@ -162,29 +234,16 @@ func main() {
 
 ```
 futuapi4go/
-├── client/           # 核心客户端实现
-│   ├── conn.go      # TCP连接与协议封装
-│   ├── client.go    # 主客户端(含心跳)
-│   └── errors.go    # 错误类型定义
-├── qot/             # 市场数据API
-│   └── quote.go     # 行情查询接口
-├── trd/             # 交易API
-│   └── trade.go     # 交易接口
-├── pb/              # Protobuf生成的Go代码
-├── proto/           # Protobuf定义文件
-├── examples/        # 使用示例
-├── go.mod           # Go模块定义
-└── README.md        # 本文件
-```
-
-## 测试
-
-```bash
-# 运行所有测试
-go test ./...
-
-# 运行特定包测试
-go test ./client/...
+├── client/           # 核心客户端
+│   ├── conn.go       # TCP连接与协议封装
+│   ├── client.go     # 主客户端
+│   └── errors.go     # 错误类型定义
+├── qot/              # 市场数据API
+│   └── quote.go      # 行情查询接口
+├── trd/              # 交易API
+├── pb/               # Protobuf生成的Go代码
+├── proto/            # Protobuf定义文件
+└── examples/         # 使用示例
 ```
 
 ## 贡献
@@ -193,7 +252,7 @@ go test ./client/...
 
 ## 许可证
 
-MIT License - 查看 [LICENSE](LICENSE) 文件
+MIT License
 
 ## 致谢
 
