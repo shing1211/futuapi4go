@@ -1,4 +1,4 @@
-# futuapi4go
+# futuapi4go - Go 语言实现的富途 OpenD API SDK
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go" alt="Go Version">
