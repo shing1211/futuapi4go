@@ -9,16 +9,25 @@
 | 核心服务器 | ✅ 已完成 | TCP 监听、协议解析(46字节头)、处理器注册 |
 | 系统 API | ✅ 已完成 | InitConnect, KeepAlive, GetGlobalState, GetUserInfo |
 | Qot 行情 API | ✅ 已完成 | 42 个 Handler 已注册 |
-| Trd 交易 API | ⏳ 待实现 | |
+| Trd 交易 API | ✅ 已完成 | 13 个 Handler 已注册 |
 | 推送模拟 | ⏳ 待实现 | |
 
 ## 架构设计
 
 ```
 simulator/
-├── server.go        # TCP 服务器核心 (46字节协议头, LittleEndian)
-├── handlers.go      # 系统 API 处理器 (InitConnect, KeepAlive, GetGlobalState, GetUserInfo)
-└── handlers_qot.go # 行情 API 处理器 (42 handlers)
+├── server.go         # TCP 服务器核心 (46字节协议头, LittleEndian)
+├── handlers.go       # 系统 API 处理器 (4 handlers)
+├── handlers_qot.go    # 行情 API 处理器 (42 handlers)
+├── handlers_trd.go    # 交易 API 处理器 (13 handlers)
+└── simulator_test.go  # 测试
+```
+
+## 运行模拟器
+
+```bash
+cd examples/simulator
+go run main.go
 ```
 
 ## 协议兼容性
