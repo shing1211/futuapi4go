@@ -76,7 +76,7 @@
 | GetCapitalDistribution | 2302 | ✅ 完成 | 获取资金分布 |
 | StockFilter | 2303 | ⏳ 规划中 | 股票筛选 |
 | GetOptionChain | 2304 | ⏳ 规划中 | 获取期权链 |
-| GetOptionExpirationDate | 2305 | ⏳ 规划中 | 获取期权到期日 |
+| GetOptionExpirationDate | 2305 | ✅ 完成 | 获取期权到期日 |
 | GetWarrant | 2306 | ⏳ 规划中 | 获取窝轮信息 |
 
 #### 2.5 用户数据

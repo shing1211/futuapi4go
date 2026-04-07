@@ -7,6 +7,7 @@ import (
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
 	"gitee.com/shing1211/futuapi4go/pb/common"
+	"gitee.com/shing1211/futuapi4go/pb/getoptionexpirationdate"
 	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetbasicqot"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetbroker"
@@ -28,25 +29,26 @@ import (
 )
 
 const (
-	ProtoID_GetBasicQot            = 2101
-	ProtoID_GetKL                  = 2102
-	ProtoID_GetHistoryKL           = 2103
-	ProtoID_RequestHistoryKL       = 2104
-	ProtoID_GetOrderBook           = 2106
-	ProtoID_GetTicker              = 2107
-	ProtoID_GetRT                  = 2108
-	ProtoID_GetMarketSnapshot      = 2109
-	ProtoID_GetSecuritySnapshot    = 2110
-	ProtoID_GetBroker              = 2111
-	ProtoID_GetStaticInfo          = 2201
-	ProtoID_GetPlateSet            = 2202
-	ProtoID_GetPlateSecurity       = 2203
-	ProtoID_GetCapitalFlow         = 2301
-	ProtoID_GetCapitalDistribution = 2302
-	ProtoID_GetUserSecurity        = 2401
-	ProtoID_GetPriceReminder       = 2404
-	ProtoID_GetTradeDate           = 2206
-	ProtoID_Subscribe              = 3001
+	ProtoID_GetBasicQot             = 2101
+	ProtoID_GetKL                   = 2102
+	ProtoID_GetHistoryKL            = 2103
+	ProtoID_RequestHistoryKL        = 2104
+	ProtoID_GetOrderBook            = 2106
+	ProtoID_GetTicker               = 2107
+	ProtoID_GetRT                   = 2108
+	ProtoID_GetMarketSnapshot       = 2109
+	ProtoID_GetSecuritySnapshot     = 2110
+	ProtoID_GetBroker               = 2111
+	ProtoID_GetStaticInfo           = 2201
+	ProtoID_GetPlateSet             = 2202
+	ProtoID_GetPlateSecurity        = 2203
+	ProtoID_GetCapitalFlow          = 2301
+	ProtoID_GetCapitalDistribution  = 2302
+	ProtoID_GetOptionExpirationDate = 2305
+	ProtoID_GetUserSecurity         = 2401
+	ProtoID_GetPriceReminder        = 2404
+	ProtoID_GetTradeDate            = 2206
+	ProtoID_Subscribe               = 3001
 )
 
 type BasicQot struct {
@@ -1222,6 +1224,75 @@ func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market in
 			})
 		}
 		result.PriceReminderList = append(result.PriceReminderList, info)
+	}
+
+	return result, nil
+}
+
+type GetOptionExpirationDateRequest struct {
+	Owner           *qotcommon.Security
+	IndexOptionType int32
+}
+
+type OptionExpirationDateInfo struct {
+	StrikeTime               string
+	StrikeTimestamp          float64
+	OptionExpiryDateDistance int32
+	Cycle                    int32
+}
+
+type GetOptionExpirationDateResponse struct {
+	DateList []*OptionExpirationDateInfo
+}
+
+func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
+	c2s := &getoptionexpirationdate.C2S{
+		Owner:           req.Owner,
+		IndexOptionType: &req.IndexOptionType,
+	}
+
+	pkt := &getoptionexpirationdate.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetOptionExpirationDate, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp getoptionexpirationdate.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetOptionExpirationDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetOptionExpirationDate: s2c is nil")
+	}
+
+	result := &GetOptionExpirationDateResponse{
+		DateList: make([]*OptionExpirationDateInfo, 0, len(s2c.GetDateList())),
+	}
+
+	for _, d := range s2c.GetDateList() {
+		result.DateList = append(result.DateList, &OptionExpirationDateInfo{
+			StrikeTime:               d.GetStrikeTime(),
+			StrikeTimestamp:          d.GetStrikeTimestamp(),
+			OptionExpiryDateDistance: d.GetOptionExpiryDateDistance(),
+			Cycle:                    d.GetCycle(),
+		})
 	}
 
 	return result, nil
