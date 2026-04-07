@@ -85,6 +85,12 @@ func New() *Client {
 
 func NewWithOptions(addr string, maxRetries int, reconnectInterval time.Duration) *Client {
 	ctx, cancel := context.WithCancel(context.Background())
+	if maxRetries == 0 {
+		maxRetries = DefaultMaxRetries
+	}
+	if reconnectInterval == 0 {
+		reconnectInterval = DefaultReconnectInterval
+	}
 	client := &Client{
 		conn:              NewConn(nil),
 		handlers:          make(map[uint32]Handler),
