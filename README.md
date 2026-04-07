@@ -253,6 +253,19 @@ futuapi4go/
 - [用户指南](USER_GUIDE.md) - SDK 使用教程、API 调用示例、常见问题
 - [开发者指南](DEVELOPER.md) - 项目架构、代码规范、贡献流程
 
+### 文档概览
+
+| 文档 | 目标读者 | 内容 |
+|------|----------|------|
+| README.md | 所有人 | 项目介绍、功能列表、快速开始 |
+| USER_GUIDE.md | 量化交易者 | API 使用教程、代码示例、FAQ |
+| DEVELOPER.md | 贡献者 | 架构设计、代码规范、调试技巧 |
+
+**快速导航：**
+- 新用户 → [用户指南](USER_GUIDE.md#快速开始)
+- 开发者 → [开发者指南](DEVELOPER.md#项目架构)
+- API 状态 → 查看上方 [实现计划与状态](#阶段二市场数据-qot---market-data-🔄-进行中) 表格
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
