@@ -49,23 +49,23 @@
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetOrderBook | 2106 | ⏳ 规划中 | 获取订单簿(档口) |
-| GetTicker | 2107 | ⏳ 规划中 | 获取逐笔成交 |
-| GetRT | 2108 | ⏳ 规划中 | 获取实时分时数据 |
+| GetOrderBook | 2106 | ✅ 完成 | 获取订单簿(档口) |
+| GetTicker | 2107 | ✅ 完成 | 获取逐笔成交 |
+| GetRT | 2108 | ✅ 完成 | 获取实时分时数据 |
 | GetMarketSnapshot | 2109 | ⏳ 规划中 | 获取市场快照 |
 | GetSecuritySnapshot | 2110 | ⏳ 规划中 | 获取股票快照 |
-| GetBroker | 2111 | ⏳ 规划中 | 获取买卖队列(经纪商) |
+| GetBroker | 2111 | ✅ 完成 | 获取买卖队列(经纪商) |
 
 #### 2.3 市场参考数据
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetStaticInfo | 2201 | ⏳ 规划中 | 获取股票静态信息 |
-| GetPlateSet | 2202 | ⏳ 规划中 | 获取板块集合 |
-| GetPlateSecurity | 2203 | ⏳ 规划中 | 获取板块成分股 |
+| GetStaticInfo | 2201 | ✅ 完成 | 获取股票静态信息 |
+| GetPlateSet | 2202 | ✅ 完成 | 获取板块集合 |
+| GetPlateSecurity | 2203 | ✅ 完成 | 获取板块成分股 |
 | GetOwnerPlate | 2204 | ⏳ 规划中 | 获取所属板块 |
 | GetReference | 2205 | ⏳ 规划中 | 获取正股相关数据 |
-| GetTradeDate | 2206 | ⏳ 规划中 | 获取交易日 |
+| GetTradeDate | 2206 | ✅ 完成 | 获取交易日 |
 | RequestTradeDate | 2207 | ⏳ 规划中 | 请求交易日 |
 | GetMarketState | 2208 | ⏳ 规划中 | 获取市场状态 |
 | GetSuspend | 2209 | ⏳ 规划中 | 获取停牌信息 |
@@ -99,7 +99,7 @@
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| Subscribe (Qot_Sub) | 3001 | ⏳ 规划中 | 订阅实时行情 |
+| Subscribe (Qot_Sub) | 3001 | ✅ 完成 | 订阅实时行情 |
 | GetSubInfo | 3002 | ⏳ 规划中 | 获取订阅信息 |
 | RegQotPush | 3003 | ⏳ 规划中 | 注册行情推送 |
 
@@ -115,15 +115,15 @@
 | Qot_UpdateBroker (3106) | ⏳ 规划中 | 经纪商队列推送 |
 | Qot_UpdatePriceReminder (3107) | ⏳ 规划中 | 价格提醒推送 |
 
-### 阶段三：交易接口 (Trd - Trading) ⏳ 规划中
+### 阶段三：交易接口 (Trd - Trading) 🔄 进行中
 
 #### 3.1 账户管理
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetAccList | 4001 | ⏳ 规划中 | 获取账户列表 |
-| UnlockTrade | 4002 | ⏳ 规划中 | 解锁交易密码 |
-| GetFunds | 4003 | ⏳ 规划中 | 获取资金信息 |
+| GetAccList | 4001 | ✅ 完成 | 获取账户列表 |
+| UnlockTrade | 4002 | ✅ 完成 | 解锁交易密码 |
+| GetFunds | 4003 | ✅ 完成 | 获取资金信息 |
 | GetOrderFee | 4004 | ⏳ 规划中 | 获取订单费用 |
 | GetMarginRatio | 4005 | ⏳ 规划中 | 获取保证金比例 |
 | GetMaxTrdQtys | 4006 | ⏳ 规划中 | 获取最大交易数量 |
@@ -132,18 +132,18 @@
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| PlaceOrder | 5001 | ⏳ 规划中 | 下单 |
-| ModifyOrder | 5002 | ⏳ 规划中 | 修改订单 |
-| GetOrderList | 5003 | ⏳ 规划中 | 查询订单列表 |
+| PlaceOrder | 5001 | ✅ 完成 | 下单 |
+| ModifyOrder | 5002 | ✅ 完成 | 修改订单 |
+| GetOrderList | 5003 | ✅ 完成 | 查询订单列表 |
 | GetHistoryOrderList | 5004 | ⏳ 规划中 | 查询历史订单 |
-| GetOrderFillList | 5005 | ⏳ 规划中 | 查询成交列表 |
+| GetOrderFillList | 5005 | ✅ 完成 | 查询成交列表 |
 | GetHistoryOrderFillList | 5006 | ⏳ 规划中 | 查询历史成交 |
 
 #### 3.3 持仓管理
 
 | API | ProtoID | 状态 | 说明 |
 |-----|---------|------|------|
-| GetPositionList | 6001 | ⏳ 规划中 | 获取持仓列表 |
+| GetPositionList | 6001 | ✅ 完成 | 获取持仓列表 |
 
 #### 3.4 交易推送
 
