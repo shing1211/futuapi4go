@@ -35,15 +35,28 @@
 | API | 状态 | 说明 |
 |-----|------|------|
 | GetBasicQot | ✅ 完成 | 获取实时行情 |
-| GetKL | ⏳ 规划中 | 获取实时/历史K线 |
+| GetKL | ✅ 完成 | 获取实时K线 |
 | GetHistoryKL | ⏳ 规划中 | 获取历史K线 |
 | GetOrderBook | ⏳ 规划中 | 获取订单簿(档口) |
 | GetTicker | ⏳ 规划中 | 获取逐笔成交 |
 | GetRT | ⏳ 规划中 | 获取实时分时数据 |
 | GetMarketSnapshot | ⏳ 规划中 | 获取市场快照 |
 | GetBroker | ⏳ 规划中 | 获取买卖队列 |
-| Subscribe/Unsubscribe | ⏳ 规划中 | 订阅/取消订阅实时行情 |
-| Subscription Push | ⏳ 规划中 | 实时行情推送处理 |
+| Subscribe | ⏳ 规划中 | 订阅实时行情 |
+| Unsubscribe | ⏳ 规划中 | 取消订阅 |
+
+### 阶段二点五：推送机制 (Push Mechanism) ⏳ 规划中
+
+> **注意**: Futu OpenD 主要通过 **TCP 长连接** 进行推送（与请求/响应共用同一连接），同时也支持 WebSocket 接口。
+
+| 功能 | 状态 | 说明 |
+|------|------|------|
+| Push 数据接收 | 🔄 部分完成 | TCP连接已有readLoop处理推送 |
+| Push 路由分发 | ✅ 完成 | 根据ProtoID分发到handler |
+| 行情推送回调 | ⏳ 规划中 | 实时行情数据回调处理 |
+| 订单状态推送 | ⏳ 规划中 | 订单状态变更推送 |
+| 系统通知推送 | ⏳ 规划中 | 市场状态、需重新解锁等通知 |
+| WebSocket 支持 | ⏳ 规划中 | 可选：支持WebSocket接口 |
 
 ### 阶段三：交易接口 (Trd - Trading) ⏳ 规划中
 
