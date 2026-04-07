@@ -31,7 +31,8 @@
 | 交易接口 (Trd) | ✅ 已完成 | 账户、订单、持仓管理 |
 | 推送通知 | ✅ 已完成 | 实时行情与交易推送 |
 | 系统 API | ✅ 已完成 | 全局状态、验证接口 |
-| 高级功能 | 🔄 开发中 | 自动重连、单元测试 |
+| 高级功能 | ✅ 已完成 | 自动重连、日志系统 |
+| 测试工具 | 🔄 开发中 | OpenD 模拟器 |
 
 📋 **完整实现清单**: [IMPLEMENTATION.md](IMPLEMENTATION.md)
 
@@ -146,6 +147,13 @@ futuapi4go/
 │   └── trade.go      # 交易接口
 ├── sys/              # 系统 API
 │   └── system.go     # 系统级接口
+├── simulator/        # OpenD 模拟器 (开发中)
+│   ├── server.go     # TCP 服务器
+│   └── handlers.go   # API 处理器
+├── push/             # 推送通知处理
+├── pb/               # Protobuf 生成代码
+├── proto/            # Protobuf 定义
+└── examples/         # 使用示例
 ├── push/             # 推送通知处理
 │   ├── qot_push.go   # 行情推送解析
 │   └── trd_push.go   # 交易推送解析
