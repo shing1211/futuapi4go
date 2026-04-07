@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -14,6 +15,25 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/keepalive"
 )
 
+var (
+	logger *log.Logger
+)
+
+func SetLogger(l *log.Logger) {
+	logger = l
+}
+
+func defaultLogger() *log.Logger {
+	return log.Default()
+}
+
+func logf(format string, v ...interface{}) {
+	if logger == nil {
+		logger = defaultLogger()
+	}
+	logger.Printf(format, v...)
+}
+
 const (
 	ProtoID_InitConnect    = 1001
 	ProtoID_KeepAlive      = 1002
@@ -23,6 +43,8 @@ const (
 const (
 	DefaultTimeout           = 30 * time.Second
 	DefaultKeepAliveInterval = 30 * time.Second
+	DefaultMaxRetries        = 3
+	DefaultReconnectInterval = 3 * time.Second
 )
 
 type Client struct {
@@ -40,6 +62,11 @@ type Client struct {
 	cancel            context.CancelFunc
 	wg                sync.WaitGroup
 	connected         bool
+
+	addr              string
+	maxRetries        int
+	reconnectInterval time.Duration
+	reconnecting      bool
 }
 
 type Handler func(protoID uint32, body []byte)
@@ -47,14 +74,38 @@ type Handler func(protoID uint32, body []byte)
 func New() *Client {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Client{
-		conn:     NewConn(nil),
-		handlers: make(map[uint32]Handler),
-		ctx:      ctx,
-		cancel:   cancel,
+		conn:              NewConn(nil),
+		handlers:          make(map[uint32]Handler),
+		ctx:               ctx,
+		cancel:            cancel,
+		maxRetries:        DefaultMaxRetries,
+		reconnectInterval: DefaultReconnectInterval,
 	}
 }
 
+func NewWithOptions(addr string, maxRetries int, reconnectInterval time.Duration) *Client {
+	ctx, cancel := context.WithCancel(context.Background())
+	client := &Client{
+		conn:              NewConn(nil),
+		handlers:          make(map[uint32]Handler),
+		ctx:               ctx,
+		cancel:            cancel,
+		maxRetries:        maxRetries,
+		reconnectInterval: reconnectInterval,
+	}
+	if addr != "" {
+		if err := client.Connect(addr); err != nil {
+			return nil
+		}
+	}
+	return client
+}
+
 func (c *Client) Connect(addr string) error {
+	c.mu.Lock()
+	c.addr = addr
+	c.mu.Unlock()
+
 	if err := c.conn.Dial(addr); err != nil {
 		return fmt.Errorf("dial: %w", err)
 	}
@@ -148,7 +199,7 @@ func (c *Client) keepAliveLoop(interval time.Duration) {
 			return
 		case <-ticker.C:
 			if err := c.keepAlive(); err != nil {
-				fmt.Printf("keepalive error: %v\n", err)
+				logf("keepalive error: %v", err)
 			}
 		}
 	}
@@ -210,7 +261,8 @@ func (c *Client) readLoop() {
 			c.mu.Lock()
 			if c.connected {
 				c.connected = false
-				fmt.Printf("connection lost: %v\n", err)
+				logf("connection lost: %v\n", err)
+				go c.reconnect()
 			}
 			c.mu.Unlock()
 			continue
@@ -224,6 +276,38 @@ func (c *Client) readLoop() {
 			handler(pkt.Header.ProtoID, pkt.Body)
 		}
 	}
+}
+
+func (c *Client) reconnect() {
+	if c.reconnecting {
+		return
+	}
+	c.reconnecting = true
+	defer func() { c.reconnecting = false }()
+
+	for attempt := 1; attempt <= c.maxRetries; attempt++ {
+		select {
+		case <-c.ctx.Done():
+			return
+		default:
+		}
+
+		logf("reconnect attempt %d/%d...\n", attempt, c.maxRetries)
+		time.Sleep(c.reconnectInterval)
+
+		if err := c.Connect(c.addr); err != nil {
+			logf("reconnect failed: %v\n", err)
+			continue
+		}
+
+		fmt.Println("reconnected successfully")
+		c.mu.Lock()
+		c.reconnecting = false
+		c.mu.Unlock()
+		return
+	}
+
+	fmt.Println("reconnect failed: max retries exceeded")
 }
 
 func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
