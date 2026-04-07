@@ -7,9 +7,13 @@ import (
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
 	"github.com/futuopen/ftapi4go/pb/common"
+	"github.com/futuopen/ftapi4go/pb/qotcommon"
 	"github.com/futuopen/ftapi4go/pb/trdcommon"
 	"github.com/futuopen/ftapi4go/pb/trdgetacclist"
 	"github.com/futuopen/ftapi4go/pb/trdgetfunds"
+	"github.com/futuopen/ftapi4go/pb/trdgetmarginratio"
+	"github.com/futuopen/ftapi4go/pb/trdgetmaxtrdqtys"
+	"github.com/futuopen/ftapi4go/pb/trdgetorderfee"
 	"github.com/futuopen/ftapi4go/pb/trdgetorderfilllist"
 	"github.com/futuopen/ftapi4go/pb/trdgetorderlist"
 	"github.com/futuopen/ftapi4go/pb/trdgetpositionlist"
@@ -22,6 +26,9 @@ const (
 	ProtoID_GetAccList       = 4001
 	ProtoID_UnlockTrade      = 4002
 	ProtoID_GetFunds         = 4003
+	ProtoID_GetOrderFee      = 4004
+	ProtoID_GetMarginRatio   = 4005
+	ProtoID_GetMaxTrdQtys    = 4006
 	ProtoID_GetPositionList  = 6001
 	ProtoID_GetOrderList     = 5003
 	ProtoID_GetOrderFillList = 5005
@@ -580,4 +587,272 @@ func UnlockTrade(c *futuapi.Client, req *UnlockTradeRequest) error {
 	}
 
 	return nil
+}
+
+type GetOrderFeeRequest struct {
+	AccID         uint64
+	TrdMarket     int32
+	OrderIDExList []string
+}
+
+type OrderFeeInfo struct {
+	OrderIDEx string
+	FeeAmount float64
+	FeeList   []*OrderFeeItemInfo
+}
+
+type OrderFeeItemInfo struct {
+	Title string
+	Value float64
+}
+
+type GetOrderFeeResponse struct {
+	OrderFeeList []*OrderFeeInfo
+}
+
+func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeResponse, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &req.TrdMarket,
+	}
+
+	c2s := &trdgetorderfee.C2S{
+		Header:        header,
+		OrderIdExList: req.OrderIDExList,
+	}
+
+	pkt := &trdgetorderfee.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetOrderFee, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdgetorderfee.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetOrderFee failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetOrderFee: s2c is nil")
+	}
+
+	result := &GetOrderFeeResponse{
+		OrderFeeList: make([]*OrderFeeInfo, 0, len(s2c.GetOrderFeeList())),
+	}
+
+	for _, f := range s2c.GetOrderFeeList() {
+		feeInfo := &OrderFeeInfo{
+			OrderIDEx: f.GetOrderIDEx(),
+			FeeAmount: f.GetFeeAmount(),
+			FeeList:   make([]*OrderFeeItemInfo, 0, len(f.GetFeeList())),
+		}
+		for _, item := range f.GetFeeList() {
+			feeInfo.FeeList = append(feeInfo.FeeList, &OrderFeeItemInfo{
+				Title: item.GetTitle(),
+				Value: item.GetValue(),
+			})
+		}
+		result.OrderFeeList = append(result.OrderFeeList, feeInfo)
+	}
+
+	return result, nil
+}
+
+type GetMarginRatioRequest struct {
+	AccID        uint64
+	TrdMarket    int32
+	SecurityList []*qotcommon.Security
+}
+
+type MarginRatioInfo struct {
+	Security        *qotcommon.Security
+	IsLongPermit    bool
+	IsShortPermit   bool
+	ShortPoolRemain float64
+	ShortFeeRate    float64
+	AlertLongRatio  float64
+	AlertShortRatio float64
+	ImLongRatio     float64
+	ImShortRatio    float64
+	McmLongRatio    float64
+	McmShortRatio   float64
+	MmLongRatio     float64
+	MmShortRatio    float64
+}
+
+type GetMarginRatioResponse struct {
+	MarginRatioInfoList []*MarginRatioInfo
+}
+
+func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRatioResponse, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &req.TrdMarket,
+	}
+
+	c2s := &trdgetmarginratio.C2S{
+		Header:       header,
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &trdgetmarginratio.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetMarginRatio, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdgetmarginratio.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetMarginRatio failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetMarginRatio: s2c is nil")
+	}
+
+	result := &GetMarginRatioResponse{
+		MarginRatioInfoList: make([]*MarginRatioInfo, 0, len(s2c.GetMarginRatioInfoList())),
+	}
+
+	for _, m := range s2c.GetMarginRatioInfoList() {
+		result.MarginRatioInfoList = append(result.MarginRatioInfoList, &MarginRatioInfo{
+			Security:        m.GetSecurity(),
+			IsLongPermit:    m.GetIsLongPermit(),
+			IsShortPermit:   m.GetIsShortPermit(),
+			ShortPoolRemain: m.GetShortPoolRemain(),
+			ShortFeeRate:    m.GetShortFeeRate(),
+			AlertLongRatio:  m.GetAlertLongRatio(),
+			AlertShortRatio: m.GetAlertShortRatio(),
+			ImLongRatio:     m.GetImLongRatio(),
+			ImShortRatio:    m.GetImShortRatio(),
+			McmLongRatio:    m.GetMcmLongRatio(),
+			McmShortRatio:   m.GetMcmShortRatio(),
+			MmLongRatio:     m.GetMmLongRatio(),
+			MmShortRatio:    m.GetMmShortRatio(),
+		})
+	}
+
+	return result, nil
+}
+
+type GetMaxTrdQtysRequest struct {
+	AccID              uint64
+	TrdMarket          int32
+	OrderType          int32
+	Code               string
+	Price              float64
+	OrderID            uint64
+	AdjustPrice        bool
+	AdjustSideAndLimit float64
+	SecMarket          int32
+	OrderIDEx          string
+}
+
+type MaxTrdQtysInfo struct {
+	MaxCashBuy          float64
+	MaxCashAndMarginBuy float64
+	MaxPositionSell     float64
+	MaxSellShort        float64
+	MaxBuyBack          float64
+	LongRequiredIM      float64
+	ShortRequiredIM     float64
+}
+
+type GetMaxTrdQtysResponse struct {
+	MaxTrdQtys *MaxTrdQtysInfo
+}
+
+func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtysResponse, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &req.TrdMarket,
+	}
+
+	c2s := &trdgetmaxtrdqtys.C2S{
+		Header:             header,
+		OrderType:          &req.OrderType,
+		Code:               &req.Code,
+		Price:              &req.Price,
+		OrderID:            &req.OrderID,
+		AdjustPrice:        &req.AdjustPrice,
+		AdjustSideAndLimit: &req.AdjustSideAndLimit,
+		SecMarket:          &req.SecMarket,
+		OrderIDEx:          &req.OrderIDEx,
+	}
+
+	pkt := &trdgetmaxtrdqtys.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetMaxTrdQtys, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdgetmaxtrdqtys.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetMaxTrdQtys failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetMaxTrdQtys: s2c is nil")
+	}
+
+	m := s2c.GetMaxTrdQtys()
+	return &GetMaxTrdQtysResponse{
+		MaxTrdQtys: &MaxTrdQtysInfo{
+			MaxCashBuy:          m.GetMaxCashBuy(),
+			MaxCashAndMarginBuy: m.GetMaxCashAndMarginBuy(),
+			MaxPositionSell:     m.GetMaxPositionSell(),
+			MaxSellShort:        m.GetMaxSellShort(),
+			MaxBuyBack:          m.GetMaxBuyBack(),
+			LongRequiredIM:      m.GetLongRequiredIM(),
+			ShortRequiredIM:     m.GetShortRequiredIM(),
+		},
+	}, nil
 }

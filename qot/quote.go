@@ -10,35 +10,43 @@ import (
 	"github.com/futuopen/ftapi4go/pb/qotcommon"
 	"github.com/futuopen/ftapi4go/pb/qotgetbasicqot"
 	"github.com/futuopen/ftapi4go/pb/qotgetbroker"
+	"github.com/futuopen/ftapi4go/pb/qotgetcapitaldistribution"
+	"github.com/futuopen/ftapi4go/pb/qotgetcapitalflow"
 	"github.com/futuopen/ftapi4go/pb/qotgetkl"
 	"github.com/futuopen/ftapi4go/pb/qotgetorderbook"
 	"github.com/futuopen/ftapi4go/pb/qotgetplatesecurity"
 	"github.com/futuopen/ftapi4go/pb/qotgetplateset"
+	"github.com/futuopen/ftapi4go/pb/qotgetpricereminder"
 	"github.com/futuopen/ftapi4go/pb/qotgetrt"
 	"github.com/futuopen/ftapi4go/pb/qotgetsecuritysnapshot"
 	"github.com/futuopen/ftapi4go/pb/qotgetstaticinfo"
 	"github.com/futuopen/ftapi4go/pb/qotgetticker"
 	"github.com/futuopen/ftapi4go/pb/qotgettradedate"
+	"github.com/futuopen/ftapi4go/pb/qotgetusersecurity"
 	"github.com/futuopen/ftapi4go/pb/qotrequesthistorykl"
 	"github.com/futuopen/ftapi4go/pb/qotsub"
 )
 
 const (
-	ProtoID_GetBasicQot         = 2101
-	ProtoID_GetKL               = 2102
-	ProtoID_GetHistoryKL        = 2103
-	ProtoID_RequestHistoryKL    = 2104
-	ProtoID_GetOrderBook        = 2106
-	ProtoID_GetTicker           = 2107
-	ProtoID_GetRT               = 2108
-	ProtoID_GetMarketSnapshot   = 2109
-	ProtoID_GetSecuritySnapshot = 2110
-	ProtoID_GetBroker           = 2111
-	ProtoID_GetStaticInfo       = 2201
-	ProtoID_GetPlateSet         = 2202
-	ProtoID_GetPlateSecurity    = 2203
-	ProtoID_GetTradeDate        = 2206
-	ProtoID_Subscribe           = 3001
+	ProtoID_GetBasicQot            = 2101
+	ProtoID_GetKL                  = 2102
+	ProtoID_GetHistoryKL           = 2103
+	ProtoID_RequestHistoryKL       = 2104
+	ProtoID_GetOrderBook           = 2106
+	ProtoID_GetTicker              = 2107
+	ProtoID_GetRT                  = 2108
+	ProtoID_GetMarketSnapshot      = 2109
+	ProtoID_GetSecuritySnapshot    = 2110
+	ProtoID_GetBroker              = 2111
+	ProtoID_GetStaticInfo          = 2201
+	ProtoID_GetPlateSet            = 2202
+	ProtoID_GetPlateSecurity       = 2203
+	ProtoID_GetCapitalFlow         = 2301
+	ProtoID_GetCapitalDistribution = 2302
+	ProtoID_GetUserSecurity        = 2401
+	ProtoID_GetPriceReminder       = 2404
+	ProtoID_GetTradeDate           = 2206
+	ProtoID_Subscribe              = 3001
 )
 
 type BasicQot struct {
@@ -936,4 +944,285 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),
 	}, nil
+}
+
+type GetCapitalFlowRequest struct {
+	Security   *qotcommon.Security
+	PeriodType int32
+	BeginTime  string
+	EndTime    string
+}
+
+type CapitalFlowItem struct {
+	InFlow      float64
+	Time        string
+	Timestamp   float64
+	MainInFlow  float64
+	SuperInFlow float64
+	BigInFlow   float64
+	MidInFlow   float64
+	SmlInFlow   float64
+}
+
+type GetCapitalFlowResponse struct {
+	FlowItemList       []*CapitalFlowItem
+	LastValidTime      string
+	LastValidTimestamp float64
+}
+
+func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalFlowResponse, error) {
+	c2s := &qotgetcapitalflow.C2S{
+		Security:   req.Security,
+		PeriodType: &req.PeriodType,
+		BeginTime:  &req.BeginTime,
+		EndTime:    &req.EndTime,
+	}
+
+	pkt := &qotgetcapitalflow.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetCapitalFlow, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetcapitalflow.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetCapitalFlow failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetCapitalFlow: s2c is nil")
+	}
+
+	result := &GetCapitalFlowResponse{
+		FlowItemList:       make([]*CapitalFlowItem, 0, len(s2c.GetFlowItemList())),
+		LastValidTime:      s2c.GetLastValidTime(),
+		LastValidTimestamp: s2c.GetLastValidTimestamp(),
+	}
+
+	for _, f := range s2c.GetFlowItemList() {
+		result.FlowItemList = append(result.FlowItemList, &CapitalFlowItem{
+			InFlow:      f.GetInFlow(),
+			Time:        f.GetTime(),
+			Timestamp:   f.GetTimestamp(),
+			MainInFlow:  f.GetMainInFlow(),
+			SuperInFlow: f.GetSuperInFlow(),
+			BigInFlow:   f.GetBigInFlow(),
+			MidInFlow:   f.GetMidInFlow(),
+			SmlInFlow:   f.GetSmlInFlow(),
+		})
+	}
+
+	return result, nil
+}
+
+type CapitalDistribution struct {
+	CapitalInSuper  float64
+	CapitalInBig    float64
+	CapitalInMid    float64
+	CapitalInSmall  float64
+	CapitalOutSuper float64
+	CapitalOutBig   float64
+	CapitalOutMid   float64
+	CapitalOutSmall float64
+	UpdateTime      string
+	UpdateTimestamp float64
+}
+
+type GetCapitalDistributionResponse struct {
+	CapitalDistribution *CapitalDistribution
+}
+
+func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*GetCapitalDistributionResponse, error) {
+	c2s := &qotgetcapitaldistribution.C2S{
+		Security: security,
+	}
+
+	pkt := &qotgetcapitaldistribution.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetCapitalDistribution, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetcapitaldistribution.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetCapitalDistribution failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetCapitalDistribution: s2c is nil")
+	}
+
+	return &GetCapitalDistributionResponse{
+		CapitalDistribution: &CapitalDistribution{
+			CapitalInSuper:  s2c.GetCapitalInSuper(),
+			CapitalInBig:    s2c.GetCapitalInBig(),
+			CapitalInMid:    s2c.GetCapitalInMid(),
+			CapitalInSmall:  s2c.GetCapitalInSmall(),
+			CapitalOutSuper: s2c.GetCapitalOutSuper(),
+			CapitalOutBig:   s2c.GetCapitalOutBig(),
+			CapitalOutMid:   s2c.GetCapitalOutMid(),
+			CapitalOutSmall: s2c.GetCapitalOutSmall(),
+			UpdateTime:      s2c.GetUpdateTime(),
+			UpdateTimestamp: s2c.GetUpdateTimestamp(),
+		},
+	}, nil
+}
+
+type GetUserSecurityResponse struct {
+	StaticInfoList []*qotcommon.SecurityStaticInfo
+}
+
+func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityResponse, error) {
+	c2s := &qotgetusersecurity.C2S{
+		GroupName: &groupName,
+	}
+
+	pkt := &qotgetusersecurity.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetUserSecurity, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetusersecurity.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetUserSecurity failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetUserSecurity: s2c is nil")
+	}
+
+	return &GetUserSecurityResponse{
+		StaticInfoList: s2c.GetStaticInfoList(),
+	}, nil
+}
+
+type PriceReminderItemInfo struct {
+	Key      int64
+	Type     int32
+	Value    float64
+	Note     string
+	Freq     int32
+	IsEnable bool
+}
+
+type PriceReminderInfo struct {
+	Security *qotcommon.Security
+	Name     string
+	ItemList []*PriceReminderItemInfo
+}
+
+type GetPriceReminderResponse struct {
+	PriceReminderList []*PriceReminderInfo
+}
+
+func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market int32) (*GetPriceReminderResponse, error) {
+	c2s := &qotgetpricereminder.C2S{
+		Security: security,
+		Market:   &market,
+	}
+
+	pkt := &qotgetpricereminder.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetPriceReminder, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetpricereminder.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetPriceReminder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetPriceReminder: s2c is nil")
+	}
+
+	result := &GetPriceReminderResponse{
+		PriceReminderList: make([]*PriceReminderInfo, 0, len(s2c.GetPriceReminderList())),
+	}
+
+	for _, pr := range s2c.GetPriceReminderList() {
+		info := &PriceReminderInfo{
+			Security: pr.GetSecurity(),
+			Name:     pr.GetName(),
+			ItemList: make([]*PriceReminderItemInfo, 0, len(pr.GetItemList())),
+		}
+		for _, item := range pr.GetItemList() {
+			info.ItemList = append(info.ItemList, &PriceReminderItemInfo{
+				Key:      item.GetKey(),
+				Type:     item.GetType(),
+				Value:    item.GetValue(),
+				Note:     item.GetNote(),
+				Freq:     item.GetFreq(),
+				IsEnable: item.GetIsEnable(),
+			})
+		}
+		result.PriceReminderList = append(result.PriceReminderList, info)
+	}
+
+	return result, nil
 }
