@@ -35,6 +35,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotmodifyusersecurity"
 	"gitee.com/shing1211/futuapi4go/pb/qotregqotpush"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesthistorykl"
+	"gitee.com/shing1211/futuapi4go/pb/qotrequesthistoryklquota"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequestrehab"
 	"gitee.com/shing1211/futuapi4go/pb/qotrequesttradedate"
 	"gitee.com/shing1211/futuapi4go/pb/qotsetpricereminder"
@@ -77,6 +78,7 @@ const (
 	ProtoID_RequestTradeDate        = 2207
 	ProtoID_Subscribe               = 3001
 	ProtoID_RegQotPush              = 3003
+	ProtoID_RequestHistoryKLQuota   = 3104
 )
 
 type BasicQot struct {
@@ -2518,5 +2520,58 @@ func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabRes
 
 	return &RequestRehabResponse{
 		RehabList: s2c.GetRehabList(),
+	}, nil
+}
+
+type RequestHistoryKLQuotaRequest struct {
+	GetDetail bool
+}
+
+type RequestHistoryKLQuotaResponse struct {
+	UsedQuota   int32
+	RemainQuota int32
+	DetailList  []*qotrequesthistoryklquota.DetailItem
+}
+
+func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest) (*RequestHistoryKLQuotaResponse, error) {
+	c2s := &qotrequesthistoryklquota.C2S{
+		BGetDetail: &req.GetDetail,
+	}
+
+	pkt := &qotrequesthistoryklquota.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_RequestHistoryKLQuota, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotrequesthistoryklquota.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("RequestHistoryKLQuota failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("RequestHistoryKLQuota: s2c is nil")
+	}
+
+	return &RequestHistoryKLQuotaResponse{
+		UsedQuota:   s2c.GetUsedQuota(),
+		RemainQuota: s2c.GetRemainQuota(),
+		DetailList:  s2c.GetDetailList(),
 	}, nil
 }

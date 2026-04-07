@@ -96,11 +96,13 @@
 | Subscribe (Qot_Sub) | 3001 | ✅ 完成 | 订阅实时行情 |
 | GetSubInfo | 3002 | ✅ 完成 | 获取订阅信息 |
 | RegQotPush | 3003 | ✅ 完成 | 注册行情推送 |
+| RequestHistoryKLQuota | 3104 | ✅ 完成 | 获取历史K线额度使用明细 |
 
 ##### 推送通知 (Push Notifications)
 
 | ProtoID | 状态 | 说明 |
 |---------|------|------|
+| Notify (1003) | ✅ 完成 | 系统通知推送 |
 | Qot_UpdateBasicQot (3101) | ✅ 完成 | 实时行情推送 |
 | Qot_UpdateKL (3102) | ✅ 完成 | K线推送 |
 | Qot_UpdateOrderBook (3103) | ✅ 完成 | 订单簿推送 |
@@ -110,6 +112,7 @@
 | Qot_UpdatePriceReminder (3107) | ✅ 完成 | 价格提醒推送 |
 | Trd_UpdateOrder (7001) | ✅ 完成 | 订单状态推送 |
 | Trd_UpdateOrderFill (7002) | ✅ 完成 | 成交推送 |
+| Trd_Notify (7003) | ✅ 完成 | 交易通知推送 |
 
 ### 阶段三：交易接口 (Trd - Trading) 🔄 进行中
 
