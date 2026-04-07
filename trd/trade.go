@@ -9,6 +9,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/common"
 	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pb/trdcommon"
+	"gitee.com/shing1211/futuapi4go/pb/trdflowsummary"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetacclist"
 	"gitee.com/shing1211/futuapi4go/pb/trdgetfunds"
 	"gitee.com/shing1211/futuapi4go/pb/trdgethistoryorderfilllist"
@@ -42,6 +43,7 @@ const (
 	ProtoID_ModifyOrder             = 5002
 	ProtoID_ReconfirmOrder          = 7004
 	ProtoID_SubAccPush              = 7005
+	ProtoID_GetFlowSummary          = 2226
 )
 
 type Acc struct {
@@ -1073,5 +1075,60 @@ func ReconfirmOrder(c *futuapi.Client, req *ReconfirmOrderRequest) (*ReconfirmOr
 	return &ReconfirmOrderResponse{
 		Header:  s2c.GetHeader(),
 		OrderID: s2c.GetOrderID(),
+	}, nil
+}
+
+type GetFlowSummaryRequest struct {
+	Header            *trdcommon.TrdHeader
+	ClearingDate      string
+	CashFlowDirection int32
+}
+
+type GetFlowSummaryResponse struct {
+	Header          *trdcommon.TrdHeader
+	FlowSummaryList []*trdflowsummary.FlowSummaryInfo
+}
+
+func GetFlowSummary(c *futuapi.Client, req *GetFlowSummaryRequest) (*GetFlowSummaryResponse, error) {
+	c2s := &trdflowsummary.C2S{
+		Header:            req.Header,
+		ClearingDate:      &req.ClearingDate,
+		CashFlowDirection: &req.CashFlowDirection,
+	}
+
+	pkt := &trdflowsummary.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetFlowSummary, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp trdflowsummary.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetFlowSummary failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetFlowSummary: s2c is nil")
+	}
+
+	return &GetFlowSummaryResponse{
+		Header:          s2c.GetHeader(),
+		FlowSummaryList: s2c.GetFlowSummaryInfoList(),
 	}, nil
 }

@@ -120,6 +120,7 @@
 | GetOrderFee | 4004 | ✅ 完成 | 获取订单费用 |
 | GetMarginRatio | 4005 | ✅ 完成 | 获取保证金比例 |
 | GetMaxTrdQtys | 4006 | ✅ 完成 | 获取最大交易数量 |
+| GetFlowSummary | 2226 | ✅ 完成 | 获取账户资金流水 |
 
 ### 3.2 订单管理
 

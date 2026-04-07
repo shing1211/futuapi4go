@@ -7,7 +7,6 @@ import (
 
 	futuapi "gitee.com/shing1211/futuapi4go/client"
 	"gitee.com/shing1211/futuapi4go/pb/common"
-	"gitee.com/shing1211/futuapi4go/pb/getoptionexpirationdate"
 	"gitee.com/shing1211/futuapi4go/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetbasicqot"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetbroker"
@@ -19,6 +18,7 @@ import (
 	"gitee.com/shing1211/futuapi4go/pb/qotgetipolist"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetkl"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetoptionchain"
+	"gitee.com/shing1211/futuapi4go/pb/qotgetoptionexpirationdate"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetorderbook"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetplatesecurity"
 	"gitee.com/shing1211/futuapi4go/pb/qotgetplateset"
@@ -1331,12 +1331,12 @@ type GetOptionExpirationDateResponse struct {
 }
 
 func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
-	c2s := &getoptionexpirationdate.C2S{
+	c2s := &qotgetoptionexpirationdate.C2S{
 		Owner:           req.Owner,
 		IndexOptionType: &req.IndexOptionType,
 	}
 
-	pkt := &getoptionexpirationdate.Request{C2S: c2s}
+	pkt := &qotgetoptionexpirationdate.Request{C2S: c2s}
 
 	body, err := proto.Marshal(pkt)
 	if err != nil {
@@ -1353,7 +1353,7 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 		return nil, err
 	}
 
-	var rsp getoptionexpirationdate.Response
+	var rsp qotgetoptionexpirationdate.Response
 	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
 		return nil, err
 	}
