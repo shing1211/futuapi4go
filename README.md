@@ -23,6 +23,23 @@
 go get gitee.com/shing1211/futuapi4go
 ```
 
+## 环境要求
+
+| 组件 | 版本要求 |
+|------|----------|
+| **Golang** | 1.21+ (推荐 1.26+) |
+| **Futu OpenD** | 10.2.6208+ (最新版本) |
+
+> **注意**: Protobuf 定义文件基于 Futu OpenD v10.2.6208，请确保使用对应版本或更高版本的 OpenD 以获得最佳兼容性。
+
+### 安装 OpenD
+
+下载并安装 [富途 OpenD](https://www.futunn.com/download/openAPI)：
+
+1. 登录牛牛账号
+2. 启用「行情接口」和「交易接口」
+3. 记录 TCP 连接地址（默认 `127.0.0.1:11111`）
+
 ## 快速开始
 
 ```go
