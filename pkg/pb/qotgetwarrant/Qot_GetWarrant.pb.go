@@ -733,7 +733,7 @@ func (x *WarrantData) GetInLinePriceStatus() int32 {
 type S2C struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	LastPage        *bool                  `protobuf:"varint,1,req,name=lastPage" json:"lastPage,omitempty"`              //是否最后一页了，false:非最后一页，还有窝轮记录未返回; true:已是最后一页
-	AllCount        *int32                 `protobuf:"varint,2,opt,name=allCount" json:"allCount,omitempty"`              //该条件请求所有数据的个数
+	AllCount        *int32                 `protobuf:"varint,2,req,name=allCount" json:"allCount,omitempty"`              //该条件请求所有数据的个数
 	WarrantDataList []*WarrantData         `protobuf:"bytes,3,rep,name=warrantDataList" json:"warrantDataList,omitempty"` //窝轮数据
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1011,7 +1011,7 @@ const file_Qot_GetWarrant_proto_rawDesc = "" +
 	"\x11inLinePriceStatus\x18. \x01(\x05R\x11inLinePriceStatus\"\x84\x01\n" +
 	"\x03S2C\x12\x1a\n" +
 	"\blastPage\x18\x01 \x02(\bR\blastPage\x12\x1a\n" +
-	"\ballCount\x18\x02 \x01(\x05R\ballCount\x12E\n" +
+	"\ballCount\x18\x02 \x02(\x05R\ballCount\x12E\n" +
 	"\x0fwarrantDataList\x18\x03 \x03(\v2\x1b.Qot_GetWarrant.WarrantDataR\x0fwarrantDataList\"0\n" +
 	"\aRequest\x12%\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x13.Qot_GetWarrant.C2SR\x03c2s\"\x83\x01\n" +

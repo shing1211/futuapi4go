@@ -17,7 +17,7 @@ message C2S
 message S2C
 {
 	required Trd_Common.TrdHeader header = 1; //交易公共参数头
-	optional uint64 orderID = 2; //订单号
+	required uint64 orderID = 2; //订单号
 }
 
 message Request

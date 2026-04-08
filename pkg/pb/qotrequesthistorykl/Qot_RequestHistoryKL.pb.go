@@ -141,7 +141,7 @@ func (x *C2S) GetSession() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Security      *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`
+	Security      *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`
 	Name          *string                `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`             // 股票名称
 	KlList        []*qotcommon.KLine     `protobuf:"bytes,2,rep,name=klList" json:"klList,omitempty"`         //K线数据
 	NextReqKey    []byte                 `protobuf:"bytes,3,opt,name=nextReqKey" json:"nextReqKey,omitempty"` //分页请求key。一次请求没有返回所有数据时，下次请求带上这个key，会接着请求
@@ -344,7 +344,7 @@ const file_Qot_RequestHistoryKL_proto_rawDesc = "" +
 	"\asession\x18\n" +
 	" \x01(\x05R\asession\"\x96\x01\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12)\n" +
 	"\x06klList\x18\x02 \x03(\v2\x11.Qot_Common.KLineR\x06klList\x12\x1e\n" +
 	"\n" +

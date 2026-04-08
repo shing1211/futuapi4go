@@ -39,7 +39,7 @@ message C2S
 
 message S2C
 {
-	optional int64 key = 1; //设置成功的情况下返回对应的key，不成功返回0
+	required int64 key = 1; //设置成功的情况下返回对应的key，不成功返回0
 }
 
 message Request

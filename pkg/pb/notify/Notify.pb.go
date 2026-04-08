@@ -680,7 +680,7 @@ func (x *UsedQuota) GetUsedKLineQuota() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          *int32                 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`                  //通知类型
+	Type          *int32                 `protobuf:"varint,1,req,name=type" json:"type,omitempty"`                  //通知类型
 	Event         *GtwEvent              `protobuf:"bytes,2,opt,name=event" json:"event,omitempty"`                 //事件通息
 	ProgramStatus *ProgramStatus         `protobuf:"bytes,3,opt,name=programStatus" json:"programStatus,omitempty"` //程序状态
 	ConnectStatus *ConnectStatus         `protobuf:"bytes,4,opt,name=connectStatus" json:"connectStatus,omitempty"` //连接状态
@@ -908,7 +908,7 @@ const file_Notify_proto_rawDesc = "" +
 	"\fusedSubQuota\x18\x01 \x01(\x05R\fusedSubQuota\x12&\n" +
 	"\x0eusedKLineQuota\x18\x02 \x01(\x05R\x0eusedKLineQuota\"\xf6\x02\n" +
 	"\x03S2C\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\x05R\x04type\x12&\n" +
+	"\x04type\x18\x01 \x02(\x05R\x04type\x12&\n" +
 	"\x05event\x18\x02 \x01(\v2\x10.Notify.GtwEventR\x05event\x12;\n" +
 	"\rprogramStatus\x18\x03 \x01(\v2\x15.Notify.ProgramStatusR\rprogramStatus\x12;\n" +
 	"\rconnectStatus\x18\x04 \x01(\v2\x15.Notify.ConnectStatusR\rconnectStatus\x12,\n" +

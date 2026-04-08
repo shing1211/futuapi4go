@@ -25,7 +25,7 @@ const (
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Security      *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`           //股票
+	Security      *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`           //股票
 	Name          *string                `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`                   // 股票名称
 	BrokerAskList []*qotcommon.Broker    `protobuf:"bytes,2,rep,name=brokerAskList" json:"brokerAskList,omitempty"` //经纪Ask(卖)盘
 	BrokerBidList []*qotcommon.Broker    `protobuf:"bytes,3,rep,name=brokerBidList" json:"brokerBidList,omitempty"` //经纪Bid(买)盘
@@ -170,7 +170,7 @@ const file_Qot_UpdateBroker_proto_rawDesc = "" +
 	"\n" +
 	"\x16Qot_UpdateBroker.proto\x12\x10Qot_UpdateBroker\x1a\fCommon.proto\x1a\x10Qot_Common.proto\"\xbf\x01\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x128\n" +
 	"\rbrokerAskList\x18\x02 \x03(\v2\x12.Qot_Common.BrokerR\rbrokerAskList\x128\n" +
 	"\rbrokerBidList\x18\x03 \x03(\v2\x12.Qot_Common.BrokerR\rbrokerBidList\"\x85\x01\n" +

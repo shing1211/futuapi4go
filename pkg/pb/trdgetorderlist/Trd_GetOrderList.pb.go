@@ -93,7 +93,7 @@ func (x *C2S) GetRefreshCache() bool {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`       //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`       //交易公共参数头
 	OrderList     []*trdcommon.Order     `protobuf:"bytes,2,rep,name=orderList" json:"orderList,omitempty"` //订单列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -272,7 +272,7 @@ const file_Trd_GetOrderList_proto_rawDesc = "" +
 	"\x10filterStatusList\x18\x03 \x03(\x05R\x10filterStatusList\x12\"\n" +
 	"\frefreshCache\x18\x04 \x01(\bR\frefreshCache\"e\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12/\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12/\n" +
 	"\torderList\x18\x02 \x03(\v2\x11.Trd_Common.OrderR\torderList\"2\n" +
 	"\aRequest\x12'\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x15.Trd_GetOrderList.C2SR\x03c2s\"\x85\x01\n" +

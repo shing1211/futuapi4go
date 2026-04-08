@@ -243,7 +243,7 @@ func (x *C2S) GetCashFlowDirection() int32 {
 
 type S2C struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	Header              *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`                           //交易公共参数头
+	Header              *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`                           //交易公共参数头
 	FlowSummaryInfoList []*FlowSummaryInfo     `protobuf:"bytes,2,rep,name=flowSummaryInfoList" json:"flowSummaryInfoList,omitempty"` //账户资金
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
@@ -432,7 +432,7 @@ const file_Trd_FlowSummary_proto_rawDesc = "" +
 	"\fclearingDate\x18\x02 \x02(\tR\fclearingDate\x12,\n" +
 	"\x11cashFlowDirection\x18\x03 \x01(\x05R\x11cashFlowDirection\"\x88\x01\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12R\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12R\n" +
 	"\x13flowSummaryInfoList\x18\x02 \x03(\v2 .Trd_FlowSummary.FlowSummaryInfoR\x13flowSummaryInfoList\"1\n" +
 	"\aRequest\x12&\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x14.Trd_FlowSummary.C2SR\x03c2s\"\x84\x01\n" +

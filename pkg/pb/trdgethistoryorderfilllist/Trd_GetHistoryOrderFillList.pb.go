@@ -77,7 +77,7 @@ func (x *C2S) GetFilterConditions() *trdcommon.TrdFilterConditions {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`               //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`               //交易公共参数头
 	OrderFillList []*trdcommon.OrderFill `protobuf:"bytes,2,rep,name=orderFillList" json:"orderFillList,omitempty"` //历史成交列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -254,7 +254,7 @@ const file_Trd_GetHistoryOrderFillList_proto_rawDesc = "" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12K\n" +
 	"\x10filterConditions\x18\x02 \x02(\v2\x1f.Trd_Common.TrdFilterConditionsR\x10filterConditions\"q\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12;\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12;\n" +
 	"\rorderFillList\x18\x02 \x03(\v2\x15.Trd_Common.OrderFillR\rorderFillList\"=\n" +
 	"\aRequest\x122\n" +
 	"\x03c2s\x18\x01 \x02(\v2 .Trd_GetHistoryOrderFillList.C2SR\x03c2s\"\x90\x01\n" +

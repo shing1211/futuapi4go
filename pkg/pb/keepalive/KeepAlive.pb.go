@@ -68,7 +68,7 @@ func (x *C2S) GetTime() int64 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Time          *int64                 `protobuf:"varint,1,opt,name=time" json:"time,omitempty"` //服务器回包时的格林威治时间戳，单位秒
+	Time          *int64                 `protobuf:"varint,1,req,name=time" json:"time,omitempty"` //服务器回包时的格林威治时间戳，单位秒
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -235,7 +235,7 @@ const file_KeepAlive_proto_rawDesc = "" +
 	"\x03C2S\x12\x12\n" +
 	"\x04time\x18\x01 \x02(\x03R\x04time\"\x19\n" +
 	"\x03S2C\x12\x12\n" +
-	"\x04time\x18\x01 \x01(\x03R\x04time\"+\n" +
+	"\x04time\x18\x01 \x02(\x03R\x04time\"+\n" +
 	"\aRequest\x12 \n" +
 	"\x03c2s\x18\x01 \x02(\v2\x0e.KeepAlive.C2SR\x03c2s\"~\n" +
 	"\bResponse\x12\x1e\n" +

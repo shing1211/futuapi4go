@@ -12,7 +12,7 @@ message C2S
 
 message S2C
 {
-	optional int64 time = 1; //服务器回包时的格林威治时间戳，单位秒
+	required int64 time = 1; //服务器回包时的格林威治时间戳，单位秒
 }
 
 message Request

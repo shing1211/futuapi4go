@@ -77,7 +77,7 @@ func (x *C2S) GetMaxRetNum() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Security      *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`     //股票
+	Security      *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`     //股票
 	Name          *string                `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`             // 股票名称
 	TickerList    []*qotcommon.Ticker    `protobuf:"bytes,2,rep,name=tickerList" json:"tickerList,omitempty"` //逐笔
 	unknownFields protoimpl.UnknownFields
@@ -261,7 +261,7 @@ const file_Qot_GetTicker_proto_rawDesc = "" +
 	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x1c\n" +
 	"\tmaxRetNum\x18\x02 \x02(\x05R\tmaxRetNum\"\x7f\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x122\n" +
 	"\n" +
 	"tickerList\x18\x02 \x03(\v2\x12.Qot_Common.TickerR\n" +

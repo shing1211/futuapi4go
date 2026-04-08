@@ -96,7 +96,7 @@ message UsedQuota
 
 message S2C
 {
-	optional int32 type = 1; //通知类型
+	required int32 type = 1; //通知类型
 	optional GtwEvent event = 2; //事件通息
 	optional ProgramStatus programStatus = 3; //程序状态
 	optional ConnectStatus connectStatus = 4; //连接状态

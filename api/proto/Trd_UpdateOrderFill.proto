@@ -11,7 +11,7 @@ import "Trd_Common.proto";
 message S2C
 {
 	required Trd_Common.TrdHeader header = 1; //交易公共参数头
-	optional Trd_Common.OrderFill orderFill = 2; //成交结构
+	required Trd_Common.OrderFill orderFill = 2; //成交结构
 }
 
 message Response

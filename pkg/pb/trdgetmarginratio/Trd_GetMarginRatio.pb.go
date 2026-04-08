@@ -217,7 +217,7 @@ func (x *C2S) GetSecurityList() []*qotcommon.Security {
 
 type S2C struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	Header              *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`                           //交易公共参数头
+	Header              *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`                           //交易公共参数头
 	MarginRatioInfoList []*MarginRatioInfo     `protobuf:"bytes,2,rep,name=marginRatioInfoList" json:"marginRatioInfoList,omitempty"` //账户资金
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
@@ -409,7 +409,7 @@ const file_Trd_GetMarginRatio_proto_rawDesc = "" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x128\n" +
 	"\fsecurityList\x18\x02 \x03(\v2\x14.Qot_Common.SecurityR\fsecurityList\"\x8b\x01\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12U\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12U\n" +
 	"\x13marginRatioInfoList\x18\x02 \x03(\v2#.Trd_GetMarginRatio.MarginRatioInfoR\x13marginRatioInfoList\"4\n" +
 	"\aRequest\x12)\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x17.Trd_GetMarginRatio.C2SR\x03c2s\"\x87\x01\n" +

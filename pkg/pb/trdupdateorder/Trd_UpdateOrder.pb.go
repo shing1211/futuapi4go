@@ -26,7 +26,7 @@ const (
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"` //交易公共参数头
-	Order         *trdcommon.Order       `protobuf:"bytes,2,opt,name=order" json:"order,omitempty"`   //订单结构
+	Order         *trdcommon.Order       `protobuf:"bytes,2,req,name=order" json:"order,omitempty"`   //订单结构
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -156,7 +156,7 @@ const file_Trd_UpdateOrder_proto_rawDesc = "" +
 	"\x15Trd_UpdateOrder.proto\x12\x0fTrd_UpdateOrder\x1a\fCommon.proto\x1a\x10Trd_Common.proto\"]\n" +
 	"\x03S2C\x12-\n" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.Trd_Common.OrderR\x05order\"\x84\x01\n" +
+	"\x05order\x18\x02 \x02(\v2\x11.Trd_Common.OrderR\x05order\"\x84\x01\n" +
 	"\bResponse\x12\x1e\n" +
 	"\aretType\x18\x01 \x02(\x05:\x04-400R\aretType\x12\x16\n" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +

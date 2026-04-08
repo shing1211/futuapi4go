@@ -111,7 +111,7 @@ func (x *C2S) GetAssetCategory() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`             //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`             //交易公共参数头
 	PositionList  []*trdcommon.Position  `protobuf:"bytes,2,rep,name=positionList" json:"positionList,omitempty"` //持仓列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -292,7 +292,7 @@ const file_Trd_GetPositionList_proto_rawDesc = "" +
 	"\frefreshCache\x18\x05 \x01(\bR\frefreshCache\x12$\n" +
 	"\rassetCategory\x18\x06 \x01(\x05R\rassetCategory\"n\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x128\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x128\n" +
 	"\fpositionList\x18\x02 \x03(\v2\x14.Trd_Common.PositionR\fpositionList\"5\n" +
 	"\aRequest\x12*\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x18.Trd_GetPositionList.C2SR\x03c2s\"\x88\x01\n" +

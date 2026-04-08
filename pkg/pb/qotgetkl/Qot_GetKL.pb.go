@@ -93,7 +93,7 @@ func (x *C2S) GetReqNum() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Security      *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"` //股票
+	Security      *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"` //股票
 	Name          *string                `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`         // 股票名称
 	KlList        []*qotcommon.KLine     `protobuf:"bytes,2,rep,name=klList" json:"klList,omitempty"`     //k线点
 	unknownFields protoimpl.UnknownFields
@@ -279,7 +279,7 @@ const file_Qot_GetKL_proto_rawDesc = "" +
 	"\bsecurity\x18\x03 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x16\n" +
 	"\x06reqNum\x18\x04 \x02(\x05R\x06reqNum\"v\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12)\n" +
 	"\x06klList\x18\x02 \x03(\v2\x11.Qot_Common.KLineR\x06klList\"+\n" +
 	"\aRequest\x12 \n" +

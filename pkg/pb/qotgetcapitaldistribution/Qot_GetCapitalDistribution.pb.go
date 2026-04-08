@@ -76,7 +76,7 @@ type S2C struct {
 	CapitalOutSuper *float64               `protobuf:"fixed64,10,opt,name=capitalOutSuper" json:"capitalOutSuper,omitempty"` // 流出资金额度，特大单
 	CapitalOutBig   *float64               `protobuf:"fixed64,4,req,name=capitalOutBig" json:"capitalOutBig,omitempty"`      // 流出资金额度，大单
 	CapitalOutMid   *float64               `protobuf:"fixed64,5,req,name=capitalOutMid" json:"capitalOutMid,omitempty"`      // 流出资金额度，中单
-	CapitalOutSmall *float64               `protobuf:"fixed64,6,opt,name=capitalOutSmall" json:"capitalOutSmall,omitempty"`  // 流出资金额度，小单
+	CapitalOutSmall *float64               `protobuf:"fixed64,6,req,name=capitalOutSmall" json:"capitalOutSmall,omitempty"`  // 流出资金额度，小单
 	UpdateTime      *string                `protobuf:"bytes,7,opt,name=updateTime" json:"updateTime,omitempty"`              // 更新时间字符串
 	UpdateTimestamp *float64               `protobuf:"fixed64,8,opt,name=updateTimestamp" json:"updateTimestamp,omitempty"`  // 更新时间戳
 	unknownFields   protoimpl.UnknownFields
@@ -316,7 +316,7 @@ const file_Qot_GetCapitalDistribution_proto_rawDesc = "" +
 	" \x01(\x01R\x0fcapitalOutSuper\x12$\n" +
 	"\rcapitalOutBig\x18\x04 \x02(\x01R\rcapitalOutBig\x12$\n" +
 	"\rcapitalOutMid\x18\x05 \x02(\x01R\rcapitalOutMid\x12(\n" +
-	"\x0fcapitalOutSmall\x18\x06 \x01(\x01R\x0fcapitalOutSmall\x12\x1e\n" +
+	"\x0fcapitalOutSmall\x18\x06 \x02(\x01R\x0fcapitalOutSmall\x12\x1e\n" +
 	"\n" +
 	"updateTime\x18\a \x01(\tR\n" +
 	"updateTime\x12(\n" +

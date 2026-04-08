@@ -95,7 +95,7 @@ func (x *C2S) GetAssetCategory() int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"` //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"` //交易公共参数头
 	Funds         *trdcommon.Funds       `protobuf:"bytes,2,opt,name=funds" json:"funds,omitempty"`   //账户资金
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -274,7 +274,7 @@ const file_Trd_GetFunds_proto_rawDesc = "" +
 	"\bcurrency\x18\x03 \x01(\x05R\bcurrency\x12$\n" +
 	"\rassetCategory\x18\x04 \x01(\x05R\rassetCategory\"]\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12'\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12'\n" +
 	"\x05funds\x18\x02 \x01(\v2\x11.Trd_Common.FundsR\x05funds\".\n" +
 	"\aRequest\x12#\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x11.Trd_GetFunds.C2SR\x03c2s\"\x81\x01\n" +

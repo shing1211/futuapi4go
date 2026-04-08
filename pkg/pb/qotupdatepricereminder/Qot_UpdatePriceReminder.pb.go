@@ -31,7 +31,7 @@ type S2C struct {
 	ChangeRate    *float64               `protobuf:"fixed64,3,req,name=changeRate" json:"changeRate,omitempty"`    //涨跌幅
 	MarketStatus  *int32                 `protobuf:"varint,4,req,name=marketStatus" json:"marketStatus,omitempty"` //市场状态,Qot_Common::PriceReminderMarketStatus
 	Content       *string                `protobuf:"bytes,5,req,name=content" json:"content,omitempty"`            //内容
-	Note          *string                `protobuf:"bytes,6,opt,name=note" json:"note,omitempty"`                  //备注仅支持 20 个以内的中文字符
+	Note          *string                `protobuf:"bytes,6,req,name=note" json:"note,omitempty"`                  //备注仅支持 20 个以内的中文字符
 	Key           *int64                 `protobuf:"varint,7,opt,name=key" json:"key,omitempty"`                   // 到价提醒的标识
 	Type          *int32                 `protobuf:"varint,8,opt,name=type" json:"type,omitempty"`                 // Qot_Common::PriceReminderType，提醒类型
 	SetValue      *float64               `protobuf:"fixed64,9,opt,name=setValue" json:"setValue,omitempty"`        // 设置的提醒值
@@ -234,7 +234,7 @@ const file_Qot_UpdatePriceReminder_proto_rawDesc = "" +
 	"changeRate\x12\"\n" +
 	"\fmarketStatus\x18\x04 \x02(\x05R\fmarketStatus\x12\x18\n" +
 	"\acontent\x18\x05 \x02(\tR\acontent\x12\x12\n" +
-	"\x04note\x18\x06 \x01(\tR\x04note\x12\x10\n" +
+	"\x04note\x18\x06 \x02(\tR\x04note\x12\x10\n" +
 	"\x03key\x18\a \x01(\x03R\x03key\x12\x12\n" +
 	"\x04type\x18\b \x01(\x05R\x04type\x12\x1a\n" +
 	"\bsetValue\x18\t \x01(\x01R\bsetValue\x12\x1a\n" +

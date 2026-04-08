@@ -77,7 +77,7 @@ func (x *C2S) GetOrderIdExList() []string {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`             //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`             //交易公共参数头
 	OrderFeeList  []*trdcommon.OrderFee  `protobuf:"bytes,2,rep,name=orderFeeList" json:"orderFeeList,omitempty"` //订单费用列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -254,7 +254,7 @@ const file_Trd_GetOrderFee_proto_rawDesc = "" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12$\n" +
 	"\rorderIdExList\x18\x02 \x03(\tR\rorderIdExList\"n\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x128\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x128\n" +
 	"\forderFeeList\x18\x02 \x03(\v2\x14.Trd_Common.OrderFeeR\forderFeeList\"1\n" +
 	"\aRequest\x12&\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x14.Trd_GetOrderFee.C2SR\x03c2s\"\x84\x01\n" +

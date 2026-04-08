@@ -94,7 +94,7 @@ func (x *C2S) GetEndTime() string {
 
 type S2C struct {
 	state             protoimpl.MessageState          `protogen:"open.v1"`
-	Security          *qotcommon.Security             `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`                   //股票
+	Security          *qotcommon.Security             `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`                   //股票
 	HoldingChangeList []*qotcommon.ShareHoldingChange `protobuf:"bytes,2,rep,name=holdingChangeList" json:"holdingChangeList,omitempty"` //对应类别的持股变化列表（最多返回前100大股东的变化）
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
@@ -272,7 +272,7 @@ const file_Qot_GetHoldingChangeList_proto_rawDesc = "" +
 	"\tbeginTime\x18\x03 \x01(\tR\tbeginTime\x12\x18\n" +
 	"\aendTime\x18\x04 \x01(\tR\aendTime\"\x85\x01\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12L\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12L\n" +
 	"\x11holdingChangeList\x18\x02 \x03(\v2\x1e.Qot_Common.ShareHoldingChangeR\x11holdingChangeList\":\n" +
 	"\aRequest\x12/\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x1d.Qot_GetHoldingChangeList.C2SR\x03c2s\"\x8d\x01\n" +

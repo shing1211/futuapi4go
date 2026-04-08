@@ -25,7 +25,7 @@ const (
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Security      *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`
+	Security      *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`
 	Name          *string                `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`     //股票名称
 	RtList        []*qotcommon.TimeShare `protobuf:"bytes,2,rep,name=rtList" json:"rtList,omitempty"` //推送的分时点
 	unknownFields protoimpl.UnknownFields
@@ -162,7 +162,7 @@ const file_Qot_UpdateRT_proto_rawDesc = "" +
 	"\n" +
 	"\x12Qot_UpdateRT.proto\x12\fQot_UpdateRT\x1a\fCommon.proto\x1a\x10Qot_Common.proto\"z\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12-\n" +
 	"\x06rtList\x18\x02 \x03(\v2\x15.Qot_Common.TimeShareR\x06rtList\"\x81\x01\n" +
 	"\bResponse\x12\x1e\n" +

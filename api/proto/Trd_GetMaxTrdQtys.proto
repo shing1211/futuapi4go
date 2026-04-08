@@ -24,7 +24,7 @@ message C2S
 
 message S2C
 {
-	optional Trd_Common.TrdHeader header = 1; //交易公共参数头
+	required Trd_Common.TrdHeader header = 1; //交易公共参数头
 	optional Trd_Common.MaxTrdQtys maxTrdQtys = 2; //最大可交易数量结构
 }
 

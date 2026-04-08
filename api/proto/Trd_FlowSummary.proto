@@ -33,7 +33,7 @@ message C2S
 
 message S2C
 {
-	optional Trd_Common.TrdHeader header = 1; //交易公共参数头
+	required Trd_Common.TrdHeader header = 1; //交易公共参数头
 	repeated FlowSummaryInfo flowSummaryInfoList = 2; //账户资金
 }
 

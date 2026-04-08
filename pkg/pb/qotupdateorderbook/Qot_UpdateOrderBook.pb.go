@@ -25,7 +25,7 @@ const (
 
 type S2C struct {
 	state                   protoimpl.MessageState `protogen:"open.v1"`
-	Security                *qotcommon.Security    `protobuf:"bytes,1,opt,name=security" json:"security,omitempty"`                                 //股票
+	Security                *qotcommon.Security    `protobuf:"bytes,1,req,name=security" json:"security,omitempty"`                                 //股票
 	Name                    *string                `protobuf:"bytes,8,opt,name=name" json:"name,omitempty"`                                         //股票名称
 	OrderBookAskList        []*qotcommon.OrderBook `protobuf:"bytes,2,rep,name=orderBookAskList" json:"orderBookAskList,omitempty"`                 //卖盘
 	OrderBookBidList        []*qotcommon.OrderBook `protobuf:"bytes,3,rep,name=orderBookBidList" json:"orderBookBidList,omitempty"`                 //买盘
@@ -202,7 +202,7 @@ const file_Qot_UpdateOrderBook_proto_rawDesc = "" +
 	"\n" +
 	"\x19Qot_UpdateOrderBook.proto\x12\x13Qot_UpdateOrderBook\x1a\fCommon.proto\x1a\x10Qot_Common.proto\"\x95\x03\n" +
 	"\x03S2C\x120\n" +
-	"\bsecurity\x18\x01 \x01(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
+	"\bsecurity\x18\x01 \x02(\v2\x14.Qot_Common.SecurityR\bsecurity\x12\x12\n" +
 	"\x04name\x18\b \x01(\tR\x04name\x12A\n" +
 	"\x10orderBookAskList\x18\x02 \x03(\v2\x15.Qot_Common.OrderBookR\x10orderBookAskList\x12A\n" +
 	"\x10orderBookBidList\x18\x03 \x03(\v2\x15.Qot_Common.OrderBookR\x10orderBookBidList\x12&\n" +

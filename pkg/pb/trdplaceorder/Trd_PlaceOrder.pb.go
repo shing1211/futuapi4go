@@ -214,7 +214,7 @@ func (x *C2S) GetPositionID() uint64 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`       //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`       //交易公共参数头
 	OrderID       *uint64                `protobuf:"varint,2,opt,name=orderID" json:"orderID,omitempty"`    //订单号
 	OrderIDEx     *string                `protobuf:"bytes,3,opt,name=orderIDEx" json:"orderIDEx,omitempty"` //表示服务器订单id，可以用来代替orderID，和orderID二选一
 	unknownFields protoimpl.UnknownFields
@@ -421,7 +421,7 @@ const file_Trd_PlaceOrder_proto_rawDesc = "" +
 	"positionID\x18\x13 \x01(\x04R\n" +
 	"positionID\"l\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12\x18\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12\x18\n" +
 	"\aorderID\x18\x02 \x01(\x04R\aorderID\x12\x1c\n" +
 	"\torderIDEx\x18\x03 \x01(\tR\torderIDEx\"0\n" +
 	"\aRequest\x12%\n" +

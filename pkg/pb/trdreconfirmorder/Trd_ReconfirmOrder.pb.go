@@ -94,7 +94,7 @@ func (x *C2S) GetReconfirmReason() int32 {
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`    //交易公共参数头
-	OrderID       *uint64                `protobuf:"varint,2,opt,name=orderID" json:"orderID,omitempty"` //订单号
+	OrderID       *uint64                `protobuf:"varint,2,req,name=orderID" json:"orderID,omitempty"` //订单号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -273,7 +273,7 @@ const file_Trd_ReconfirmOrder_proto_rawDesc = "" +
 	"\x0freconfirmReason\x18\x04 \x02(\x05R\x0freconfirmReason\"N\n" +
 	"\x03S2C\x12-\n" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12\x18\n" +
-	"\aorderID\x18\x02 \x01(\x04R\aorderID\"4\n" +
+	"\aorderID\x18\x02 \x02(\x04R\aorderID\"4\n" +
 	"\aRequest\x12)\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x17.Trd_ReconfirmOrder.C2SR\x03c2s\"\x87\x01\n" +
 	"\bResponse\x12\x1e\n" +

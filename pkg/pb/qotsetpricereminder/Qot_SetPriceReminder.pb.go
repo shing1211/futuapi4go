@@ -196,7 +196,7 @@ func (x *C2S) GetReminderSessionList() []int32 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           *int64                 `protobuf:"varint,1,opt,name=key" json:"key,omitempty"` //设置成功的情况下返回对应的key，不成功返回0
+	Key           *int64                 `protobuf:"varint,1,req,name=key" json:"key,omitempty"` //设置成功的情况下返回对应的key，不成功返回0
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -370,7 +370,7 @@ const file_Qot_SetPriceReminder_proto_rawDesc = "" +
 	"\x04note\x18\x06 \x01(\tR\x04note\x120\n" +
 	"\x13reminderSessionList\x18\b \x03(\x05R\x13reminderSessionList\"\x17\n" +
 	"\x03S2C\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\x03R\x03key\"6\n" +
+	"\x03key\x18\x01 \x02(\x03R\x03key\"6\n" +
 	"\aRequest\x12+\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x19.Qot_SetPriceReminder.C2SR\x03c2s\"\x89\x01\n" +
 	"\bResponse\x12\x1e\n" +

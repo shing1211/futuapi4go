@@ -26,7 +26,7 @@ const (
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"` //交易公共参数头
-	Type          *int32                 `protobuf:"varint,2,opt,name=type" json:"type,omitempty"`    //通知类型，后边再补充
+	Type          *int32                 `protobuf:"varint,2,req,name=type" json:"type,omitempty"`    //通知类型，后边再补充
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -157,7 +157,7 @@ const file_Trd_Notify_proto_rawDesc = "" +
 	"Trd_Notify\x1a\fCommon.proto\x1a\x10Trd_Common.proto\"H\n" +
 	"\x03S2C\x12-\n" +
 	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\x05R\x04type\"\x7f\n" +
+	"\x04type\x18\x02 \x02(\x05R\x04type\"\x7f\n" +
 	"\bResponse\x12\x1e\n" +
 	"\aretType\x18\x01 \x02(\x05:\x04-400R\aretType\x12\x16\n" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +

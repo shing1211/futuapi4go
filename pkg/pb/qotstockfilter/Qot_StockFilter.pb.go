@@ -1723,7 +1723,7 @@ func (x *C2S) GetCustomIndicatorFilterList() []*CustomIndicatorFilter {
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	LastPage      *bool                  `protobuf:"varint,1,req,name=lastPage" json:"lastPage,omitempty"` // 是否最后一页了,false:非最后一页,还有窝轮记录未返回; true:已是最后一页
-	AllCount      *int32                 `protobuf:"varint,2,opt,name=allCount" json:"allCount,omitempty"` // 该条件请求所有数据的个数
+	AllCount      *int32                 `protobuf:"varint,2,req,name=allCount" json:"allCount,omitempty"` // 该条件请求所有数据的个数
 	DataList      []*StockData           `protobuf:"bytes,3,rep,name=dataList" json:"dataList,omitempty"`  // 返回的股票数据列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1985,7 +1985,7 @@ const file_Qot_StockFilter_proto_rawDesc = "" +
 	"\x19customIndicatorFilterList\x18\t \x03(\v2&.Qot_StockFilter.CustomIndicatorFilterR\x19customIndicatorFilterList\"u\n" +
 	"\x03S2C\x12\x1a\n" +
 	"\blastPage\x18\x01 \x02(\bR\blastPage\x12\x1a\n" +
-	"\ballCount\x18\x02 \x01(\x05R\ballCount\x126\n" +
+	"\ballCount\x18\x02 \x02(\x05R\ballCount\x126\n" +
 	"\bdataList\x18\x03 \x03(\v2\x1a.Qot_StockFilter.StockDataR\bdataList\"1\n" +
 	"\aRequest\x12&\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x14.Qot_StockFilter.C2SR\x03c2s\"\x84\x01\n" +

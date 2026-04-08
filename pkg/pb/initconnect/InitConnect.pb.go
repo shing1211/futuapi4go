@@ -114,7 +114,7 @@ type S2C struct {
 	LoginUserID       *uint64                `protobuf:"varint,2,req,name=loginUserID" json:"loginUserID,omitempty"`             //FutuOpenD登陆的牛牛用户ID
 	ConnID            *uint64                `protobuf:"varint,3,req,name=connID" json:"connID,omitempty"`                       //此连接的连接ID，连接的唯一标识
 	ConnAESKey        *string                `protobuf:"bytes,4,req,name=connAESKey" json:"connAESKey,omitempty"`                //此连接后续AES加密通信的Key，固定为16字节长字符串
-	KeepAliveInterval *int32                 `protobuf:"varint,5,opt,name=keepAliveInterval" json:"keepAliveInterval,omitempty"` //心跳保活间隔
+	KeepAliveInterval *int32                 `protobuf:"varint,5,req,name=keepAliveInterval" json:"keepAliveInterval,omitempty"` //心跳保活间隔
 	AesCBCiv          *string                `protobuf:"bytes,6,opt,name=aesCBCiv" json:"aesCBCiv,omitempty"`                    //AES加密通信CBC加密模式的iv，固定为16字节长字符串
 	UserAttribution   *int32                 `protobuf:"varint,7,opt,name=userAttribution" json:"userAttribution,omitempty"`     //用户类型，牛牛用户或MooMoo用户
 	unknownFields     protoimpl.UnknownFields
@@ -338,7 +338,7 @@ const file_InitConnect_proto_rawDesc = "" +
 	"\n" +
 	"connAESKey\x18\x04 \x02(\tR\n" +
 	"connAESKey\x12,\n" +
-	"\x11keepAliveInterval\x18\x05 \x01(\x05R\x11keepAliveInterval\x12\x1a\n" +
+	"\x11keepAliveInterval\x18\x05 \x02(\x05R\x11keepAliveInterval\x12\x1a\n" +
 	"\baesCBCiv\x18\x06 \x01(\tR\baesCBCiv\x12(\n" +
 	"\x0fuserAttribution\x18\a \x01(\x05R\x0fuserAttribution\"-\n" +
 	"\aRequest\x12\"\n" +

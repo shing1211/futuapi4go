@@ -116,15 +116,20 @@ func (c *Conn) ReadPacket() (*Packet, error) {
 		}
 	}
 
+	// Debug: Log response for specific APIs
+	if h.ProtoID == 1004 {
+		fmt.Printf("[DEBUG-RAW] GetGlobalState Response (%d bytes): % x\n", h.BodyLen, body[:min(len(body), 200)])
+	}
+	if h.ProtoID == 2101 || h.ProtoID == 3001 {
+		fmt.Printf("[DEBUG] Response ProtoID=%d, BodyLen=%d, Body=% x\n", h.ProtoID, h.BodyLen, body[:min(len(body), 200)])
+	}
+
 	return &Packet{Header: h, Body: body}, nil
 }
 
 func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-
-	// Calculate SHA1 hash of body
-	bodySHA1 := sha1.Sum(body)
 
 	// Manually encode header per official Futu protocol spec (44 bytes)
 	// Reference: https://openapi.futunn.com/futu-api-doc/en/ftapi/protocol.html
@@ -150,9 +155,15 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 	binary.LittleEndian.PutUint32(header[12:], uint32(len(body)))
 	
 	// Byte 16-35: BodySHA1 (20 bytes)
-	copy(header[16:36], bodySHA1[:])
+	sha1Hash := sha1.Sum(body)
+	copy(header[16:36], sha1Hash[:])
 	
 	// Byte 36-43: Reserved (8 bytes) - zeros
+
+	// Debug: Log request for specific APIs
+	if protoID == 2101 || protoID == 3001 {
+		fmt.Printf("[DEBUG] Request ProtoID=%d, SerialNo=%d, BodyLen=%d, Body=% x\n", protoID, serialNo, len(body), body[:min(len(body), 200)])
+	}
 
 	if _, err := c.conn.Write(header); err != nil {
 		return fmt.Errorf("write header: %w", err)
@@ -173,4 +184,11 @@ func (c *Conn) LocalAddr() net.Addr {
 
 func (c *Conn) RemoteAddr() net.Addr {
 	return c.conn.RemoteAddr()
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

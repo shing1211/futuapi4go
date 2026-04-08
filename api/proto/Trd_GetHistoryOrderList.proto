@@ -15,7 +15,7 @@ message C2S
 
 message S2C
 {
-	optional Trd_Common.TrdHeader header = 1; //交易公共参数头
+	required Trd_Common.TrdHeader header = 1; //交易公共参数头
 	repeated Trd_Common.Order orderList = 2; //历史订单列表
 }
 

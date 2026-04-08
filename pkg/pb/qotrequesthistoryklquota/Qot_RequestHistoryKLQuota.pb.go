@@ -138,7 +138,7 @@ func (x *C2S) GetBGetDetail() bool {
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UsedQuota     *int32                 `protobuf:"varint,1,req,name=usedQuota" json:"usedQuota,omitempty"`     //已使用过的额度，即当前周期内已经下载过多少只股票。
-	RemainQuota   *int32                 `protobuf:"varint,2,opt,name=remainQuota" json:"remainQuota,omitempty"` //剩余额度
+	RemainQuota   *int32                 `protobuf:"varint,2,req,name=remainQuota" json:"remainQuota,omitempty"` //剩余额度
 	DetailList    []*DetailItem          `protobuf:"bytes,3,rep,name=detailList" json:"detailList,omitempty"`    //每只拉取过的股票的下载时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -329,7 +329,7 @@ const file_Qot_RequestHistoryKLQuota_proto_rawDesc = "" +
 	"bGetDetail\"\x8c\x01\n" +
 	"\x03S2C\x12\x1c\n" +
 	"\tusedQuota\x18\x01 \x02(\x05R\tusedQuota\x12 \n" +
-	"\vremainQuota\x18\x02 \x01(\x05R\vremainQuota\x12E\n" +
+	"\vremainQuota\x18\x02 \x02(\x05R\vremainQuota\x12E\n" +
 	"\n" +
 	"detailList\x18\x03 \x03(\v2%.Qot_RequestHistoryKLQuota.DetailItemR\n" +
 	"detailList\";\n" +

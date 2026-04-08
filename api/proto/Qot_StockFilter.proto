@@ -320,7 +320,7 @@ message C2S
 message S2C
 {
 	required bool lastPage = 1; // 是否最后一页了,false:非最后一页,还有窝轮记录未返回; true:已是最后一页
-	optional int32 allCount = 2; // 该条件请求所有数据的个数
+	required int32 allCount = 2; // 该条件请求所有数据的个数
 	repeated StockData dataList = 3; // 返回的股票数据列表
 }
 

@@ -71,7 +71,7 @@ type S2C struct {
 	state           protoimpl.MessageState   `protogen:"open.v1"`
 	ConnSubInfoList []*qotcommon.ConnSubInfo `protobuf:"bytes,1,rep,name=connSubInfoList" json:"connSubInfoList,omitempty"` //订阅订阅信息
 	TotalUsedQuota  *int32                   `protobuf:"varint,2,req,name=totalUsedQuota" json:"totalUsedQuota,omitempty"`  //FutuOpenD已使用的订阅额度
-	RemainQuota     *int32                   `protobuf:"varint,3,opt,name=remainQuota" json:"remainQuota,omitempty"`        //FutuOpenD剩余订阅额度
+	RemainQuota     *int32                   `protobuf:"varint,3,req,name=remainQuota" json:"remainQuota,omitempty"`        //FutuOpenD剩余订阅额度
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -254,7 +254,7 @@ const file_Qot_GetSubInfo_proto_rawDesc = "" +
 	"\x03S2C\x12A\n" +
 	"\x0fconnSubInfoList\x18\x01 \x03(\v2\x17.Qot_Common.ConnSubInfoR\x0fconnSubInfoList\x12&\n" +
 	"\x0etotalUsedQuota\x18\x02 \x02(\x05R\x0etotalUsedQuota\x12 \n" +
-	"\vremainQuota\x18\x03 \x01(\x05R\vremainQuota\"0\n" +
+	"\vremainQuota\x18\x03 \x02(\x05R\vremainQuota\"0\n" +
 	"\aRequest\x12%\n" +
 	"\x03c2s\x18\x01 \x02(\v2\x13.Qot_GetSubInfo.C2SR\x03c2s\"\x83\x01\n" +
 	"\bResponse\x12\x1e\n" +

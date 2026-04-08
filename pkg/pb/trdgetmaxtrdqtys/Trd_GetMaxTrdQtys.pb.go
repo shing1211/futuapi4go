@@ -150,7 +150,7 @@ func (x *C2S) GetPositionID() uint64 {
 
 type S2C struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,opt,name=header" json:"header,omitempty"`         //交易公共参数头
+	Header        *trdcommon.TrdHeader   `protobuf:"bytes,1,req,name=header" json:"header,omitempty"`         //交易公共参数头
 	MaxTrdQtys    *trdcommon.MaxTrdQtys  `protobuf:"bytes,2,opt,name=maxTrdQtys" json:"maxTrdQtys,omitempty"` //最大可交易数量结构
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -339,7 +339,7 @@ const file_Trd_GetMaxTrdQtys_proto_rawDesc = "" +
 	"positionID\x18\v \x01(\x04R\n" +
 	"positionID\"l\n" +
 	"\x03S2C\x12-\n" +
-	"\x06header\x18\x01 \x01(\v2\x15.Trd_Common.TrdHeaderR\x06header\x126\n" +
+	"\x06header\x18\x01 \x02(\v2\x15.Trd_Common.TrdHeaderR\x06header\x126\n" +
 	"\n" +
 	"maxTrdQtys\x18\x02 \x01(\v2\x16.Trd_Common.MaxTrdQtysR\n" +
 	"maxTrdQtys\"3\n" +

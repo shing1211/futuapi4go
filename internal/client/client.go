@@ -132,6 +132,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		RecvNotify:          &recvNotify,
 		PacketEncAlgo:       &packetEncAlgo,
 		ProgrammingLanguage: &programmingLanguage,
+		PushProtoFmt:        func() *int32 { v := int32(0); return &v }(), // Explicitly set Protobuf format
 	}
 
 	pkt := &initconnect.Request{
