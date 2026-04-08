@@ -511,11 +511,7 @@ func (c *Client) readLoop() {
 			return
 		}
 
-		apiTimeout := c.opts.APITimeout
-		if apiTimeout == 0 {
-			apiTimeout = DefaultTimeout
-		}
-		c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
+		c.conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 		pkt, err := c.conn.ReadPacket()
 		if err != nil {
 			c.mu.Lock()
