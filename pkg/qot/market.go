@@ -30,6 +30,9 @@ type GetOwnerPlateResponse struct {
 }
 
 func GetOwnerPlate(c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlateResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &qotgetownerplate.C2S{
 		SecurityList: req.SecurityList,
 	}
@@ -80,6 +83,9 @@ type GetReferenceResponse struct {
 }
 
 func GetReference(c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &qotgetreference.C2S{
 		Security:      req.Security,
 		ReferenceType: &req.ReferenceType,
@@ -136,6 +142,9 @@ type GetMarketStateResponse struct {
 }
 
 func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketStateResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &qotgetmarketstate.C2S{
 		SecurityList: req.SecurityList,
 	}
@@ -193,6 +202,9 @@ type GetSubInfoResponse struct {
 }
 
 func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &qotgetsubinfo.C2S{}
 
 	pkt := &qotgetsubinfo.Request{C2S: c2s}

@@ -59,6 +59,9 @@ type GetAccListResponse struct {
 }
 
 func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool) (*GetAccListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &trdgetacclist.C2S{
 		TrdCategory:           &trdCategory,
 		NeedGeneralSecAccount: &needGeneralSecAccount,
@@ -133,6 +136,9 @@ type GetFundsResponse struct {
 }
 
 func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -210,6 +216,9 @@ type GetPositionListResponse struct {
 }
 
 func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositionListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -296,6 +305,9 @@ type GetOrderListResponse struct {
 }
 
 func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -381,6 +393,9 @@ type GetOrderFillListResponse struct {
 }
 
 func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrderFillListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -456,6 +471,9 @@ type PlaceOrderResponse struct {
 }
 
 func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -515,6 +533,9 @@ type ModifyOrderRequest struct {
 }
 
 func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
+	if err := c.EnsureConnected(); err != nil {
+		return err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -564,6 +585,9 @@ type UnlockTradeRequest struct {
 }
 
 func UnlockTrade(c *futuapi.Client, req *UnlockTradeRequest) error {
+	if err := c.EnsureConnected(); err != nil {
+		return err
+	}
 	c2s := &trdunlocktrade.C2S{
 		Unlock:       &req.Unlock,
 		PwdMD5:       &req.PwdMD5,
@@ -621,6 +645,9 @@ type GetOrderFeeResponse struct {
 }
 
 func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -711,6 +738,9 @@ type GetMarginRatioResponse struct {
 }
 
 func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRatioResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -805,6 +835,9 @@ type GetMaxTrdQtysResponse struct {
 }
 
 func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtysResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -879,6 +912,9 @@ type GetHistoryOrderListResponse struct {
 }
 
 func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*GetHistoryOrderListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -937,6 +973,9 @@ type GetHistoryOrderFillListResponse struct {
 }
 
 func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequest) (*GetHistoryOrderFillListResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
@@ -988,6 +1027,9 @@ type SubAccPushRequest struct {
 }
 
 func SubAccPush(c *futuapi.Client, req *SubAccPushRequest) error {
+	if err := c.EnsureConnected(); err != nil {
+		return err
+	}
 	c2s := &trdsubaccpush.C2S{
 		AccIDList: req.AccIDList,
 	}
@@ -1034,6 +1076,9 @@ type ReconfirmOrderResponse struct {
 }
 
 func ReconfirmOrder(c *futuapi.Client, req *ReconfirmOrderRequest) (*ReconfirmOrderResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &trdreconfirmorder.C2S{
 		PacketID:        req.PacketID,
 		Header:          req.Header,
@@ -1090,6 +1135,9 @@ type GetFlowSummaryResponse struct {
 }
 
 func GetFlowSummary(c *futuapi.Client, req *GetFlowSummaryRequest) (*GetFlowSummaryResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &trdflowsummary.C2S{
 		Header:            req.Header,
 		ClearingDate:      &req.ClearingDate,

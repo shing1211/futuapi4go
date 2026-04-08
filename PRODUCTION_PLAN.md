@@ -16,13 +16,13 @@ This is the comprehensive, master tracking document for all unfinished items.
 | Phase | Status | Progress | Tasks Remaining | ETA |
 |---|---|---|---|---|
 | Phase 1: Critical Bug Fixes | ✅ Complete | 4/4 | 0 | ✅ Done |
-| Phase 2: API Safety Layer | ⬜ Not Started | 0/6 | 6 | 3-4h |
+| Phase 2: API Safety Layer | 🔄 In Progress | 4/6 | 2 | 1-2h |
 | Phase 3: Configuration System | ⬜ Not Started | 0/5 | 5 | 2-3h |
 | Phase 4: Comprehensive Testing | ⬜ Not Started | 0/10 | 10 | 6-8h |
 | Phase 5: Documentation | ⬜ Not Started | 1/7 | 6 | 2-3h |
 | Phase 6: Production Hardening | ⬜ Not Started | 0/7 | 7 | 2-3h |
 | Phase 7: Simulator Completion | ⬜ Not Started | 1/38 | 37 | 8-10h |
-| **Total** | | **6/77** | **71** | **~30h** |
+| **Total** | | **10/77** | **67** | **~27h** |
 
 ---
 
@@ -41,18 +41,18 @@ This is the comprehensive, master tracking document for all unfinished items.
 ---
 
 ## Phase 2: API Safety Layer / API安全層
-**Priority**: 🟠 HIGH | **Estimated**: 3-4 hours
+**Priority**: 🟠 HIGH | **Estimated**: 3-4 hours | **Status**: ✅ 4/6 Tasks Complete
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 2.1 | Add connection guard wrapper | `internal/client/client.go` | ⬜ | Create `ensureConnected()` helper |
-| 2.2 | Wrap all Qot APIs (33 functions) | `pkg/qot/quote.go`, `pkg/qot/market.go` | ⬜ | Add connection checks before each API call |
-| 2.3 | Wrap all Trd APIs (16 functions) | `pkg/trd/trade.go` | ⬜ | Add connection checks before each API call |
-| 2.4 | Wrap all Sys APIs (4 functions) | `pkg/sys/system.go` | ⬜ | Add connection checks before each API call |
+| 2.1 | Add connection guard wrapper | `internal/client/client.go` | ✅ | Created `EnsureConnected()` helper method |
+| 2.2 | Wrap all Qot APIs (37 functions) | `pkg/qot/quote.go`, `pkg/qot/market.go` | ✅ | Added connection checks to all 37 Qot functions |
+| 2.3 | Wrap all Trd APIs (16 functions) | `pkg/trd/trade.go` | ✅ | Added connection checks to all 16 Trd functions |
+| 2.4 | Wrap all Sys APIs (4 functions) | `pkg/sys/system.go` | ✅ | Added connection checks to all 4 Sys functions |
 | 2.5 | Implement serial-based response matching | `internal/client/conn.go` | ⬜ | Match responses to requests by serial number |
 | 2.6 | Add Context support | `internal/client/client.go` | ⬜ | Add `WithContext()` option for cancellation |
 
-**Deliverable / 交付物**: All APIs safe to call, proper error messages instead of panics
+**Deliverable / 交付物**: All 57 API functions safe to call, proper error messages instead of panics ✅
 
 ---
 
@@ -291,13 +291,13 @@ This is the comprehensive, master tracking document for all unfinished items.
 | Phase | Estimated Time | Cumulative | Completion |
 |---|---|---|---|
 | Phase 1: Critical Fixes | 2-3 hours | 2-3 hours | ✅ 100% |
-| Phase 2: API Safety | 3-4 hours | 5-7 hours | 0% |
+| Phase 2: API Safety | 3-4 hours | 5-7 hours | 🔄 67% |
 | Phase 3: Configuration | 2-3 hours | 7-10 hours | 0% |
 | Phase 4: Testing | 6-8 hours | 13-18 hours | 0% |
 | Phase 5: Documentation | 2-3 hours | 15-21 hours | 14% |
 | Phase 6: Hardening | 2-3 hours | 17-24 hours | 0% |
 | Phase 7: Simulator | 8-10 hours | 25-34 hours | 3% |
-| **Total** | **25-34 hours** | **~30 hours remaining** | **8%** |
+| **Total** | **25-34 hours** | **~27 hours remaining** | **13%** |
 
 ---
 
@@ -309,6 +309,7 @@ This is the comprehensive, master tracking document for all unfinished items.
 | 2026-04-08 | 1.1 | Added Phase 7: Simulator Completion (38 tasks) |
 | 2026-04-08 | 1.2 | Fixed simulator compilation errors |
 | 2026-04-08 | 1.3 | ✅ Phase 1 Complete: Nil-conn guards, TOCTOU race, debug logs, fmt.Println |
+| 2026-04-08 | 1.4 | 🔄 Phase 2 Partial: EnsureConnected() helper, 57/57 API functions wrapped |
 
 ---
 

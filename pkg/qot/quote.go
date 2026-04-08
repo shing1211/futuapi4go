@@ -93,6 +93,7 @@ type BasicQot struct {
 }
 
 func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetbasicqot.C2S{
 		SecurityList: securityList,
 	}
@@ -173,6 +174,7 @@ type GetKLResponse struct {
 }
 
 func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetkl.C2S{
 		Security:  req.Security,
 		RehabType: &req.RehabType,
@@ -266,6 +268,7 @@ type GetOrderBookResponse struct {
 }
 
 func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetorderbook.C2S{
 		Security: req.Security,
 		Num:      &req.Num,
@@ -355,6 +358,7 @@ type GetTickerResponse struct {
 }
 
 func GetTicker(c *futuapi.Client, req *GetTickerRequest) (*GetTickerResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	maxRetNum := req.Num
 	c2s := &qotgetticker.C2S{
 		Security:  req.Security,
@@ -435,6 +439,7 @@ type GetRTResponse struct {
 }
 
 func GetRT(c *futuapi.Client, req *GetRTRequest) (*GetRTResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetrt.C2S{
 		Security: req.Security,
 	}
@@ -509,6 +514,7 @@ type GetBrokerResponse struct {
 }
 
 func GetBroker(c *futuapi.Client, req *GetBrokerRequest) (*GetBrokerResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetbroker.C2S{
 		Security: req.Security,
 	}
@@ -583,6 +589,7 @@ type GetStaticInfoResponse struct {
 }
 
 func GetStaticInfo(c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfoResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetstaticinfo.C2S{
 		Market:       &req.Market,
 		SecType:      &req.SecType,
@@ -639,6 +646,7 @@ type GetPlateSetResponse struct {
 }
 
 func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetplateset.C2S{
 		Market: &req.Market,
 	}
@@ -697,6 +705,7 @@ type GetPlateSecurityResponse struct {
 }
 
 func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlateSecurityResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetplatesecurity.C2S{
 		Plate: req.Plate,
 	}
@@ -748,6 +757,7 @@ type GetTradeDateResponse struct {
 }
 
 func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgettradedate.C2S{
 		Market:    &req.Market,
 		BeginTime: &req.BeginTime,
@@ -802,6 +812,7 @@ type RequestTradeDateResponse struct {
 }
 
 func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*RequestTradeDateResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotrequesttradedate.C2S{
 		Market:    &req.Market,
 		BeginTime: &req.BeginTime,
@@ -864,6 +875,7 @@ type RequestHistoryKLResponse struct {
 }
 
 func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*RequestHistoryKLResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotrequesthistorykl.C2S{
 		RehabType:    &req.RehabType,
 		KlType:       &req.KlType,
@@ -923,6 +935,7 @@ type GetSecuritySnapshotResponse struct {
 }
 
 func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*GetSecuritySnapshotResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetsecuritysnapshot.C2S{
 		SecurityList: req.SecurityList,
 	}
@@ -990,6 +1003,7 @@ type SubscribeResponse struct {
 }
 
 func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	subTypeList := make([]int32, len(req.SubTypeList))
 	for i, st := range req.SubTypeList {
 		subTypeList[i] = int32(st)
@@ -1062,6 +1076,7 @@ type GetCapitalFlowResponse struct {
 }
 
 func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalFlowResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetcapitalflow.C2S{
 		Security:   req.Security,
 		PeriodType: &req.PeriodType,
@@ -1140,6 +1155,7 @@ type GetCapitalDistributionResponse struct {
 }
 
 func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*GetCapitalDistributionResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetcapitaldistribution.C2S{
 		Security: security,
 	}
@@ -1196,6 +1212,7 @@ type GetUserSecurityResponse struct {
 }
 
 func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetusersecurity.C2S{
 		GroupName: &groupName,
 	}
@@ -1256,6 +1273,7 @@ type GetPriceReminderResponse struct {
 }
 
 func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market int32) (*GetPriceReminderResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetpricereminder.C2S{
 		Security: security,
 		Market:   &market,
@@ -1335,6 +1353,7 @@ type GetOptionExpirationDateResponse struct {
 }
 
 func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	return nil, fmt.Errorf("GetOptionExpirationDate: not implemented due to protobuf issues")
 }
 
@@ -1364,6 +1383,7 @@ type GetOptionChainResponse struct {
 }
 
 func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	return nil, fmt.Errorf("GetOptionChain: not implemented due to protobuf issues")
 }
 
@@ -1395,6 +1415,7 @@ type StockFilterResponse struct {
 }
 
 func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotstockfilter.C2S{
 		Begin:                     &req.Begin,
 		Num:                       &req.Num,
@@ -1550,6 +1571,7 @@ type GetWarrantResponse struct {
 }
 
 func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetwarrant.C2S{
 		Begin:                 &req.Begin,
 		Num:                   &req.Num,
@@ -1698,6 +1720,7 @@ type GetSuspendResponse struct {
 }
 
 func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetsuspend.C2S{
 		SecurityList: req.SecurityList,
 		BeginTime:    &req.BeginTime,
@@ -1786,6 +1809,7 @@ type GetFutureInfoResponse struct {
 }
 
 func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfoResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetfutureinfo.C2S{
 		SecurityList: req.SecurityList,
 	}
@@ -1874,6 +1898,7 @@ type GetCodeChangeResponse struct {
 }
 
 func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChangeResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetcodechange.C2S{
 		SecurityList:   req.SecurityList,
 		TimeFilterList: req.TimeFilterList,
@@ -1992,6 +2017,7 @@ type GetIpoListResponse struct {
 }
 
 func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetipolist.C2S{
 		Market: &req.Market,
 	}
@@ -2105,6 +2131,7 @@ type GetHoldingChangeListResponse struct {
 }
 
 func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (*GetHoldingChangeListResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetholdingchangelist.C2S{
 		Security:       req.Security,
 		HolderCategory: &req.HolderCategory,
@@ -2163,6 +2190,7 @@ type GetUserSecurityGroupResponse struct {
 }
 
 func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (*GetUserSecurityGroupResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotgetusersecuritygroup.C2S{
 		GroupType: &req.GroupType,
 	}
@@ -2224,6 +2252,7 @@ type ModifyUserSecurityResponse struct {
 }
 
 func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*ModifyUserSecurityResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotmodifyusersecurity.C2S{
 		GroupName:    &req.GroupName,
 		Op:           &req.Op,
@@ -2277,6 +2306,7 @@ type SetPriceReminderResponse struct {
 }
 
 func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPriceReminderResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotsetpricereminder.C2S{
 		Security: req.Security,
 		Op:       &req.Op,
@@ -2337,6 +2367,7 @@ type RegQotPushResponse struct {
 }
 
 func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotregqotpush.C2S{
 		SecurityList:  req.SecurityList,
 		SubTypeList:   req.SubTypeList,
@@ -2386,6 +2417,7 @@ type RequestRehabResponse struct {
 }
 
 func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotrequestrehab.C2S{
 		Security: req.Security,
 	}
@@ -2437,6 +2469,7 @@ type RequestHistoryKLQuotaResponse struct {
 }
 
 func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest) (*RequestHistoryKLQuotaResponse, error) {
+	if err := c.EnsureConnected(); err != nil { return nil, err }
 	c2s := &qotrequesthistoryklquota.C2S{
 		BGetDetail: &req.GetDetail,
 	}

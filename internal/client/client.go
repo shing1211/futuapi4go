@@ -387,6 +387,20 @@ func (c *Client) IsConnected() bool {
 	return c.connected
 }
 
+// EnsureConnected returns an error if the client is not connected.
+// This should be called by all public API functions before making requests.
+func (c *Client) EnsureConnected() error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if !c.connected {
+		return ErrNotConnected
+	}
+	if c.conn == nil {
+		return ErrNotConnected
+	}
+	return nil
+}
+
 func (c *Client) Conn() *Conn {
 	return c.conn
 }

@@ -37,6 +37,9 @@ type GetGlobalStateResponse struct {
 }
 
 func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &getglobalstate.C2S{
 		UserID: func() *uint64 { v := uint64(0); return &v }(),
 	}
@@ -98,6 +101,9 @@ type GetUserInfoResponse struct {
 }
 
 func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &getuserinfo.C2S{}
 
 	pkt := &getuserinfo.Request{C2S: c2s}
@@ -147,6 +153,9 @@ type GetDelayStatisticsResponse struct {
 }
 
 func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
 	c2s := &getdelaystatistics.C2S{}
 
 	pkt := &getdelaystatistics.Request{C2S: c2s}
@@ -194,6 +203,9 @@ type VerificationRequest struct {
 }
 
 func Verification(c *futuapi.Client, req *VerificationRequest) error {
+	if err := c.EnsureConnected(); err != nil {
+		return err
+	}
 	c2s := &verification.C2S{
 		Type: func() *int32 { v := int32(req.Type); return &v }(),
 		Op:   func() *int32 { v := int32(req.Op); return &v }(),
