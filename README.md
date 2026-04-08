@@ -8,10 +8,13 @@
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
   </a>
   <a href="https://gitee.com/shing1211/futuapi4go">
-    <img src="https://img.shields.io/badge/Version-0.2.0-blue.svg" alt="Version">
+    <img src="https://img.shields.io/badge/Version-0.3.0--dev-orange.svg" alt="Version">
   </a>
   <a href="https://gitee.com/shing1211/futuapi4go">
-    <img src="https://img.shields.io/badge/Platform-Futu%20OpenD-blue.svg" alt="Platform">
+    <img src="https://img.shields.io/badge/Status-Development-yellow.svg" alt="Status">
+  </a>
+  <a href="https://gitee.com/shing1211/futuapi4go">
+    <img src="https://img.shields.io/badge/Examples-24-brightgreen.svg" alt="Examples">
   </a>
 </p>
 
@@ -19,6 +22,19 @@
   <strong>Go 语言实现的富途 OpenD API SDK</strong><br>
   为量化交易者打造的世界级 Golang 交易接口
 </p>
+
+---
+
+## ⚠️ Production Status / 生產狀態
+
+**Current Status**: ⚠️ **Development** - Not yet production-ready
+**當前狀態**: ⚠️ **開發中** - 尚未達到生產就緒
+
+See [STATUS.md](STATUS.md) for detailed readiness assessment.
+查看 [STATUS.md](STATUS.md) 獲取詳細就緒評估。
+
+See [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) for implementation roadmap.
+查看 [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) 獲取實施路線圖。
 
 ---
 
