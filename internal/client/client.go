@@ -387,7 +387,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
 
-	// Set up push notification dispatcher and start readLoop
+	// Set up push notification dispatcher for when readLoop starts
 	c.conn.SetPushHandler(func(pkt *Packet) {
 		c.recordPush()
 		c.handlersMu.RLock()
@@ -396,21 +396,10 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		if ok {
 			handler(pkt.Header.ProtoID, pkt.Body)
 		}
+		if c.opts.PushHandler != nil {
+			c.opts.PushHandler(pkt)
+		}
 	})
-
-	// Also call user-configured push handler if set
-	if c.opts.PushHandler != nil {
-		userHandler := c.opts.PushHandler
-		c.conn.SetPushHandler(func(pkt *Packet) {
-			c.handlersMu.RLock()
-			handler, ok := c.handlers[pkt.Header.ProtoID]
-			c.handlersMu.RUnlock()
-			if ok {
-				handler(pkt.Header.ProtoID, pkt.Body)
-			}
-			userHandler(pkt)
-		})
-	}
 
 	// Start readLoop for asynchronous push notifications
 	c.wg.Add(1)
@@ -514,7 +503,7 @@ func (c *Client) readLoop() {
 		pkt, err := c.conn.readOne()
 		if err != nil {
 			c.mu.Lock()
-			if c.connected && atomic.LoadInt32(&c.connActive) == 1 {
+			if c.connected {
 				c.connected = false
 				c.logWarn("connection lost: %v\n", err)
 				c.mu.Unlock()
