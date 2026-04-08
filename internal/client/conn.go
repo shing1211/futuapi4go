@@ -71,14 +71,24 @@ func (c *Conn) Close() error {
 }
 
 func (c *Conn) SetReadDeadline(t time.Time) error {
+	if c.conn == nil {
+		return fmt.Errorf("set read deadline: %w", ErrNotConnected)
+	}
 	return c.conn.SetReadDeadline(t)
 }
 
 func (c *Conn) SetWriteDeadline(t time.Time) error {
+	if c.conn == nil {
+		return fmt.Errorf("set write deadline: %w", ErrNotConnected)
+	}
 	return c.conn.SetWriteDeadline(t)
 }
 
 func (c *Conn) ReadPacket() (*Packet, error) {
+	if c.conn == nil {
+		return nil, fmt.Errorf("read packet: %w", ErrNotConnected)
+	}
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -116,18 +126,14 @@ func (c *Conn) ReadPacket() (*Packet, error) {
 		}
 	}
 
-	// Debug: Log response for specific APIs
-	if h.ProtoID == 1004 {
-		fmt.Printf("[DEBUG-RAW] GetGlobalState Response (%d bytes): % x\n", h.BodyLen, body[:min(len(body), 200)])
-	}
-	if h.ProtoID == 2101 || h.ProtoID == 3001 {
-		fmt.Printf("[DEBUG] Response ProtoID=%d, BodyLen=%d, Body=% x\n", h.ProtoID, h.BodyLen, body[:min(len(body), 200)])
-	}
-
 	return &Packet{Header: h, Body: body}, nil
 }
 
 func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
+	if c.conn == nil {
+		return fmt.Errorf("write packet: %w", ErrNotConnected)
+	}
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -160,11 +166,6 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 	
 	// Byte 36-43: Reserved (8 bytes) - zeros
 
-	// Debug: Log request for specific APIs
-	if protoID == 2101 || protoID == 3001 {
-		fmt.Printf("[DEBUG] Request ProtoID=%d, SerialNo=%d, BodyLen=%d, Body=% x\n", protoID, serialNo, len(body), body[:min(len(body), 200)])
-	}
-
 	if _, err := c.conn.Write(header); err != nil {
 		return fmt.Errorf("write header: %w", err)
 	}
@@ -184,11 +185,4 @@ func (c *Conn) LocalAddr() net.Addr {
 
 func (c *Conn) RemoteAddr() net.Addr {
 	return c.conn.RemoteAddr()
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

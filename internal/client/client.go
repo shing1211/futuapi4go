@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"google.golang.org/protobuf/proto"
@@ -66,7 +67,7 @@ type Client struct {
 	addr              string
 	maxRetries        int
 	reconnectInterval time.Duration
-	reconnecting      bool
+	reconnecting      int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
 }
 
 type Handler func(protoID uint32, body []byte)
@@ -319,11 +320,11 @@ func (c *Client) readLoop() {
 }
 
 func (c *Client) reconnect() {
-	if c.reconnecting {
-		return
+	// Atomically check and set reconnecting flag to prevent TOCTOU race
+	if !atomic.CompareAndSwapInt32(&c.reconnecting, 0, 1) {
+		return // Already reconnecting
 	}
-	c.reconnecting = true
-	defer func() { c.reconnecting = false }()
+	defer atomic.StoreInt32(&c.reconnecting, 0)
 
 	for attempt := 1; attempt <= c.maxRetries; attempt++ {
 		select {
@@ -340,14 +341,11 @@ func (c *Client) reconnect() {
 			continue
 		}
 
-		fmt.Println("reconnected successfully")
-		c.mu.Lock()
-		c.reconnecting = false
-		c.mu.Unlock()
+		logf("reconnected successfully\n")
 		return
 	}
 
-	fmt.Println("reconnect failed: max retries exceeded")
+	logf("reconnect failed: max retries exceeded\n")
 }
 
 func (c *Client) RegisterHandler(protoID uint32, handler Handler) {

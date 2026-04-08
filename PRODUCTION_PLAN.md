@@ -15,28 +15,28 @@ This is the comprehensive, master tracking document for all unfinished items.
 
 | Phase | Status | Progress | Tasks Remaining | ETA |
 |---|---|---|---|---|
-| Phase 1: Critical Bug Fixes | ⬜ Not Started | 0/4 | 4 | 2-3h |
+| Phase 1: Critical Bug Fixes | ✅ Complete | 4/4 | 0 | ✅ Done |
 | Phase 2: API Safety Layer | ⬜ Not Started | 0/6 | 6 | 3-4h |
 | Phase 3: Configuration System | ⬜ Not Started | 0/5 | 5 | 2-3h |
 | Phase 4: Comprehensive Testing | ⬜ Not Started | 0/10 | 10 | 6-8h |
-| Phase 5: Documentation | ⬜ Not Started | 0/7 | 7 | 2-3h |
+| Phase 5: Documentation | ⬜ Not Started | 1/7 | 6 | 2-3h |
 | Phase 6: Production Hardening | ⬜ Not Started | 0/7 | 7 | 2-3h |
-| Phase 7: Simulator Completion | ⬜ Not Started | 0/38 | 38 | 8-10h |
-| **Total** | | | **77 tasks** | **25-34h** |
+| Phase 7: Simulator Completion | ⬜ Not Started | 1/38 | 37 | 8-10h |
+| **Total** | | **6/77** | **71** | **~30h** |
 
 ---
 
 ## Phase 1: Critical Bug Fixes / 關鍵錯誤修復
-**Priority**: 🔴 CRITICAL | **Estimated**: 2-3 hours
+**Priority**: 🔴 CRITICAL | **Estimated**: 2-3 hours | **Status**: ✅ COMPLETE
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 1.1 | Fix nil-conn guards | `internal/client/conn.go` | ⬜ | Add nil checks to ReadPacket, WritePacket, SetReadDeadline, SetWriteDeadline |
-| 1.2 | Fix TOCTOU race | `internal/client/client.go` | ⬜ | Add atomic/mutex protection for `reconnecting` flag |
-| 1.3 | Remove debug logs | `internal/client/conn.go` | ⬜ | Remove or gate fmt.Printf("[DEBUG...]") at lines 121, 124, 165 |
-| 1.4 | Fix fmt.Println usage | `internal/client/client.go` | ⬜ | Replace with logf() in reconnect logic (lines 343, 350) |
+| 1.1 | Fix nil-conn guards | `internal/client/conn.go` | ✅ | Added nil checks to ReadPacket, WritePacket, SetReadDeadline, SetWriteDeadline |
+| 1.2 | Fix TOCTOU race | `internal/client/client.go` | ✅ | Changed `reconnecting` to int32 with atomic CompareAndSwapInt32 |
+| 1.3 | Remove debug logs | `internal/client/conn.go` | ✅ | Removed all fmt.Printf("[DEBUG...]") and unused min() function |
+| 1.4 | Fix fmt.Println usage | `internal/client/client.go` | ✅ | Replaced with logf() in reconnect logic |
 
-**Deliverable / 交付物**: SDK no longer panics on misuse, thread-safe reconnection
+**Deliverable / 交付物**: SDK no longer panics on misuse, thread-safe reconnection ✅
 
 ---
 
@@ -290,14 +290,14 @@ This is the comprehensive, master tracking document for all unfinished items.
 
 | Phase | Estimated Time | Cumulative | Completion |
 |---|---|---|---|
-| Phase 1: Critical Fixes | 2-3 hours | 2-3 hours | 0% |
+| Phase 1: Critical Fixes | 2-3 hours | 2-3 hours | ✅ 100% |
 | Phase 2: API Safety | 3-4 hours | 5-7 hours | 0% |
 | Phase 3: Configuration | 2-3 hours | 7-10 hours | 0% |
 | Phase 4: Testing | 6-8 hours | 13-18 hours | 0% |
-| Phase 5: Documentation | 2-3 hours | 15-21 hours | 86% |
+| Phase 5: Documentation | 2-3 hours | 15-21 hours | 14% |
 | Phase 6: Hardening | 2-3 hours | 17-24 hours | 0% |
 | Phase 7: Simulator | 8-10 hours | 25-34 hours | 3% |
-| **Total** | **25-34 hours** | **25-34 hours** | **6%** |
+| **Total** | **25-34 hours** | **~30 hours remaining** | **8%** |
 
 ---
 
@@ -308,6 +308,7 @@ This is the comprehensive, master tracking document for all unfinished items.
 | 2026-04-08 | 1.0 | Initial plan created |
 | 2026-04-08 | 1.1 | Added Phase 7: Simulator Completion (38 tasks) |
 | 2026-04-08 | 1.2 | Fixed simulator compilation errors |
+| 2026-04-08 | 1.3 | ✅ Phase 1 Complete: Nil-conn guards, TOCTOU race, debug logs, fmt.Println |
 
 ---
 
