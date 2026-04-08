@@ -210,11 +210,15 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.connected = true
 	c.mu.Unlock()
 
-	// Note: readLoop is intentionally disabled for now.
-	// Synchronous requests read packets directly via ReadPacket().
-	// Push notifications will be handled in a future update.
-	// c.wg.Add(1)
-	// go c.readLoop()
+	// Set up push notification dispatcher
+	c.conn.SetPushHandler(func(pkt *Packet) {
+		c.handlersMu.RLock()
+		handler, ok := c.handlers[pkt.Header.ProtoID]
+		c.handlersMu.RUnlock()
+		if ok {
+			handler(pkt.Header.ProtoID, pkt.Body)
+		}
+	})
 
 	if c.keepAliveInterval > 0 {
 		interval := time.Duration(c.keepAliveInterval) * time.Second
@@ -399,6 +403,38 @@ func (c *Client) EnsureConnected() error {
 		return ErrNotConnected
 	}
 	return nil
+}
+
+// SetPushHandler sets a handler for push notifications (asynchronous updates from OpenD).
+// Push notifications are packets with serial numbers that don't match any request.
+func (c *Client) SetPushHandler(handler PacketHandler) {
+	c.conn.SetPushHandler(handler)
+}
+
+// Context returns the client's context. Used for cancellation of operations.
+func (c *Client) Context() context.Context {
+	return c.ctx
+}
+
+// WithContext returns a new Client with the given context for cancellation support.
+// The original client remains usable. Operations will respect the context's deadline/cancellation.
+func (c *Client) WithContext(ctx context.Context) *Client {
+	newClient := &Client{
+		conn:              c.conn,
+		handlers:          c.handlers,
+		ctx:               ctx,
+		cancel:            func() {}, // Don't cancel parent context
+		maxRetries:        c.maxRetries,
+		reconnectInterval: c.reconnectInterval,
+	}
+	newClient.mu.RLock()
+	newClient.connID = c.connID
+	newClient.aesKey = c.aesKey
+	newClient.serverVer = c.serverVer
+	newClient.keepAliveInterval = c.keepAliveInterval
+	newClient.connected = c.connected
+	newClient.mu.RUnlock()
+	return newClient
 }
 
 func (c *Client) Conn() *Conn {

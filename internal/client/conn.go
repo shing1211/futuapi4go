@@ -41,10 +41,14 @@ type Packet struct {
 	Body   []byte
 }
 
+type PacketHandler func(pkt *Packet)
+
 type Conn struct {
-	conn net.Conn
-	mu   sync.Mutex
-	sem  chan struct{}
+	conn           net.Conn
+	mu             sync.Mutex
+	sem            chan struct{}
+	expectedSerial uint32        // Serial number we're expecting
+	pushHandler    PacketHandler // Handler for push notifications (packets with unexpected serial)
 }
 
 func NewConn(conn net.Conn) *Conn {
@@ -52,6 +56,21 @@ func NewConn(conn net.Conn) *Conn {
 		conn: conn,
 		sem:  make(chan struct{}, 1),
 	}
+}
+
+// SetPushHandler sets a callback for handling push notifications.
+// Packets with serial numbers that don't match expected requests will be dispatched here.
+func (c *Conn) SetPushHandler(handler PacketHandler) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.pushHandler = handler
+}
+
+// SetExpectedSerial sets the serial number we're expecting for the next response.
+func (c *Conn) SetExpectedSerial(serial uint32) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.expectedSerial = serial
 }
 
 func (c *Conn) Dial(addr string) error {
@@ -90,43 +109,60 @@ func (c *Conn) ReadPacket() (*Packet, error) {
 	}
 
 	c.mu.Lock()
-	defer c.mu.Unlock()
+	expectedSerial := c.expectedSerial
+	pushHandler := c.pushHandler
+	c.mu.Unlock()
 
-	// Read 44-byte header
-	header := make([]byte, HeaderLen)
-	n, err := io.ReadFull(c.conn, header)
-	if err != nil {
-		return nil, fmt.Errorf("read header (%d/%d bytes): %w", n, HeaderLen, err)
-	}
-
-	// Parse header fields manually (no struct padding)
-	var h Header
-	copy(h.Magic[:], header[0:2])
-	h.ProtoID = binary.LittleEndian.Uint32(header[2:6])
-	h.ProtoFmt = byte(header[6])
-	h.ProtoVer = header[7]
-	h.SerialNo = binary.LittleEndian.Uint32(header[8:12])
-	h.BodyLen = binary.LittleEndian.Uint32(header[12:16])
-	copy(h.BodySHA1[:], header[16:36])
-	copy(h.Reserved[:], header[36:44])
-	
-	if string(h.Magic[:]) != "FT" {
-		return nil, fmt.Errorf("invalid magic: % x (expected 'FT')", h.Magic)
-	}
-	
-	if h.BodyLen > MaxPacketSize {
-		return nil, fmt.Errorf("body too large: %d bytes", h.BodyLen)
-	}
-
-	body := make([]byte, h.BodyLen)
-	if h.BodyLen > 0 {
-		n, err := io.ReadFull(c.conn, body)
+	// Read packets until we get one with the expected serial number.
+	// Packets with other serials are push notifications and dispatched to the handler.
+	for {
+		// Read 44-byte header
+		header := make([]byte, HeaderLen)
+		n, err := io.ReadFull(c.conn, header)
 		if err != nil {
-			return nil, fmt.Errorf("read body (%d/%d bytes): %w", n, h.BodyLen, err)
+			return nil, fmt.Errorf("read header (%d/%d bytes): %w", n, HeaderLen, err)
 		}
-	}
 
-	return &Packet{Header: h, Body: body}, nil
+		// Parse header fields manually (no struct padding)
+		var h Header
+		copy(h.Magic[:], header[0:2])
+		h.ProtoID = binary.LittleEndian.Uint32(header[2:6])
+		h.ProtoFmt = byte(header[6])
+		h.ProtoVer = header[7]
+		h.SerialNo = binary.LittleEndian.Uint32(header[8:12])
+		h.BodyLen = binary.LittleEndian.Uint32(header[12:16])
+		copy(h.BodySHA1[:], header[16:36])
+		copy(h.Reserved[:], header[36:44])
+
+		if string(h.Magic[:]) != "FT" {
+			return nil, fmt.Errorf("invalid magic: % x (expected 'FT')", h.Magic)
+		}
+
+		if h.BodyLen > MaxPacketSize {
+			return nil, fmt.Errorf("body too large: %d bytes", h.BodyLen)
+		}
+
+		body := make([]byte, h.BodyLen)
+		if h.BodyLen > 0 {
+			n, err := io.ReadFull(c.conn, body)
+			if err != nil {
+				return nil, fmt.Errorf("read body (%d/%d bytes): %w", n, h.BodyLen, err)
+			}
+		}
+
+		pkt := &Packet{Header: h, Body: body}
+
+		// Check if this packet matches the expected serial
+		if expectedSerial == 0 || h.SerialNo == expectedSerial {
+			return pkt, nil
+		}
+
+		// Serial doesn't match - this is a push notification
+		if pushHandler != nil {
+			pushHandler(pkt)
+		}
+		// Continue reading until we get the expected serial
+	}
 }
 
 func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
@@ -135,6 +171,9 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 	}
 
 	c.mu.Lock()
+	// Set expected serial for the next ReadPacket call
+	// This enables serial matching to prevent push notifications from being consumed as responses
+	c.expectedSerial = serialNo
 	defer c.mu.Unlock()
 
 	// Manually encode header per official Futu protocol spec (44 bytes)
