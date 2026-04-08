@@ -59,11 +59,12 @@ func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
 		return s.errorResponse(pkt, err)
 	}
 	c2s := req.GetC2S()
+	_ = c2s // suppress unused warning
 
 	retType := int32(common.RetType_RetType_Succeed)
 
 	bqList := make([]*qotcommon.BasicQot, 0)
-	for _, sec := range req.SecurityList {
+	for _, sec := range c2s.GetSecurityList() {
 		market := sec.GetMarket()
 		code := sec.GetCode()
 		key := fmt.Sprintf("%d.%s", market, code)
@@ -110,7 +111,7 @@ func (s *Server) handleGetKL(pkt *Packet) (*Packet, error) {
 	name := "Mock"
 
 	klList := make([]*qotcommon.KLine, 0, c2s.GetReqNum())
-	for i := int32(0); i < req.GetReqNum(); i++ {
+	for i := int32(0); i < c2s.GetReqNum(); i++ {
 		timeStr := fmt.Sprintf("2026-01-%02d 15:00:00", i+1)
 		ts := float64(1735689600 + int64(i)*86400)
 		open := 100.0
@@ -137,7 +138,7 @@ func (s *Server) handleGetKL(pkt *Packet) (*Packet, error) {
 
 	resp := &qotgetkl.Response{
 		RetType: &retType,
-		S2C:     &qotgetkl.S2C{Security: req.Security, Name: &name, KlList: klList},
+		S2C:     &qotgetkl.S2C{Security: c2s.GetSecurity(), Name: &name, KlList: klList},
 	}
 	return s.successResponse(pkt, resp)
 }
