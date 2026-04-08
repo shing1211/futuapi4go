@@ -200,6 +200,42 @@ futuapi4go/
 
 ---
 
+## 示例代码
+
+本项目提供了 5 个 comprehensive 示例程序，覆盖所有主要 API 用例：
+
+| 示例 | 描述 | APIs 覆盖 |
+|------|------|----------|
+| [01_market_data_basic](examples/01_market_data_basic/) | 基础市场数据 API | GetBasicQot, GetKL, GetOrderBook, GetTicker, GetRT, GetBroker |
+| [02_market_data_advanced](examples/02_market_data_advanced/) | 高级市场分析 API | CapitalFlow, StockFilter, OptionChain, Warrant, IPO |
+| [03_trading_operations](examples/03_trading_operations/) | 交易操作 API | GetAccList, GetFunds, PlaceOrder, GetOrderList, GetPositionList |
+| [04_push_subscriptions](examples/04_push_subscriptions/) | 实时推送订阅 | Subscribe, GetSubInfo, RegQotPush, Push Handlers |
+| [05_comprehensive_demo](examples/05_comprehensive_demo/) | 全功能演示 | 所有主要 API 的综合展示 |
+
+### 快速运行示例
+
+**使用模拟器（推荐用于开发）**:
+```bash
+# 终端 1: 启动模拟器
+cd examples/simulator
+go run main.go
+
+# 终端 2: 运行示例
+cd examples/01_market_data_basic
+go run main.go
+```
+
+**使用真实 Futu OpenD**:
+```bash
+# 确保 OpenD 运行在 127.0.0.1:11111
+cd examples/05_comprehensive_demo
+go run main.go
+```
+
+详细示例文档请查看: [examples/README.md](examples/README.md)
+
+---
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
