@@ -3,7 +3,24 @@
 ## 🚨 Current Status: NOT PRODUCTION READY
 
 **Date**: 2026-04-08
-**Version**: 0.3.0
+**Version**: 0.3.0-dev
+
+**See**: [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) for complete implementation plan with all 77 tasks.
+
+---
+
+## 📊 Quick Stats
+
+| Category | Total | Completed | Remaining | % Done |
+|---|---|---|---|---|
+| SDK Critical Fixes | 4 | 0 | 4 | 0% |
+| API Safety | 6 | 0 | 6 | 0% |
+| Configuration | 5 | 0 | 5 | 0% |
+| Testing | 10 | 0 | 10 | 0% |
+| Documentation | 7 | 1 | 6 | 14% |
+| Production Hardening | 7 | 0 | 7 | 0% |
+| Simulator Completion | 38 | 1 | 37 | 3% |
+| **Total** | **77** | **2** | **75** | **3%** |
 
 ---
 
@@ -20,7 +37,12 @@
 - [ ] **Debug logs in production**: Raw packet bytes logged to stdout
 - [ ] **Zero Go doc comments**: No function documentation
 - [ ] **No API state checks**: GetBasicQot before Connect() panics
-- [ ] **Missing examples**: README references non-existent files
+
+### Simulator Gaps
+- [ ] **26 Qot stub handlers**: Return empty data instead of mocks
+- [ ] **10 Trd stub handlers**: Return empty data instead of mocks
+- [ ] **No graceful shutdown**: Doesn't handle SIGINT/SIGTERM
+- [ ] **No error logging**: Silent failures hard to debug
 
 ---
 
