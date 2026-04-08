@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/trd"
 )
@@ -67,9 +66,8 @@ func main() {
 
 	// Construct order / 構建訂單
 	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
-	trdSide := int32(trdcommon.TrdSide_TrdSide_Buy)  // Buy / 買入
-	orderType := int32(trdcommon.OrderType_OrderType_Normal)  // Normal order / 普通單
-	priceType := int32(trdcommon.PriceType_PriceType_Limit)  // Limit price / 限價單
+	trdSide := int32(trdcommon.TrdSide_TrdSide_Buy)          // Buy / 買入
+	orderType := int32(trdcommon.OrderType_OrderType_Normal) // Normal order / 普通單
 
 	// Example: Buy 100 shares of Tencent at 350.00 / 以350.00買入騰訊100股
 	req := &trd.PlaceOrderRequest{
@@ -78,7 +76,6 @@ func main() {
 		Code:      "00700",
 		TrdSide:   trdSide,
 		OrderType: orderType,
-		PriceType: priceType,
 		Price:     350.00,
 		Qty:       100.0,
 	}
@@ -94,7 +91,7 @@ func main() {
 
 	// DRY RUN - Comment out to actually place the order / 乾運行 - 取消註釋以實際下單
 	dryRun := true
-	
+
 	if dryRun {
 		fmt.Println("⚠️  DRY RUN MODE / 乾運行模式")
 		fmt.Println("   Order was NOT actually submitted")
@@ -103,10 +100,10 @@ func main() {
 		fmt.Println("   To place order, uncomment this code:")
 		fmt.Println("   resp, err := trd.PlaceOrder(cli, req)")
 		fmt.Println("   if err != nil {")
-		fmt.Println("       log.Printf(\"PlaceOrder failed: %v\", err)")
+		fmt.Println("       log.Printf(\"PlaceOrder failed\", err)")
 		fmt.Println("       return")
 		fmt.Println("   }")
-		fmt.Println("   fmt.Printf(\"✅ Order placed! OrderID: %d\\n\", resp.OrderID)")
+		fmt.Println("   fmt.Printf(\"Order placed, OrderID\", resp.OrderID)")
 	} else {
 		// Live order placement / 實際下單
 		resp, err := trd.PlaceOrder(cli, req)

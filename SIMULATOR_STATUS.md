@@ -1,50 +1,50 @@
 # OpenD Simulator - Production Readiness Assessment
 
-## 📊 Current Status: ⚠️ PARTIALLY READY
+## Current Status: PARTIALLY READY
 
 **Date**: 2026-04-08
 **Version**: 0.3.0-dev
 
 ---
 
-## ✅ What's Working
+## What's Working
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| **TCP Server** | ✅ Working | 44-byte protocol header, LittleEndian |
-| **InitConnect** | ✅ Working | Returns mock connection info |
-| **KeepAlive** | ✅ Working | Returns timestamp |
-| **GetGlobalState** | ✅ Working | Returns mock market states |
-| **GetUserInfo** | ✅ Working | Returns mock user info |
-| **GetBasicQot** | ✅ Working | Returns mock quotes for requested securities |
-| **GetKL** | ✅ Working | Returns mock K-line data |
-| **GetOrderBook** | ✅ Working | Returns mock order book with bid/ask |
-| **Subscribe** | ✅ Working | Returns success response |
-| **GetSubInfo** | ✅ Working | Returns mock quota info |
-| **RegQotPush** | ✅ Working | Returns success response |
-| **Push Handlers** | ✅ Working | 11 push handlers registered |
-| **Compilation** | ✅ Working | Compiles successfully after fix |
+| **TCP Server** | Working | 44-byte protocol header, LittleEndian |
+| **InitConnect** | Working | Returns mock connection info |
+| **KeepAlive** | Working | Returns timestamp |
+| **GetGlobalState** | Working | Returns mock market states |
+| **GetUserInfo** | Working | Returns mock user info |
+| **GetBasicQot** | Working | Returns mock quotes for requested securities |
+| **GetKL** | Working | Returns mock K-line data |
+| **GetOrderBook** | Working | Returns mock order book with bid/ask |
+| **Subscribe** | Working | Returns success response |
+| **GetSubInfo** | Working | Returns mock quota info |
+| **RegQotPush** | Working | Returns success response |
+| **Push Handlers** | Working | 11 push handlers registered |
+| **Compilation** | Working | Compiles successfully after fix |
 
 ---
 
-## ⚠️ Handler Implementation Quality
+## Handler Implementation Quality
 
 ### Fully Implemented (Returns Mock Data)
 
 | Handler | ProtoID | Quality | Description |
 |---------|---------|---------|-------------|
-| handleInitConnect | 1001 | ✅ Full | Returns connID, AES key, server version |
-| handleKeepAlive | 1002 | ✅ Full | Returns timestamp |
-| handleGetGlobalState | 1004 | ✅ Full | Returns market states, login status |
-| handleGetUserInfo | 1005 | ✅ Full | Returns user info, quotas |
-| handleGetBasicQot | 2101 | ✅ Full | Returns quotes with price, volume |
-| handleGetKL | 2102 | ✅ Full | Returns K-line with OHLCV |
-| handleGetOrderBook | 2106 | ✅ Full | Returns bid/ask with levels |
-| handleGetStaticInfo | 2201 | ✅ Full | Returns security static info |
-| handleSubscribe | 3001 | ✅ Full | Returns success |
-| handleGetSubInfo | 3002 | ✅ Full | Returns quota info |
-| handleRegQotPush | 3003 | ✅ Full | Returns success |
-| Push Handlers | 3101-7003 | ✅ Full | All 11 push handlers return mock data |
+| handleInitConnect | 1001 | Full | Returns connID, AES key, server version |
+| handleKeepAlive | 1002 | Full | Returns timestamp |
+| handleGetGlobalState | 1004 | Full | Returns market states, login status |
+| handleGetUserInfo | 1005 | Full | Returns user info, quotas |
+| handleGetBasicQot | 2101 | Full | Returns quotes with price, volume |
+| handleGetKL | 2102 | Full | Returns K-line with OHLCV |
+| handleGetOrderBook | 2106 | Full | Returns bid/ask with levels |
+| handleGetStaticInfo | 2201 | Full | Returns security static info |
+| handleSubscribe | 3001 | Full | Returns success |
+| handleGetSubInfo | 3002 | Full | Returns quota info |
+| handleRegQotPush | 3003 | Full | Returns success |
+| Push Handlers | 3101-7003 | Full | All 11 push handlers return mock data |
 
 ### Stub Implementations (Returns Empty Success)
 
@@ -82,23 +82,23 @@
 
 | Handler | ProtoID | Status | Issue |
 |---------|---------|--------|-------|
-| handleGetAccList | 4001 | ✅ Full | Returns mock account |
-| handleUnlockTrade | 4002 | ✅ Full | Returns success |
-| handleGetFunds | 4003 | ⚠️ Stub | Returns empty success |
-| handleGetOrderFee | 4004 | ⚠️ Stub | Returns empty success |
-| handleGetMarginRatio | 4005 | ⚠️ Stub | Returns empty success |
-| handleGetMaxTrdQtys | 4006 | ⚠️ Stub | Returns empty success |
-| handlePlaceOrder | 5001 | ✅ Partial | Returns mock order ID |
-| handleModifyOrder | 5002 | ⚠️ Stub | Returns empty success |
-| handleGetOrderList | 5003 | ⚠️ Stub | Returns empty success |
-| handleGetHistoryOrderList | 5004 | ⚠️ Stub | Returns empty success |
-| handleGetOrderFillList | 5005 | ⚠️ Stub | Returns empty success |
-| handleGetHistoryOrderFillList | 5006 | ⚠️ Stub | Returns empty success |
-| handleGetPositionList | 6001 | ⚠️ Stub | Returns empty success |
+| handleGetAccList | 4001 | Full | Returns mock account |
+| handleUnlockTrade | 4002 | Full | Returns success |
+| handleGetFunds | 4003 | Stub | Returns empty success |
+| handleGetOrderFee | 4004 | Stub | Returns empty success |
+| handleGetMarginRatio | 4005 | Stub | Returns empty success |
+| handleGetMaxTrdQtys | 4006 | Stub | Returns empty success |
+| handlePlaceOrder | 5001 | Partial | Returns mock order ID |
+| handleModifyOrder | 5002 | Stub | Returns empty success |
+| handleGetOrderList | 5003 | Stub | Returns empty success |
+| handleGetHistoryOrderList | 5004 | Stub | Returns empty success |
+| handleGetOrderFillList | 5005 | Stub | Returns empty success |
+| handleGetHistoryOrderFillList | 5006 | Stub | Returns empty success |
+| handleGetPositionList | 6001 | Stub | Returns empty success |
 
 ---
 
-## 📊 Summary Statistics
+## Summary Statistics
 
 | Category | Total | Fully Working | Stub/Empty | % Complete |
 |----------|-------|---------------|------------|------------|
@@ -110,7 +110,7 @@
 
 ---
 
-## 🚀 How to Run Simulator
+## How to Run Simulator
 
 ### Build
 ```bash
@@ -136,7 +136,7 @@ go run main.go
 
 ---
 
-## 🔧 Issues to Fix Before Production
+## Issues to Fix Before Production
 
 ### Critical (Must Fix)
 - [ ] **No server startup message** - Should print listening address
@@ -157,21 +157,21 @@ go run main.go
 
 ---
 
-## 🎯 Recommendation
+## Recommendation
 
-**Current Status**: ✅ **READY FOR DEVELOPMENT TESTING**
+**Current Status**: READY FOR DEVELOPMENT TESTING
 
 The simulator is sufficient for:
-- ✅ Testing SDK connection logic
-- ✅ Testing basic API calls (GetBasicQot, GetKL, GetOrderBook)
-- ✅ Testing subscription flow
-- ✅ Testing push notification parsing
-- ✅ Developing examples
+- Testing SDK connection logic
+- Testing basic API calls (GetBasicQot, GetKL, GetOrderBook)
+- Testing subscription flow
+- Testing push notification parsing
+- Developing examples
 
 **NOT ready for**:
-- ❌ Production validation
-- ❌ Complete API coverage testing
-- ❌ Performance benchmarking
+- Production validation
+- Complete API coverage testing
+- Performance benchmarking
 
 ---
 

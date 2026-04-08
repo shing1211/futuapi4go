@@ -12,7 +12,7 @@
 // - GetMarginRatio: Get margin ratio
 // - GetMaxTrdQtys: Get max trade quantities
 // - GetHistoryOrderList: Get history orders
-// - GetOrderFillList: Get order fills
+// - GetOrderOrderFillList: Get order fills
 //
 // Usage:
 //   go run main.go
@@ -26,7 +26,7 @@ import (
 	"log"
 	"time"
 
-	"gitee.com/shing1211/futuapi4go/internal/client"
+	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/trd"
@@ -34,12 +34,12 @@ import (
 
 func main() {
 	// Create and connect client
-	cli := client.New()
+	cli := futuapi.New()
 	defer cli.Close()
 
 	addr := "127.0.0.1:11111"
 	fmt.Printf("=== Connecting to %s ===\n", addr)
-	
+
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("Connection failed: %v", err)
 	}
@@ -47,7 +47,6 @@ func main() {
 
 	// Define markets
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
 	trdCategory := int32(trdcommon.TrdCategory_TrdCategory_Security)
 
 	// 1. Get Account List
@@ -78,8 +77,9 @@ func main() {
 	fmt.Println("=== 2. Unlock Trading (UnlockTrade) ===")
 	fmt.Println("  ⚠️  In real environment, you need to provide trade password")
 	fmt.Println("  For simulator, this will return success")
-	
-	unlockErr := trd.UnlockTrade(cli, "your_trade_password")
+
+	unlockReq := &trd.UnlockTradeRequest{Unlock: true, PwdMD5: "your_trade_password"}
+	unlockErr := trd.UnlockTrade(cli, unlockReq)
 	if unlockErr != nil {
 		log.Printf("UnlockTrade failed: %v (expected in simulator)", unlockErr)
 	} else {
@@ -93,7 +93,7 @@ func main() {
 		AccID:     accID,
 		TrdMarket: hkMarket,
 	}
-	
+
 	fundsResp, err := trd.GetFunds(cli, fundsReq)
 	if err != nil {
 		log.Printf("GetFunds failed: %v", err)
@@ -115,14 +115,14 @@ func main() {
 		AccID:     accID,
 		TrdMarket: 0, // 0 means all markets
 	}
-	
+
 	posResp, err := trd.GetPositionList(cli, posReq)
 	if err != nil {
 		log.Printf("GetPositionList failed: %v", err)
 	} else {
 		fmt.Printf("  Account: %d\n", accID)
 		fmt.Printf("  Found %d positions\n", len(posResp.PositionList))
-		
+
 		if len(posResp.PositionList) > 0 {
 			fmt.Printf("  %-10s %-10s %-10s %-10s %-12s %-12s %-12s %-12s\n",
 				"Code", "Name", "Qty", "AvailQty", "CostPrice", "Price", "Val", "PlVal")
@@ -139,12 +139,12 @@ func main() {
 
 	// 5. Place Order (Buy)
 	fmt.Println("=== 5. Place Order - BUY (PlaceOrder) ===")
-	
+
 	trdSide := int32(trdcommon.TrdSide_TrdSide_Buy)
 	orderType := int32(trdcommon.OrderType_OrderType_Normal)
 	qty := float64(100)
 	price := 350.00
-	
+
 	placeReq := &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: hkMarket,
@@ -154,7 +154,7 @@ func main() {
 		Price:     price,
 		Qty:       qty,
 	}
-	
+
 	placeResp, err := trd.PlaceOrder(cli, placeReq)
 	var orderID uint64
 	if err != nil {
@@ -163,7 +163,7 @@ func main() {
 		orderID = placeResp.OrderID
 		fmt.Printf("  ✓ Order placed successfully!\n")
 		fmt.Printf("  OrderID: %d\n", orderID)
-		fmt.Printf("  Action: BUY %.0f shares of %s at %.2f\n", 
+		fmt.Printf("  Action: BUY %.0f shares of %s at %.2f\n",
 			qty, "00700", price)
 	}
 	fmt.Println()
@@ -174,14 +174,14 @@ func main() {
 		AccID:     accID,
 		TrdMarket: hkMarket,
 	}
-	
+
 	orderResp, err := trd.GetOrderList(cli, orderReq)
 	if err != nil {
 		log.Printf("GetOrderList failed: %v", err)
 	} else {
 		fmt.Printf("  Account: %d\n", accID)
 		fmt.Printf("  Found %d orders\n", len(orderResp.OrderList))
-		
+
 		if len(orderResp.OrderList) > 0 {
 			fmt.Printf("  %-12s %-10s %-10s %-12s %-10s %-10s %-12s\n",
 				"OrderID", "Code", "Side", "Type", "Qty", "Price", "Status")
@@ -190,21 +190,21 @@ func main() {
 				if o.TrdSide == int32(trdcommon.TrdSide_TrdSide_Sell) {
 					side = "SELL"
 				}
-				
+
 				status := "Unknown"
 				switch o.OrderStatus {
-				case int32(trdcommon.OrderState_OrderState_Submitting):
+				case int32(trdcommon.OrderStatus_OrderStatus_Submitting):
 					status = "Submitting"
-				case int32(trdcommon.OrderState_OrderState_Submitted):
+				case int32(trdcommon.OrderStatus_OrderStatus_Submitted):
 					status = "Submitted"
-				case int32(trdcommon.OrderState_OrderState_FilledAll):
+				case int32(trdcommon.OrderStatus_OrderStatus_Filled_All):
 					status = "Filled"
-				case int32(trdcommon.OrderState_OrderState_PartialDone):
+				case int32(trdcommon.OrderStatus_OrderStatus_Filled_Part):
 					status = "Partial"
-				case int32(trdcommon.OrderState_OrderState_Canceled):
+				case int32(trdcommon.OrderStatus_OrderStatus_Cancelled_All):
 					status = "Cancelled"
 				}
-				
+
 				fmt.Printf("  %-12d %-10s %-10s %-12d %-10.0f %-10.2f %-12s\n",
 					o.OrderID, o.Code, side, o.OrderType, o.Qty, o.Price, status)
 			}
@@ -218,14 +218,14 @@ func main() {
 	fmt.Println("=== 7. Modify Order (ModifyOrder) ===")
 	if orderID > 0 {
 		modifyReq := &trd.ModifyOrderRequest{
-			AccID:      accID,
-			TrdMarket:  hkMarket,
-			OrderID:    orderID,
-			ModifyType: int32(trdcommon.ModifyOrderType_ModifyOrderType_Normal),
-			Qty:        200, // Change quantity to 200
-			Price:      360.00, // Change price to 360
+			AccID:         accID,
+			TrdMarket:     hkMarket,
+			OrderID:       orderID,
+			ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Normal),
+			Qty:           200,
+			Price:         360.00,
 		}
-		
+
 		modifyErr := trd.ModifyOrder(cli, modifyReq)
 		if modifyErr != nil {
 			log.Printf("ModifyOrder failed: %v", modifyErr)
@@ -239,23 +239,23 @@ func main() {
 	fmt.Println()
 
 	// 8. Get Order Fills/Executions
-	fmt.Println("=== 8. Order Fills (GetOrderFillList) ===")
+	fmt.Println("=== 8. Order Fills (GetOrderOrderFillList) ===")
 	fillReq := &trd.GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: hkMarket,
 	}
-	
+
 	fillResp, err := trd.GetOrderFillList(cli, fillReq)
 	if err != nil {
 		log.Printf("GetOrderFillList failed: %v", err)
 	} else {
 		fmt.Printf("  Account: %d\n", accID)
-		fmt.Printf("  Found %d fills\n", len(fillResp.FillList))
-		
-		if len(fillResp.FillList) > 0 {
+		fmt.Printf("  Found %d fills\n", len(fillResp.OrderFillList))
+
+		if len(fillResp.OrderFillList) > 0 {
 			fmt.Printf("  %-12s %-12s %-10s %-12s %-10s\n",
 				"FillID", "OrderID", "Code", "Qty", "Price")
-			for _, f := range fillResp.FillList {
+			for _, f := range fillResp.OrderFillList {
 				fmt.Printf("  %-12d %-12d %-10s %-12.0f %-10.2f\n",
 					f.FillID, f.OrderID, f.Code, f.Qty, f.Price)
 			}
@@ -271,17 +271,17 @@ func main() {
 		AccID:     accID,
 		TrdMarket: hkMarket,
 	}
-	
+
 	feeResp, err := trd.GetOrderFee(cli, feeReq)
 	if err != nil {
 		log.Printf("GetOrderFee failed: %v", err)
 	} else {
 		fmt.Printf("  Account: %d\n", accID)
-		fmt.Printf("  Found %d fee records\n", len(feeResp.FeeList))
-		
-		if len(feeResp.FeeList) > 0 {
-			for _, fee := range feeResp.FeeList {
-				fmt.Printf("  OrderID: %d | Fee: %.2f\n", fee.OrderID, fee.Fee)
+		fmt.Printf("  Found %d fee records\n", len(feeResp.OrderFeeList))
+
+		if len(feeResp.OrderFeeList) > 0 {
+			for _, fee := range feeResp.OrderFeeList {
+				fmt.Printf("  OrderID: %s | Fee: %.2f\n", fee.OrderIDEx, fee.FeeAmount)
 			}
 		} else {
 			fmt.Println("  No fees found")
@@ -291,17 +291,24 @@ func main() {
 
 	// 10. Get Margin Ratio
 	fmt.Println("=== 10. Margin Ratio (GetMarginRatio) ===")
+	code007 := "00700"
+	sec007 := &qotcommon.Security{Market: &hkMarket, Code: &code007}
 	marginReq := &trd.GetMarginRatioRequest{
-		AccID: accID,
-		Code:  "00700",
+		AccID:        accID,
+		TrdMarket:    hkMarket,
+		SecurityList: []*qotcommon.Security{sec007},
 	}
-	
+
 	marginResp, err := trd.GetMarginRatio(cli, marginReq)
 	if err != nil {
 		log.Printf("GetMarginRatio failed: %v", err)
 	} else {
 		fmt.Printf("  Stock: %s\n", "00700")
-		fmt.Printf("  Margin Ratio: %.4f\n", marginResp.MarginRatio)
+		if len(marginResp.MarginRatioInfoList) > 0 {
+			info := marginResp.MarginRatioInfoList[0]
+			fmt.Printf("  IM Long Ratio:   %.4f\n", info.ImLongRatio)
+			fmt.Printf("  IM Short Ratio:  %.4f\n", info.ImShortRatio)
+		}
 	}
 	fmt.Println()
 
@@ -314,38 +321,40 @@ func main() {
 		Price:     350.00,
 		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
 	}
-	
+
 	maxQtyResp, err := trd.GetMaxTrdQtys(cli, maxQtyReq)
 	if err != nil {
 		log.Printf("GetMaxTrdQtys failed: %v", err)
 	} else {
 		fmt.Printf("  Stock: %s @ %.2f\n", "00700", 350.00)
-		fmt.Printf("  Max Cash Buy:      %.0f\n", maxQtyResp.MaxCashBuy)
-		fmt.Printf("  Max Margin Buy:    %.0f\n", maxQtyResp.MaxMarginBuy)
-		fmt.Printf("  Max Sell:          %.0f\n", maxQtyResp.MaxSell)
-		fmt.Printf("  Max Short Sell:    %.0f\n", maxQtyResp.MaxSellShort)
+		fmt.Printf("  Max Cash Buy:        %.0f\n", maxQtyResp.MaxTrdQtys.MaxCashBuy)
+		fmt.Printf("  Max Cash+Margin Buy: %.0f\n", maxQtyResp.MaxTrdQtys.MaxCashAndMarginBuy)
+		fmt.Printf("  Max Position Sell:   %.0f\n", maxQtyResp.MaxTrdQtys.MaxPositionSell)
+		fmt.Printf("  Max Short Sell:      %.0f\n", maxQtyResp.MaxTrdQtys.MaxSellShort)
 	}
 	fmt.Println()
 
 	// 12. Get History Orders
 	fmt.Println("=== 12. History Orders (GetHistoryOrderList) ===")
-	beginTime := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
-	endTime := time.Now().Format("2006-01-02")
-	
+	beginTimeStr := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
+	endTimeStr := time.Now().Format("2006-01-02")
+
 	histReq := &trd.GetHistoryOrderListRequest{
 		AccID:     accID,
 		TrdMarket: hkMarket,
-		BeginTime: beginTime,
-		EndTime:   endTime,
+		FilterConditions: &trdcommon.TrdFilterConditions{
+			BeginTime: &beginTimeStr,
+			EndTime:   &endTimeStr,
+		},
 	}
-	
+
 	histResp, err := trd.GetHistoryOrderList(cli, histReq)
 	if err != nil {
 		log.Printf("GetHistoryOrderList failed: %v", err)
 	} else {
-		fmt.Printf("  Period: %s to %s\n", beginTime, endTime)
+		fmt.Printf("  Period: %s to %s\n", beginTimeStr, endTimeStr)
 		fmt.Printf("  Found %d historical orders\n", len(histResp.OrderList))
-		
+
 		if len(histResp.OrderList) > 0 {
 			fmt.Printf("  Showing first 3:\n")
 			count := 3
@@ -355,11 +364,19 @@ func main() {
 			for i := 0; i < count; i++ {
 				o := histResp.OrderList[i]
 				side := "BUY"
-				if o.TrdSide == int32(trdcommon.TrdSide_TrdSide_Sell) {
+				if o.TrdSide != nil && *o.TrdSide == int32(trdcommon.TrdSide_TrdSide_Sell) {
 					side = "SELL"
 				}
+				codeStr := "N/A"
+				if o.Code != nil {
+					codeStr = *o.Code
+				}
+				nameStr := "N/A"
+				if o.Name != nil {
+					nameStr = *o.Name
+				}
 				fmt.Printf("    %s (%s) | %s | Qty=%.0f | Price=%.2f | Status=%d\n",
-					o.Code, o.Name, side, o.Qty, o.Price, o.OrderStatus)
+					codeStr, nameStr, side, o.GetQty(), o.GetPrice(), o.GetOrderStatus())
 			}
 		}
 	}

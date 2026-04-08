@@ -1,28 +1,28 @@
-# FutuAPI4Go Release Checklist / 發佈檢查清單
+# FutuAPI4Go Release Checklist
 
-## Pre-Release Verification / 發佈前驗證
+## Pre-Release Verification
 
-### Code Quality / 代碼質量
+### Code Quality
 - [ ] `go vet ./...` passes with no warnings
 - [ ] `go test -race ./...` passes with no races detected
-- [ ] `go test ./...` passes with ≥80% coverage
+- [ ] `go test ./...` passes with 80%+ coverage
 - [ ] No `panic()` calls in production code
 - [ ] All errors wrapped with `%w` for proper error chaining
 - [ ] All public functions have Go doc comments
 
-### API Compatibility / API 兼容性
+### API Compatibility
 - [ ] All exported functions work with real Futu OpenD
 - [ ] No breaking changes to public API signatures (or documented in CHANGELOG)
 - [ ] Backward compatibility verified (if applicable)
 
-### Testing / 測試
+### Testing
 - [ ] Unit tests pass for all packages
 - [ ] Integration tests pass against real OpenD (with FUTU_INTEGRATION_TESTS=1)
 - [ ] Example programs compile successfully
 - [ ] Simulator compiles and runs correctly
 - [ ] No flaky tests (tests pass consistently on multiple runs)
 
-### Documentation / 文檔
+### Documentation
 - [ ] README.md updated with current version and features
 - [ ] CHANGELOG.md updated with release notes
 - [ ] USER_GUIDE.md updated if API changed
@@ -30,19 +30,19 @@
 - [ ] All new public functions have Go doc comments
 - [ ] Examples updated if API changed
 
-### Build / 構建
+### Build
 - [ ] `go build ./...` succeeds
 - [ ] `go build ./cmd/...` succeeds for all example programs
 - [ ] Cross-compilation tested (if applicable)
 - [ ] Version string updated in `internal/client/version.go`
 
-### Security / 安全
+### Security
 - [ ] No hardcoded credentials or API keys
 - [ ] RSA encryption works if configured
 - [ ] No debug logging in production code
 - [ ] No `fmt.Printf` statements for sensitive data
 
-### Performance / 性能
+### Performance
 - [ ] No goroutine leaks (verified with `go test -race`)
 - [ ] Connection pool works correctly
 - [ ] Metrics tracking works (GetMetrics returns valid data)
@@ -50,7 +50,7 @@
 
 ---
 
-## Release Process / 發佈流程
+## Release Process
 
 1. **Update version** in `internal/client/version.go`
 2. **Update CHANGELOG.md** with release notes
@@ -62,7 +62,7 @@
 
 ---
 
-## Post-Release / 發佈後
+## Post-Release
 
 - [ ] Monitor for issues/bugs reported
 - [ ] Update PRODUCTION_PLAN.md progress

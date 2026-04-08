@@ -2,7 +2,7 @@
 
 ## Prerequisites Checklist
 
-### ✅ Step 1: Verify Futu OpenD is Running
+### Step 1: Verify Futu OpenD is Running
 ```bash
 netstat -ano | findstr "11111"
 ```
@@ -11,15 +11,15 @@ Expected output:
 TCP    127.0.0.1:11111        0.0.0.0:0              LISTENING       <PID>
 ```
 
-### ✅ Step 2: Check Futu OpenD Status
+### Step 2: Check Futu OpenD Status
 1. Open Futu OpenD application
 2. Verify you see:
-   - ✅ "已连接" or "Connected" status
-   - ✅ Logged into Futu account
-   - ✅ Port 11111 configured
-   - ✅ No RSA key required (or properly configured)
+   - "Connected" status
+   - Logged into Futu account
+   - Port 11111 configured
+   - No RSA key required (or properly configured)
 
-### ⚠️ Step 3: Common Issues
+### Step 3: Common Issues
 
 #### Issue A: OpenD Not Logged In
 - **Symptom**: Port listening but no response
@@ -56,11 +56,11 @@ go run ./cmd/examples/diag_packet/
 
 ## Current Status
 
-✅ **Project Structure**: Complete (Go standard layout)
-✅ **Protobuf Files**: Regenerated with correct paths
-✅ **Examples**: 6 comprehensive examples created
-✅ **Compilation**: Successful
-⚠️ **OpenD Connection**: Needs verification
+- **Project Structure**: Complete (Go standard layout)
+- **Protobuf Files**: Regenerated with correct paths
+- **Examples**: 6 comprehensive examples created
+- **Compilation**: Successful
+- **OpenD Connection**: Needs verification
 
 ## Next Steps
 

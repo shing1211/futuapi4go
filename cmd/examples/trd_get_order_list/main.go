@@ -98,20 +98,20 @@ func main() {
 
 		status := "Unknown"
 		switch o.OrderStatus {
-		case int32(trdcommon.OrderState_OrderState_Submitting):
+		case int32(trdcommon.OrderStatus_OrderStatus_Submitting):
 			status = "Submitting"
-		case int32(trdcommon.OrderState_OrderState_Submitted):
+		case int32(trdcommon.OrderStatus_OrderStatus_Submitted):
 			status = "Submitted"
-		case int32(trdcommon.OrderState_OrderState_FilledAll):
+		case int32(trdcommon.OrderStatus_OrderStatus_Filled_All):
 			status = "Filled"
-		case int32(trdcommon.OrderState_OrderState_PartialDone):
+		case int32(trdcommon.OrderStatus_OrderStatus_Filled_Part):
 			status = "Partial"
-		case int32(trdcommon.OrderState_OrderState_Canceled):
+		case int32(trdcommon.OrderStatus_OrderStatus_Cancelled_All):
 			status = "Canceled"
 		}
 
 		fmt.Printf("  %-12d %-10s %-8s %-6s %-6s %-8.0f %-8.2f %-10.0f\n",
-			o.OrderID, o.Code, side, orderType, status, o.Qty, o.Price, o.DealtQty)
+			o.OrderID, o.Code, side, orderType, status, o.Qty, o.Price, o.FillQty)
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")

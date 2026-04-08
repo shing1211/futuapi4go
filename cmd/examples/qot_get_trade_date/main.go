@@ -66,11 +66,11 @@ func main() {
 	for i, td := range resp.TradeDateList {
 		// Highlight today / 突出顯示今天
 		marker := "  "
-		if td.TradeDate == now.Format("2006-01-02") {
+		if td.GetTime() == now.Format("2006-01-02") {
 			marker = "🔵"
 		}
 
-		fmt.Printf("%s %d. %s\n", marker, i+1, td.TradeDate)
+		fmt.Printf("%s %d. %s\n", marker, i+1, td.GetTime())
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")

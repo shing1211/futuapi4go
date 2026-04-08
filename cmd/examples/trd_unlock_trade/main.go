@@ -46,8 +46,10 @@ func main() {
 	}
 
 	// Unlock trade / 解鎖交易
+	unlock := true
 	req := &trd.UnlockTradeRequest{
-		PWD: password,
+		Unlock: unlock,
+		PwdMD5: password,
 	}
 
 	fmt.Println("🔓 Attempting to unlock trading / 正在嘗試解鎖交易...")

@@ -21,14 +21,17 @@ const (
 	ProtoID_GetSubInfo     = 3002
 )
 
+// GetOwnerPlateRequest defines parameters for GetOwnerPlate.
 type GetOwnerPlateRequest struct {
 	SecurityList []*qotcommon.Security
 }
 
+// GetOwnerPlateResponse is the response type for GetOwnerPlate.
 type GetOwnerPlateResponse struct {
 	OwnerPlateList []*qotgetownerplate.SecurityOwnerPlate
 }
 
+// GetOwnerPlate returns the owner plates for the given securities.
 func GetOwnerPlate(c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -73,15 +76,18 @@ func GetOwnerPlate(c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlate
 	}, nil
 }
 
+// GetReferenceRequest defines parameters for GetReference.
 type GetReferenceRequest struct {
 	Security      *qotcommon.Security
 	ReferenceType int32
 }
 
+// GetReferenceResponse is the response type for GetReference.
 type GetReferenceResponse struct {
 	StaticInfoList []*qotcommon.SecurityStaticInfo
 }
 
+// GetReference returns related securities (e.g., futures underlying) for the given security.
 func GetReference(c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -127,20 +133,24 @@ func GetReference(c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceRes
 	}, nil
 }
 
+// MarketStateInfo represents the market state for a single security.
 type MarketStateInfo struct {
 	Security    *qotcommon.Security
 	Name        string
 	MarketState int32
 }
 
+// GetMarketStateRequest defines parameters for GetMarketState.
 type GetMarketStateRequest struct {
 	SecurityList []*qotcommon.Security
 }
 
+// GetMarketStateResponse is the response type for GetMarketState.
 type GetMarketStateResponse struct {
 	MarketInfoList []*MarketStateInfo
 }
 
+// GetMarketState returns the market state (trading status) for the given securities.
 func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketStateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -195,12 +205,14 @@ func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketSt
 	return result, nil
 }
 
+// GetSubInfoResponse is the response type for GetSubInfo.
 type GetSubInfoResponse struct {
 	ConnSubInfoList []*qotcommon.ConnSubInfo
 	TotalUsedQuota  int32
 	RemainQuota     int32
 }
 
+// GetSubInfo returns subscription information and quota usage.
 func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err

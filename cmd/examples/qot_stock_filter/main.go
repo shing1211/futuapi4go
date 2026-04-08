@@ -13,14 +13,14 @@ import (
 	"log"
 	"os"
 
-	"gitee.com/shing1211/futuapi4go/internal/client"
+	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
-	cli := client.New()
+	cli := futuapi.New()
 	defer cli.Close()
 
 	addr := os.Getenv("FUTU_ADDR")
@@ -48,14 +48,14 @@ func main() {
 	// Example: Filter by price range 100-500 / 示例：篩選價格100-500的股票
 	// Uncomment to use filters / 取消註釋以使用篩選器
 	/*
-	req.BaseFilterList = []*qotstockfilter.BaseFilter{
-		{
-			FieldName:  int32(qotstockfilter.StockField_StockField_CurPrice),
-			FilterMin:  ptrFloat64(100.0),
-			FilterMax:  ptrFloat64(500.0),
-			IsNoFilter: ptrBool(false),
-		},
-	}
+		req.BaseFilterList = []*qotstockfilter.BaseFilter{
+			{
+				FieldName:  int32(qotstockfilter.StockField_StockField_CurPrice),
+				FilterMin:  ptrFloat64(100.0),
+				FilterMax:  ptrFloat64(500.0),
+				IsNoFilter: ptrBool(false),
+			},
+		}
 	*/
 
 	fmt.Println("📊 Stock Filter / 股票篩選")
@@ -69,7 +69,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Found %d stocks matching criteria / 找到%d只符合條件的股票\n\n", 
+	fmt.Printf("Found %d stocks matching criteria / 找到%d只符合條件的股票\n\n",
 		resp.AllCount, resp.AllCount)
 
 	// Display results / 顯示結果
@@ -83,11 +83,11 @@ func main() {
 
 	for i := 0; i < displayCount; i++ {
 		stock := resp.DataList[i]
-		
+
 		// Extract price from base data / 從基礎數據提取價格
 		price := 0.0
 		for _, bd := range stock.BaseDataList {
-			if bd.FieldName == int32(qotstockfilter.StockField_StockField_CurPrice) {
+			if bd.FieldName != nil && *bd.FieldName == int32(qotstockfilter.StockField_StockField_CurPrice) {
 				price = bd.GetValue()
 				break
 			}
@@ -97,12 +97,12 @@ func main() {
 			stock.Security.GetCode(), stock.Name, price)
 	}
 
-	if resp.AllCount > displayCount {
-		fmt.Printf("  ... and %d more stocks\n", resp.AllCount-displayCount)
+	if resp.AllCount > int32(displayCount) {
+		fmt.Printf("  ... and %d more stocks\n", resp.AllCount-int32(displayCount))
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")
 }
 
 func ptrFloat64(v float64) *float64 { return &v }
-func ptrBool(v bool) *bool { return &v }
+func ptrBool(v bool) *bool          { return &v }

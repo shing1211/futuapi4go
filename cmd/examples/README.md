@@ -2,7 +2,7 @@
 
 This directory contains comprehensive examples demonstrating how to use the FutuAPI4Go SDK for market data queries, trading operations, and real-time subscriptions.
 
-## 📚 Example Programs
+## Example Programs
 
 ### 1. **01_market_data_basic** - Basic Market Data APIs
 **Purpose**: Demonstrates fundamental market data APIs  
@@ -73,7 +73,7 @@ go run main.go
 
 **Best For**: Learning trading operations, order management, position tracking
 
-**⚠️ Important**: Trading APIs require `UnlockTrade` to be called first in real environments!
+**Important**: Trading APIs require `UnlockTrade` to be called first in real environments!
 
 ---
 
@@ -116,7 +116,7 @@ go run main.go
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Using with Simulator (Recommended for Development)
 
@@ -149,7 +149,7 @@ go run main.go
 
 ---
 
-## 📖 Example Structure
+## Example Structure
 
 Each example follows a consistent structure:
 
@@ -159,11 +159,11 @@ package main
 import (
     "fmt"
     "log"
-    
-    futuapi "gitee.com/shing1211/futuapi4go/client"
-    "gitee.com/shing1211/futuapi4go/qot"
-    "gitee.com/shing1211/futuapi4go/trd"
-    "gitee.com/shing1211/futuapi4go/pb/qotcommon"
+
+    futuapi "gitee.com/shing1211/futuapi4go/internal/client"
+    "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+    "gitee.com/shing1211/futuapi4go/pkg/qot"
+    "gitee.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {
@@ -183,7 +183,7 @@ func main() {
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 ### 1. **Connection Management**
 ```go
@@ -227,7 +227,7 @@ qot.Subscribe(cli, subReq)
 
 ---
 
-## 🎯 Common Use Cases
+## Common Use Cases
 
 ### Market Data Retrieval
 ```go
@@ -271,7 +271,7 @@ qot.Subscribe(cli, subReq)
 
 ---
 
-## 🔧 Helper Functions
+## Helper Functions
 
 All examples include helper functions for creating pointers:
 
@@ -286,7 +286,7 @@ These are necessary because protobuf fields require pointer types.
 
 ---
 
-## 📝 Notes
+## Notes
 
 1. **Simulator vs Real OpenD**: 
    - Simulator returns mock data for testing
@@ -304,7 +304,7 @@ These are necessary because protobuf fields require pointer types.
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [USER_GUIDE.md](../USER_GUIDE.md) - Complete user documentation
 - [SIMULATOR.md](../SIMULATOR.md) - Simulator documentation
@@ -313,7 +313,7 @@ These are necessary because protobuf fields require pointer types.
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Connection Failed
 ```
@@ -335,7 +335,7 @@ Subscribe failed: retType=-1
 
 ---
 
-## 💬 Support
+## Support
 
 For issues or questions:
 - Open an issue on [Gitee](https://gitee.com/shing1211/futuapi4go)
@@ -344,4 +344,4 @@ For issues or questions:
 
 ---
 
-**Happy Coding! 🚀**
+**Happy Coding!**

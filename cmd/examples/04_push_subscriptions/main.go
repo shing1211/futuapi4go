@@ -20,19 +20,19 @@ import (
 	"log"
 	"time"
 
-	"gitee.com/shing1211/futuapi4go/internal/client"
+	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
 	// Create and connect client
-	cli := client.New()
+	cli := futuapi.New()
 	defer cli.Close()
 
 	addr := "127.0.0.1:11111"
 	fmt.Printf("=== Connecting to %s ===\n", addr)
-	
+
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("Connection failed: %v", err)
 	}
@@ -41,7 +41,7 @@ func main() {
 	// Define securities to subscribe
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
 	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
-	
+
 	securities := []*qotcommon.Security{
 		{Market: &hkMarket, Code: ptrStr("00700")}, // Tencent
 		{Market: &hkMarket, Code: ptrStr("09988")}, // Alibaba
@@ -50,7 +50,7 @@ func main() {
 
 	// 1. Subscribe to Real-time Data
 	fmt.Println("=== 1. Subscribe to Real-time Data (Subscribe) ===")
-	
+
 	// Subscribe to multiple data types
 	subTypes := []qot.SubType{
 		qot.SubType_Basic,     // Real-time quotes
@@ -60,14 +60,14 @@ func main() {
 		qot.SubType_RT,        // Real-time minute data
 		qot.SubType_Broker,    // Broker queue
 	}
-	
+
 	subReq := &qot.SubscribeRequest{
-		SecurityList:         securities,
-		SubTypeList:          subTypes,
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+		SecurityList:     securities,
+		SubTypeList:      subTypes,
+		IsSubOrUnSub:     true,
+		IsRegOrUnRegPush: true,
 	}
-	
+
 	subResp, err := qot.Subscribe(cli, subReq)
 	if err != nil {
 		log.Printf("Subscribe failed: %v", err)
@@ -87,13 +87,16 @@ func main() {
 	} else {
 		fmt.Printf("  Total Used Quota: %d\n", subInfoResp.TotalUsedQuota)
 		fmt.Printf("  Remaining Quota: %d\n", subInfoResp.RemainQuota)
-		
-		if len(subInfoResp.SubInfoList) > 0 {
+
+		if len(subInfoResp.ConnSubInfoList) > 0 {
 			fmt.Printf("  Active Subscriptions:\n")
-			for _, info := range subInfoResp.SubInfoList {
-				fmt.Printf("    %s %s | SubType=%d | DataCount=%d\n",
-					info.Security.GetMarket(), info.Security.GetCode(),
-					info.SubType, info.DataCount)
+			for _, connInfo := range subInfoResp.ConnSubInfoList {
+				for _, info := range connInfo.GetSubInfoList() {
+					for _, sec := range info.GetSecurityList() {
+						fmt.Printf("    %s | SubType=%d\n",
+							sec.GetCode(), info.GetSubType())
+					}
+				}
 			}
 		}
 	}
@@ -101,14 +104,14 @@ func main() {
 
 	// 3. Register for Push Notifications
 	fmt.Println("=== 3. Register for Push Notifications (RegQotPush) ===")
-	
-	regReq := &qot.SubscribeRequest{
-		SecurityList:         securities,
-		SubTypeList:          subTypes,
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+
+	regReq := &qot.RegQotPushRequest{
+		SecurityList: securities,
+		SubTypeList:  []int32{int32(qotcommon.SubType_SubType_Basic)},
+		IsRegOrUnReg: true,
+		IsFirstPush:  true,
 	}
-	
+
 	regResp, err := qot.RegQotPush(cli, regReq)
 	if err != nil {
 		log.Printf("RegQotPush failed: %v", err)
@@ -123,7 +126,7 @@ func main() {
 	fmt.Println("=== 4. Push Notification Setup ===")
 	fmt.Println("  In real applications, you would set up handlers like:")
 	fmt.Println()
-	fmt.Println("  cli.SetQotPushHandler(func(pkt *client.Packet) {")
+	fmt.Println("  cli.SetQotPushHandler(func(pkt *	futuapi.Packet) {")
 	fmt.Println("    switch pkt.ProtoID {")
 	fmt.Println("    case 3101: // Basic quote update")
 	fmt.Println("      // Handle basic quote")
@@ -144,7 +147,7 @@ func main() {
 	// 5. Example: What you'll receive in push notifications
 	fmt.Println("=== 5. Push Notification Examples ===")
 	fmt.Println()
-	
+
 	fmt.Println("  Basic Quote Push (3101):")
 	fmt.Println("  ┌─────────────┬────────┬────────┬────────┬──────────┐")
 	fmt.Println("  │ Code        │ Price  │ Open   │ High   │ Volume   │")
@@ -202,7 +205,7 @@ func main() {
 	fmt.Println("    - Contains: Trade event type and details")
 	fmt.Println()
 	fmt.Println("  Setup example:")
-	fmt.Println("  cli.SetTrdPushHandler(func(pkt *client.Packet) {")
+	fmt.Println("  cli.SetTrdPushHandler(func(pkt *	futuapi.Packet) {")
 	fmt.Println("    switch pkt.ProtoID {")
 	fmt.Println("    case 7001: // Order status update")
 	fmt.Println("      // Handle order update")

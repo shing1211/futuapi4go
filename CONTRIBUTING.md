@@ -1,28 +1,28 @@
 # Contributing to futuapi4go
 
-感谢您对 futuapi4go 项目的关注！欢迎提交 Issue 和 Pull Request。
+Thank you for your interest in futuapi4go! We welcome Issues and Pull Requests.
 
-## 开发环境要求
+## Development Environment Requirements
 
 - Go 1.26+
-- 富途 OpenD 客户端
+- Futu OpenD client
 
-## 开发指南
+## Development Guide
 
-1. Fork 本仓库
-2. 创建功能分支 (`git checkout -b feature/xxx`)
-3. 编写代码并添加测试
-4. 提交您的更改 (`git commit -m 'Add xxx'`)
-5. 推送分支 (`git push origin feature/xxx`)
-6. 创建 Pull Request
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/xxx`)
+3. Write code and add tests
+4. Commit your changes (`git commit -m 'Add xxx'`)
+5. Push branch (`git push origin feature/xxx`)
+6. Create Pull Request
 
-## 代码规范
+## Code Standards
 
-- 遵循 Go 代码风格规范
-- 添加适当的注释
-- 确保代码通过 `go vet` 和 `go fmt`
-- 添加单元测试（如果有新功能）
+- Follow Go code style guidelines
+- Add appropriate comments
+- Ensure code passes `go vet` and `go fmt`
+- Add unit tests for new features
 
-## 问题反馈
+## Issue Reporting
 
-如果您发现 Bug 或有新功能建议，请提交 Issue。
+If you find a bug or have feature suggestions, please submit an Issue.

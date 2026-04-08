@@ -1,25 +1,25 @@
 # Project Restructuring Status
 
-## ✅ Completed
+## Completed
 
 1. **Directory Structure** - Migrated to Go standard layout
-   - ✅ `pkg/` - Public packages (qot, trd, sys, push, pb)
-   - ✅ `internal/` - Private packages (client)
-   - ✅ `cmd/` - Applications (examples, simulator)
-   - ✅ `api/proto/` - Protobuf definitions
-   - ✅ `docs/`, `scripts/`, `configs/`, `test/` - Standard directories
+   - `pkg/` - Public packages (qot, trd, sys, push, pb)
+   - `internal/` - Private packages (client)
+   - `cmd/` - Applications (examples, simulator)
+   - `api/proto/` - Protobuf definitions
+   - `docs/`, `scripts/`, `configs/`, `test/` - Standard directories
 
 2. **Import Paths** - All updated to new structure
-   - ✅ 74 protobuf files updated
-   - ✅ All Go source files updated
-   - ✅ go.mod cleaned up (no more replace directives)
+   - 74 protobuf files updated
+   - All Go source files updated
+   - go.mod cleaned up (no more replace directives)
 
 3. **Package Organization**
-   - ✅ Public APIs in `pkg/` (importable by users)
-   - ✅ Internal client in `internal/` (not importable)
-   - ✅ Examples and simulator in `cmd/`
+   - Public APIs in `pkg/` (importable by users)
+   - Internal client in `internal/` (not importable)
+   - Examples and simulator in `cmd/`
 
-## ⚠️ Issues to Fix
+## Issues to Fix
 
 ### Compilation Errors (Minor)
 
@@ -50,7 +50,7 @@ The examples have some API mismatches that need fixing:
 - [ ] Create migration guide for existing users
 - [ ] Update all documentation references
 
-## 📋 Next Steps
+## Next Steps
 
 Since you have **real Futu OpenD** running locally, I recommend:
 
@@ -59,13 +59,13 @@ Since you have **real Futu OpenD** running locally, I recommend:
 3. **Then fix simulator** to match real API behavior
 4. **Create examples for every function** (your original goal)
 
-## 🎯 Benefits of New Structure
+## Benefits of New Structure
 
-✅ **Go Standard Layout** - Familiar to all Go developers
-✅ **Clear API Boundaries** - pkg/ vs internal/ separation
-✅ **Better Organization** - Easy to find and maintain code
-✅ **Scalable** - Ready for growth (more tools, tests, docs)
-✅ **Professional** - World-class project structure
+- **Go Standard Layout** - Familiar to all Go developers
+- **Clear API Boundaries** - pkg/ vs internal/ separation
+- **Better Organization** - Easy to find and maintain code
+- **Scalable** - Ready for growth (more tools, tests, docs)
+- **Professional** - World-class project structure
 
 ---
 

@@ -60,12 +60,12 @@ func main() {
 	fmt.Println("🔴 Ask Orders (Sell) / 賣盤:")
 	fmt.Printf("  %-6s %-12s %-12s %-10s\n", "Level", "Price", "Volume", "Orders")
 	fmt.Println("  " + "--------------------------------------------")
-	
+
 	// Ask list is in reverse order (highest price first)
 	for i := len(resp.OrderBookAskList) - 1; i >= 0; i-- {
 		ob := resp.OrderBookAskList[i]
 		fmt.Printf("  %-6d %-12.2f %-12d %-10d\n",
-			len(resp.OrderBookAskList)-i, ob.Price, ob.Volume, ob.OrederCount)
+			len(resp.OrderBookAskList)-i, ob.Price, ob.Volume, ob.OrderCount)
 	}
 
 	fmt.Println()
@@ -74,10 +74,10 @@ func main() {
 	fmt.Println("🟢 Bid Orders (Buy) / 買盤:")
 	fmt.Printf("  %-6s %-12s %-12s %-10s\n", "Level", "Price", "Volume", "Orders")
 	fmt.Println("  " + "--------------------------------------------")
-	
+
 	for i, ob := range resp.OrderBookBidList {
 		fmt.Printf("  %-6d %-12.2f %-12d %-10d\n",
-			i+1, ob.Price, ob.Volume, ob.OrederCount)
+			i+1, ob.Price, ob.Volume, ob.OrderCount)
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")

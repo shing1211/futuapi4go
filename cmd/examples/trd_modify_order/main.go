@@ -54,12 +54,12 @@ func main() {
 
 	// Construct modify request / 構建修改請求
 	req := &trd.ModifyOrderRequest{
-		AccID:      accID,
-		TrdMarket:  int32(trdcommon.TrdMarket_TrdMarket_HK),
-		OrderID:    orderID,
-		ModifyType: int32(trdcommon.ModifyOrderType_ModifyOrderType_Normal), // Normal modify / 普通修改
-		Qty:        200.0,    // New quantity / 新數量
-		Price:      360.00,   // New price / 新價格
+		AccID:         accID,
+		TrdMarket:     int32(trdcommon.TrdMarket_TrdMarket_HK),
+		OrderID:       orderID,
+		ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Normal), // Normal modify / 普通修改
+		Qty:           200.0,                                               // New quantity / 新數量
+		Price:         360.00,                                              // New price / 新價格
 	}
 
 	fmt.Println("📝 Modify Order Details / 修改訂單詳情:")
@@ -79,10 +79,10 @@ func main() {
 		fmt.Println("   To modify order, uncomment this code:")
 		fmt.Println("   err := trd.ModifyOrder(cli, req)")
 		fmt.Println("   if err != nil {")
-		fmt.Println("       log.Printf(\"ModifyOrder failed: %v\", err)")
+		fmt.Println("       log.Printf(\"ModifyOrder failed\", err)")
 		fmt.Println("       return")
 		fmt.Println("   }")
-		fmt.Println("   fmt.Println(\"✅ Order modified successfully!\")")
+		fmt.Println("   fmt.Println(\"Order modified successfully\")")
 	} else {
 		// Live modification / 實際修改
 		err := trd.ModifyOrder(cli, req)

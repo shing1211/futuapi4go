@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"log"
 
-	"gitee.com/shing1211/futuapi4go/internal/client"
+	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pkg/qot"
@@ -29,20 +29,20 @@ import (
 
 func main() {
 	// Create and connect client
-	cli := client.New()
+	cli := futuapi.New()
 	defer cli.Close()
 
 	addr := "127.0.0.1:11111"
 	fmt.Printf("=== Connecting to %s ===\n", addr)
-	
+
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("Connection failed: %v", err)
 	}
 	fmt.Printf("✓ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
-	shMarket := int32(qotcommon.QotMarket_QotMarket_CNSH_Security)
+	_ = int32(qotcommon.QotMarket_QotMarket_US_Security)
+	_ = int32(qotcommon.QotMarket_QotMarket_CNSH_Security)
 
 	// 1. Get Stock Static Info
 	fmt.Println("=== 1. Stock Static Info (GetStaticInfo) ===")
@@ -50,7 +50,7 @@ func main() {
 		Market:  hkMarket,
 		SecType: int32(qotcommon.SecurityType_SecurityType_Eqty),
 	}
-	
+
 	staticResp, err := qot.GetStaticInfo(cli, staticReq)
 	if err != nil {
 		log.Printf("GetStaticInfo failed: %v", err)
@@ -65,7 +65,7 @@ func main() {
 			info := staticResp.StaticInfoList[i]
 			basic := info.GetBasic()
 			fmt.Printf("  %s | %s | LotSize=%d | ListDate=%s\n",
-				basic.GetCode(), basic.GetName(), basic.GetLotSize(), basic.GetListTime())
+				basic.GetSecurity().GetCode(), basic.GetName(), basic.GetLotSize(), basic.GetListTime())
 		}
 	}
 	fmt.Println()
@@ -75,7 +75,7 @@ func main() {
 	plateReq := &qot.GetPlateSetRequest{
 		Market: hkMarket,
 	}
-	
+
 	plateResp, err := qot.GetPlateSet(cli, plateReq)
 	if err != nil {
 		log.Printf("GetPlateSet failed: %v", err)
@@ -97,23 +97,22 @@ func main() {
 		Market: &hkMarket,
 		Code:   ptrStr("00700"),
 	}
-	
+
 	capFlowReq := &qot.GetCapitalFlowRequest{
 		Security:   security,
 		PeriodType: 1, // Daily
 	}
-	
+
 	capFlowResp, err := qot.GetCapitalFlow(cli, capFlowReq)
 	if err != nil {
 		log.Printf("GetCapitalFlow failed: %v", err)
 	} else {
 		fmt.Printf("  Stock: %s\n", security.GetCode())
-		fmt.Printf("  %-20s %-15s %-15s %-15s\n",
-			"Time", "Main In", "Main Out", "Net Flow")
+		fmt.Printf("  %-20s %-15s %-15s\n",
+			"Time", "InFlow", "Main In")
 		for _, flow := range capFlowResp.FlowItemList {
-			fmt.Printf("  %-20s %-15.2f %-15.2f %-15.2f\n",
-				flow.Time, flow.MainInFlow, flow.MainOutFlow,
-				flow.MainInFlow-flow.MainOutFlow)
+			fmt.Printf("  %-20s %-15.2f %-15.2f\n",
+				flow.Time, flow.InFlow, flow.MainInFlow)
 		}
 	}
 	fmt.Println()
@@ -134,8 +133,8 @@ func main() {
 		fmt.Printf("  Mid Out:   %.2f\n", cd.CapitalOutMid)
 		fmt.Printf("  Small In:  %.2f\n", cd.CapitalInSmall)
 		fmt.Printf("  Small Out: %.2f\n", cd.CapitalOutSmall)
-		
-		netMainFlow := cd.CapitalInSuper + cd.CapitalInBig - 
+
+		netMainFlow := cd.CapitalInSuper + cd.CapitalInBig -
 			cd.CapitalOutSuper - cd.CapitalOutBig
 		fmt.Printf("  Net Main Flow:  %.2f\n", netMainFlow)
 		fmt.Printf("  Update Time: %s\n", cd.UpdateTime)
@@ -149,7 +148,7 @@ func main() {
 		Num:    10,
 		Market: hkMarket,
 	}
-	
+
 	// Example: Filter stocks with price between 100 and 500
 	// Note: Simulator returns empty results, but this shows the API usage
 	/*
@@ -162,12 +161,12 @@ func main() {
 			},
 		}
 	*/
-	
+
 	filterResp, err := qot.StockFilter(cli, filterReq)
 	if err != nil {
 		log.Printf("StockFilter failed: %v", err)
 	} else {
-		fmt.Printf("  Found %d stocks matching criteria (showing first %d)\n", 
+		fmt.Printf("  Found %d stocks matching criteria (showing first %d)\n",
 			filterResp.AllCount, len(filterResp.DataList))
 		for _, stock := range filterResp.DataList {
 			fmt.Printf("  %s (%s)", stock.Security.GetCode(), stock.Name)
@@ -188,7 +187,7 @@ func main() {
 	optionExpReq := &qot.GetOptionExpirationDateRequest{
 		Owner: security,
 	}
-	
+
 	optionExpResp, err := qot.GetOptionExpirationDate(cli, optionExpReq)
 	if err != nil {
 		log.Printf("GetOptionExpirationDate failed: %v", err)
@@ -219,12 +218,12 @@ func main() {
 		Num:   10,
 		Owner: security,
 	}
-	
+
 	warrantResp, err := qot.GetWarrant(cli, warrantReq)
 	if err != nil {
 		log.Printf("GetWarrant failed: %v", err)
 	} else {
-		fmt.Printf("  Found %d warrants (showing first %d)\n", 
+		fmt.Printf("  Found %d warrants (showing first %d)\n",
 			warrantResp.AllCount, len(warrantResp.WarrantDataList))
 		for _, w := range warrantResp.WarrantDataList {
 			fmt.Printf("  %s | %s | Price=%.3f | Vol=%d\n",
@@ -241,7 +240,7 @@ func main() {
 		BeginTime: "2026-04-01",
 		EndTime:   "2026-04-30",
 	}
-	
+
 	tradeDateResp, err := qot.GetTradeDate(cli, tradeDateReq)
 	if err != nil {
 		log.Printf("GetTradeDate failed: %v", err)
@@ -252,7 +251,7 @@ func main() {
 			if i > 0 {
 				fmt.Print(", ")
 			}
-			fmt.Print(td.TradeDate)
+			fmt.Print(td.GetTime())
 			if i >= 9 {
 				fmt.Printf(" ... (%d total)", len(tradeDateResp.TradeDateList))
 				break
@@ -265,11 +264,9 @@ func main() {
 	// 10. Get Futures Information
 	fmt.Println("=== 10. Futures Information (GetFutureInfo) ===")
 	futureReq := &qot.GetFutureInfoRequest{
-		Begin: 0,
-		Num:   5,
-		Market: hkMarket,
+		SecurityList: []*qotcommon.Security{security},
 	}
-	
+
 	futureResp, err := qot.GetFutureInfo(cli, futureReq)
 	if err != nil {
 		log.Printf("GetFutureInfo failed: %v", err)
@@ -277,7 +274,7 @@ func main() {
 		fmt.Printf("  Found %d futures contracts\n", len(futureResp.FutureInfoList))
 		for _, f := range futureResp.FutureInfoList {
 			fmt.Printf("  %s | %s | LastTradeDay=%s\n",
-				f.GetCode(), f.GetName(), f.GetLastTradeTime())
+				f.Security.GetCode(), f.Name, f.LastTradeTime)
 		}
 	}
 	fmt.Println()
@@ -287,7 +284,7 @@ func main() {
 	ipoReq := &qot.GetIpoListRequest{
 		Market: hkMarket,
 	}
-	
+
 	ipoResp, err := qot.GetIpoList(cli, ipoReq)
 	if err != nil {
 		log.Printf("GetIpoList failed: %v", err)
@@ -296,10 +293,10 @@ func main() {
 		for _, ipo := range ipoResp.IpoList {
 			fmt.Printf("  %s (%s) | ListDate=%s",
 				ipo.Basic.Security.GetCode(), ipo.Basic.Name, ipo.Basic.ListTime)
-			
+
 			// Show exchange-specific data
 			if ipo.HkExData != nil {
-				fmt.Printf(" | IPOPrice=%.2f", ipo.HkExData.IpoPrice)
+				fmt.Printf(" | IPOPriceMin=%.2f", ipo.HkExData.IpoPriceMin)
 			}
 			fmt.Println()
 		}
