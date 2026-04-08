@@ -12,6 +12,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
+
+	"time"
 )
 
 const (
@@ -52,7 +54,11 @@ func GetOwnerPlate(c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlate
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +115,11 @@ func GetReference(c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceRes
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +181,11 @@ func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketSt
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +245,11 @@ func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}

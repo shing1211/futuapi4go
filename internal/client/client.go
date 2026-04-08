@@ -257,7 +257,7 @@ func New(opts ...Option) *Client {
 	logger = options.Logger
 
 	ctx, cancel := context.WithCancel(context.Background())
-	return &Client{
+	client := &Client{
 		conn:     NewConn(nil),
 		opts:     options,
 		handlers: make(map[uint32]Handler),
@@ -265,6 +265,8 @@ func New(opts ...Option) *Client {
 		cancel:   cancel,
 		metrics:  &Metrics{},
 	}
+	client.conn.apiTimeout = options.APITimeout
+	return client
 }
 
 // NewWithOptions creates a Client with legacy parameters (deprecated, use New(With...) instead).
@@ -350,8 +352,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	if apiTimeout == 0 {
 		apiTimeout = DefaultTimeout
 	}
-	c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
-	respPkt, err := c.conn.ReadPacket()
+	respPkt, err := c.conn.ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		c.conn.Close()
 		return fmt.Errorf("read response: %w", err)
@@ -471,8 +472,7 @@ func (c *Client) keepAlive() error {
 		return err
 	}
 
-	c.conn.SetReadDeadline(time.Now().Add(10 * time.Second))
-	respPkt, err := c.conn.ReadPacket()
+	respPkt, err := c.conn.ReadResponse(serialNo, 10*time.Second)
 	if err != nil {
 		return err
 	}
@@ -500,36 +500,32 @@ func (c *Client) nextSerialNo() uint32 {
 func (c *Client) readLoop() {
 	defer c.wg.Done()
 
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
-
 	for {
 		select {
 		case <-c.ctx.Done():
 			return
-		case <-ticker.C:
+		default:
 		}
 
 		if atomic.LoadInt32(&c.connActive) == 0 {
 			return
 		}
 
-		c.conn.SetReadDeadline(time.Now().Add(time.Millisecond))
-		pkt, err := c.conn.ReadPacket()
+		pkt, err := c.conn.readOne()
 		if err != nil {
-			if atomic.LoadInt32(&c.connActive) == 0 {
-				return
+			c.mu.Lock()
+			if c.connected && atomic.LoadInt32(&c.connActive) == 1 {
+				c.connected = false
+				c.logWarn("connection lost: %v\n", err)
+				c.mu.Unlock()
+				go c.reconnect()
+			} else {
+				c.mu.Unlock()
 			}
-			continue
+			return
 		}
 
-		c.handlersMu.RLock()
-		handler, ok := c.handlers[pkt.Header.ProtoID]
-		c.handlersMu.RUnlock()
-
-		if ok {
-			handler(pkt.Header.ProtoID, pkt.Body)
-		}
+		c.conn.Dispatch(pkt)
 	}
 }
 
@@ -699,8 +695,7 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 	if apiTimeout == 0 {
 		apiTimeout = DefaultTimeout
 	}
-	c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
-	pkt, err := c.conn.ReadPacket()
+	pkt, err := c.conn.ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return fmt.Errorf("read response: %w", err)
 	}

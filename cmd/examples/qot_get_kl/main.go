@@ -38,7 +38,7 @@ func main() {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
 	security := &qotcommon.Security{
 		Market: &hkMarket,
-		Code:   ptrStr("00700"), // Tencent / 騰訊
+		Code:   ptrStr("HSImain"), // Tencent / 騰訊
 	}
 
 	// Example 1: Daily K-line / 日K線

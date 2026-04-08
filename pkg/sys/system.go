@@ -11,6 +11,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/verification"
+
+	"time"
 )
 
 const (
@@ -59,7 +61,11 @@ func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +130,11 @@ func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +189,11 @@ func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) 
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +250,11 @@ func Verification(c *futuapi.Client, req *VerificationRequest) error {
 		return err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return err
 	}

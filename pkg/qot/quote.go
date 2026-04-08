@@ -41,6 +41,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotsub"
+
+	"time"
 )
 
 const (
@@ -119,7 +121,11 @@ func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*Basi
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +220,11 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -313,7 +323,11 @@ func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookRes
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -410,7 +424,11 @@ func GetTicker(c *futuapi.Client, req *GetTickerRequest) (*GetTickerResponse, er
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -496,7 +514,11 @@ func GetRT(c *futuapi.Client, req *GetRTRequest) (*GetRTResponse, error) {
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -578,7 +600,11 @@ func GetBroker(c *futuapi.Client, req *GetBrokerRequest) (*GetBrokerResponse, er
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -660,7 +686,11 @@ func GetStaticInfo(c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfo
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -721,7 +751,11 @@ func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetRespon
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -785,7 +819,11 @@ func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlat
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -844,7 +882,11 @@ func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateRes
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -905,7 +947,11 @@ func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*Request
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -977,7 +1023,11 @@ func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*Request
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1035,7 +1085,11 @@ func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*G
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1121,7 +1175,11 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1192,7 +1250,11 @@ func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalF
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1273,7 +1335,11 @@ func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*G
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1334,7 +1400,11 @@ func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityRespo
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1402,7 +1472,11 @@ func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market in
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1488,7 +1562,11 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1578,7 +1656,11 @@ func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionCh
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1684,7 +1766,11 @@ func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterRespon
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1871,7 +1957,11 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -1996,7 +2086,11 @@ func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse,
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2089,7 +2183,11 @@ func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfo
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2186,7 +2284,11 @@ func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChange
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2313,7 +2415,11 @@ func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse,
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2435,7 +2541,11 @@ func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2497,7 +2607,11 @@ func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2566,7 +2680,11 @@ func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*Mod
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2629,7 +2747,11 @@ func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPric
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2693,7 +2815,11 @@ func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse,
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2744,7 +2870,11 @@ func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabRes
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -2801,7 +2931,11 @@ func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest)
 		return nil, err
 	}
 
-	pktResp, err := c.Conn().ReadPacket()
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
