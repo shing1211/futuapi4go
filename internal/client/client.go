@@ -496,10 +496,6 @@ func (c *Client) readLoop() {
 		default:
 		}
 
-		if atomic.LoadInt32(&c.connActive) == 0 {
-			return
-		}
-
 		pkt, err := c.conn.readOne()
 		if err != nil {
 			c.mu.Lock()
