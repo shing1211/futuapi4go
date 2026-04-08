@@ -35,6 +35,42 @@ func logf(format string, v ...interface{}) {
 	logger.Printf(format, v...)
 }
 
+// logInfo logs at info level if log level allows.
+func (c *Client) logInfo(format string, v ...interface{}) {
+	if c.opts.LogLevel > 0 {
+		return
+	}
+	l := c.opts.Logger
+	if l == nil {
+		l = defaultLogger()
+	}
+	l.Printf(format, v...)
+}
+
+// logWarn logs at warn level if log level allows.
+func (c *Client) logWarn(format string, v ...interface{}) {
+	if c.opts.LogLevel > 1 {
+		return
+	}
+	l := c.opts.Logger
+	if l == nil {
+		l = defaultLogger()
+	}
+	l.Printf(format, v...)
+}
+
+// logError logs at error level if log level allows.
+func (c *Client) logError(format string, v ...interface{}) {
+	if c.opts.LogLevel > 2 {
+		return
+	}
+	l := c.opts.Logger
+	if l == nil {
+		l = defaultLogger()
+	}
+	l.Printf(format, v...)
+}
+
 const (
 	ProtoID_InitConnect    = 1001
 	ProtoID_KeepAlive      = 1002
@@ -46,11 +82,99 @@ const (
 	DefaultKeepAliveInterval = 30 * time.Second
 	DefaultMaxRetries        = 3
 	DefaultReconnectInterval = 3 * time.Second
+	DefaultDialTimeout       = 10 * time.Second
 )
+
+// ClientOptions holds configuration options for the Client.
+// Use NewOptions() for sensible defaults, then modify as needed.
+type ClientOptions struct {
+	// Connection settings
+	DialTimeout       time.Duration // Timeout for initial TCP dial
+	APITimeout        time.Duration // Default timeout for API calls
+	KeepAliveInterval time.Duration // Interval between keepalive pings
+	MaxPacketSize     uint32        // Maximum packet size (default 10MB)
+
+	// Reconnection settings
+	MaxRetries        int           // Max reconnection attempts
+	ReconnectInterval time.Duration // Base interval between reconnect attempts
+	ReconnectBackoff  float64       // Multiplier for backoff (1.0 = no backoff)
+
+	// Logging
+	Logger *log.Logger // Custom logger (nil = use default)
+	LogLevel int       // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
+
+	// Push notifications
+	PushHandler PacketHandler // Handler for incoming push notifications
+}
+
+// NewOptions returns ClientOptions with sensible defaults.
+func NewOptions() *ClientOptions {
+	return &ClientOptions{
+		DialTimeout:       DefaultDialTimeout,
+		APITimeout:        DefaultTimeout,
+		KeepAliveInterval: DefaultKeepAliveInterval,
+		MaxPacketSize:     10 * 1024 * 1024,
+		MaxRetries:        DefaultMaxRetries,
+		ReconnectInterval: DefaultReconnectInterval,
+		ReconnectBackoff:  1.5,
+		Logger:            nil,
+		LogLevel:          0,
+		PushHandler:       nil,
+	}
+}
+
+// Option is a functional option for configuring Client.
+type Option func(*ClientOptions)
+
+// WithDialTimeout sets the TCP dial timeout.
+func WithDialTimeout(d time.Duration) Option {
+	return func(o *ClientOptions) { o.DialTimeout = d }
+}
+
+// WithAPITimeout sets the default API call timeout.
+func WithAPITimeout(d time.Duration) Option {
+	return func(o *ClientOptions) { o.APITimeout = d }
+}
+
+// WithKeepAliveInterval sets the keepalive ping interval.
+func WithKeepAliveInterval(d time.Duration) Option {
+	return func(o *ClientOptions) { o.KeepAliveInterval = d }
+}
+
+// WithMaxRetries sets the maximum reconnection attempts.
+func WithMaxRetries(n int) Option {
+	return func(o *ClientOptions) { o.MaxRetries = n }
+}
+
+// WithReconnectInterval sets the base reconnect interval.
+func WithReconnectInterval(d time.Duration) Option {
+	return func(o *ClientOptions) { o.ReconnectInterval = d }
+}
+
+// WithReconnectBackoff sets the backoff multiplier for reconnection.
+func WithReconnectBackoff(m float64) Option {
+	return func(o *ClientOptions) { o.ReconnectBackoff = m }
+}
+
+// WithLogger sets a custom logger.
+func WithLogger(l *log.Logger) Option {
+	return func(o *ClientOptions) { o.Logger = l }
+}
+
+// WithLogLevel sets the log level (0=Info, 1=Warn, 2=Error, 3=Silent).
+func WithLogLevel(level int) Option {
+	return func(o *ClientOptions) { o.LogLevel = level }
+}
+
+// WithPushHandler sets a handler for push notifications.
+func WithPushHandler(h PacketHandler) Option {
+	return func(o *ClientOptions) { o.PushHandler = h }
+}
 
 type Client struct {
 	conn              *Conn
 	mu                sync.RWMutex
+	opts              *ClientOptions
 	connID            uint64
 	aesKey            string
 	serverVer         int32
@@ -65,47 +189,36 @@ type Client struct {
 	connected         bool
 
 	addr              string
-	maxRetries        int
-	reconnectInterval time.Duration
 	reconnecting      int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
 }
 
 type Handler func(protoID uint32, body []byte)
 
-func New() *Client {
+// New creates a Client with default options.
+func New(opts ...Option) *Client {
+	options := NewOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
+
+	logger = options.Logger
+
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Client{
 		conn:              NewConn(nil),
+		opts:              options,
 		handlers:          make(map[uint32]Handler),
 		ctx:               ctx,
 		cancel:            cancel,
-		maxRetries:        DefaultMaxRetries,
-		reconnectInterval: DefaultReconnectInterval,
 	}
 }
 
+// NewWithOptions creates a Client with legacy parameters (deprecated, use New(With...) instead).
 func NewWithOptions(addr string, maxRetries int, reconnectInterval time.Duration) *Client {
-	ctx, cancel := context.WithCancel(context.Background())
-	if maxRetries == 0 {
-		maxRetries = DefaultMaxRetries
-	}
-	if reconnectInterval == 0 {
-		reconnectInterval = DefaultReconnectInterval
-	}
-	client := &Client{
-		conn:              NewConn(nil),
-		handlers:          make(map[uint32]Handler),
-		ctx:               ctx,
-		cancel:            cancel,
-		maxRetries:        maxRetries,
-		reconnectInterval: reconnectInterval,
-	}
-	if addr != "" {
-		if err := client.Connect(addr); err != nil {
-			return nil
-		}
-	}
-	return client
+	return New(
+		WithMaxRetries(maxRetries),
+		WithReconnectInterval(reconnectInterval),
+	)
 }
 
 func (c *Client) Connect(addr string) error {
@@ -117,6 +230,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.addr = addr
 	c.mu.Unlock()
 
+	// Dial with configured timeout
 	if err := c.conn.Dial(addr); err != nil {
 		return fmt.Errorf("dial: %w", err)
 	}
@@ -156,7 +270,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		// Set encryption algorithm to FTAES_ECB (0) as per protocol spec
 		packetEncAlgo = 0
 		c2s.PacketEncAlgo = &packetEncAlgo
-		
+
 		// Re-marshal with encryption flag set
 		pkt = &initconnect.Request{C2S: c2s}
 		body, err = proto.Marshal(pkt)
@@ -164,7 +278,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 			c.conn.Close()
 			return fmt.Errorf("marshal request: %w", err)
 		}
-		
+
 		// Replace body with encrypted version
 		body = encryptedBody
 		logf("InitConnect: Using RSA encryption")
@@ -178,7 +292,11 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		return fmt.Errorf("write packet: %w", err)
 	}
 
-	c.conn.SetReadDeadline(time.Now().Add(DefaultTimeout))
+	apiTimeout := c.opts.APITimeout
+	if apiTimeout == 0 {
+		apiTimeout = DefaultTimeout
+	}
+	c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
 	respPkt, err := c.conn.ReadPacket()
 	if err != nil {
 		c.conn.Close()
@@ -220,10 +338,32 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		}
 	})
 
+	// Also call user-configured push handler if set
+	if c.opts.PushHandler != nil {
+		userHandler := c.opts.PushHandler
+		c.conn.SetPushHandler(func(pkt *Packet) {
+			c.handlersMu.RLock()
+			handler, ok := c.handlers[pkt.Header.ProtoID]
+			c.handlersMu.RUnlock()
+			if ok {
+				handler(pkt.Header.ProtoID, pkt.Body)
+			}
+			userHandler(pkt)
+		})
+	}
+
+	keepAliveInterval := c.opts.KeepAliveInterval
+	if keepAliveInterval == 0 {
+		if c.keepAliveInterval > 0 {
+			keepAliveInterval = time.Duration(c.keepAliveInterval) * time.Second
+		} else {
+			keepAliveInterval = DefaultKeepAliveInterval
+		}
+	}
 	if c.keepAliveInterval > 0 {
 		interval := time.Duration(c.keepAliveInterval) * time.Second
-		if interval < DefaultKeepAliveInterval {
-			interval = DefaultKeepAliveInterval
+		if interval < keepAliveInterval {
+			interval = keepAliveInterval
 		}
 		c.wg.Add(1)
 		go c.keepAliveLoop(interval)
@@ -244,7 +384,10 @@ func (c *Client) keepAliveLoop(interval time.Duration) {
 			return
 		case <-ticker.C:
 			if err := c.keepAlive(); err != nil {
-				logf("keepalive error: %v", err)
+				c.logWarn("keepalive error: %v\n", err)
+				// Trigger reconnect if keepalive fails
+				go c.reconnect()
+				return
 			}
 		}
 	}
@@ -330,26 +473,41 @@ func (c *Client) reconnect() {
 	}
 	defer atomic.StoreInt32(&c.reconnecting, 0)
 
-	for attempt := 1; attempt <= c.maxRetries; attempt++ {
+	maxRetries := c.opts.MaxRetries
+	if maxRetries == 0 {
+		maxRetries = DefaultMaxRetries
+	}
+	baseInterval := c.opts.ReconnectInterval
+	if baseInterval == 0 {
+		baseInterval = DefaultReconnectInterval
+	}
+	backoff := c.opts.ReconnectBackoff
+	if backoff <= 0 {
+		backoff = 1.0
+	}
+
+	interval := baseInterval
+	for attempt := 1; attempt <= maxRetries; attempt++ {
 		select {
 		case <-c.ctx.Done():
 			return
 		default:
 		}
 
-		logf("reconnect attempt %d/%d...\n", attempt, c.maxRetries)
-		time.Sleep(c.reconnectInterval)
+		c.logInfo("reconnect attempt %d/%d...\n", attempt, maxRetries)
+		time.Sleep(interval)
 
 		if err := c.Connect(c.addr); err != nil {
-			logf("reconnect failed: %v\n", err)
+			c.logWarn("reconnect failed: %v\n", err)
+			interval = time.Duration(float64(interval) * backoff)
 			continue
 		}
 
-		logf("reconnected successfully\n")
+		c.logInfo("reconnected successfully\n")
 		return
 	}
 
-	logf("reconnect failed: max retries exceeded\n")
+	c.logError("reconnect failed: max retries exceeded\n")
 }
 
 func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
@@ -421,11 +579,10 @@ func (c *Client) Context() context.Context {
 func (c *Client) WithContext(ctx context.Context) *Client {
 	newClient := &Client{
 		conn:              c.conn,
+		opts:              c.opts,
 		handlers:          c.handlers,
 		ctx:               ctx,
 		cancel:            func() {}, // Don't cancel parent context
-		maxRetries:        c.maxRetries,
-		reconnectInterval: c.reconnectInterval,
 	}
 	newClient.mu.RLock()
 	newClient.connID = c.connID
