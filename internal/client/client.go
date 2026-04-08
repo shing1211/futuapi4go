@@ -500,30 +500,27 @@ func (c *Client) nextSerialNo() uint32 {
 func (c *Client) readLoop() {
 	defer c.wg.Done()
 
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
 	for {
 		select {
 		case <-c.ctx.Done():
 			return
-		default:
+		case <-ticker.C:
 		}
 
 		if atomic.LoadInt32(&c.connActive) == 0 {
 			return
 		}
 
-		c.conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+		c.conn.SetReadDeadline(time.Now().Add(time.Millisecond))
 		pkt, err := c.conn.ReadPacket()
 		if err != nil {
-			c.mu.Lock()
-			if c.connected && atomic.LoadInt32(&c.connActive) == 1 {
-				c.connected = false
-				c.logWarn("connection lost: %v\n", err)
-				c.mu.Unlock()
-				go c.reconnect()
-			} else {
-				c.mu.Unlock()
+			if atomic.LoadInt32(&c.connActive) == 0 {
+				return
 			}
-			return
+			continue
 		}
 
 		c.handlersMu.RLock()
