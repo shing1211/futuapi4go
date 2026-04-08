@@ -20,6 +20,7 @@ const (
 	ProtoID_Verification       = 8001
 )
 
+// GetGlobalStateResponse represents the global connection state including server info, login status, and market availability.
 type GetGlobalStateResponse struct {
 	ConnID        uint64
 	ServerVer     int32
@@ -36,6 +37,8 @@ type GetGlobalStateResponse struct {
 	MarketSZ      int32
 }
 
+// GetGlobalState retrieves the global connection state including server version, login status, and market information.
+// Returns the global state or an error if the request fails.
 func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -92,6 +95,7 @@ func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
 	}, nil
 }
 
+// GetUserInfoResponse represents the user information including user ID, nickname, avatar, and API level.
 type GetUserInfoResponse struct {
 	UserID                int64
 	NickName              string
@@ -100,6 +104,8 @@ type GetUserInfoResponse struct {
 	IsNeedAgreeDisclaimer bool
 }
 
+// GetUserInfo retrieves the current user information including nickname, avatar, and API level.
+// Returns the user info or an error if the request fails.
 func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -146,12 +152,15 @@ func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
 	}, nil
 }
 
+// GetDelayStatisticsResponse represents delay statistics for quote push, request-reply, and order placement.
 type GetDelayStatisticsResponse struct {
 	QotPushStatisticsList    []*getdelaystatistics.DelayStatistics
 	ReqReplyStatisticsList   []*getdelaystatistics.ReqReplyStatisticsItem
 	PlaceOrderStatisticsList []*getdelaystatistics.PlaceOrderStatisticsItem
 }
 
+// GetDelayStatistics retrieves performance delay statistics for quote pushes, request-reply, and order placements.
+// Returns the delay statistics or an error if the request fails.
 func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -196,12 +205,15 @@ func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) 
 	}, nil
 }
 
+// VerificationRequest is the request to verify a user with a specified code (e.g., SMS or email verification).
 type VerificationRequest struct {
 	Type verification.VerificationType
 	Op   verification.VerificationOp
 	Code string
 }
 
+// Verification submits a verification request for user authentication.
+// Returns an error if the verification fails.
 func Verification(c *futuapi.Client, req *VerificationRequest) error {
 	if err := c.EnsureConnected(); err != nil {
 		return err

@@ -81,6 +81,7 @@ const (
 	ProtoID_RequestHistoryKLQuota   = 3104
 )
 
+// BasicQot represents basic quote data for a security.
 type BasicQot struct {
 	Security       *qotcommon.Security
 	Name           string
@@ -97,6 +98,7 @@ type BasicQot struct {
 	Amplitude      float64
 }
 
+// GetBasicQot returns basic quote data for the given securities.
 func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -158,6 +160,7 @@ func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*Basi
 	return result, nil
 }
 
+// KLine represents a single K-line (candlestick) data point.
 type KLine struct {
 	Time           string
 	IsBlank        bool
@@ -172,6 +175,7 @@ type KLine struct {
 	Timestamp      float64
 }
 
+// GetKLRequest defines parameters for GetKL.
 type GetKLRequest struct {
 	Security  *qotcommon.Security
 	RehabType int32
@@ -179,12 +183,14 @@ type GetKLRequest struct {
 	ReqNum    int32
 }
 
+// GetKLResponse is the response type for GetKL.
 type GetKLResponse struct {
 	Security *qotcommon.Security
 	Name     string
 	KLList   []*KLine
 }
 
+// GetKL returns K-line (candlestick) data for the given security.
 func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -252,6 +258,7 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 	return result, nil
 }
 
+// OrderBook represents a price level in the order book.
 type OrderBook struct {
 	Price      float64
 	Volume     int64
@@ -259,17 +266,20 @@ type OrderBook struct {
 	DetailList []*OrderBookDetail
 }
 
+// OrderBookDetail represents a single order in the order book.
 type OrderBookDetail struct {
 	Price   float64
 	Volume  int64
 	OrderID int64
 }
 
+// GetOrderBookRequest defines parameters for GetOrderBook.
 type GetOrderBookRequest struct {
 	Security *qotcommon.Security
 	Num      int32
 }
 
+// GetOrderBookResponse is the response type for GetOrderBook.
 type GetOrderBookResponse struct {
 	Security                *qotcommon.Security
 	Name                    string
@@ -281,6 +291,7 @@ type GetOrderBookResponse struct {
 	SvrRecvTimeAskTimestamp float64
 }
 
+// GetOrderBook returns the order book (买卖盘) for the given security.
 func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -349,6 +360,7 @@ func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookRes
 	return result, nil
 }
 
+// Ticker represents a single trade tick data point.
 type Ticker struct {
 	Time      string
 	Sequence  int64
@@ -362,17 +374,20 @@ type Ticker struct {
 	Timestamp float64
 }
 
+// GetTickerRequest defines parameters for GetTicker.
 type GetTickerRequest struct {
 	Security *qotcommon.Security
 	Num      int32
 }
 
+// GetTickerResponse is the response type for GetTicker.
 type GetTickerResponse struct {
 	Security   *qotcommon.Security
 	Name       string
 	TickerList []*Ticker
 }
 
+// GetTicker returns recent tick (逐笔成交) data for the given security.
 func GetTicker(c *futuapi.Client, req *GetTickerRequest) (*GetTickerResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -438,24 +453,29 @@ func GetTicker(c *futuapi.Client, req *GetTickerRequest) (*GetTickerResponse, er
 	return result, nil
 }
 
+// RT represents a single real-time data point.
 type RT struct {
-	Time     string
-	Price    float64
-	Volume   int64
-	Turnover float64
-	AvgPrice float64
+	Time           string
+	Price          float64
+	LastClosePrice float64
+	AvgPrice       float64
+	Volume         int64
+	Turnover       float64
 }
 
+// GetRTRequest defines parameters for GetRT.
 type GetRTRequest struct {
 	Security *qotcommon.Security
 }
 
+// GetRTResponse is the response type for GetRT.
 type GetRTResponse struct {
 	Security *qotcommon.Security
 	Name     string
 	RTList   []*RT
 }
 
+// GetRT returns real-time (分时) data for the given security.
 func GetRT(c *futuapi.Client, req *GetRTRequest) (*GetRTResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -503,17 +523,19 @@ func GetRT(c *futuapi.Client, req *GetRTRequest) (*GetRTResponse, error) {
 
 	for _, rt := range s2c.GetRtList() {
 		result.RTList = append(result.RTList, &RT{
-			Time:     rt.GetTime(),
-			Price:    rt.GetPrice(),
-			Volume:   rt.GetVolume(),
-			Turnover: rt.GetTurnover(),
-			AvgPrice: rt.GetAvgPrice(),
+			Time:           rt.GetTime(),
+			Price:          rt.GetPrice(),
+			LastClosePrice: rt.GetLastClosePrice(),
+			AvgPrice:       rt.GetAvgPrice(),
+			Volume:         rt.GetVolume(),
+			Turnover:       rt.GetTurnover(),
 		})
 	}
 
 	return result, nil
 }
 
+// Broker represents a broker (经纪) in the broker queue.
 type Broker struct {
 	ID     int64
 	Name   string
@@ -521,11 +543,13 @@ type Broker struct {
 	Volume int64
 }
 
+// GetBrokerRequest defines parameters for GetBroker.
 type GetBrokerRequest struct {
 	Security *qotcommon.Security
 	Num      int32
 }
 
+// GetBrokerResponse is the response type for GetBroker.
 type GetBrokerResponse struct {
 	Security      *qotcommon.Security
 	Name          string
@@ -533,6 +557,7 @@ type GetBrokerResponse struct {
 	BidBrokerList []*Broker
 }
 
+// GetBroker returns broker queue data (经纪队列) for the given security.
 func GetBroker(c *futuapi.Client, req *GetBrokerRequest) (*GetBrokerResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -600,16 +625,19 @@ func GetBroker(c *futuapi.Client, req *GetBrokerRequest) (*GetBrokerResponse, er
 	return result, nil
 }
 
+// GetStaticInfoRequest defines parameters for GetStaticInfo.
 type GetStaticInfoRequest struct {
 	Market       int32
 	SecType      int32
 	SecurityList []*qotcommon.Security
 }
 
+// GetStaticInfoResponse is the response type for GetStaticInfo.
 type GetStaticInfoResponse struct {
 	StaticInfoList []*qotcommon.SecurityStaticInfo
 }
 
+// GetStaticInfo returns static info for the given securities.
 func GetStaticInfo(c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfoResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -656,19 +684,23 @@ func GetStaticInfo(c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfo
 	}, nil
 }
 
+// Plate represents a market plate (板块).
 type Plate struct {
 	Plate *qotcommon.Security
 	Name  string
 }
 
+// GetPlateSetRequest defines parameters for GetPlateSet.
 type GetPlateSetRequest struct {
 	Market int32
 }
 
+// GetPlateSetResponse is the response type for GetPlateSet.
 type GetPlateSetResponse struct {
 	PlateSetList []*Plate
 }
 
+// GetPlateSet returns the set of plates for the given market.
 func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -722,14 +754,17 @@ func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetRespon
 	return result, nil
 }
 
+// GetPlateSecurityRequest defines parameters for GetPlateSecurity.
 type GetPlateSecurityRequest struct {
 	Plate *qotcommon.Security
 }
 
+// GetPlateSecurityResponse is the response type for GetPlateSecurity.
 type GetPlateSecurityResponse struct {
 	StaticInfoList []*qotcommon.SecurityStaticInfo
 }
 
+// GetPlateSecurity returns securities belonging to the given plate.
 func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlateSecurityResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -774,16 +809,19 @@ func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlat
 	}, nil
 }
 
+// GetTradeDateRequest defines parameters for GetTradeDate.
 type GetTradeDateRequest struct {
 	Market    int32
 	BeginTime string
 	EndTime   string
 }
 
+// GetTradeDateResponse is the response type for GetTradeDate.
 type GetTradeDateResponse struct {
 	TradeDateList []*qotgettradedate.TradeDate
 }
 
+// GetTradeDate returns the list of trade dates for the given market within the specified time range.
 func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -830,6 +868,7 @@ func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateRes
 	}, nil
 }
 
+// RequestTradeDateRequest defines parameters for RequestTradeDate.
 type RequestTradeDateRequest struct {
 	Market    int32
 	BeginTime string
@@ -837,10 +876,12 @@ type RequestTradeDateRequest struct {
 	Security  *qotcommon.Security
 }
 
+// RequestTradeDateResponse is the response type for RequestTradeDate.
 type RequestTradeDateResponse struct {
 	TradeDateList []*qotrequesttradedate.TradeDate
 }
 
+// RequestTradeDate requests trade dates for a specific security.
 func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*RequestTradeDateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -888,6 +929,7 @@ func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*Request
 	}, nil
 }
 
+// RequestHistoryKLRequest defines parameters for RequestHistoryKL.
 type RequestHistoryKLRequest struct {
 	RehabType    int32
 	KlType       int32
@@ -899,6 +941,7 @@ type RequestHistoryKLRequest struct {
 	ExtendedTime bool
 }
 
+// RequestHistoryKLResponse is the response type for RequestHistoryKL.
 type RequestHistoryKLResponse struct {
 	Security   *qotcommon.Security
 	Name       string
@@ -906,6 +949,7 @@ type RequestHistoryKLResponse struct {
 	NextReqKey []byte
 }
 
+// RequestHistoryKL requests historical K-line (candlestick) data for the given security.
 func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*RequestHistoryKLResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -960,14 +1004,17 @@ func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*Request
 	}, nil
 }
 
+// GetSecuritySnapshotRequest defines parameters for GetSecuritySnapshot.
 type GetSecuritySnapshotRequest struct {
 	SecurityList []*qotcommon.Security
 }
 
+// GetSecuritySnapshotResponse is the response type for GetSecuritySnapshot.
 type GetSecuritySnapshotResponse struct {
 	SnapshotList []*qotgetsecuritysnapshot.Snapshot
 }
 
+// GetSecuritySnapshot returns snapshot data for the given securities.
 func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*GetSecuritySnapshotResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1012,8 +1059,10 @@ func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*G
 	}, nil
 }
 
+// SubType represents the type of market data subscription.
 type SubType int32
 
+// Subscription type constants.
 const (
 	SubType_Basic     SubType = 1
 	SubType_OrderBook SubType = 2
@@ -1023,6 +1072,7 @@ const (
 	SubType_Broker    SubType = 6
 )
 
+// SubscribeRequest defines parameters for Subscribe.
 type SubscribeRequest struct {
 	SecurityList         []*qotcommon.Security
 	SubTypeList          []SubType
@@ -1033,11 +1083,13 @@ type SubscribeRequest struct {
 	IsUnsubAll           bool
 }
 
+// SubscribeResponse is the response type for Subscribe.
 type SubscribeResponse struct {
 	RetType int32
 	RetMsg  string
 }
 
+// Subscribe subscribes to or unsubscribes from real-time market data.
 func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1089,6 +1141,7 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 	}, nil
 }
 
+// GetCapitalFlowRequest defines parameters for GetCapitalFlow.
 type GetCapitalFlowRequest struct {
 	Security   *qotcommon.Security
 	PeriodType int32
@@ -1096,6 +1149,7 @@ type GetCapitalFlowRequest struct {
 	EndTime    string
 }
 
+// CapitalFlowItem represents a single capital flow data point.
 type CapitalFlowItem struct {
 	InFlow      float64
 	Time        string
@@ -1107,12 +1161,14 @@ type CapitalFlowItem struct {
 	SmlInFlow   float64
 }
 
+// GetCapitalFlowResponse is the response type for GetCapitalFlow.
 type GetCapitalFlowResponse struct {
 	FlowItemList       []*CapitalFlowItem
 	LastValidTime      string
 	LastValidTimestamp float64
 }
 
+// GetCapitalFlow returns capital flow data for the given security.
 func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalFlowResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1177,6 +1233,7 @@ func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalF
 	return result, nil
 }
 
+// CapitalDistribution represents the distribution of capital across different tiers.
 type CapitalDistribution struct {
 	CapitalInSuper  float64
 	CapitalInBig    float64
@@ -1190,10 +1247,12 @@ type CapitalDistribution struct {
 	UpdateTimestamp float64
 }
 
+// GetCapitalDistributionResponse is the response type for GetCapitalDistribution.
 type GetCapitalDistributionResponse struct {
 	CapitalDistribution *CapitalDistribution
 }
 
+// GetCapitalDistribution returns capital distribution data for the given security.
 func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*GetCapitalDistributionResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1249,10 +1308,12 @@ func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*G
 	}, nil
 }
 
+// GetUserSecurityResponse is the response type for GetUserSecurity.
 type GetUserSecurityResponse struct {
 	StaticInfoList []*qotcommon.SecurityStaticInfo
 }
 
+// GetUserSecurity returns the list of user-defined securities in the specified group.
 func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1297,6 +1358,7 @@ func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityRespo
 	}, nil
 }
 
+// PriceReminderItemInfo represents a single price reminder item.
 type PriceReminderItemInfo struct {
 	Key      int64
 	Type     int32
@@ -1306,16 +1368,19 @@ type PriceReminderItemInfo struct {
 	IsEnable bool
 }
 
+// PriceReminderInfo represents the price reminder settings for a security.
 type PriceReminderInfo struct {
 	Security *qotcommon.Security
 	Name     string
 	ItemList []*PriceReminderItemInfo
 }
 
+// GetPriceReminderResponse is the response type for GetPriceReminder.
 type GetPriceReminderResponse struct {
 	PriceReminderList []*PriceReminderInfo
 }
 
+// GetPriceReminder returns price reminder settings for the given security.
 func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market int32) (*GetPriceReminderResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1382,11 +1447,13 @@ func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market in
 	return result, nil
 }
 
+// GetOptionExpirationDateRequest defines parameters for GetOptionExpirationDate.
 type GetOptionExpirationDateRequest struct {
 	Owner           *qotcommon.Security
 	IndexOptionType int32
 }
 
+// OptionExpirationDateInfo represents information about an option expiration date.
 type OptionExpirationDateInfo struct {
 	StrikeTime               string
 	StrikeTimestamp          float64
@@ -1394,10 +1461,12 @@ type OptionExpirationDateInfo struct {
 	Cycle                    int32
 }
 
+// GetOptionExpirationDateResponse is the response type for GetOptionExpirationDate.
 type GetOptionExpirationDateResponse struct {
 	DateList []*OptionExpirationDateInfo
 }
 
+// GetOptionExpirationDate returns the list of option expiration dates for the given underlying.
 func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1454,6 +1523,7 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 	return result, nil
 }
 
+// GetOptionChainRequest defines parameters for GetOptionChain.
 type GetOptionChainRequest struct {
 	Owner           *qotcommon.Security
 	IndexOptionType int32
@@ -1464,21 +1534,25 @@ type GetOptionChainRequest struct {
 	DataFilter      interface{}
 }
 
+// OptionItem represents a pair of call and put options at the same strike price.
 type OptionItem struct {
 	Call *qotcommon.SecurityStaticInfo
 	Put  *qotcommon.SecurityStaticInfo
 }
 
+// OptionChain represents the option chain for a single expiration date.
 type OptionChain struct {
 	StrikeTime      string
 	StrikeTimestamp float64
 	Option          []*OptionItem
 }
 
+// GetOptionChainResponse is the response type for GetOptionChain.
 type GetOptionChainResponse struct {
 	OptionChain []*OptionChain
 }
 
+// GetOptionChain returns the option chain (期权链) for the given underlying security.
 func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1551,6 +1625,7 @@ func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionCh
 	return result, nil
 }
 
+// StockFilterRequest defines parameters for StockFilter.
 type StockFilterRequest struct {
 	Begin                     int32
 	Num                       int32
@@ -1563,6 +1638,7 @@ type StockFilterRequest struct {
 	CustomIndicatorFilterList []*qotstockfilter.CustomIndicatorFilter
 }
 
+// StockFilterData represents a single stock filter result.
 type StockFilterData struct {
 	Security                *qotcommon.Security
 	Name                    string
@@ -1572,12 +1648,14 @@ type StockFilterData struct {
 	CustomIndicatorDataList []*qotstockfilter.CustomIndicatorData
 }
 
+// StockFilterResponse is the response type for StockFilter.
 type StockFilterResponse struct {
 	LastPage bool
 	AllCount int32
 	DataList []*StockFilterData
 }
 
+// StockFilter filters stocks based on various criteria (选股).
 func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1645,6 +1723,7 @@ func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterRespon
 	return result, nil
 }
 
+// GetWarrantRequest defines parameters for GetWarrant.
 type GetWarrantRequest struct {
 	Begin                 int32
 	Num                   int32
@@ -1682,6 +1761,7 @@ type GetWarrantRequest struct {
 	PriceRecoveryRatioMax float64
 }
 
+// WarrantData represents detailed data for a single warrant.
 type WarrantData struct {
 	Stock              *qotcommon.Security
 	Owner              *qotcommon.Security
@@ -1730,12 +1810,14 @@ type WarrantData struct {
 	InLinePriceStatus  int32
 }
 
+// GetWarrantResponse is the response type for GetWarrant.
 type GetWarrantResponse struct {
 	LastPage        bool
 	AllCount        int32
 	WarrantDataList []*WarrantData
 }
 
+// GetWarrant returns warrant data filtered by the given criteria.
 func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1867,26 +1949,31 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 	return result, nil
 }
 
+// GetSuspendRequest defines parameters for GetSuspend.
 type GetSuspendRequest struct {
 	SecurityList []*qotcommon.Security
 	BeginTime    string
 	EndTime      string
 }
 
+// SuspendInfo represents the suspension time for a security.
 type SuspendInfo struct {
 	Time      string
 	Timestamp float64
 }
 
+// SecuritySuspendInfo represents suspension info for a single security.
 type SecuritySuspendInfo struct {
 	Security    *qotcommon.Security
 	SuspendList []*SuspendInfo
 }
 
+// GetSuspendResponse is the response type for GetSuspend.
 type GetSuspendResponse struct {
 	SecuritySuspendList []*SecuritySuspendInfo
 }
 
+// GetSuspend returns suspension (停牌) information for the given securities.
 func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1949,10 +2036,12 @@ func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse,
 	return result, nil
 }
 
+// GetFutureInfoRequest defines parameters for GetFutureInfo.
 type GetFutureInfoRequest struct {
 	SecurityList []*qotcommon.Security
 }
 
+// FutureInfo represents detailed information about a futures contract.
 type FutureInfo struct {
 	Name               string
 	Security           *qotcommon.Security
@@ -1974,10 +2063,12 @@ type FutureInfo struct {
 	Origin             *qotcommon.Security
 }
 
+// GetFutureInfoResponse is the response type for GetFutureInfo.
 type GetFutureInfoResponse struct {
 	FutureInfoList []*FutureInfo
 }
 
+// GetFutureInfo returns futures contract information for the given securities.
 func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfoResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2047,12 +2138,14 @@ func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfo
 	return result, nil
 }
 
+// GetCodeChangeRequest defines parameters for GetCodeChange.
 type GetCodeChangeRequest struct {
 	SecurityList   []*qotcommon.Security
 	TimeFilterList []*qotgetcodechange.TimeFilter
 	TypeList       []int32
 }
 
+// CodeChangeInfo represents information about a code change ( stock split, merger, etc.).
 type CodeChangeInfo struct {
 	Type               int32
 	Security           *qotcommon.Security
@@ -2065,10 +2158,12 @@ type CodeChangeInfo struct {
 	EndTimestamp       float64
 }
 
+// GetCodeChangeResponse is the response type for GetCodeChange.
 type GetCodeChangeResponse struct {
 	CodeChangeList []*CodeChangeInfo
 }
 
+// GetCodeChange returns code change (股份代号变动) information for the given securities.
 func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChangeResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2131,10 +2226,12 @@ func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChange
 	return result, nil
 }
 
+// GetIpoListRequest defines parameters for GetIpoList.
 type GetIpoListRequest struct {
 	Market int32
 }
 
+// BasicIpoData represents basic IPO data.
 type BasicIpoData struct {
 	Security      *qotcommon.Security
 	Name          string
@@ -2142,6 +2239,7 @@ type BasicIpoData struct {
 	ListTimestamp float64
 }
 
+// CNIpoExData represents China A-share IPO extended data.
 type CNIpoExData struct {
 	ApplyCode              string
 	IssueSize              int64
@@ -2162,6 +2260,7 @@ type CNIpoExData struct {
 	WinningNumDataList     []*qotgetipolist.WinningNumData
 }
 
+// HKIpoExData represents Hong Kong IPO extended data.
 type HKIpoExData struct {
 	IpoPriceMin       float64
 	IpoPriceMax       float64
@@ -2173,12 +2272,14 @@ type HKIpoExData struct {
 	ApplyEndTimestamp float64
 }
 
+// USIpoExData represents US IPO extended data.
 type USIpoExData struct {
 	IpoPriceMin float64
 	IpoPriceMax float64
 	IssueSize   int64
 }
 
+// IpoData represents complete IPO data including basic and market-specific extended data.
 type IpoData struct {
 	Basic    *BasicIpoData
 	CnExData *CNIpoExData
@@ -2186,10 +2287,12 @@ type IpoData struct {
 	UsExData *USIpoExData
 }
 
+// GetIpoListResponse is the response type for GetIpoList.
 type GetIpoListResponse struct {
 	IpoList []*IpoData
 }
 
+// GetIpoList returns the list of upcoming and recently listed IPOs for the given market.
 func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2294,6 +2397,7 @@ func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse,
 	return result, nil
 }
 
+// GetHoldingChangeListRequest defines parameters for GetHoldingChangeList.
 type GetHoldingChangeListRequest struct {
 	Security       *qotcommon.Security
 	HolderCategory int32
@@ -2301,11 +2405,13 @@ type GetHoldingChangeListRequest struct {
 	EndTime        string
 }
 
+// GetHoldingChangeListResponse is the response type for GetHoldingChangeList.
 type GetHoldingChangeListResponse struct {
 	Security          *qotcommon.Security
 	HoldingChangeList []*qotcommon.ShareHoldingChange
 }
 
+// GetHoldingChangeList returns the holding change list for the given security.
 func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (*GetHoldingChangeListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2354,19 +2460,23 @@ func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (
 	}, nil
 }
 
+// GetUserSecurityGroupRequest defines parameters for GetUserSecurityGroup.
 type GetUserSecurityGroupRequest struct {
 	GroupType int32
 }
 
+// UserSecurityGroupData represents a user-defined security group.
 type UserSecurityGroupData struct {
 	GroupName string
 	GroupType int32
 }
 
+// GetUserSecurityGroupResponse is the response type for GetUserSecurityGroup.
 type GetUserSecurityGroupResponse struct {
 	GroupList []*UserSecurityGroupData
 }
 
+// GetUserSecurityGroup returns the list of user-defined security groups.
 func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (*GetUserSecurityGroupResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2420,17 +2530,20 @@ func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (
 	return result, nil
 }
 
+// ModifyUserSecurityRequest defines parameters for ModifyUserSecurity.
 type ModifyUserSecurityRequest struct {
 	GroupName    string
 	Op           int32
 	SecurityList []*qotcommon.Security
 }
 
+// ModifyUserSecurityResponse is the response type for ModifyUserSecurity.
 type ModifyUserSecurityResponse struct {
 	RetType int32
 	RetMsg  string
 }
 
+// ModifyUserSecurity adds or removes securities from a user-defined group.
 func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*ModifyUserSecurityResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2473,6 +2586,7 @@ func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*Mod
 	}, nil
 }
 
+// SetPriceReminderRequest defines parameters for SetPriceReminder.
 type SetPriceReminderRequest struct {
 	Security *qotcommon.Security
 	Op       int32
@@ -2483,10 +2597,12 @@ type SetPriceReminderRequest struct {
 	Note     string
 }
 
+// SetPriceReminderResponse is the response type for SetPriceReminder.
 type SetPriceReminderResponse struct {
 	Key int64
 }
 
+// SetPriceReminder creates, updates, or deletes a price reminder.
 func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPriceReminderResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2537,6 +2653,7 @@ func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPric
 	}, nil
 }
 
+// RegQotPushRequest defines parameters for RegQotPush.
 type RegQotPushRequest struct {
 	SecurityList  []*qotcommon.Security
 	SubTypeList   []int32
@@ -2545,11 +2662,13 @@ type RegQotPushRequest struct {
 	IsFirstPush   bool
 }
 
+// RegQotPushResponse is the response type for RegQotPush.
 type RegQotPushResponse struct {
 	RetType int32
 	RetMsg  string
 }
 
+// RegQotPush registers or unregisters for real-time push notifications.
 func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2594,14 +2713,17 @@ func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse,
 	}, nil
 }
 
+// RequestRehabRequest defines parameters for RequestRehab.
 type RequestRehabRequest struct {
 	Security *qotcommon.Security
 }
 
+// RequestRehabResponse is the response type for RequestRehab.
 type RequestRehabResponse struct {
 	RehabList []*qotcommon.Rehab
 }
 
+// RequestRehab requests rehabilitation (复权) data for the given security.
 func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -2646,16 +2768,19 @@ func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabRes
 	}, nil
 }
 
+// RequestHistoryKLQuotaRequest defines parameters for RequestHistoryKLQuota.
 type RequestHistoryKLQuotaRequest struct {
 	GetDetail bool
 }
 
+// RequestHistoryKLQuotaResponse is the response type for RequestHistoryKLQuota.
 type RequestHistoryKLQuotaResponse struct {
 	UsedQuota   int32
 	RemainQuota int32
 	DetailList  []*qotrequesthistoryklquota.DetailItem
 }
 
+// RequestHistoryKLQuota returns the quota usage for historical K-line requests.
 func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest) (*RequestHistoryKLQuotaResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err

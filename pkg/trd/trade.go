@@ -46,6 +46,7 @@ const (
 	ProtoID_GetFlowSummary          = 2226
 )
 
+// Acc represents a trading account with its environment, ID, type, and status.
 type Acc struct {
 	TrdEnv    int32
 	AccID     uint64
@@ -54,10 +55,13 @@ type Acc struct {
 	AccStatus int32
 }
 
+// GetAccListResponse is the response containing a list of trading accounts.
 type GetAccListResponse struct {
 	AccList []*Acc
 }
 
+// GetAccList retrieves the list of trading accounts, optionally including general security account info.
+// Returns the account list or an error if the request fails.
 func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool) (*GetAccListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -115,6 +119,7 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 	return result, nil
 }
 
+// Funds represents the capital and asset information of a trading account.
 type Funds struct {
 	Power          float64
 	TotalAssets    float64
@@ -126,15 +131,19 @@ type Funds struct {
 	AvailableFunds float64
 }
 
+// GetFundsRequest is the request to retrieve account funds.
 type GetFundsRequest struct {
 	AccID     uint64
 	TrdMarket int32
 }
 
+// GetFundsResponse is the response containing account funds information.
 type GetFundsResponse struct {
 	Funds *Funds
 }
 
+// GetFunds retrieves the account funds information including cash, assets, and available funds.
+// Returns the funds data or an error if the request fails.
 func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -194,6 +203,7 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 	}, nil
 }
 
+// Position represents a stock position with quantity, price, cost, and profit/loss information.
 type Position struct {
 	Code       string
 	Name       string
@@ -206,15 +216,19 @@ type Position struct {
 	PlRatio    float64
 }
 
+// GetPositionListRequest is the request to retrieve position list.
 type GetPositionListRequest struct {
 	AccID     uint64
 	TrdMarket int32
 }
 
+// GetPositionListResponse is the response containing a list of positions.
 type GetPositionListResponse struct {
 	PositionList []*Position
 }
 
+// GetPositionList retrieves the current position list for the account.
+// Returns the position list or an error if the request fails.
 func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositionListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -280,6 +294,7 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 	return result, nil
 }
 
+// Order represents an order with its ID, code, side, type, status, price, quantity, and fill information.
 type Order struct {
 	OrderID      uint64
 	Code         string
@@ -295,15 +310,19 @@ type Order struct {
 	FillAvgPrice float64
 }
 
+// GetOrderListRequest is the request to retrieve order list.
 type GetOrderListRequest struct {
 	AccID     uint64
 	TrdMarket int32
 }
 
+// GetOrderListResponse is the response containing a list of orders.
 type GetOrderListResponse struct {
 	OrderList []*Order
 }
 
+// GetOrderList retrieves the current order list for the account.
+// Returns the order list or an error if the request fails.
 func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -372,6 +391,7 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 	return result, nil
 }
 
+// OrderFill represents a filled (executed) order with its order ID, fill ID, code, side, price, and quantity.
 type OrderFill struct {
 	OrderID    uint64
 	FillID     uint64
@@ -383,15 +403,19 @@ type OrderFill struct {
 	CreateTime string
 }
 
+// GetOrderFillListRequest is the request to retrieve order fill list.
 type GetOrderFillListRequest struct {
 	AccID     uint64
 	TrdMarket int32
 }
 
+// GetOrderFillListResponse is the response containing a list of order fills.
 type GetOrderFillListResponse struct {
 	OrderFillList []*OrderFill
 }
 
+// GetOrderFillList retrieves the current order fill (execution) list for the account.
+// Returns the order fill list or an error if the request fails.
 func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrderFillListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -456,6 +480,7 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 	return result, nil
 }
 
+// PlaceOrderRequest is the request to place a new order.
 type PlaceOrderRequest struct {
 	AccID     uint64
 	TrdMarket int32
@@ -466,10 +491,13 @@ type PlaceOrderRequest struct {
 	Qty       float64
 }
 
+// PlaceOrderResponse is the response containing the newly placed order ID.
 type PlaceOrderResponse struct {
 	OrderID uint64
 }
 
+// PlaceOrder places a new order and returns the order ID.
+// Returns the order ID or an error if the placement fails.
 func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -524,6 +552,7 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 	}, nil
 }
 
+// ModifyOrderRequest is the request to modify an existing order (cancel, update price, or update quantity).
 type ModifyOrderRequest struct {
 	AccID         uint64
 	TrdMarket     int32
@@ -533,6 +562,8 @@ type ModifyOrderRequest struct {
 	Qty           float64
 }
 
+// ModifyOrder modifies or cancels an existing order.
+// Returns an error if the modification fails.
 func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 	if err := c.EnsureConnected(); err != nil {
 		return err
@@ -580,12 +611,15 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 	return nil
 }
 
+// UnlockTradeRequest is the request to unlock or lock trading with a password.
 type UnlockTradeRequest struct {
 	Unlock       bool
 	PwdMD5       string
 	SecurityFirm int32
 }
 
+// UnlockTrade unlocks or locks trading functionality using the provided password.
+// Returns an error if the unlock operation fails.
 func UnlockTrade(c *futuapi.Client, req *UnlockTradeRequest) error {
 	if err := c.EnsureConnected(); err != nil {
 		return err
@@ -625,27 +659,33 @@ func UnlockTrade(c *futuapi.Client, req *UnlockTradeRequest) error {
 	return nil
 }
 
+// GetOrderFeeRequest is the request to retrieve order fee information.
 type GetOrderFeeRequest struct {
 	AccID         uint64
 	TrdMarket     int32
 	OrderIDExList []string
 }
 
+// OrderFeeInfo represents the fee information for a single order.
 type OrderFeeInfo struct {
 	OrderIDEx string
 	FeeAmount float64
 	FeeList   []*OrderFeeItemInfo
 }
 
+// OrderFeeItemInfo represents a single fee item with its title and value.
 type OrderFeeItemInfo struct {
 	Title string
 	Value float64
 }
 
+// GetOrderFeeResponse is the response containing order fee information.
 type GetOrderFeeResponse struct {
 	OrderFeeList []*OrderFeeInfo
 }
 
+// GetOrderFee retrieves the fee details for specified orders.
+// Returns the order fee list or an error if the request fails.
 func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -713,12 +753,14 @@ func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeRespon
 	return result, nil
 }
 
+// GetMarginRatioRequest is the request to retrieve margin ratio information.
 type GetMarginRatioRequest struct {
 	AccID        uint64
 	TrdMarket    int32
 	SecurityList []*qotcommon.Security
 }
 
+// MarginRatioInfo represents margin ratio information for a security, including long/short permits and fee rates.
 type MarginRatioInfo struct {
 	Security        *qotcommon.Security
 	IsLongPermit    bool
@@ -735,10 +777,13 @@ type MarginRatioInfo struct {
 	MmShortRatio    float64
 }
 
+// GetMarginRatioResponse is the response containing margin ratio information.
 type GetMarginRatioResponse struct {
 	MarginRatioInfoList []*MarginRatioInfo
 }
 
+// GetMarginRatio retrieves the margin ratio information for specified securities.
+// Returns the margin ratio list or an error if the request fails.
 func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRatioResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -809,6 +854,7 @@ func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRa
 	return result, nil
 }
 
+// GetMaxTrdQtysRequest is the request to retrieve maximum tradable quantities.
 type GetMaxTrdQtysRequest struct {
 	AccID              uint64
 	TrdMarket          int32
@@ -822,6 +868,7 @@ type GetMaxTrdQtysRequest struct {
 	OrderIDEx          string
 }
 
+// MaxTrdQtysInfo represents the maximum tradable quantities for various trading scenarios.
 type MaxTrdQtysInfo struct {
 	MaxCashBuy          float64
 	MaxCashAndMarginBuy float64
@@ -832,10 +879,13 @@ type MaxTrdQtysInfo struct {
 	ShortRequiredIM     float64
 }
 
+// GetMaxTrdQtysResponse is the response containing maximum tradable quantities.
 type GetMaxTrdQtysResponse struct {
 	MaxTrdQtys *MaxTrdQtysInfo
 }
 
+// GetMaxTrdQtys retrieves the maximum tradable quantities for a given order.
+// Returns the maximum quantities or an error if the request fails.
 func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtysResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -902,6 +952,7 @@ func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtys
 	}, nil
 }
 
+// GetHistoryOrderListRequest is the request to retrieve historical order list.
 type GetHistoryOrderListRequest struct {
 	AccID            uint64
 	TrdMarket        int32
@@ -909,10 +960,13 @@ type GetHistoryOrderListRequest struct {
 	FilterStatusList []int32
 }
 
+// GetHistoryOrderListResponse is the response containing historical orders.
 type GetHistoryOrderListResponse struct {
 	OrderList []*trdcommon.Order
 }
 
+// GetHistoryOrderList retrieves the historical order list based on filter conditions.
+// Returns the historical order list or an error if the request fails.
 func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*GetHistoryOrderListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -964,16 +1018,20 @@ func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*G
 	}, nil
 }
 
+// GetHistoryOrderFillListRequest is the request to retrieve historical order fill list.
 type GetHistoryOrderFillListRequest struct {
 	AccID            uint64
 	TrdMarket        int32
 	FilterConditions *trdcommon.TrdFilterConditions
 }
 
+// GetHistoryOrderFillListResponse is the response containing historical order fills.
 type GetHistoryOrderFillListResponse struct {
 	OrderFillList []*trdcommon.OrderFill
 }
 
+// GetHistoryOrderFillList retrieves the historical order fill (execution) list based on filter conditions.
+// Returns the historical order fill list or an error if the request fails.
 func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequest) (*GetHistoryOrderFillListResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1024,10 +1082,13 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 	}, nil
 }
 
+// SubAccPushRequest is the request to subscribe to account push notifications.
 type SubAccPushRequest struct {
 	AccIDList []uint64
 }
 
+// SubAccPush subscribes to account push notifications for the specified account IDs.
+// Returns an error if the subscription fails.
 func SubAccPush(c *futuapi.Client, req *SubAccPushRequest) error {
 	if err := c.EnsureConnected(); err != nil {
 		return err
@@ -1065,6 +1126,7 @@ func SubAccPush(c *futuapi.Client, req *SubAccPushRequest) error {
 	return nil
 }
 
+// ReconfirmOrderRequest is the request to reconfirm an order with a specified reason.
 type ReconfirmOrderRequest struct {
 	PacketID        *common.PacketID
 	Header          *trdcommon.TrdHeader
@@ -1072,11 +1134,14 @@ type ReconfirmOrderRequest struct {
 	ReconfirmReason int32
 }
 
+// ReconfirmOrderResponse is the response containing the reconfirmed order header and ID.
 type ReconfirmOrderResponse struct {
 	Header  *trdcommon.TrdHeader
 	OrderID uint64
 }
 
+// ReconfirmOrder reconfirms an order that requires additional verification.
+// Returns the reconfirmed order details or an error if the request fails.
 func ReconfirmOrder(c *futuapi.Client, req *ReconfirmOrderRequest) (*ReconfirmOrderResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
@@ -1125,17 +1190,21 @@ func ReconfirmOrder(c *futuapi.Client, req *ReconfirmOrderRequest) (*ReconfirmOr
 	}, nil
 }
 
+// GetFlowSummaryRequest is the request to retrieve fund flow summary for a clearing date.
 type GetFlowSummaryRequest struct {
 	Header            *trdcommon.TrdHeader
 	ClearingDate      string
 	CashFlowDirection int32
 }
 
+// GetFlowSummaryResponse is the response containing the fund flow summary.
 type GetFlowSummaryResponse struct {
 	Header          *trdcommon.TrdHeader
 	FlowSummaryList []*trdflowsummary.FlowSummaryInfo
 }
 
+// GetFlowSummary retrieves the fund flow summary for a specified clearing date.
+// Returns the flow summary list or an error if the request fails.
 func GetFlowSummary(c *futuapi.Client, req *GetFlowSummaryRequest) (*GetFlowSummaryResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
