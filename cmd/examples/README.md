@@ -159,11 +159,11 @@ package main
 import (
     "fmt"
     "log"
-    
-    futuapi "gitee.com/shing1211/futuapi4go/client"
-    "gitee.com/shing1211/futuapi4go/qot"
-    "gitee.com/shing1211/futuapi4go/trd"
-    "gitee.com/shing1211/futuapi4go/pb/qotcommon"
+
+    futuapi "gitee.com/shing1211/futuapi4go/internal/client"
+    "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+    "gitee.com/shing1211/futuapi4go/pkg/qot"
+    "gitee.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {

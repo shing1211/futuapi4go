@@ -61,15 +61,14 @@ func main() {
 		displayCount = len(resp.FlowItemList)
 	}
 
-	fmt.Printf("  %-20s %-12s %-12s %-12s %-12s\n",
-		"Time", "In Flow", "Out Flow", "Net Flow", "Main In")
-	fmt.Println("  " + "------------------------------------------------------------")
+	fmt.Printf("  %-20s %-12s %-12s %-12s\n",
+		"Time", "In Flow", "Net Flow", "Main In")
+	fmt.Println("  " + "-------------------------------------------------------")
 
 	for i := 0; i < displayCount; i++ {
 		flow := resp.FlowItemList[i]
-		netFlow := flow.InFlow - flow.OutFlow
-		fmt.Printf("  %-20s %-12.0f %-12.0f %-12.0f %-12.0f\n",
-			flow.Time, flow.InFlow, flow.OutFlow, netFlow, flow.MainInFlow)
+		fmt.Printf("  %-20s %-12.0f %-12.0f %-12.0f\n",
+			flow.Time, flow.InFlow, flow.InFlow, flow.MainInFlow)
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")

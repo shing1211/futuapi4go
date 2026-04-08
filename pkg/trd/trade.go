@@ -525,11 +525,12 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 }
 
 type ModifyOrderRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	OrderID   uint64
-	Price     float64
-	Qty       float64
+	AccID         uint64
+	TrdMarket     int32
+	OrderID       uint64
+	ModifyOrderOp int32
+	Price         float64
+	Qty           float64
 }
 
 func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
@@ -543,10 +544,11 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 
 	orderID := req.OrderID
 	c2s := &trdmodifyorder.C2S{
-		Header:  header,
-		OrderID: &orderID,
-		Price:   &req.Price,
-		Qty:     &req.Qty,
+		Header:        header,
+		OrderID:       &orderID,
+		ModifyOrderOp: &req.ModifyOrderOp,
+		Price:         &req.Price,
+		Qty:           &req.Qty,
 	}
 
 	pkt := &trdmodifyorder.Request{C2S: c2s}

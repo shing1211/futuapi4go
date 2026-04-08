@@ -21,7 +21,7 @@ import (
 	"os"
 	"time"
 
-	"gitee.com/shing1211/futuapi4go/internal/client"
+	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"gitee.com/shing1211/futuapi4go/pkg/qot"
@@ -32,7 +32,7 @@ func main() {
 	printHeader()
 
 	// Create client
-	cli := client.New()
+	cli := futuapi.New()
 	defer cli.Close()
 
 	// Connect
@@ -76,13 +76,13 @@ func printFooter() {
 	fmt.Println("╚═══════════════════════════════════════════════════════════╝")
 }
 
-func connect(cli *client.Client, addr string) error {
+func connect(cli *futuapi.Client, addr string) error {
 	fmt.Printf("📡 Connecting to %s...\n", addr)
-	
+
 	if err := cli.Connect(addr); err != nil {
 		return fmt.Errorf("connection failed: %w", err)
 	}
-	
+
 	fmt.Printf("✅ Connected successfully!\n")
 	fmt.Printf("   Connection ID: %d\n", cli.GetConnID())
 	fmt.Printf("   Server Version: %d\n", cli.GetServerVer())
@@ -90,7 +90,7 @@ func connect(cli *client.Client, addr string) error {
 	return nil
 }
 
-func runMarketDataDemo(cli *client.Client) {
+func runMarketDataDemo(cli *futuapi.Client) {
 	printSection("1. Market Data - Basic")
 
 	// Define securities
@@ -127,16 +127,16 @@ func runMarketDataDemo(cli *client.Client) {
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    5,
 	}
-	
+
 	klResp, err := qot.GetKL(cli, klReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetKL failed: %v\n", err)
 	} else {
-		fmt.Printf("   ✓ Retrieved %d K-lines for %s\n", 
+		fmt.Printf("   ✓ Retrieved %d K-lines for %s\n",
 			len(klResp.KLList), klResp.Security.GetCode())
 		for i, kl := range klResp.KLList {
 			fmt.Printf("   [%d] %s | O: %.2f H: %.2f L: %.2f C: %.2f | V: %d\n",
-				i+1, kl.Time, kl.OpenPrice, kl.HighPrice, 
+				i+1, kl.Time, kl.OpenPrice, kl.HighPrice,
 				kl.LowPrice, kl.ClosePrice, kl.Volume)
 		}
 	}
@@ -148,7 +148,7 @@ func runMarketDataDemo(cli *client.Client) {
 		Security: securities[0],
 		Num:      5,
 	}
-	
+
 	obResp, err := qot.GetOrderBook(cli, obReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetOrderBook failed: %v\n", err)
@@ -166,7 +166,7 @@ func runMarketDataDemo(cli *client.Client) {
 	fmt.Println()
 }
 
-func runAdvancedMarketDataDemo(cli *client.Client) {
+func runAdvancedMarketDataDemo(cli *futuapi.Client) {
 	printSection("2. Market Data - Advanced")
 
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
@@ -181,17 +181,17 @@ func runAdvancedMarketDataDemo(cli *client.Client) {
 		Security:   security,
 		PeriodType: 1,
 	}
-	
+
 	capFlowResp, err := qot.GetCapitalFlow(cli, capFlowReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetCapitalFlow failed: %v\n", err)
 	} else {
-		fmt.Printf("   ✓ Retrieved %d capital flow records\n", 
+		fmt.Printf("   ✓ Retrieved %d capital flow records\n",
 			len(capFlowResp.FlowItemList))
 		if len(capFlowResp.FlowItemList) > 0 {
 			flow := capFlowResp.FlowItemList[0]
-			fmt.Printf("   Latest: %s | Main In: %.2f | Main Out: %.2f\n",
-				flow.Time, flow.MainInFlow, flow.MainOutFlow)
+			fmt.Printf("   Latest: %s | In Flow: %.2f | Main In: %.2f\n",
+				flow.Time, flow.InFlow, flow.MainInFlow)
 		}
 	}
 	fmt.Println()
@@ -217,7 +217,7 @@ func runAdvancedMarketDataDemo(cli *client.Client) {
 		Num:    10,
 		Market: hkMarket,
 	}
-	
+
 	filterResp, err := qot.StockFilter(cli, filterReq)
 	if err != nil {
 		fmt.Printf("   ❌ StockFilter failed: %v\n", err)
@@ -234,18 +234,18 @@ func runAdvancedMarketDataDemo(cli *client.Client) {
 		BeginTime: "2026-04-01",
 		EndTime:   "2026-04-30",
 	}
-	
+
 	tradeDateResp, err := qot.GetTradeDate(cli, tradeDateReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetTradeDate failed: %v\n", err)
 	} else {
-		fmt.Printf("   ✓ Found %d trading days\n", 
+		fmt.Printf("   ✓ Found %d trading days\n",
 			len(tradeDateResp.TradeDateList))
 	}
 	fmt.Println()
 }
 
-func runTradingDemo(cli *client.Client) {
+func runTradingDemo(cli *futuapi.Client) {
 	printSection("3. Trading Operations")
 
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
@@ -263,7 +263,7 @@ func runTradingDemo(cli *client.Client) {
 				i+1, acc.AccID, acc.AccType, acc.AccStatus)
 		}
 	}
-	
+
 	var accID uint64 = 123456789
 	if accResp != nil && len(accResp.AccList) > 0 {
 		accID = accResp.AccList[0].AccID
@@ -276,7 +276,7 @@ func runTradingDemo(cli *client.Client) {
 		AccID:     accID,
 		TrdMarket: hkMarket,
 	}
-	
+
 	fundsResp, err := trd.GetFunds(cli, fundsReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetFunds failed: %v\n", err)
@@ -284,7 +284,7 @@ func runTradingDemo(cli *client.Client) {
 		f := fundsResp.Funds
 		fmt.Printf("   ✓ Total Assets: %.2f\n", f.TotalAssets)
 		fmt.Printf("     Cash: %.2f | Market Value: %.2f\n", f.Cash, f.MarketVal)
-		fmt.Printf("     Available: %.2f | Frozen: %.2f\n", 
+		fmt.Printf("     Available: %.2f | Frozen: %.2f\n",
 			f.AvailableFunds, f.FrozenCash)
 	}
 	fmt.Println()
@@ -295,7 +295,7 @@ func runTradingDemo(cli *client.Client) {
 		AccID:     accID,
 		TrdMarket: 0,
 	}
-	
+
 	posResp, err := trd.GetPositionList(cli, posReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetPositionList failed: %v\n", err)
@@ -319,20 +319,20 @@ func runTradingDemo(cli *client.Client) {
 		Price:     350.00,
 		Qty:       100.0,
 	}
-	
+
 	placeResp, err := trd.PlaceOrder(cli, placeReq)
 	if err != nil {
 		fmt.Printf("   ❌ PlaceOrder failed: %v\n", err)
 	} else {
 		fmt.Printf("   ✓ Order placed! OrderID: %d\n", placeResp.OrderID)
-		
+
 		// 3.5 Get Order List
 		fmt.Println("📋 Order List:")
 		orderReq := &trd.GetOrderListRequest{
 			AccID:     accID,
 			TrdMarket: hkMarket,
 		}
-		
+
 		orderResp, err := trd.GetOrderList(cli, orderReq)
 		if err != nil {
 			fmt.Printf("   ❌ GetOrderList failed: %v\n", err)
@@ -351,19 +351,19 @@ func runTradingDemo(cli *client.Client) {
 		Price:     350.00,
 		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
 	}
-	
+
 	maxQtyResp, err := trd.GetMaxTrdQtys(cli, maxQtyReq)
 	if err != nil {
 		fmt.Printf("   ❌ GetMaxTrdQtys failed: %v\n", err)
 	} else {
-		fmt.Printf("   ✓ Max Cash Buy: %.0f\n", maxQtyResp.MaxCashBuy)
-		fmt.Printf("     Max Margin Buy: %.0f\n", maxQtyResp.MaxMarginBuy)
-		fmt.Printf("     Max Sell: %.0f\n", maxQtyResp.MaxSell)
+		fmt.Printf("   ✓ Max Cash Buy: %.0f\n", maxQtyResp.MaxTrdQtys.MaxCashBuy)
+		fmt.Printf("     Max Cash+Margin Buy: %.0f\n", maxQtyResp.MaxTrdQtys.MaxCashAndMarginBuy)
+		fmt.Printf("     Max Position Sell: %.0f\n", maxQtyResp.MaxTrdQtys.MaxPositionSell)
 	}
 	fmt.Println()
 }
 
-func runSubscriptionDemo(cli *client.Client) {
+func runSubscriptionDemo(cli *futuapi.Client) {
 	printSection("4. Real-time Subscriptions")
 
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
@@ -374,12 +374,12 @@ func runSubscriptionDemo(cli *client.Client) {
 	// 4.1 Subscribe
 	fmt.Println("📡 Subscribe to Real-time Data:")
 	subReq := &qot.SubscribeRequest{
-		SecurityList:         securities,
-		SubTypeList:          []qot.SubType{qot.SubType_Basic, qot.SubType_KL},
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+		SecurityList:     securities,
+		SubTypeList:      []qot.SubType{qot.SubType_Basic, qot.SubType_KL},
+		IsSubOrUnSub:     true,
+		IsRegOrUnRegPush: true,
 	}
-	
+
 	subResp, err := qot.Subscribe(cli, subReq)
 	if err != nil {
 		fmt.Printf("   ❌ Subscribe failed: %v\n", err)
@@ -401,13 +401,13 @@ func runSubscriptionDemo(cli *client.Client) {
 
 	// 4.3 Register Push
 	fmt.Println("🔔 Register Push Notifications:")
-	regReq := &qot.SubscribeRequest{
-		SecurityList:         securities,
-		SubTypeList:          []qot.SubType{qot.SubType_Basic},
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+	regReq := &qot.RegQotPushRequest{
+		SecurityList: securities,
+		SubTypeList:  []int32{int32(qotcommon.SubType_SubType_Basic)},
+		IsRegOrUnReg: true,
+		IsFirstPush:  true,
 	}
-	
+
 	regResp, err := qot.RegQotPush(cli, regReq)
 	if err != nil {
 		fmt.Printf("   ❌ RegQotPush failed: %v\n", err)

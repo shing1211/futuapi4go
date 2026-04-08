@@ -32,11 +32,11 @@ import (
 
 // Strategy parameters / 策略參數
 const (
-	LookbackPeriod = 20   // Periods to calculate range / 計算範圍的週期數
-	BreakoutBuffer = 0.5  // % buffer to confirm breakout / 確認突破的緩衝百分比
-	StopLossPct    = 2.0  // Stop loss percentage / 止損百分比
-	TakeProfitPct  = 4.0  // Take profit percentage / 止盈百分比
-	TradeQty       = 100  // Shares to trade / 交易股數
+	LookbackPeriod = 20  // Periods to calculate range / 計算範圍的週期數
+	BreakoutBuffer = 0.5 // % buffer to confirm breakout / 確認突破的緩衝百分比
+	StopLossPct    = 2.0 // Stop loss percentage / 止損百分比
+	TakeProfitPct  = 4.0 // Take profit percentage / 止盈百分比
+	TradeQty       = 100 // Shares to trade / 交易股數
 )
 
 func main() {
@@ -118,8 +118,9 @@ func main() {
 	fmt.Println()
 
 	// Calculate risk management levels / 計算風險管理級別
+	var stopLoss, takeProfit float64
 	if breakoutType != "" {
-		stopLoss, takeProfit := calculateRiskLevels(breakoutPrice, breakoutType)
+		stopLoss, takeProfit = calculateRiskLevels(breakoutPrice, breakoutType)
 		fmt.Println("🛡️  Risk Management / 風險管理:")
 		fmt.Printf("   Entry / 入場:      HK$%.2f\n", breakoutPrice)
 		fmt.Printf("   Stop Loss / 止損:   HK$%.2f (-%.1f%%)\n", stopLoss, StopLossPct)
@@ -139,7 +140,7 @@ func main() {
 	}
 	fmt.Println()
 
-	executeBreakoutTrade(cli, accID, security, breakoutType, breakoutPrice, TradeQty, 
+	executeBreakoutTrade(cli, accID, security, breakoutType, breakoutPrice, TradeQty,
 		stopLoss, takeProfit, dryRun)
 
 	fmt.Println("\n=== Strategy Complete / 策略完成 ===")
@@ -147,10 +148,10 @@ func main() {
 
 // KLineData holds simplified K-line data / K線數據結構
 type KLineData struct {
-	Close     float64
-	High      float64
-	Low       float64
-	Volume    int64
+	Close  float64
+	High   float64
+	Low    float64
+	Volume int64
 }
 
 // fetchKLData retrieves K-line data / 獲取K線數據

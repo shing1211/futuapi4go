@@ -2,7 +2,6 @@ package integration
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -155,10 +154,10 @@ func TestIntegrationSubscribe(t *testing.T) {
 	security := &qotcommon.Security{Market: &hkMarket, Code: &code}
 
 	subReq := &qot.SubscribeRequest{
-		SecurityList:         []*qotcommon.Security{security},
-		SubTypeList:          []qot.SubType{qot.SubType_Basic},
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+		SecurityList:     []*qotcommon.Security{security},
+		SubTypeList:      []qot.SubType{qot.SubType_Basic},
+		IsSubOrUnSub:     true,
+		IsRegOrUnRegPush: true,
 	}
 
 	subResp, err := qot.Subscribe(client, subReq)
@@ -215,10 +214,10 @@ func TestIntegrationMultipleAPIs(t *testing.T) {
 				code := "00700"
 				security := &qotcommon.Security{Market: &hkMarket, Code: &code}
 				subReq := &qot.SubscribeRequest{
-					SecurityList:         []*qotcommon.Security{security},
-					SubTypeList:          []qot.SubType{qot.SubType_Basic},
-					IsSubOrUnSub:         true,
-					IsRegOrUnRegPush:     true,
+					SecurityList:     []*qotcommon.Security{security},
+					SubTypeList:      []qot.SubType{qot.SubType_Basic},
+					IsSubOrUnSub:     true,
+					IsRegOrUnRegPush: true,
 				}
 				_, err := qot.Subscribe(client, subReq)
 				return err

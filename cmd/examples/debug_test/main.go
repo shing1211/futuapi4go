@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== FutuAPI4Go Debug Test ===\n")
+	fmt.Println("=== FutuAPI4Go Debug Test ===")
 
 	cli := futuapi.New()
 	defer cli.Close()
@@ -52,7 +52,7 @@ func main() {
 	fmt.Printf("    TrdLogined: %v\n", state.TrdLogined)
 	fmt.Printf("    ServerVer: %d\n", state.ServerVer)
 	fmt.Printf("    ConnID: %d\n", state.ConnID)
-	
+
 	// Check if markets are in a valid state
 	if state.MarketHK == 0 {
 		fmt.Println("\n⚠️  HK market state is 0 (unknown)")
@@ -81,10 +81,10 @@ func main() {
 	// Test 2: Subscribe
 	fmt.Println("📡 Test 2: Subscribe")
 	subReq := &qot.SubscribeRequest{
-		SecurityList:         []*qotcommon.Security{sec},
-		SubTypeList:          []qot.SubType{qot.SubType_Basic},
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
+		SecurityList:     []*qotcommon.Security{sec},
+		SubTypeList:      []qot.SubType{qot.SubType_Basic},
+		IsSubOrUnSub:     true,
+		IsRegOrUnRegPush: true,
 	}
 	subResp, err := qot.Subscribe(cli, subReq)
 	if err != nil {

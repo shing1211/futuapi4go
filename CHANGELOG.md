@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2026-04-08
+
+### Fixed
+
+#### Protobuf Wrapper Layer Compatibility
+- Fixed wrapper structs missing fields that caused example compilation failures
+- `BasicQot` in `pkg/qot/quote.go` expanded with missing fields: `IsSuspended`, `UpdateTime`, `LastClosePrice`, `TurnoverRate`, `Amplitude`
+- `ModifyOrderRequest` in `pkg/trd/trade.go` added `ModifyOrderOp` field
+
+#### Example Code Fixes
+- **qot_get_order_book**: Fixed `ob.OrederCount` → `ob.OrderCount` (proto has typo)
+- **qot_get_trade_date**: Fixed `td.TradeDate` → `td.GetTime()` (field is `time`)
+- **trd_unlock_trade**: Added `Unlock: true` field, changed `PWD` → `PwdMD5`
+- **trd_place_order**: Removed non-existent `PriceType` field
+- **trd_get_order_list**: Fixed `OrderState_*` → `OrderStatus_*`, `DealtQty` → `FillQty`
+- **trd_modify_order**: Fixed `ModifyType` → `ModifyOrderOp`, `ModifyOrderType_*` → `ModifyOrderOp_*`
+- **trd_get_order_list**: Fixed `OrderState_*` → `OrderStatus_*`, `DealtQty` → `FillQty`
+- **02_market_data_advanced**: Fixed `basic.GetCode()` → `basic.GetSecurity().GetCode()`, fixed `GetFutureInfoRequest` fields, fixed capital flow field access, fixed `IpoPrice` field
+- **03_trading_operations**: Fixed `UnlockTradeRequest`, `OrderStatus` enums, `ModifyOrderOp`, `OrderFillList`, `GetOrderFeeResponse`, `GetMarginRatioRequest`, `GetMaxTrdQtysResponse`, `GetHistoryOrderListRequest`, `TrdSide` pointer type
+- **04_push_subscriptions**: Fixed `SubInfoList` → `ConnSubInfoList` with proper nesting, fixed `RegQotPushRequest` struct
+- **05_comprehensive_demo**: Fixed capital flow fields, `GetMaxTrdQtysResponse`, `RegQotPush` request type
+- **algo_breakout_trading**: Fixed variable scope issue for `stopLoss`/`takeProfit`
+- **qot_stock_filter**: Fixed `BaseData.FieldName` pointer type, `AllCount` type conversion
+- **qot_get_capital_flow**: Fixed capital flow field access
+
+#### Test Fixes
+- **test/integration**: Removed unused `fmt` import
+
+#### Build/Vet Fixes
+- Fixed `fmt.Println` → `fmt.Print` for strings containing printf directives in example code comments
+- Fixed `fmt.Printf` format specifier mismatches (wrong argument types for `*string`, `*float64` fields)
+
+### Verified
+
+- **20/20 example compile tests pass** against live OpenD with simulated account
+- All `go build ./...` succeeds
+- All `go test ./...` passes (unit + integration + example compilation tests)
+
 ## [0.4.0] - 2026-04-08
 
 ### Added
