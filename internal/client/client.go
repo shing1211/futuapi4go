@@ -190,6 +190,58 @@ type Client struct {
 
 	addr              string
 	reconnecting      int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
+
+	// Metrics / 指標
+	metrics     *Metrics
+	metricsMu   sync.RWMutex
+}
+
+// Metrics tracks client performance statistics.
+type Metrics struct {
+	TotalRequests    uint64
+	SuccessfulReqs   uint64
+	FailedReqs       uint64
+	TotalLatencyMs   uint64
+	LastRequestTime  time.Time
+	LastErrorCode    string
+	LastErrorMessage string
+	ReconnectCount   uint64
+	ConnectedSince   time.Time
+	PushReceived     uint64
+}
+
+// GetMetrics returns a copy of current metrics.
+func (c *Client) GetMetrics() Metrics {
+	c.metricsMu.RLock()
+	defer c.metricsMu.RUnlock()
+	return *c.metrics
+}
+
+func (c *Client) recordRequest(protoID uint32, duration time.Duration, err error) {
+	c.metricsMu.Lock()
+	defer c.metricsMu.Unlock()
+	c.metrics.TotalRequests++
+	c.metrics.LastRequestTime = time.Now()
+	c.metrics.TotalLatencyMs += uint64(duration.Milliseconds())
+	if err != nil {
+		c.metrics.FailedReqs++
+		c.metrics.LastErrorCode = fmt.Sprintf("%d", protoID)
+		c.metrics.LastErrorMessage = err.Error()
+	} else {
+		c.metrics.SuccessfulReqs++
+	}
+}
+
+func (c *Client) recordReconnect() {
+	c.metricsMu.Lock()
+	defer c.metricsMu.Unlock()
+	c.metrics.ReconnectCount++
+}
+
+func (c *Client) recordPush() {
+	c.metricsMu.Lock()
+	defer c.metricsMu.Unlock()
+	c.metrics.PushReceived++
 }
 
 type Handler func(protoID uint32, body []byte)
@@ -210,6 +262,7 @@ func New(opts ...Option) *Client {
 		handlers:          make(map[uint32]Handler),
 		ctx:               ctx,
 		cancel:            cancel,
+		metrics:           &Metrics{},
 	}
 }
 
@@ -326,10 +379,14 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
 	c.connected = true
+	c.metricsMu.Lock()
+	c.metrics.ConnectedSince = time.Now()
+	c.metricsMu.Unlock()
 	c.mu.Unlock()
 
-	// Set up push notification dispatcher
+	// Set up push notification dispatcher and start readLoop
 	c.conn.SetPushHandler(func(pkt *Packet) {
+		c.recordPush()
 		c.handlersMu.RLock()
 		handler, ok := c.handlers[pkt.Header.ProtoID]
 		c.handlersMu.RUnlock()
@@ -351,6 +408,10 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 			userHandler(pkt)
 		})
 	}
+
+	// Start readLoop for asynchronous push notifications
+	c.wg.Add(1)
+	go c.readLoop()
 
 	keepAliveInterval := c.opts.KeepAliveInterval
 	if keepAliveInterval == 0 {
@@ -443,16 +504,22 @@ func (c *Client) readLoop() {
 		default:
 		}
 
-		c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		apiTimeout := c.opts.APITimeout
+		if apiTimeout == 0 {
+			apiTimeout = DefaultTimeout
+		}
+		c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
 		pkt, err := c.conn.ReadPacket()
 		if err != nil {
 			c.mu.Lock()
 			if c.connected {
 				c.connected = false
-				logf("connection lost: %v\n", err)
+				c.logWarn("connection lost: %v\n", err)
+				c.mu.Unlock()
 				go c.reconnect()
+			} else {
+				c.mu.Unlock()
 			}
-			c.mu.Unlock()
 			continue
 		}
 
@@ -472,6 +539,7 @@ func (c *Client) reconnect() {
 		return // Already reconnecting
 	}
 	defer atomic.StoreInt32(&c.reconnecting, 0)
+	defer c.recordReconnect()
 
 	maxRetries := c.opts.MaxRetries
 	if maxRetries == 0 {
@@ -603,6 +671,13 @@ func (c *Client) NextSerialNo() uint32 {
 }
 
 func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) error {
+	start := time.Now()
+	err := c.requestInternal(protoID, req, rsp)
+	c.recordRequest(protoID, time.Since(start), err)
+	return err
+}
+
+func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Message) error {
 	if c.conn == nil {
 		return ErrNotConnected
 	}
@@ -617,7 +692,11 @@ func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) e
 		return err
 	}
 
-	c.conn.SetReadDeadline(time.Now().Add(DefaultTimeout))
+	apiTimeout := c.opts.APITimeout
+	if apiTimeout == 0 {
+		apiTimeout = DefaultTimeout
+	}
+	c.conn.SetReadDeadline(time.Now().Add(apiTimeout))
 	pkt, err := c.conn.ReadPacket()
 	if err != nil {
 		return fmt.Errorf("read response: %w", err)

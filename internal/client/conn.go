@@ -153,15 +153,17 @@ func (c *Conn) ReadPacket() (*Packet, error) {
 		pkt := &Packet{Header: h, Body: body}
 
 		// Check if this packet matches the expected serial
-		if expectedSerial == 0 || h.SerialNo == expectedSerial {
+		if expectedSerial > 0 && h.SerialNo == expectedSerial {
 			return pkt, nil
 		}
 
-		// Serial doesn't match - this is a push notification
+		// No pending request (expectedSerial == 0) or serial mismatch
+		// This is a push notification - dispatch to handler
 		if pushHandler != nil {
 			pushHandler(pkt)
 		}
-		// Continue reading until we get the expected serial
+		// If expectedSerial == 0, we keep reading for push notifications forever
+		// If expectedSerial > 0, we continue until we find the matching serial
 	}
 }
 

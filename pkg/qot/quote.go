@@ -17,8 +17,8 @@ import (
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
-	// "gitee.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
-	// "gitee.com/shing1211/futuapi4go/pkg/pb/qotgetoptionexpirationdate"
+	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
+	qotgetoptionexpirationdate "gitee.com/shing1211/futuapi4go/pkg/pb/qotgetoptionexpirationdate"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetplatesecurity"
 	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
@@ -1353,8 +1353,59 @@ type GetOptionExpirationDateResponse struct {
 }
 
 func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
-	if err := c.EnsureConnected(); err != nil { return nil, err }
-	return nil, fmt.Errorf("GetOptionExpirationDate: not implemented due to protobuf issues")
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
+
+	c2s := &qotgetoptionexpirationdate.C2S{
+		Owner:           req.Owner,
+		IndexOptionType: &req.IndexOptionType,
+	}
+
+	pkt := &qotgetoptionexpirationdate.Request{C2S: c2s}
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetOptionExpirationDate, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetoptionexpirationdate.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetOptionExpirationDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetOptionExpirationDate: s2c is nil")
+	}
+
+	result := &GetOptionExpirationDateResponse{
+		DateList: make([]*OptionExpirationDateInfo, 0, len(s2c.GetDateList())),
+	}
+
+	for _, d := range s2c.GetDateList() {
+		result.DateList = append(result.DateList, &OptionExpirationDateInfo{
+			StrikeTime:               d.GetStrikeTime(),
+			StrikeTimestamp:          d.GetStrikeTimestamp(),
+			OptionExpiryDateDistance: d.GetOptionExpiryDateDistance(),
+			Cycle:                    d.GetCycle(),
+		})
+	}
+
+	return result, nil
 }
 
 type GetOptionChainRequest struct {
@@ -1383,8 +1434,75 @@ type GetOptionChainResponse struct {
 }
 
 func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
-	if err := c.EnsureConnected(); err != nil { return nil, err }
-	return nil, fmt.Errorf("GetOptionChain: not implemented due to protobuf issues")
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
+
+	c2s := &qotgetoptionchain.C2S{
+		Owner:           req.Owner,
+		IndexOptionType: &req.IndexOptionType,
+		Type:            &req.Type,
+		Condition:       &req.Condition,
+		BeginTime:       &req.BeginTime,
+		EndTime:         &req.EndTime,
+	}
+
+	pkt := &qotgetoptionchain.Request{C2S: c2s}
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetOptionChain, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	pktResp, err := c.Conn().ReadPacket()
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetoptionchain.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetOptionChain failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetOptionChain: s2c is nil")
+	}
+
+	result := &GetOptionChainResponse{
+		OptionChain: make([]*OptionChain, 0, len(s2c.GetOptionChain())),
+	}
+
+	for _, chain := range s2c.GetOptionChain() {
+		oc := &OptionChain{
+			StrikeTime:      chain.GetStrikeTime(),
+			StrikeTimestamp: chain.GetStrikeTimestamp(),
+			Option:          make([]*OptionItem, 0, len(chain.GetOption())),
+		}
+
+		for _, opt := range chain.GetOption() {
+			item := &OptionItem{}
+			if opt.GetCall() != nil {
+				item.Call = opt.GetCall()
+			}
+			if opt.GetPut() != nil {
+				item.Put = opt.GetPut()
+			}
+			oc.Option = append(oc.Option, item)
+		}
+
+		result.OptionChain = append(result.OptionChain, oc)
+	}
+
+	return result, nil
 }
 
 type StockFilterRequest struct {
