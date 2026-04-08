@@ -348,6 +348,9 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		return fmt.Errorf("write packet: %w", err)
 	}
 
+	c.wg.Add(1)
+	go c.readLoop()
+
 	apiTimeout := c.opts.APITimeout
 	if apiTimeout == 0 {
 		apiTimeout = DefaultTimeout
@@ -387,7 +390,6 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
 
-	// Set up push notification dispatcher for when readLoop starts
 	c.conn.SetPushHandler(func(pkt *Packet) {
 		c.recordPush()
 		c.handlersMu.RLock()
@@ -401,10 +403,6 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		}
 	})
 
-	// Start readLoop for asynchronous push notifications
-	c.wg.Add(1)
-	go c.readLoop()
-
 	keepAliveInterval := c.opts.KeepAliveInterval
 	if keepAliveInterval == 0 {
 		if c.keepAliveInterval > 0 {
@@ -413,7 +411,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 			keepAliveInterval = DefaultKeepAliveInterval
 		}
 	}
-	interval := time.Duration(c.keepAliveInterval) * time.Second
+	interval := keepAliveInterval
 	if interval > 0 && interval < keepAliveInterval {
 		interval = keepAliveInterval
 	}
