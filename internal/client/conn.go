@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	HeaderLen     = 44  // Fixed: Official Futu protocol spec
+	HeaderLen     = 44 // Fixed: Official Futu protocol spec
 	MagicBytes    = "FT"
-	ProtoVersion  = 0   // Fixed: Protocol version is 0, not 1
+	ProtoVersion  = 0 // Fixed: Protocol version is 0, not 1
 	MaxPacketSize = 10 * 1024 * 1024
 )
 
@@ -28,8 +28,8 @@ var (
 type Header struct {
 	Magic    [2]byte
 	ProtoID  uint32
-	ProtoFmt byte              // 1 byte on wire
-	ProtoVer byte              // 1 byte on wire  
+	ProtoFmt byte // 1 byte on wire
+	ProtoVer byte // 1 byte on wire
 	SerialNo uint32
 	BodyLen  uint32
 	BodySHA1 [20]byte
@@ -46,7 +46,8 @@ type PacketHandler func(pkt *Packet)
 type Conn struct {
 	conn           net.Conn
 	mu             sync.Mutex
-	sem            chan struct{}
+	connMu         sync.RWMutex  // Serializes TCP reads/writes; reads RLock (concurrent), writes Lock (exclusive)
+	sem            chan struct{} // Semaphore to ensure only one reader at a time
 	expectedSerial uint32        // Serial number we're expecting
 	pushHandler    PacketHandler // Handler for push notifications (packets with unexpected serial)
 }
@@ -107,6 +108,9 @@ func (c *Conn) ReadPacket() (*Packet, error) {
 	if c.conn == nil {
 		return nil, fmt.Errorf("read packet: %w", ErrNotConnected)
 	}
+
+	c.connMu.RLock() // Shared: allow concurrent reads, including readLoop for push notifications
+	defer c.connMu.RUnlock()
 
 	c.mu.Lock()
 	expectedSerial := c.expectedSerial
@@ -172,39 +176,39 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 		return fmt.Errorf("write packet: %w", ErrNotConnected)
 	}
 
+	c.connMu.Lock() // Exclusive: block all readers (including readLoop) while serial is being updated
 	c.mu.Lock()
-	// Set expected serial for the next ReadPacket call
-	// This enables serial matching to prevent push notifications from being consumed as responses
 	c.expectedSerial = serialNo
-	defer c.mu.Unlock()
+	c.mu.Unlock()
+	c.connMu.Unlock()
 
 	// Manually encode header per official Futu protocol spec (44 bytes)
 	// Reference: https://openapi.futunn.com/futu-api-doc/en/ftapi/protocol.html
 	header := make([]byte, HeaderLen)
-	
+
 	// Byte 0-1: Magic "FT" (2 bytes)
 	header[0] = 'F'
 	header[1] = 'T'
-	
+
 	// Byte 2-5: ProtoID (4 bytes, little-endian)
 	binary.LittleEndian.PutUint32(header[2:], protoID)
-	
+
 	// Byte 6: ProtoFmt (1 byte) - 0=Protobuf, 1=JSON
-	header[6] = 0  // Protobuf format (byte value)
-	
+	header[6] = 0 // Protobuf format (byte value)
+
 	// Byte 7: ProtoVer (1 byte) - currently 0
 	header[7] = ProtoVersion
-	
+
 	// Byte 8-11: SerialNo (4 bytes, little-endian)
 	binary.LittleEndian.PutUint32(header[8:], serialNo)
-	
+
 	// Byte 12-15: BodyLen (4 bytes, little-endian)
 	binary.LittleEndian.PutUint32(header[12:], uint32(len(body)))
-	
+
 	// Byte 16-35: BodySHA1 (20 bytes)
 	sha1Hash := sha1.Sum(body)
 	copy(header[16:36], sha1Hash[:])
-	
+
 	// Byte 36-43: Reserved (8 bytes) - zeros
 
 	if _, err := c.conn.Write(header); err != nil {
