@@ -43,9 +43,9 @@ func main() {
 	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
 
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")}, // Tencent
-		{Market: &hkMarket, Code: ptrStr("09988")}, // Alibaba
-		{Market: &usMarket, Code: ptrStr("AAPL")},  // Apple
+		{Market: &hkMarket, Code: ptrStr("HK.HSImain")}, // Tencent
+		{Market: &hkMarket, Code: ptrStr("09988")},      // Alibaba
+		{Market: &usMarket, Code: ptrStr("AAPL")},       // Apple
 	}
 
 	// 1. Subscribe to Real-time Data

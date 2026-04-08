@@ -31,7 +31,7 @@ func main() {
 	// Connect to OpenD or Simulator
 	addr := "127.0.0.1:11111"
 	fmt.Printf("=== Connecting to %s ===\n", addr)
-	
+
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("Connection failed: %v", err)
 	}
@@ -71,7 +71,7 @@ func main() {
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    5,
 	}
-	
+
 	klResp, err := qot.GetKL(cli, klReq)
 	if err != nil {
 		log.Printf("GetKL failed: %v", err)
@@ -95,7 +95,7 @@ func main() {
 		KLType:    int32(qotcommon.KLType_KLType_1Min),
 		ReqNum:    5,
 	}
-	
+
 	klResp1Min, err := qot.GetKL(cli, klReq1Min)
 	if err != nil {
 		log.Printf("GetKL 1-min failed: %v", err)
@@ -115,7 +115,7 @@ func main() {
 		Security: securities[0],
 		Num:      5, // Top 5 levels
 	}
-	
+
 	obResp, err := qot.GetOrderBook(cli, obReq)
 	if err != nil {
 		log.Printf("GetOrderBook failed: %v", err)
@@ -140,7 +140,7 @@ func main() {
 		Security: securities[0],
 		Num:      10,
 	}
-	
+
 	tickerResp, err := qot.GetTicker(cli, tickerReq)
 	if err != nil {
 		log.Printf("GetTicker failed: %v", err)
@@ -166,7 +166,7 @@ func main() {
 	rtReq := &qot.GetRTRequest{
 		Security: securities[0],
 	}
-	
+
 	rtResp, err := qot.GetRT(cli, rtReq)
 	if err != nil {
 		log.Printf("GetRT failed: %v", err)
@@ -193,7 +193,7 @@ func main() {
 		Security: securities[0],
 		Num:      10,
 	}
-	
+
 	brokerResp, err := qot.GetBroker(cli, brokerReq)
 	if err != nil {
 		log.Printf("GetBroker failed: %v", err)
@@ -217,7 +217,7 @@ func main() {
 	snapReq := &qot.GetSecuritySnapshotRequest{
 		SecurityList: securities[:1], // Just first one
 	}
-	
+
 	snapResp, err := qot.GetSecuritySnapshot(cli, snapReq)
 	if err != nil {
 		log.Printf("GetSecuritySnapshot failed: %v", err)
@@ -242,8 +242,8 @@ func main() {
 }
 
 // Helper functions
-func ptrStr(s string) *string { return &s }
-func ptrInt32(v int32) *int32 { return &v }
-func ptrInt64(v int64) *int64 { return &v }
+func ptrStr(s string) *string       { return &s }
+func ptrInt32(v int32) *int32       { return &v }
+func ptrInt64(v int64) *int64       { return &v }
 func ptrFloat64(v float64) *float64 { return &v }
-func ptrBool(v bool) *bool { return &v }
+func ptrBool(v bool) *bool          { return &v }

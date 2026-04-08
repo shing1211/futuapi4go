@@ -100,8 +100,8 @@ type ClientOptions struct {
 	ReconnectBackoff  float64       // Multiplier for backoff (1.0 = no backoff)
 
 	// Logging
-	Logger *log.Logger // Custom logger (nil = use default)
-	LogLevel int       // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
+	Logger   *log.Logger // Custom logger (nil = use default)
+	LogLevel int         // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
@@ -187,13 +187,14 @@ type Client struct {
 	cancel            context.CancelFunc
 	wg                sync.WaitGroup
 	connected         bool
+	connActive        int32 // atomic flag: 0 = loops should exit, 1 = loops running
 
-	addr              string
-	reconnecting      int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
+	addr         string
+	reconnecting int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
 
 	// Metrics / 指標
-	metrics     *Metrics
-	metricsMu   sync.RWMutex
+	metrics   *Metrics
+	metricsMu sync.RWMutex
 }
 
 // Metrics tracks client performance statistics.
@@ -257,12 +258,12 @@ func New(opts ...Option) *Client {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Client{
-		conn:              NewConn(nil),
-		opts:              options,
-		handlers:          make(map[uint32]Handler),
-		ctx:               ctx,
-		cancel:            cancel,
-		metrics:           &Metrics{},
+		conn:     NewConn(nil),
+		opts:     options,
+		handlers: make(map[uint32]Handler),
+		ctx:      ctx,
+		cancel:   cancel,
+		metrics:  &Metrics{},
 	}
 }
 
@@ -291,7 +292,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	clientVer := int32(10100)
 	clientID := "futuapi4go"
 	recvNotify := true
-	var packetEncAlgo int32 = -1  // Default: no encryption
+	var packetEncAlgo int32 = -1 // Default: no encryption
 	programmingLanguage := "Go"
 
 	c2s := &initconnect.C2S{
@@ -379,6 +380,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
 	c.connected = true
+	atomic.StoreInt32(&c.connActive, 1)
 	c.metricsMu.Lock()
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
@@ -421,13 +423,13 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 			keepAliveInterval = DefaultKeepAliveInterval
 		}
 	}
-	if c.keepAliveInterval > 0 {
-		interval := time.Duration(c.keepAliveInterval) * time.Second
-		if interval < keepAliveInterval {
-			interval = keepAliveInterval
-		}
+	interval := time.Duration(c.keepAliveInterval) * time.Second
+	if interval > 0 && interval < keepAliveInterval {
+		interval = keepAliveInterval
+	}
+	if keepAliveInterval > 0 {
 		c.wg.Add(1)
-		go c.keepAliveLoop(interval)
+		go c.keepAliveLoop(keepAliveInterval)
 	}
 
 	return nil
@@ -444,18 +446,19 @@ func (c *Client) keepAliveLoop(interval time.Duration) {
 		case <-c.ctx.Done():
 			return
 		case <-ticker.C:
+			if atomic.LoadInt32(&c.connActive) == 0 {
+				return
+			}
 			if err := c.keepAlive(); err != nil {
 				c.logWarn("keepalive error: %v\n", err)
-				// Trigger reconnect if keepalive fails
-				go c.reconnect()
-				return
 			}
 		}
 	}
 }
 
 func (c *Client) keepAlive() error {
-	req := &keepalive.C2S{}
+	now := time.Now().Unix()
+	req := &keepalive.C2S{Time: &now}
 	pkt := &keepalive.Request{C2S: req}
 
 	body, err := proto.Marshal(pkt)
@@ -504,6 +507,10 @@ func (c *Client) readLoop() {
 		default:
 		}
 
+		if atomic.LoadInt32(&c.connActive) == 0 {
+			return
+		}
+
 		apiTimeout := c.opts.APITimeout
 		if apiTimeout == 0 {
 			apiTimeout = DefaultTimeout
@@ -512,7 +519,7 @@ func (c *Client) readLoop() {
 		pkt, err := c.conn.ReadPacket()
 		if err != nil {
 			c.mu.Lock()
-			if c.connected {
+			if c.connected && atomic.LoadInt32(&c.connActive) == 1 {
 				c.connected = false
 				c.logWarn("connection lost: %v\n", err)
 				c.mu.Unlock()
@@ -520,7 +527,7 @@ func (c *Client) readLoop() {
 			} else {
 				c.mu.Unlock()
 			}
-			continue
+			return
 		}
 
 		c.handlersMu.RLock()
@@ -554,6 +561,8 @@ func (c *Client) reconnect() {
 		backoff = 1.0
 	}
 
+	atomic.StoreInt32(&c.connActive, 0)
+
 	interval := baseInterval
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		select {
@@ -585,6 +594,7 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 }
 
 func (c *Client) Close() error {
+	atomic.StoreInt32(&c.connActive, 0)
 	c.cancel()
 	c.wg.Wait()
 	if c.conn != nil {
@@ -646,11 +656,11 @@ func (c *Client) Context() context.Context {
 // The original client remains usable. Operations will respect the context's deadline/cancellation.
 func (c *Client) WithContext(ctx context.Context) *Client {
 	newClient := &Client{
-		conn:              c.conn,
-		opts:              c.opts,
-		handlers:          c.handlers,
-		ctx:               ctx,
-		cancel:            func() {}, // Don't cancel parent context
+		conn:     c.conn,
+		opts:     c.opts,
+		handlers: c.handlers,
+		ctx:      ctx,
+		cancel:   func() {}, // Don't cancel parent context
 	}
 	newClient.mu.RLock()
 	newClient.connID = c.connID
