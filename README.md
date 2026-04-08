@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/badge/Examples-29-brightgreen.svg" alt="Examples">
   </a>
   <a href="https://gitee.com/shing1211/futuapi4go">
-    <img src="https://img.shields.io/badge/Progress-22%25-orange.svg" alt="Progress">
+    <img src="https://img.shields.io/badge/Progress-44%25-yellow.svg" alt="Progress">
   </a>
 </p>
 
@@ -79,9 +79,11 @@ See [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) for implementation roadmap.
 | 推送通知 | ✅ 已完成 | 实时行情与交易推送，串行匹配 |
 | 系统 API | ✅ 已完成 | 全局状态、验证接口 |
 | 配置系统 | ✅ 已完成 | 功能选项、超时、重试、日志、连接池 |
+| 指标监控 | ✅ 已完成 | Metrics/Instrumentation、健康检查端点 |
+| 版本信息 | ✅ 已完成 | GetVersionInfo 实现 |
 | OpenD 模拟器 | 🔄 46% 完成 | 29/63 handlers 完整实现 |
 | 算法交易示例 | ✅ 已完成 | 5 个策略示例 |
-| 测试工具 | ⬜ 待开发 | 单元测试覆盖率待提升 |
+| 测试工具 | ✅ 已完成 | 64 tests passing across 5 packages |
 
 ## 已完成阶段 / Completed Phases
 
@@ -104,6 +106,23 @@ See [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) for implementation roadmap.
 - 重试配置：最大重试、间隔、指数退避
 - 日志接口：自定义 logger，4 级日志
 - 连接池：`ClientPool` 健康检查，自动重连
+
+### ✅ Phase 4: Testing Infrastructure (4/4)
+- 64 tests passing across 5 packages
+- Unit tests for core client functionality
+- Integration tests with OpenD simulator
+- Concurrent access and race condition tests
+- Test coverage for error paths and edge cases
+
+### ✅ Phase 6: Push Notifications & Observability (11/11)
+- Push notification support with serial matching
+- Metrics and instrumentation for monitoring
+- Health check endpoint for client pool
+- Version information API (GetVersionInfo)
+- Release checklist for production readiness
+- GetOptionChain implementation (2304)
+- GetOptionExpirationDate implementation (2305)
+- Bug fixes and protocol improvements
 
 ---
 

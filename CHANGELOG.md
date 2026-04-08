@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-04-08
+
+### Added
+
+#### Push Notification Support
+- Push notification handler with serial matching
+- Prevents push notifications from being consumed as request responses
+- Support for all Qot and Trd push types
+
+#### Metrics & Instrumentation
+- Client metrics collection for API calls
+- Latency tracking for request/response cycles
+- Success/failure rate monitoring
+- Connection pool metrics
+
+#### Health Check
+- Health check endpoint for client pool
+- Periodic connectivity monitoring
+- Auto-reconnection on health check failure
+
+#### Version Information
+- GetVersionInfo API implementation
+- SDK version reporting
+- OpenD version compatibility checking
+
+#### Release Checklist
+- Production readiness checklist
+- Code quality gates
+- Testing requirements
+- Documentation requirements
+
+#### Options Trading APIs
+- GetOptionChain (2304) - 获取期权链数据
+- GetOptionExpirationDate (2305) - 获取期权到期日
+
+### Fixed
+- Protocol header validation improvements
+- Error handling for edge cases
+- Connection state management fixes
+
+### Testing
+- 64 tests passing across 5 packages
+- Unit tests for core client functionality
+- Integration tests with OpenD simulator
+- Concurrent access and race condition tests
+
 ## [0.3.0] - 2026-04-07
 
 ### Added
