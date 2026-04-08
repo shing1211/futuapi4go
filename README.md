@@ -22,19 +22,19 @@
 </p>
 
 <p align="center">
-  <strong>Go 语言实现的富途 OpenD API SDK</strong><br>
-  为量化交易者打造的世界级 Golang 交易接口
+  <strong>Futu OpenD API SDK for Go</strong><br>
+  World-class Golang trading interface for quantitative traders
 </p>
 
 ---
 
-## 安装 / Installation
+## Installation
 
 ```bash
 go get gitee.com/shing1211/futuapi4go
 ```
 
-### 环境要求 / Requirements
+### Requirements
 
 | Component | Version |
 |-----------|---------|
@@ -43,7 +43,7 @@ go get gitee.com/shing1211/futuapi4go
 
 ---
 
-## 快速开始 / Quick Start
+## Quick Start
 
 ```go
 import (
@@ -75,7 +75,7 @@ func main() {
 	}
 
 	for _, bq := range result {
-		fmt.Printf("%s: 现价=%.2f 开盘=%.2f 最高=%.2f 最低=%.2f\n",
+		fmt.Printf("%s: CurPrice=%.2f Open=%.2f High=%.2f Low=%.2f\n",
 			bq.Security.GetCode(), bq.CurPrice, bq.OpenPrice,
 			bq.HighPrice, bq.LowPrice)
 	}
@@ -86,32 +86,32 @@ func ptrStr(s string) *string { return &s }
 
 ---
 
-## 项目状态 / Project Status
+## Project Status
 
-**✅ All 20 example compile tests pass with live OpenD (simulated account)**
+**All 20 example compile tests pass with live OpenD (simulated account)**
 
-| 模块 / Module | 状态 / Status | 说明 / Notes |
+| Module | Status | Notes |
 |---------------|----------------|--------------|
-| 核心架构 / Core | ✅ 完成 | TCP连接、自动心跳、用户信息 |
-| 市场数据 / Market Data | ✅ 完成 | 37+ APIs, 所有示例通过 |
-| 交易接口 / Trading | ✅ 完成 | 16 APIs, 所有示例通过 |
-| 推送通知 / Push | ✅ 完成 | 实时行情与交易推送 |
-| 系统 API / System | ✅ 完成 | 全局状态、验证接口 |
-| 配置系统 / Config | ✅ 完成 | 功能选项、超时、重试、日志 |
-| 测试 / Tests | ✅ 完成 | 20/20 examples + unit + integration 全部通过 |
+| Core Architecture | Complete | TCP connection, auto heartbeat, user info |
+| Market Data | Complete | 37+ APIs, all examples pass |
+| Trading | Complete | 16 APIs, all examples pass |
+| Push Notifications | Complete | Real-time quotes and trading push |
+| System APIs | Complete | Global state, verification |
+| Config System | Complete | Options, timeouts, retries, logging |
+| Tests | Complete | 20/20 examples + unit + integration all pass |
 
 ---
 
-## 示例 / Examples
+## Examples
 
-**29 个示例程序**，全部通过编译测试 / All 29 example programs compile and pass tests:
+**29 example programs**, all compile and pass tests:
 
-### 行情 API / Market Data APIs (11)
+### Market Data APIs (11)
 
-| 示例 | APIs |
+| Example | APIs |
 |------|------|
 | [qot_get_basic_qot](cmd/examples/qot_get_basic_qot/) | GetBasicQot |
-| [qot_get_kl](cmd/examples/qot_get_kl/) | GetKL (日/分/周) |
+| [qot_get_kl](cmd/examples/qot_get_kl/) | GetKL (day/min/week) |
 | [qot_get_order_book](cmd/examples/qot_get_order_book/) | GetOrderBook |
 | [qot_get_ticker](cmd/examples/qot_get_ticker/) | GetTicker |
 | [qot_get_rt](cmd/examples/qot_get_rt/) | GetRT |
@@ -122,9 +122,9 @@ func ptrStr(s string) *string { return &s }
 | [qot_subscribe](cmd/examples/qot_subscribe/) | Subscribe |
 | [qot_stock_filter](cmd/examples/qot_stock_filter/) | StockFilter |
 
-### 交易 API / Trading APIs (7)
+### Trading APIs (7)
 
-| 示例 | APIs |
+| Example | APIs |
 |------|------|
 | [trd_get_acc_list](cmd/examples/trd_get_acc_list/) | GetAccList |
 | [trd_get_funds](cmd/examples/trd_get_funds/) | GetFunds |
@@ -134,87 +134,87 @@ func ptrStr(s string) *string { return &s }
 | [trd_get_order_list](cmd/examples/trd_get_order_list/) | GetOrderList |
 | [trd_modify_order](cmd/examples/trd_modify_order/) | ModifyOrder |
 
-### 综合示例 / Comprehensive (5)
+### Comprehensive (5)
 
-| 示例 | 说明 |
+| Example | Description |
 |------|------|
-| [01_market_data_basic](cmd/examples/01_market_data_basic/) | 基础行情 API |
-| [02_market_data_advanced](cmd/examples/02_market_data_advanced/) | 高级行情分析 |
-| [03_trading_operations](cmd/examples/03_trading_operations/) | 完整交易流程 |
-| [04_push_subscriptions](cmd/examples/04_push_subscriptions/) | 实时推送 |
-| [05_comprehensive_demo](cmd/examples/05_comprehensive_demo/) | 全功能展示 |
+| [01_market_data_basic](cmd/examples/01_market_data_basic/) | Basic market data API |
+| [02_market_data_advanced](cmd/examples/02_market_data_advanced/) | Advanced market analysis |
+| [03_trading_operations](cmd/examples/03_trading_operations/) | Complete trading workflow |
+| [04_push_subscriptions](cmd/examples/04_push_subscriptions/) | Real-time push |
+| [05_comprehensive_demo](cmd/examples/05_comprehensive_demo/) | Full feature showcase |
 
-### 系统 API / System (1)
+### System APIs (1)
 
-| 示例 | APIs |
+| Example | APIs |
 |------|------|
 | [sys_get_global_state](cmd/examples/sys_get_global_state/) | GetGlobalState |
 
-### 算法交易 / Algo Trading (5)
+### Algo Trading (5)
 
-| 示例 | 策略 |
+| Example | Strategy |
 |------|------|
-| [algo_sma_crossover](cmd/examples/algo_sma_crossover/) | SMA 交叉 |
-| [algo_grid_trading](cmd/examples/algo_grid_trading/) | 网格交易 |
-| [algo_market_making](cmd/examples/algo_market_making/) | 做市策略 |
-| [algo_breakout_trading](cmd/examples/algo_breakout_trading/) | 突破交易 |
-| [algo_vwap_execution](cmd/examples/algo_vwap_execution/) | VWAP 执行 |
+| [algo_sma_crossover](cmd/examples/algo_sma_crossover/) | SMA Crossover |
+| [algo_grid_trading](cmd/examples/algo_grid_trading/) | Grid Trading |
+| [algo_market_making](cmd/examples/algo_market_making/) | Market Making |
+| [algo_breakout_trading](cmd/examples/algo_breakout_trading/) | Breakout Trading |
+| [algo_vwap_execution](cmd/examples/algo_vwap_execution/) | VWAP Execution |
 
 ---
 
-## 功能特性 / Features
+## Features
 
-### 市场数据 / Market Data
-- 实时行情、K线、订单簿、逐笔成交、分时数据
-- 经纪队列、板块信息、资金流向、期权数据
-- 涡轮窝轮、自选股管理、价格提醒、股票筛选
+### Market Data
+- Real-time quotes, K-lines, order book, tick-by-tick trades, minute data
+- Broker queue, sector info, capital flow, options data
+- Warrants, watchlist, price alerts, stock screening
 
-### 交易功能 / Trading
-- 账户管理、下单改单、订单管理、持仓查询
-- 成交记录、订单费用、保证金率、最大交易量
+### Trading
+- Account management, order placement/modification, order management, position queries
+- Trade records, order fees, margin ratio, max trade quantity
 
-### 推送服务 / Push Notifications
-- 实时行情、K线、订单簿、逐笔成交、分时、经纪推送
-- 订单状态、成交、交易通知、系统通知推送
+### Push Notifications
+- Real-time quotes, K-lines, order book, tick-by-tick trades, minute data, broker push
+- Order status, fills, trade notifications, system notification push
 
-### 系统功能 / System
-- 全局状态、用户信息、延迟统计、验证接口
+### System
+- Global state, user info, latency statistics, verification
 
 ---
 
-## 项目结构 / Project Structure
+## Project Structure
 
 ```
 futuapi4go/
 ├── cmd/
-│   ├── examples/          # 29 个示例程序
-│   └── simulator/          # OpenD 模拟器
-├── internal/client/        # 核心客户端
+│   ├── examples/          # 29 example programs
+│   └── simulator/          # OpenD simulator
+├── internal/client/        # Core client
 ├── pkg/
-│   ├── qot/              # 行情 API (37 functions)
-│   ├── trd/              # 交易 API (16 functions)
-│   ├── sys/              # 系统 API
-│   ├── push/             # 推送解析
-│   └── pb/               # Protobuf 生成代码 (74 packages)
-├── api/proto/            # Protobuf 定义 (74 files)
-└── test/                 # 集成测试
+│   ├── qot/              # Market Data API (37 functions)
+│   ├── trd/              # Trading API (16 functions)
+│   ├── sys/              # System API
+│   ├── push/             # Push parsing
+│   └── pb/               # Protobuf generated code (74 packages)
+├── api/proto/            # Protobuf definitions (74 files)
+└── test/                 # Integration tests
 ```
 
 ---
 
-## 文档 / Documentation
+## Documentation
 
-| 文档 | 说明 |
+| Document | Description |
 |------|------|
-| [USER_GUIDE.md](USER_GUIDE.md) | 用户使用指南 |
-| [CHANGELOG.md](CHANGELOG.md) | 更新日志 |
-| [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) | 实施计划 |
-| [STATUS.md](STATUS.md) | 生产就绪状态 |
+| [USER_GUIDE.md](USER_GUIDE.md) | User guide |
+| [CHANGELOG.md](CHANGELOG.md) | Changelog |
+| [PRODUCTION_PLAN.md](PRODUCTION_PLAN.md) | Implementation plan |
+| [STATUS.md](STATUS.md) | Production readiness status |
 
-详细示例文档: [cmd/examples/README.md](cmd/examples/README.md)
+Detailed example docs: [cmd/examples/README.md](cmd/examples/README.md)
 
 ---
 
-## 许可证 / License
+## License
 
 MIT License

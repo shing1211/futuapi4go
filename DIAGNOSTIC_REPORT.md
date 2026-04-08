@@ -1,30 +1,30 @@
 # FutuAPI4Go - OpenD Connection Diagnostic Report
 
 ## Date: 2026-04-08
-## Status: ⚠️ Need to verify OpenD configuration
+## Status: Need to verify OpenD configuration
 
 ---
 
-## ✅ What's Working
+## What's Working
 
-1. **Project Structure**: ✅ Go standard layout complete
-2. **Protobuf Files**: ✅ Regenerated with correct paths
-3. **Code Compilation**: ✅ All examples compile successfully
-4. **TCP Connection**: ✅ Port 11111 is listening and accepts connections
+1. **Project Structure**: Go standard layout complete
+2. **Protobuf Files**: Regenerated with correct paths
+3. **Code Compilation**: All examples compile successfully
+4. **TCP Connection**: Port 11111 is listening and accepts connections
 
-## ❌ What's Not Working
+## What's Not Working
 
 **Issue**: Futu OpenD accepts TCP connection but **does not respond** to InitConnect protocol messages
 
 **Symptoms**:
 ```
-✅ TCP connected
-📤 Request sent (48 bytes header + 31 bytes body)
-📥 Waiting for response (10s)...
-❌ Read header failed: read tcp 127.0.0.1:63123->127.0.0.1:11111: i/o timeout
+TCP connected
+Request sent (48 bytes header + 31 bytes body)
+Waiting for response (10s)...
+Read header failed: read tcp 127.0.0.1:63123->127.0.0.1:11111: i/o timeout
 ```
 
-## 🔍 Root Cause Analysis
+## Root Cause Analysis
 
 This specific symptom (TCP connects, but no response) typically means:
 
@@ -37,11 +37,11 @@ This specific symptom (TCP connects, but no response) typically means:
 
 2. **OpenD API Access Disabled**
    - Settings may have API access turned off
-   - **Fix**: Open OpenD settings → Check "Allow API Access" or similar
+   - **Fix**: Open OpenD settings -> Check "Allow API Access" or similar
 
 3. **Wrong Port Configuration**  
    - OpenD listening on different port than 11111
-   - **Fix**: Check OpenD settings → Confirm "Listen Port" = 11111
+   - **Fix**: Check OpenD settings -> Confirm "Listen Port" = 11111
 
 4. **RSA Encryption Required**
    - OpenD configured to require RSA, client sending unencrypted
@@ -59,34 +59,34 @@ This specific symptom (TCP connects, but no response) typically means:
 
 ---
 
-## 📋 Action Items for User
+## Action Items for User
 
 ### Step 1: Verify OpenD Status (Most Important!)
 
 **Please check these in your Futu OpenD application:**
 
 - [ ] **Is OpenD showing a logged-in account?** (Not login screen)
-  - Should see: Username, account balance, or "已连接" status
-  - Should NOT see: Login form, password fields, or "未登录"
+   - Should see: Username, account balance, or "Connected" status
+   - Should NOT see: Login form, password fields, or "Not logged in"
 
 - [ ] **What does the main window show?**
-  - Screenshot would be helpful
-  - Look for any error messages or warnings
+   - Screenshot would be helpful
+   - Look for any error messages or warnings
 
 - [ ] **Check Settings:**
-  - Open Settings/Preferences
-  - Find "API" or "OpenAPI" section
-  - Confirm:
-    - ☑️ API access is enabled
-    - ☑️ Port is set to 11111
-    - ☐ RSA encryption is NOT required (or is properly configured)
-    - ☑️ "Allow connections from localhost" or similar is enabled
+   - Open Settings/Preferences
+   - Find "API" or "OpenAPI" section
+   - Confirm:
+     - API access is enabled
+     - Port is set to 11111
+     - RSA encryption is NOT required (or is properly configured)
+     - "Allow connections from localhost" or similar is enabled
 
 ### Step 2: Restart OpenD
 
 Sometimes OpenD gets in a bad state:
 
-1. **Fully exit OpenD** (check system tray, right-click → Exit)
+1. **Fully exit OpenD** (check system tray, right-click -> Exit)
 2. **Wait 10 seconds**
 3. **Restart OpenD**
 4. **Login if prompted**
@@ -112,12 +112,12 @@ pip install --upgrade protobuf==3.20.0
 python test_opend_python.py
 ```
 
-If Python works → Our Go protocol has a bug
-If Python fails too → OpenD configuration issue
+If Python works -> Our Go protocol has a bug
+If Python fails too -> OpenD configuration issue
 
 ---
 
-## 📞 What to Report Back
+## What to Report Back
 
 Once you've checked the above, please tell me:
 
@@ -134,7 +134,7 @@ With this information, I can pinpoint the exact issue and fix it!
 
 ---
 
-## 💡 Quick Fix Attempt
+## Quick Fix Attempt
 
 If you want to try the quickest fix first:
 

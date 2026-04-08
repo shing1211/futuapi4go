@@ -1,205 +1,203 @@
 # FutuAPI4Go - Master Implementation Plan
 
-## 📋 Executive Summary
+## Executive Summary
 
-This is the comprehensive, master tracking document for all unfinished items.
-這是所有未完成事項的綜合主追蹤文件。
+This is the comprehensive master tracking document for all unfinished items.
 
 **Last Updated**: 2026-04-08
 **Target**: Production-ready SDK with zero critical/high issues
-**目標**: 零關鍵/高優先級問題的生產就緒 SDK
 
 ---
 
-## 📊 Progress Overview / 進度概覽
+## Progress Overview
 
 | Phase | Status | Progress | Tasks Remaining | ETA |
 |---|---|---|---|---|
-| Phase 1: Critical Bug Fixes | ✅ Complete | 4/4 | 0 | ✅ Done |
-| Phase 2: API Safety Layer | ✅ Complete | 6/6 | 0 | ✅ Done |
-| Phase 3: Configuration System | ✅ Complete | 5/5 | 0 | ✅ Done |
-| Phase 4: Comprehensive Testing | ✅ Complete | 10/10 | 0 | ✅ Done |
-| Phase 5: Documentation | ⬜ Not Started | 1/7 | 6 | 2-3h |
-| Phase 6: Production Hardening | ✅ Complete | 7/7 | 0 | ✅ Done |
-| Phase 7: Simulator Completion | ⬜ Not Started | 1/38 | 37 | 8-10h |
+| Phase 1: Critical Bug Fixes | Complete | 4/4 | 0 | Done |
+| Phase 2: API Safety Layer | Complete | 6/6 | 0 | Done |
+| Phase 3: Configuration System | Complete | 5/5 | 0 | Done |
+| Phase 4: Comprehensive Testing | Complete | 10/10 | 0 | Done |
+| Phase 5: Documentation | Not Started | 1/7 | 6 | 2-3h |
+| Phase 6: Production Hardening | Complete | 7/7 | 0 | Done |
+| Phase 7: Simulator Completion | Not Started | 1/38 | 37 | 8-10h |
 | **Total** | | **34/77** | **43** | **~13h** |
 
 ---
 
-## Phase 1: Critical Bug Fixes / 關鍵錯誤修復
-**Priority**: 🔴 CRITICAL | **Estimated**: 2-3 hours | **Status**: ✅ COMPLETE
+## Phase 1: Critical Bug Fixes
+**Priority**: CRITICAL | **Estimated**: 2-3 hours | **Status**: COMPLETE
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 1.1 | Fix nil-conn guards | `internal/client/conn.go` | ✅ | Added nil checks to ReadPacket, WritePacket, SetReadDeadline, SetWriteDeadline |
-| 1.2 | Fix TOCTOU race | `internal/client/client.go` | ✅ | Changed `reconnecting` to int32 with atomic CompareAndSwapInt32 |
-| 1.3 | Remove debug logs | `internal/client/conn.go` | ✅ | Removed all fmt.Printf("[DEBUG...]") and unused min() function |
-| 1.4 | Fix fmt.Println usage | `internal/client/client.go` | ✅ | Replaced with logf() in reconnect logic |
+| 1.1 | Fix nil-conn guards | `internal/client/conn.go` | Done | Added nil checks to ReadPacket, WritePacket, SetReadDeadline, SetWriteDeadline |
+| 1.2 | Fix TOCTOU race | `internal/client/client.go` | Done | Changed `reconnecting` to int32 with atomic CompareAndSwapInt32 |
+| 1.3 | Remove debug logs | `internal/client/conn.go` | Done | Removed all fmt.Printf("[DEBUG...]") and unused min() function |
+| 1.4 | Fix fmt.Println usage | `internal/client/client.go` | Done | Replaced with logf() in reconnect logic |
 
-**Deliverable / 交付物**: SDK no longer panics on misuse, thread-safe reconnection ✅
+**Deliverable**: SDK no longer panics on misuse, thread-safe reconnection
 
 ---
 
-## Phase 2: API Safety Layer / API安全層
-**Priority**: 🟠 HIGH | **Estimated**: 3-4 hours | **Status**: ✅ COMPLETE
+## Phase 2: API Safety Layer
+**Priority**: HIGH | **Estimated**: 3-4 hours | **Status**: COMPLETE
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 2.1 | Add connection guard wrapper | `internal/client/client.go` | ✅ | Created `EnsureConnected()` helper method |
-| 2.2 | Wrap all Qot APIs (37 functions) | `pkg/qot/quote.go`, `pkg/qot/market.go` | ✅ | Added connection checks to all 37 Qot functions |
-| 2.3 | Wrap all Trd APIs (16 functions) | `pkg/trd/trade.go` | ✅ | Added connection checks to all 16 Trd functions |
-| 2.4 | Wrap all Sys APIs (4 functions) | `pkg/sys/system.go` | ✅ | Added connection checks to all 4 Sys functions |
-| 2.5 | Implement serial-based response matching | `internal/client/conn.go` | ✅ | ReadPacket now matches serials, dispatches push notifications to handlers |
-| 2.6 | Add Context support | `internal/client/client.go` | ✅ | Added `Context()`, `WithContext()`, `SetPushHandler()` methods |
+| 2.1 | Add connection guard wrapper | `internal/client/client.go` | Done | Created `EnsureConnected()` helper method |
+| 2.2 | Wrap all Qot APIs (37 functions) | `pkg/qot/quote.go`, `pkg/qot/market.go` | Done | Added connection checks to all 37 Qot functions |
+| 2.3 | Wrap all Trd APIs (16 functions) | `pkg/trd/trade.go` | Done | Added connection checks to all 16 Trd functions |
+| 2.4 | Wrap all Sys APIs (4 functions) | `pkg/sys/system.go` | Done | Added connection checks to all 4 Sys functions |
+| 2.5 | Implement serial-based response matching | `internal/client/conn.go` | Done | ReadPacket now matches serials, dispatches push notifications to handlers |
+| 2.6 | Add Context support | `internal/client/client.go` | Done | Added `Context()`, `WithContext()`, `SetPushHandler()` methods |
 
-**Deliverable / 交付物**: All 57 API functions safe to call, proper error messages instead of panics, push notification support ✅
+**Deliverable**: All 57 API functions safe to call, proper error messages instead of panics, push notification support
 
 ---
 
-## Phase 3: Configuration System / 配置系統
-**Priority**: 🟡 MEDIUM | **Estimated**: 2-3 hours | **Status**: ✅ COMPLETE
+## Phase 3: Configuration System
+**Priority**: MEDIUM | **Estimated**: 2-3 hours | **Status**: COMPLETE
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 3.1 | Create ClientOptions struct | `internal/client/client.go` | ✅ | Added ClientOptions struct with sensible defaults |
-| 3.2 | Add configurable timeouts | `internal/client/client.go` | ✅ | DialTimeout, APITimeout, KeepAliveInterval, MaxPacketSize |
-| 3.3 | Add retry configuration | `internal/client/client.go` | ✅ | MaxRetries, ReconnectInterval, ReconnectBackoff |
-| 3.4 | Add logger interface | `internal/client/client.go` | ✅ | Custom logger, log levels (Info/Warn/Error/Silent) |
-| 3.5 | Add connection pool support | `internal/client/pool.go` | ✅ | ClientPool with health checking, auto-reconnect, min/max idle |
+| 3.1 | Create ClientOptions struct | `internal/client/client.go` | Done | Added ClientOptions struct with sensible defaults |
+| 3.2 | Add configurable timeouts | `internal/client/client.go` | Done | DialTimeout, APITimeout, KeepAliveInterval, MaxPacketSize |
+| 3.3 | Add retry configuration | `internal/client/client.go` | Done | MaxRetries, ReconnectInterval, ReconnectBackoff |
+| 3.4 | Add logger interface | `internal/client/client.go` | Done | Custom logger, log levels (Info/Warn/Error/Silent) |
+| 3.5 | Add connection pool support | `internal/client/pool.go` | Done | ClientPool with health checking, auto-reconnect, min/max idle |
 
-**Deliverable / 交付物**: Fully configurable SDK with functional options pattern and connection pooling ✅
+**Deliverable**: Fully configurable SDK with functional options pattern and connection pooling
 
 ---
 
-## Phase 4: Comprehensive Testing / 綜合測試
-**Priority**: 🔴 CRITICAL | **Estimated**: 6-8 hours | **Status**: ✅ 10/10 Complete
+## Phase 4: Comprehensive Testing
+**Priority**: CRITICAL | **Estimated**: 6-8 hours | **Status**: 10/10 Complete
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 4.1 | Conn binary encoding tests | `internal/client/conn_test.go` | ✅ | 12 tests: header, SHA1, edge cases, concurrent writes |
-| 4.2 | Client lifecycle tests | `internal/client/client_test.go` | ✅ | 11 tests: creation, options, context, handlers |
-| 4.3 | Concurrent access tests | `internal/client/conn_test.go` | ✅ | Goroutine safety for serial tracking and writes |
-| 4.4 | Error path tests | `internal/client/errors_test.go` | ✅ | 6 tests: all error constants and custom error type |
-| 4.5 | Integration tests with simulator | `test/integration/integration_test.go` | ✅ | 7 tests: Connect, EnsureConnected, GetGlobalState, GetBasicQot, Subscribe, multiple APIs, context |
-| 4.6 | Qot API tests | `pkg/qot/quote_test.go` | ✅ | 6 tests: request validation, struct fields |
-| 4.7 | Trd API tests | `pkg/trd/trade_test.go` | ✅ | 7 tests: request validation, struct fields |
-| 4.8 | Sys API tests | `pkg/sys/system_test.go` | ✅ | 4 tests: response fields, request validation |
-| 4.9 | Push handler tests | `pkg/push/push_test.go` | ✅ | 11 tests: invalid data handling for all parsers |
-| 4.10 | Example validation tests | `test/examples/examples_test.go` | ✅ | 3 tests: compile validation for 24 examples |
+| 4.1 | Conn binary encoding tests | `internal/client/conn_test.go` | Done | 12 tests: header, SHA1, edge cases, concurrent writes |
+| 4.2 | Client lifecycle tests | `internal/client/client_test.go` | Done | 11 tests: creation, options, context, handlers |
+| 4.3 | Concurrent access tests | `internal/client/conn_test.go` | Done | Goroutine safety for serial tracking and writes |
+| 4.4 | Error path tests | `internal/client/errors_test.go` | Done | 6 tests: all error constants and custom error type |
+| 4.5 | Integration tests with simulator | `test/integration/integration_test.go` | Done | 7 tests: Connect, EnsureConnected, GetGlobalState, GetBasicQot, Subscribe, multiple APIs, context |
+| 4.6 | Qot API tests | `pkg/qot/quote_test.go` | Done | 6 tests: request validation, struct fields |
+| 4.7 | Trd API tests | `pkg/trd/trade_test.go` | Done | 7 tests: request validation, struct fields |
+| 4.8 | Sys API tests | `pkg/sys/system_test.go` | Done | 4 tests: response fields, request validation |
+| 4.9 | Push handler tests | `pkg/push/push_test.go` | Done | 11 tests: invalid data handling for all parsers |
+| 4.10 | Example validation tests | `test/examples/examples_test.go` | Done | 3 tests: compile validation for 24 examples |
 
-**Test Results**: ✅ **64 tests passing** across 5 packages
+**Test Results**: 64 tests passing across 5 packages
 **Coverage**: Core client, Qot, Trd, Sys, Push, Integration, Examples
 
 ---
 
-## Phase 5: Documentation / 文檔
-**Priority**: 🟠 HIGH | **Estimated**: 2-3 hours
+## Phase 5: Documentation
+**Priority**: HIGH | **Estimated**: 2-3 hours
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 5.1 | Add Go doc comments | All `pkg/` files | ⬜ | Document all 64+ exported functions |
-| 5.2 | Create API reference | `docs/API_REFERENCE.md` | ⬜ | Complete API documentation with examples |
-| 5.3 | Update README | `README.md` | ✅ Done | Added production status badges |
-| 5.4 | Create SECURITY.md | `SECURITY.md` | ⬜ | Document security considerations |
-| 5.5 | Create MIGRATION.md | `MIGRATION.md` | ⬜ | Guide for users upgrading from old versions |
-| 5.6 | Update examples documentation | `cmd/examples/EXAMPLES_README.md` | ✅ Done | All examples documented |
-| 5.7 | Create CONTRIBUTING guide | `CONTRIBUTING.md` | ⬜ | Update with new standards |
+| 5.1 | Add Go doc comments | All `pkg/` files | Pending | Document all 64+ exported functions |
+| 5.2 | Create API reference | `docs/API_REFERENCE.md` | Pending | Complete API documentation with examples |
+| 5.3 | Update README | `README.md` | Done | Added production status badges |
+| 5.4 | Create SECURITY.md | `SECURITY.md` | Pending | Document security considerations |
+| 5.5 | Create MIGRATION.md | `MIGRATION.md` | Pending | Guide for users upgrading from old versions |
+| 5.6 | Update examples documentation | `cmd/examples/EXAMPLES_README.md` | Done | All examples documented |
+| 5.7 | Create CONTRIBUTING guide | `CONTRIBUTING.md` | Pending | Update with new standards |
 
-**Deliverable / 交付物**: Complete, professional documentation suite
+**Deliverable**: Complete, professional documentation suite
 
 ---
 
-## Phase 6: Production Hardening / 生產強化
-**Priority**: 🟢 LOW | **Estimated**: 2-3 hours
+## Phase 6: Production Hardening
+**Priority**: LOW | **Estimated**: 2-3 hours
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 6.1 | Implement push notification support | `internal/client/client.go` | ✅ | readLoop enabled with proper dispatch |
-| 6.2 | Add metrics/instrumentation | `internal/client/client.go` | ✅ | Metrics struct tracking requests, latencies, errors |
-| 6.3 | Add health check endpoint | `internal/client/client.go` | ✅ | GetMetrics() provides connection status |
-| 6.4 | Create release checklist | `docs/RELEASE_CHECKLIST.md` | ✅ | Pre-release verification steps |
-| 6.5 | Add version information | `internal/client/version.go` | ✅ | SDK version, build info |
-| 6.6 | Implement GetOptionChain | `pkg/qot/quote.go` | ✅ | Complete implementation |
-| 6.7 | Implement GetOptionExpirationDate | `pkg/qot/quote.go` | ✅ | Complete implementation |
+| 6.1 | Implement push notification support | `internal/client/client.go` | Done | readLoop enabled with proper dispatch |
+| 6.2 | Add metrics/instrumentation | `internal/client/client.go` | Done | Metrics struct tracking requests, latencies, errors |
+| 6.3 | Add health check endpoint | `internal/client/client.go` | Done | GetMetrics() provides connection status |
+| 6.4 | Create release checklist | `docs/RELEASE_CHECKLIST.md` | Done | Pre-release verification steps |
+| 6.5 | Add version information | `internal/client/version.go` | Done | SDK version, build info |
+| 6.6 | Implement GetOptionChain | `pkg/qot/quote.go` | Done | Complete implementation |
+| 6.7 | Implement GetOptionExpirationDate | `pkg/qot/quote.go` | Done | Complete implementation |
 
-**Deliverable / 交付物**: Production-grade SDK ready for enterprise use
+**Deliverable**: Production-grade SDK ready for enterprise use
 
 ---
 
-## Phase 7: Simulator Completion / 模擬器完成
-**Priority**: 🟡 MEDIUM | **Estimated**: 8-10 hours
+## Phase 7: Simulator Completion
+**Priority**: MEDIUM | **Estimated**: 8-10 hours
 
 ### 7.1 Server Infrastructure (4 tasks)
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 7.1.1 | Add server startup message | `cmd/simulator/server.go` | ⬜ | Print listening address on startup |
-| 7.1.2 | Add graceful shutdown | `cmd/simulator/server.go` | ⬜ | Handle SIGINT/SIGTERM signals |
-| 7.1.3 | Add error logging | `cmd/simulator/server.go` | ⬜ | Replace fmt.Printf with structured logging |
-| 7.1.4 | Add connection tracking | `cmd/simulator/server.go` | ⬜ | Track active connections, provide stats |
+| 7.1.1 | Add server startup message | `cmd/simulator/server.go` | Pending | Print listening address on startup |
+| 7.1.2 | Add graceful shutdown | `cmd/simulator/server.go` | Pending | Handle SIGINT/SIGTERM signals |
+| 7.1.3 | Add error logging | `cmd/simulator/server.go` | Pending | Replace fmt.Printf with structured logging |
+| 7.1.4 | Add connection tracking | `cmd/simulator/server.go` | Pending | Track active connections, provide stats |
 
 ### 7.2 Qot API Stub Handlers (26 tasks)
 
 | # | Task | ProtoID | Status | Description |
 |---|------|---------|--------|-------------|
-| 7.2.1 | Implement handleGetTicker | 2107 | ⬜ | Return mock ticker data with time, price, volume |
-| 7.2.2 | Implement handleGetRT | 2108 | ⬜ | Return mock real-time minute data |
-| 7.2.3 | Implement handleGetBroker | 2111 | ⬜ | Return mock broker queue with IDs and volumes |
-| 7.2.4 | Implement handleGetPlateSet | 2202 | ⬜ | Return mock plate/sector list |
-| 7.2.5 | Implement handleGetPlateSecurity | 2203 | ⬜ | Return mock securities in plate |
-| 7.2.6 | Implement handleGetOwnerPlate | 2204 | ⬜ | Return mock plate ownership info |
-| 7.2.7 | Implement handleGetReference | 2205 | ⬜ | Return mock reference data |
-| 7.2.8 | Implement handleGetTradeDate | 2206 | ⬜ | Return mock trading dates |
-| 7.2.9 | Implement handleGetMarketState | 2208 | ⬜ | Return mock market state (open/closed) |
-| 7.2.10 | Implement handleGetSuspend | 2209 | ⬜ | Return mock suspended securities list |
-| 7.2.11 | Implement handleGetCodeChange | 2210 | ⬜ | Return mock code change history |
-| 7.2.12 | Implement handleGetFutureInfo | 2211 | ⬜ | Return mock futures contract info |
-| 7.2.13 | Implement handleGetIpoList | 2212 | ⬜ | Return mock IPO listings |
-| 7.2.14 | Implement handleGetHoldingChangeList | 2213 | ⬜ | Return mock holding changes |
-| 7.2.15 | Implement handleRequestRehab | 2214 | ⬜ | Return mock rehabilitation data |
-| 7.2.16 | Implement handleGetCapitalFlow | 2301 | ⬜ | Return mock capital flow with in/out |
-| 7.2.17 | Implement handleGetCapitalDistribution | 2302 | ⬜ | Return mock capital distribution by size |
-| 7.2.18 | Implement handleStockFilter | 2303 | ⬜ | Return mock filtered stocks |
-| 7.2.19 | Implement handleGetOptionChain | 2304 | ⬜ | Return mock option chain |
-| 7.2.20 | Implement handleGetOptionExpirationDate | 2305 | ⬜ | Return mock option expiration dates |
-| 7.2.21 | Implement handleGetWarrant | 2306 | ⬜ | Return mock warrant/cbbc data |
-| 7.2.22 | Implement handleGetUserSecurity | 2401 | ⬜ | Return mock user watchlist |
-| 7.2.23 | Implement handleGetUserSecurityGroup | 2402 | ⬜ | Return mock user watchlist groups |
-| 7.2.24 | Implement handleModifyUserSecurity | 2403 | ⬜ | Return mock modify result |
-| 7.2.25 | Implement handleGetPriceReminder | 2404 | ⬜ | Return mock price reminders |
-| 7.2.26 | Implement handleSetPriceReminder | 2405 | ⬜ | Return mock set result |
-| 7.2.27 | Implement handleGetSecuritySnapshot | 2110 | ⬜ | Return mock security snapshots |
+| 7.2.1 | Implement handleGetTicker | 2107 | Pending | Return mock ticker data with time, price, volume |
+| 7.2.2 | Implement handleGetRT | 2108 | Pending | Return mock real-time minute data |
+| 7.2.3 | Implement handleGetBroker | 2111 | Pending | Return mock broker queue with IDs and volumes |
+| 7.2.4 | Implement handleGetPlateSet | 2202 | Pending | Return mock plate/sector list |
+| 7.2.5 | Implement handleGetPlateSecurity | 2203 | Pending | Return mock securities in plate |
+| 7.2.6 | Implement handleGetOwnerPlate | 2204 | Pending | Return mock plate ownership info |
+| 7.2.7 | Implement handleGetReference | 2205 | Pending | Return mock reference data |
+| 7.2.8 | Implement handleGetTradeDate | 2206 | Pending | Return mock trading dates |
+| 7.2.9 | Implement handleGetMarketState | 2208 | Pending | Return mock market state (open/closed) |
+| 7.2.10 | Implement handleGetSuspend | 2209 | Pending | Return mock suspended securities list |
+| 7.2.11 | Implement handleGetCodeChange | 2210 | Pending | Return mock code change history |
+| 7.2.12 | Implement handleGetFutureInfo | 2211 | Pending | Return mock futures contract info |
+| 7.2.13 | Implement handleGetIpoList | 2212 | Pending | Return mock IPO listings |
+| 7.2.14 | Implement handleGetHoldingChangeList | 2213 | Pending | Return mock holding changes |
+| 7.2.15 | Implement handleRequestRehab | 2214 | Pending | Return mock rehabilitation data |
+| 7.2.16 | Implement handleGetCapitalFlow | 2301 | Pending | Return mock capital flow with in/out |
+| 7.2.17 | Implement handleGetCapitalDistribution | 2302 | Pending | Return mock capital distribution by size |
+| 7.2.18 | Implement handleStockFilter | 2303 | Pending | Return mock filtered stocks |
+| 7.2.19 | Implement handleGetOptionChain | 2304 | Pending | Return mock option chain |
+| 7.2.20 | Implement handleGetOptionExpirationDate | 2305 | Pending | Return mock option expiration dates |
+| 7.2.21 | Implement handleGetWarrant | 2306 | Pending | Return mock warrant/cbbc data |
+| 7.2.22 | Implement handleGetUserSecurity | 2401 | Pending | Return mock user watchlist |
+| 7.2.23 | Implement handleGetUserSecurityGroup | 2402 | Pending | Return mock user watchlist groups |
+| 7.2.24 | Implement handleModifyUserSecurity | 2403 | Pending | Return mock modify result |
+| 7.2.25 | Implement handleGetPriceReminder | 2404 | Pending | Return mock price reminders |
+| 7.2.26 | Implement handleSetPriceReminder | 2405 | Pending | Return mock set result |
+| 7.2.27 | Implement handleGetSecuritySnapshot | 2110 | Pending | Return mock security snapshots |
 
 ### 7.3 Trd API Stub Handlers (10 tasks)
 
 | # | Task | ProtoID | Status | Description |
 |---|------|---------|--------|-------------|
-| 7.3.1 | Implement handleGetFunds | 4003 | ⬜ | Return mock funds with cash, market value |
-| 7.3.2 | Implement handleGetOrderFee | 4004 | ⬜ | Return mock order fees |
-| 7.3.3 | Implement handleGetMarginRatio | 4005 | ⬜ | Return mock margin ratios |
-| 7.3.4 | Implement handleGetMaxTrdQtys | 4006 | ⬜ | Return mock max trade quantities |
-| 7.3.5 | Implement handleModifyOrder | 5002 | ⬜ | Return mock modify result |
-| 7.3.6 | Implement handleGetOrderList | 5003 | ⬜ | Return mock order list |
-| 7.3.7 | Implement handleGetHistoryOrderList | 5004 | ⬜ | Return mock historical orders |
-| 7.3.8 | Implement handleGetOrderFillList | 5005 | ⬜ | Return mock order fills |
-| 7.3.9 | Implement handleGetHistoryOrderFillList | 5006 | ⬜ | Return mock historical fills |
-| 7.3.10 | Implement handleGetPositionList | 6001 | ⬜ | Return mock positions with P/L |
+| 7.3.1 | Implement handleGetFunds | 4003 | Pending | Return mock funds with cash, market value |
+| 7.3.2 | Implement handleGetOrderFee | 4004 | Pending | Return mock order fees |
+| 7.3.3 | Implement handleGetMarginRatio | 4005 | Pending | Return mock margin ratios |
+| 7.3.4 | Implement handleGetMaxTrdQtys | 4006 | Pending | Return mock max trade quantities |
+| 7.3.5 | Implement handleModifyOrder | 5002 | Pending | Return mock modify result |
+| 7.3.6 | Implement handleGetOrderList | 5003 | Pending | Return mock order list |
+| 7.3.7 | Implement handleGetHistoryOrderList | 5004 | Pending | Return mock historical orders |
+| 7.3.8 | Implement handleGetOrderFillList | 5005 | Pending | Return mock order fills |
+| 7.3.9 | Implement handleGetHistoryOrderFillList | 5006 | Pending | Return mock historical fills |
+| 7.3.10 | Implement handleGetPositionList | 6001 | Pending | Return mock positions with P/L |
 
 ### 7.4 Simulator Testing (3 tasks)
 
 | # | Task | File(s) | Status | Description |
 |---|------|---------|--------|-------------|
-| 7.4.1 | End-to-end simulator test | `cmd/examples/simulator/` | ⬜ | Test full workflow with simulator |
-| 7.4.2 | Add simulator configuration | `cmd/simulator/` | ⬜ | Configurable mock data, ports |
-| 7.4.3 | Document simulator usage | `SIMULATOR.md` | ⬜ | Update with complete usage guide |
+| 7.4.1 | End-to-end simulator test | `cmd/examples/simulator/` | Pending | Test full workflow with simulator |
+| 7.4.2 | Add simulator configuration | `cmd/simulator/` | Pending | Configurable mock data, ports |
+| 7.4.3 | Document simulator usage | `SIMULATOR.md` | Pending | Update with complete usage guide |
 
-**Deliverable / 交付物**: Fully functional simulator with 100% API coverage
+**Deliverable**: Fully functional simulator with 100% API coverage
 
 ---
 
-## 📈 Progress Tracking / 進度追蹤
+## Progress Tracking
 
-### Completed / 已完成 ✅
+### Completed
 - [x] Project restructured to Go standard layout
 - [x] Protocol header fixed (44 bytes)
 - [x] SHA1 hash calculation added
@@ -208,32 +206,32 @@ This is the comprehensive, master tracking document for all unfinished items.
 - [x] Simulator compilation errors fixed
 - [x] Production plan documented
 
-### In Progress / 進行中 🔄
+### In Progress
 - [ ] Phase 1-7 implementation (0/77 tasks started)
 
-### Blocked / 受阻 🚫
+### Blocked
 - [ ] Integration tests require working simulator
 - [ ] GetOptionChain blocked by protobuf issues
 
 ---
 
-## 🎯 Success Criteria / 成功標準
+## Success Criteria
 
-### Must Have (Production Ready) / 必須具備
+### Must Have (Production Ready)
 
 - [ ] Phase 1 complete (0/4 tasks)
 - [ ] Phase 2 complete (0/6 tasks)
 - [ ] Phase 4 complete (0/10 tasks)
 - [ ] Zero CRITICAL issues
 - [ ] Zero HIGH issues
-- [ ] ≥80% code coverage
+- [ ] 80%+ code coverage
 - [ ] Zero race conditions (go test -race passes)
 - [ ] All exported functions documented
 - [ ] All examples compile and run
 - [ ] Integration tests pass with simulator
 - [ ] No panic() calls in any code path
 
-### Should Have (Production Recommended) / 建議具備
+### Should Have (Production Recommended)
 
 - [ ] Phase 3 complete (0/5 tasks)
 - [ ] Phase 5 complete (6/7 tasks - README done)
@@ -244,7 +242,7 @@ This is the comprehensive, master tracking document for all unfinished items.
 - [ ] SECURITY.md document
 - [ ] Migration guide
 
-### Nice to Have (Enterprise Ready) / 企業就緒
+### Nice to Have (Enterprise Ready)
 
 - [ ] Phase 6 complete (0/7 tasks)
 - [ ] Phase 7 complete (0/38 tasks)
@@ -258,9 +256,9 @@ This is the comprehensive, master tracking document for all unfinished items.
 
 ---
 
-## 🛠️ Implementation Notes / 實施說明
+## Implementation Notes
 
-### Code Standards / 代碼標準
+### Code Standards
 
 - All functions must have Go doc comments
 - All errors must be wrapped with context using `%w`
@@ -269,7 +267,7 @@ This is the comprehensive, master tracking document for all unfinished items.
 - All public APIs must return errors, not panic
 - All simulator handlers must return realistic mock data
 
-### Commit Strategy / 提交策略
+### Commit Strategy
 
 - Each task = one commit
 - Atomic commits (one logical change per commit)
@@ -277,43 +275,43 @@ This is the comprehensive, master tracking document for all unfinished items.
 - No mixed concerns in single commit
 - Update this document when tasks complete
 
-### Testing Strategy / 測試策略
+### Testing Strategy
 
 - Unit tests first, then integration tests
 - All tests must pass before merging
 - Race detector enabled for all tests
-- Coverage threshold: ≥80%
+- Coverage threshold: 80%+
 - Benchmark critical paths
 
 ---
 
-## 📅 Timeline Estimate / 時間線估算
+## Timeline Estimate
 
 | Phase | Estimated Time | Cumulative | Completion |
 |---|---|---|---|
-| Phase 1: Critical Fixes | 2-3 hours | 2-3 hours | ✅ 100% |
-| Phase 2: API Safety | 3-4 hours | 5-7 hours | ✅ 100% |
-| Phase 3: Configuration | 2-3 hours | 7-10 hours | ✅ 100% |
+| Phase 1: Critical Fixes | 2-3 hours | 2-3 hours | 100% |
+| Phase 2: API Safety | 3-4 hours | 5-7 hours | 100% |
+| Phase 3: Configuration | 2-3 hours | 7-10 hours | 100% |
 | Phase 4: Testing | 6-8 hours | 13-18 hours | 0% |
 | Phase 5: Documentation | 2-3 hours | 15-21 hours | 14% |
-| Phase 6: Hardening | 2-3 hours | 17-24 hours | ✅ 100% |
+| Phase 6: Hardening | 2-3 hours | 17-24 hours | 100% |
 | Phase 7: Simulator | 8-10 hours | 25-34 hours | 3% |
 | **Total** | **25-34 hours** | **~24 hours remaining** | **22%** |
 
 ---
 
-## 📝 Change Log / 變更記錄
+## Change Log
 
 | Date | Version | Changes |
 |------|---------|---------|
 | 2026-04-08 | 1.0 | Initial plan created |
 | 2026-04-08 | 1.1 | Added Phase 7: Simulator Completion (38 tasks) |
 | 2026-04-08 | 1.2 | Fixed simulator compilation errors |
-| 2026-04-08 | 1.3 | ✅ Phase 1 Complete: Nil-conn guards, TOCTOU race, debug logs, fmt.Println |
-| 2026-04-08 | 1.4 | 🔄 Phase 2 Partial: EnsureConnected() helper, 57/57 API functions wrapped |
-| 2026-04-08 | 1.5 | ✅ Phase 2 Complete: Serial matching, Context support, push dispatcher |
-| 2026-04-08 | 1.6 | 🔄 Phase 3 Near Complete: ClientOptions, functional options, configurable timeouts, retry config, log levels |
-| 2026-04-08 | 1.7 | ✅ Phase 3 Complete: ClientPool with health checking, auto-reconnect, min/max idle connections |
+| 2026-04-08 | 1.3 | Phase 1 Complete: Nil-conn guards, TOCTOU race, debug logs, fmt.Println |
+| 2026-04-08 | 1.4 | Phase 2 Partial: EnsureConnected() helper, 57/57 API functions wrapped |
+| 2026-04-08 | 1.5 | Phase 2 Complete: Serial matching, Context support, push dispatcher |
+| 2026-04-08 | 1.6 | Phase 3 Near Complete: ClientOptions, functional options, configurable timeouts, retry config, log levels |
+| 2026-04-08 | 1.7 | Phase 3 Complete: ClientPool with health checking, auto-reconnect, min/max idle connections |
 
 ---
 

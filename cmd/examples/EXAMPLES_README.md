@@ -1,147 +1,142 @@
-# Examples / 示例程式
+# Examples
 
 This directory contains comprehensive examples for every API function in FutuAPI4Go.
-本目錄包含 FutuAPI4Go 每個 API 函數的綜合示例。
 
-## 📚 Example Index / 示例索引
+## Example Index
 
-### 🎯 Quick Start / 快速開始
-| Example / 示例 | API | Description / 描述 |
+### Quick Start
+| Example | API | Description |
 |---|---|---|
-| `debug_test/` | Multiple | Debug test for protocol verification / 協議驗證調試測試 |
+| `debug_test/` | Multiple | Debug test for protocol verification |
 
-### 📊 Market Data APIs / 行情 API
+### Market Data APIs
 
-| # | Example / 示例 | API | Description / 描述 |
+| # | Example | API | Description |
 |---|---|---|---|
-| 1 | `qot_get_basic_qot/` | GetBasicQot | Real-time quotes / 實時報價 |
-| 2 | `qot_get_kl/` | GetKL | K-line data (daily, minute, weekly) / K線數據 |
-| 3 | `qot_get_order_book/` | GetOrderBook | Order book / 買賣盤 |
-| 4 | `qot_get_ticker/` | GetTicker | Tick-by-tick trades / 逐筆成交 |
-| 5 | `qot_get_rt/` | GetRT | Real-time minute data / 實時分時 |
-| 6 | `qot_get_broker/` | GetBroker | Broker queue / 經紀隊列 |
-| 7 | `qot_subscribe/` | Subscribe | Real-time subscription / 實時訂閱 |
-| 8 | `qot_get_capital_flow/` | GetCapitalFlow | Capital flow analysis / 資金流向 |
-| 9 | `qot_stock_filter/` | StockFilter | Stock screening / 股票篩選 |
-| 10 | `qot_get_trade_date/` | GetTradeDate | Trading calendar / 交易日曆 |
-| 11 | `qot_get_static_info/` | GetStaticInfo | Stock static info / 股票靜態信息 |
+| 1 | `qot_get_basic_qot/` | GetBasicQot | Real-time quotes |
+| 2 | `qot_get_kl/` | GetKL | K-line data (daily, minute, weekly) |
+| 3 | `qot_get_order_book/` | GetOrderBook | Order book |
+| 4 | `qot_get_ticker/` | GetTicker | Tick-by-tick trades |
+| 5 | `qot_get_rt/` | GetRT | Real-time minute data |
+| 6 | `qot_get_broker/` | GetBroker | Broker queue |
+| 7 | `qot_subscribe/` | Subscribe | Real-time subscription |
+| 8 | `qot_get_capital_flow/` | GetCapitalFlow | Capital flow analysis |
+| 9 | `qot_stock_filter/` | StockFilter | Stock screening |
+| 10 | `qot_get_trade_date/` | GetTradeDate | Trading calendar |
+| 11 | `qot_get_static_info/` | GetStaticInfo | Stock static info |
 
-### 💰 Trading APIs / 交易 API
+### Trading APIs
 
-| # | Example / 示例 | API | Description / 描述 |
+| # | Example | API | Description |
 |---|---|---|---|
-| 1 | `trd_get_acc_list/` | GetAccList | Account list / 賬戶列表 |
-| 2 | `trd_get_funds/` | GetFunds | Account funds / 賬戶資金 |
-| 3 | `trd_get_position_list/` | GetPositionList | Holdings / 持倉列表 |
-| 4 | `trd_unlock_trade/` | UnlockTrade | Unlock trading / 解鎖交易 |
-| 5 | `trd_place_order/` | PlaceOrder | Place order (with dry run) / 下單 |
-| 6 | `trd_get_order_list/` | GetOrderList | Order list / 訂單列表 |
-| 7 | `trd_modify_order/` | ModifyOrder | Modify order / 修改訂單 |
+| 1 | `trd_get_acc_list/` | GetAccList | Account list |
+| 2 | `trd_get_funds/` | GetFunds | Account funds |
+| 3 | `trd_get_position_list/` | GetPositionList | Holdings |
+| 4 | `trd_unlock_trade/` | UnlockTrade | Unlock trading |
+| 5 | `trd_place_order/` | PlaceOrder | Place order (with dry run) |
+| 6 | `trd_get_order_list/` | GetOrderList | Order list |
+| 7 | `trd_modify_order/` | ModifyOrder | Modify order |
 
-### 🖥️ System APIs / 系統 API
+### System APIs
 
-| # | Example / 示例 | API | Description / 描述 |
+| # | Example | API | Description |
 |---|---|---|---|
-| 1 | `sys_get_global_state/` | GetGlobalState | OpenD global state / OpenD 全局狀態 |
+| 1 | `sys_get_global_state/` | GetGlobalState | OpenD global state |
 
-## 🚀 How to Use / 使用方法
+## How to Use
 
-### Prerequisites / 前置條件
-1. **Futu OpenD must be running** / Futu OpenD 必須運行中
-2. **OpenD must be logged in to quote server** / OpenD 必須登錄行情服務器
+### Prerequisites
+1. **Futu OpenD must be running**
+2. **OpenD must be logged in to quote server**
 3. **Default address**: `127.0.0.1:11111`
 
-### Basic Usage / 基本用法
+### Basic Usage
 
 ```bash
-# Run any example / 運行任何示例
+# Run any example
 cd cmd/examples/qot_get_basic_qot
 go run main.go
 
-# Use custom OpenD address / 使用自定義 OpenD 地址
+# Use custom OpenD address
 FUTU_ADDR=192.168.1.100:11111 go run main.go
 
-# Trading examples need account ID / 交易示例需要賬戶ID
-go run main.go 123456789  # Replace with your account ID / 替換為您的賬戶ID
+# Trading examples need account ID
+go run main.go 123456789  # Replace with your account ID
 ```
 
-### Example Output / 示例輸出
+### Example Output
 
 ```
-=== GetBasicQot Example / 獲取實時行情示例 ===
+=== GetBasicQot Example ===
 Connecting to 127.0.0.1:11111...
-✅ Connected! ConnID=7447516338564503397
+Connected! ConnID=7447516338564503397
 
 Querying quotes for 3 securities...
 
-=== Real-time Quotes / 實時行情 ===
+=== Real-time Quotes ===
 
-📈 00700 (Tencent)
-   Current Price / 現價:  350.50
-   Open Price / 開盤價:   348.00
-   High Price / 最高價:   352.00
-   Low Price / 最低價:    347.50
-   Volume / 成交量:       12345678
+00700 (Tencent)
+   Current Price:  350.50
+   Open Price:   348.00
+   High Price:   352.00
+   Low Price:    347.50
+   Volume:       12345678
    ...
 ```
 
-## 📝 Features / 特性
+## Features
 
-✅ **Bilingual Documentation** / 雙語文檔
-   - All comments in English + Traditional Chinese
-   - All 註釋使用英文 + 繁體中文
-
-✅ **Production Ready** / 生產就緒
+- **Production Ready**
    - Proper error handling
    - Clear usage instructions
    - Formatted output with emojis
 
-✅ **Safe Defaults** / 安全預設
+- **Safe Defaults**
    - Dry run mode for trading examples
    - No accidental order submissions
    - Clear warnings for destructive operations
 
-## 🛠️ Running All Examples / 運行所有示例
+## Running All Examples
 
 ```bash
-# Market data examples / 行情示例
+# Market data examples
 for dir in qot_*/; do
   echo "Running $dir..."
   cd "$dir" && go run main.go && cd ..
 done
 
-# Trading examples / 交易示例
+# Trading examples
 for dir in trd_*/; do
   echo "Running $dir..."
   cd "$dir" && go run main.go && cd ..
 done
 
-# System examples / 系統示例
+# System examples
 cd sys_get_global_state && go run main.go
 ```
 
-## ⚠️ Notes / 注意事項
+## Notes
 
-1. **Protocol Issue / 協議問題**:
+1. **Protocol Issue**:
    - Some Qot APIs may return parse errors due to proto mismatch
    - See [PROTO_NOTES.md](../PROTO_NOTES.md) for details
    - Subscribe and basic connection APIs work correctly
 
-2. **Trading APIs / 交易API**:
+2. **Trading APIs**:
    - Examples use DRY RUN mode by default
    - Remove `dryRun = true` to execute real trades
    - Always test with simulator first
 
-3. **Authentication / 認證**:
+3. **Authentication**:
    - OpenD must be logged in to quote server
    - Trade unlock requires correct password
 
-## 📖 Documentation / 文檔
+## Documentation
 
-- [USER_GUIDE.md](../USER_GUIDE.md) - Complete user guide / 完整用戶指南
-- [SIMULATOR.md](../SIMULATOR.md) - OpenD simulator guide / OpenD 模擬器指南
-- [PROTO_NOTES.md](../PROTO_NOTES.md) - Protocol implementation notes / 協議實現筆記
+- [USER_GUIDE.md](../USER_GUIDE.md) - Complete user guide
+- [SIMULATOR.md](../SIMULATOR.md) - OpenD simulator guide
+- [PROTO_NOTES.md](../PROTO_NOTES.md) - Protocol implementation notes
 
 ---
 
-**Happy Coding! 🚀**
+**Happy Coding!**
