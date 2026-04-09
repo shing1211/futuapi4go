@@ -43,19 +43,19 @@ func main() {
 
 	// Subscribe to multiple data types / 訂閱多種數據類型
 	subTypes := []qot.SubType{
-		qot.SubType_Basic,      // Real-time quotes / 實時報價
-		qot.SubType_OrderBook,  // Order book / 買賣盤
-		qot.SubType_Ticker,     // Tick-by-tick / 逐筆
-		qot.SubType_KL,         // K-line / K線
-		qot.SubType_RT,         // Real-time minute data / 實時分時
-		qot.SubType_Broker,     // Broker queue / 經紀隊列
+		qot.SubType_Basic,     // Real-time quotes / 實時報價
+		qot.SubType_OrderBook, // Order book / 買賣盤
+		qot.SubType_Ticker,    // Tick-by-tick / 逐筆
+		qot.SubType_KL,        // K-line / K線
+		qot.SubType_RT,        // Real-time minute data / 實時分時
+		qot.SubType_Broker,    // Broker queue / 經紀隊列
 	}
 
 	req := &qot.SubscribeRequest{
-		SecurityList:         securities,
-		SubTypeList:          subTypes,
-		IsSubOrUnSub:         true,   // true=subscribe, false=unsubscribe
-		IsRegOrUnRegPush:     true,   // true=register for push, false=unregister
+		SecurityList:     securities,
+		SubTypeList:      subTypes,
+		IsSubOrUnSub:     true, // true=subscribe, false=unsubscribe
+		IsRegOrUnRegPush: true, // true=register for push, false=unregister
 	}
 
 	fmt.Printf("Subscribing to %d data types for %d securities...\n\n", len(subTypes), len(securities))
