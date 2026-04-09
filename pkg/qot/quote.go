@@ -46,16 +46,14 @@ import (
 )
 
 const (
-	ProtoID_GetBasicQot             = 2101
-	ProtoID_GetKL                   = 2102
-	ProtoID_GetHistoryKL            = 2103
-	ProtoID_RequestHistoryKL        = 2104
-	ProtoID_GetOrderBook            = 2106
-	ProtoID_GetTicker               = 2107
-	ProtoID_GetRT                   = 2108
-	ProtoID_GetMarketSnapshot       = 2109
-	ProtoID_GetSecuritySnapshot     = 2110
-	ProtoID_GetBroker               = 2111
+	ProtoID_GetBasicQot             = 3004
+	ProtoID_GetKL                   = 3006
+	ProtoID_GetOrderBook            = 3012
+	ProtoID_GetTicker               = 3010
+	ProtoID_GetRT                   = 3008
+	ProtoID_GetMarketSnapshot       = 3203
+	ProtoID_GetSecuritySnapshot     = 3203
+	ProtoID_GetBroker               = 3014
 	ProtoID_GetStaticInfo           = 2201
 	ProtoID_GetPlateSet             = 2202
 	ProtoID_GetPlateSecurity        = 2203
@@ -68,18 +66,19 @@ const (
 	ProtoID_GetUserSecurityGroup    = 2402
 	ProtoID_ModifyUserSecurity      = 2403
 	ProtoID_SetPriceReminder        = 2405
-	ProtoID_GetCapitalFlow          = 2301
-	ProtoID_GetCapitalDistribution  = 2302
-	ProtoID_StockFilter             = 2303
-	ProtoID_GetOptionChain          = 2304
-	ProtoID_GetOptionExpirationDate = 2305
-	ProtoID_GetWarrant              = 2306
+	ProtoID_GetCapitalFlow          = 3211
+	ProtoID_GetCapitalDistribution  = 3212
+	ProtoID_StockFilter             = 3215
+	ProtoID_GetOptionChain          = 3209
+	ProtoID_GetOptionExpirationDate = 3224
+	ProtoID_GetWarrant              = 3210
 	ProtoID_GetUserSecurity         = 2401
 	ProtoID_GetPriceReminder        = 2404
-	ProtoID_GetTradeDate            = 2206
-	ProtoID_RequestTradeDate        = 2207
+	ProtoID_GetTradeDate            = 2205
+	ProtoID_RequestTradeDate        = 3219
 	ProtoID_Subscribe               = 3001
 	ProtoID_RegQotPush              = 3003
+	ProtoID_RequestHistoryKL        = 3103
 	ProtoID_RequestHistoryKLQuota   = 3104
 )
 

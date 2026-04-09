@@ -17,10 +17,10 @@ import (
 )
 
 const (
-	ProtoID_GetOwnerPlate  = 2204
-	ProtoID_GetReference   = 2205
-	ProtoID_GetMarketState = 2208
-	ProtoID_GetSubInfo     = 3002
+	ProtoID_GetOwnerPlate  = 3207
+	ProtoID_GetReference   = 3206
+	ProtoID_GetMarketState = 3223
+	ProtoID_GetSubInfo     = 3003
 )
 
 // GetOwnerPlateRequest defines parameters for GetOwnerPlate.
