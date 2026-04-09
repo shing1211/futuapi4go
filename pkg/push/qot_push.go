@@ -3,14 +3,14 @@ package push
 import (
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdateticker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateticker"
 )
 
 const (
@@ -194,3 +194,4 @@ func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 		CurValue:     rsp.GetCurValue(),
 	}, nil
 }
+

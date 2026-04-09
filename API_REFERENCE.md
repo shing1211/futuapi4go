@@ -94,7 +94,7 @@ Sets the global push notification handler.
 
 ## Market Data (qot)
 
-Import: `"gitee.com/shing1211/futuapi4go/pkg/qot"`
+Import: `"github.com/shing1211/futuapi4go/pkg/qot"`
 
 All functions in this package require a connected client. They use the `qotcommon` package for security definitions and enum values.
 
@@ -499,7 +499,7 @@ Returns current subscription quota usage.
 
 ## Trading (trd)
 
-Import: `"gitee.com/shing1211/futuapi4go/pkg/trd"`
+Import: `"github.com/shing1211/futuapi4go/pkg/trd"`
 
 All trading functions require an unlocked trading account. Pass the `AccID` and `TrdMarket` via a `Header` in each request.
 
@@ -749,7 +749,7 @@ Retrieves trading flow summary data.
 
 ## System (sys)
 
-Import: `"gitee.com/shing1211/futuapi4go/pkg/sys"`
+Import: `"github.com/shing1211/futuapi4go/pkg/sys"`
 
 ### `GetGlobalState(c *Client) (*GetGlobalStateResponse, error)`
 
@@ -781,7 +781,7 @@ Submits verification code for account operations.
 
 ## Push Notifications
 
-Import: `"gitee.com/shing1211/futuapi4go/pkg/push"`
+Import: `"github.com/shing1211/futuapi4go/pkg/push"`
 
 Register push handlers on the client to receive real-time updates:
 

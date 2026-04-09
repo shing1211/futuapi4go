@@ -3,20 +3,20 @@ package simulator
 import (
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetmarginratio"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetmaxtrdqtys"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderfee"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmarginratio"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmaxtrdqtys"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfee"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
 )
 
 func (s *Server) RegisterTrdHandlers() {
@@ -122,3 +122,4 @@ func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 	resp := &trdgetpositionlist.Response{RetType: &retType}
 	return s.successResponse(pkt, resp)
 }
+

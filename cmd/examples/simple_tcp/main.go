@@ -10,7 +10,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/initconnect"
+	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 )
 
 const HeaderLen = 48
@@ -110,3 +110,4 @@ func readResponse(conn net.Conn) (*Header, error) {
 	binary.Read(bytes.NewReader(header), binary.LittleEndian, &h)
 	return &h, nil
 }
+

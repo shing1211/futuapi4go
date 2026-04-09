@@ -25,3 +25,4 @@ func (e *Error) Error() string {
 func NewError(code int32, msg string) *Error {
 	return &Error{Code: code, Message: msg}
 }
+

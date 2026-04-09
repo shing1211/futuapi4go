@@ -5,13 +5,13 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
 
 	"time"
 )
@@ -274,3 +274,4 @@ func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
 		RemainQuota:     s2c.GetRemainQuota(),
 	}, nil
 }
+

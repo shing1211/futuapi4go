@@ -7,8 +7,8 @@
 package qotmodifyusersecurity
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -320,7 +320,7 @@ const file_Qot_ModifyUserSecurity_proto_rawDesc = "" +
 	"\x18ModifyUserSecurityOp_Add\x10\x01\x12\x1c\n" +
 	"\x18ModifyUserSecurityOp_Del\x10\x02\x12 \n" +
 	"\x1cModifyUserSecurityOp_MoveOut\x10\x03BR\n" +
-	"\x13com.futu.openapi.pbZ;gitee.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity"
+	"\x13com.futu.openapi.pbZ;github.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity"
 
 var (
 	file_Qot_ModifyUserSecurity_proto_rawDescOnce sync.Once

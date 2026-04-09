@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Trd_ReconfirmOrder;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/trdreconfirmorder";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/trdreconfirmorder";
 
 import "Common.proto";
 import "Trd_Common.proto";

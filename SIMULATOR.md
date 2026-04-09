@@ -98,7 +98,7 @@ package main
 import (
     "log"
 
-    "gitee.com/shing1211/futuapi4go/simulator"
+    "github.com/shing1211/futuapi4go/simulator"
 )
 
 func main() {
@@ -123,9 +123,9 @@ package main
 import (
     "log"
 
-    futuapi "gitee.com/shing1211/futuapi4go/client"
-    "gitee.com/shing1211/futuapi4go/qot"
-    "gitee.com/shing1211/futuapi4go/pb/qotcommon"
+    futuapi "github.com/shing1211/futuapi4go/client"
+    "github.com/shing1211/futuapi4go/qot"
+    "github.com/shing1211/futuapi4go/pb/qotcommon"
 )
 
 func main() {

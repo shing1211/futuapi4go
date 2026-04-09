@@ -10,12 +10,12 @@ import (
 	"log"
 	"os"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
-	"gitee.com/shing1211/futuapi4go/pkg/sys"
-	"gitee.com/shing1211/futuapi4go/pkg/trd"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/sys"
+	"github.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {
@@ -174,3 +174,4 @@ func testTradingAPIs(cli *futuapi.Client) {
 }
 
 func ptrStr(s string) *string { return &s }
+

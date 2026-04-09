@@ -18,7 +18,7 @@ This guide is for quantitative traders, covering how to use the futuapi4go SDK f
 ### Installation
 
 ```bash
-go get gitee.com/shing1211/futuapi4go
+go get github.com/shing1211/futuapi4go
 ```
 
 ### Basic Usage Flow
@@ -29,9 +29,9 @@ package main
 import (
     "fmt"
     "log"
-    futuapi "gitee.com/shing1211/futuapi4go/client"
-    "gitee.com/shing1211/futuapi4go/qot"
-    "gitee.com/shing1211/futuapi4go/pb/qotcommon"
+    futuapi "github.com/shing1211/futuapi4go/client"
+    "github.com/shing1211/futuapi4go/qot"
+    "github.com/shing1211/futuapi4go/pb/qotcommon"
 )
 
 func main() {

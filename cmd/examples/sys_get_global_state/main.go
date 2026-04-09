@@ -14,8 +14,8 @@ import (
 	"os"
 	"time"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/sys"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/sys"
 )
 
 func main() {
@@ -81,3 +81,4 @@ func main() {
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")
 }
+

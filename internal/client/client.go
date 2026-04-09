@@ -11,9 +11,9 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/initconnect"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/keepalive"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
+	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
 )
 
 var (
@@ -689,3 +689,4 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 
 	return nil
 }
+

@@ -7,8 +7,8 @@
 package qotrequesthistoryklquota
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -340,7 +340,7 @@ const file_Qot_RequestHistoryKLQuota_proto_rawDesc = "" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x120\n" +
 	"\x03s2c\x18\x04 \x01(\v2\x1e.Qot_RequestHistoryKLQuota.S2CR\x03s2cBU\n" +
-	"\x13com.futu.openapi.pbZ>gitee.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryklquota"
+	"\x13com.futu.openapi.pbZ>github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryklquota"
 
 var (
 	file_Qot_RequestHistoryKLQuota_proto_rawDescOnce sync.Once

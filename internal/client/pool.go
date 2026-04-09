@@ -285,3 +285,4 @@ func (p *ClientPool) newClient() (*Client, error) {
 func (p *ClientPool) newClientLocked() (*Client, error) {
 	return p.newClient()
 }
+

@@ -9,7 +9,7 @@ echo.
 
 set PROTO_DIR=api\proto
 set PB_DIR=pkg\pb
-set IMPORT_PATH=gitee.com/shing1211/futuapi4go/pkg/pb
+set IMPORT_PATH=github.com/shing1211/futuapi4go/pkg/pb
 
 echo Step 1: Creating output directories...
 mkdir %PB_DIR%\common 2>nul

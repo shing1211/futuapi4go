@@ -10,7 +10,7 @@ Write-Host ""
 
 $PROTO_DIR = "api\proto"
 $PB_DIR = "pkg\pb"
-$PROJECT = "gitee.com/shing1211/futuapi4go"
+$PROJECT = "github.com/shing1211/futuapi4go"
 
 # Clean old generated files
 Write-Host "Step 1: Cleaning old generated files..." -ForegroundColor Yellow

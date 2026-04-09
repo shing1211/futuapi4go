@@ -21,11 +21,11 @@ import (
 	"os"
 	"time"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
-	"gitee.com/shing1211/futuapi4go/pkg/trd"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {
@@ -449,3 +449,4 @@ func ptrFloat64(v float64) *float64 {
 
 // Ensure time import is used
 var _ = time.Now
+

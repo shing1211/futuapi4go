@@ -13,9 +13,9 @@ import (
 	"log"
 	"os"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/trd"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {
@@ -70,3 +70,4 @@ func main() {
 
 	fmt.Println("=== Example Complete / 示例完成 ===")
 }
+

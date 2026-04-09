@@ -7,7 +7,7 @@
 package trdflowsummary
 
 import (
-	trdcommon "gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	trdcommon "github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -445,7 +445,7 @@ const file_Trd_FlowSummary_proto_rawDesc = "" +
 	"\x1cTrdCashFlowDirection_Unknown\x10\x00\x12\x1b\n" +
 	"\x17TrdCashFlowDirection_In\x10\x01\x12\x1c\n" +
 	"\x18TrdCashFlowDirection_Out\x10\x02BK\n" +
-	"\x13com.futu.openapi.pbZ4gitee.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
+	"\x13com.futu.openapi.pbZ4github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
 
 var (
 	file_Trd_FlowSummary_proto_rawDescOnce sync.Once

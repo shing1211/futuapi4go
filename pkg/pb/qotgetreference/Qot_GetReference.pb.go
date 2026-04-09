@@ -7,13 +7,14 @@
 package qotgetreference
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -316,7 +317,7 @@ const file_Qot_GetReference_proto_rawDesc = "" +
 	"\x14ReferenceType_Unknow\x10\x00\x12\x19\n" +
 	"\x15ReferenceType_Warrant\x10\x01\x12\x18\n" +
 	"\x14ReferenceType_Future\x10\x02BL\n" +
-	"\x13com.futu.openapi.pbZ5gitee.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
+	"\x13com.futu.openapi.pbZ5github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 
 var (
 	file_Qot_GetReference_proto_rawDescOnce sync.Once

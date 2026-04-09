@@ -3,7 +3,7 @@ package sys
 import (
 	"testing"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
+	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
 )
 
 func TestGetGlobalStateResponseFields(t *testing.T) {
@@ -71,3 +71,4 @@ func TestVerificationRequestFields(t *testing.T) {
 		t.Errorf("expected Code 123456, got %s", req.Code)
 	}
 }
+

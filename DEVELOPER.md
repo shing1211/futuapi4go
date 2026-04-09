@@ -277,10 +277,10 @@ All protobuf packages use local paths:
 ```go
 import (
     "google.golang.org/protobuf/proto"
-    futuapi "gitee.com/shing1211/futuapi4go/client"
-    "gitee.com/shing1211/futuapi4go/pb/common"
-    "gitee.com/shing1211/futuapi4go/pb/qotcommon"
-    "gitee.com/shing1211/futuapi4go/pb/qotgetkl"
+    futuapi "github.com/shing1211/futuapi4go/client"
+    "github.com/shing1211/futuapi4go/pb/common"
+    "github.com/shing1211/futuapi4go/pb/qotcommon"
+    "github.com/shing1211/futuapi4go/pb/qotgetkl"
 )
 ```
 
@@ -307,7 +307,7 @@ protoc --go_out=../pb --go_opt=paths=source_relative \
 2. Update `pb/go.mod` to ensure correct module name:
 
 ```go
-module gitee.com/shing1211/futuapi4go/pb
+module github.com/shing1211/futuapi4go/pb
 ```
 
 ### ProtoID Constant Definitions
@@ -481,17 +481,17 @@ Main project uses `replace` directive for local pb:
 ```go
 // go.mod
 require (
-    gitee.com/shing1211/futuapi4go/pb v0.0.0
+    github.com/shing1211/futuapi4go/pb v0.0.0
 )
 
-replace gitee.com/shing1211/futuapi4go/pb => ./pb
+replace github.com/shing1211/futuapi4go/pb => ./pb
 ```
 
 ### Dependency Updates
 
 ```bash
 # Main project
-go get -u gitee.com/shing1211/futuapi4go/pb
+go get -u github.com/shing1211/futuapi4go/pb
 
 # pb module
 cd pb && go get -u google.golang.org/protobuf

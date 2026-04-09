@@ -7,11 +7,11 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
-	"gitee.com/shing1211/futuapi4go/pkg/sys"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/sys"
 )
 
 func main() {
@@ -156,3 +156,4 @@ func main() {
 
 // Wait briefly for any push notifications
 func wait() { time.Sleep(2 * time.Second) }
+

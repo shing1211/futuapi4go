@@ -11,10 +11,10 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/initconnect"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 )
 
 const (
@@ -298,3 +298,4 @@ func (s *Server) GetQuote(market int32, code string) *qotcommon.BasicQot {
 	key := fmt.Sprintf("%d.%s", market, code)
 	return s.Quotes[key]
 }
+

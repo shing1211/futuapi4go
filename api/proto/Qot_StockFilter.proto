@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Qot_StockFilter;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/qotstockfilter";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter";
 
 import "Common.proto";
 import "Qot_Common.proto";

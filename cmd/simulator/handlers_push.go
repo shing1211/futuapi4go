@@ -3,20 +3,20 @@ package simulator
 import (
 	"time"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/notify"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotupdateticker"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdnotify"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/notify"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateticker"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdnotify"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
 )
 
 func (s *Server) RegisterPushHandlers() {
@@ -366,3 +366,4 @@ func (s *Server) handlePushNotify(pkt *Packet) (*Packet, error) {
 
 	return s.successResponse(pkt, resp)
 }
+

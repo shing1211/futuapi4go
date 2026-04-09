@@ -24,11 +24,11 @@ import (
 	"os"
 	"strconv"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
-	"gitee.com/shing1211/futuapi4go/pkg/trd"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/trd"
 )
 
 // VWAP execution parameters / VWAP執行參數
@@ -318,3 +318,4 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
+

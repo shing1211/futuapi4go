@@ -5,14 +5,14 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotsub"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
 )
 
 func (s *Server) RegisterQotHandlers() {
@@ -409,3 +409,4 @@ func (s *Server) handleGetSecuritySnapshot(pkt *Packet) (*Packet, error) {
 	resp := &qotgetbasicqot.Response{RetType: &retType}
 	return s.successResponse(pkt, resp)
 }
+

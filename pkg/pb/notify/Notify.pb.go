@@ -7,12 +7,13 @@
 package notify
 
 import (
-	common "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	common "github.com/shing1211/futuapi4go/pkg/pb/common"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -949,7 +950,7 @@ const file_Notify_proto_rawDesc = "" +
 	"\x1fGtwEventType_NessaryDataMissing\x10\r\x12 \n" +
 	"\x1cGtwEventType_TradePwdChanged\x10\x0e\x12!\n" +
 	"\x1dGtwEventType_EnableDeviceLock\x10\x0fBC\n" +
-	"\x13com.futu.openapi.pbZ,gitee.com/shing1211/futuapi4go/pkg/pb/notify"
+	"\x13com.futu.openapi.pbZ,github.com/shing1211/futuapi4go/pkg/pb/notify"
 
 var (
 	file_Notify_proto_rawDescOnce sync.Once

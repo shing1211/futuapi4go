@@ -20,9 +20,9 @@ import (
 	"log"
 	"time"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
@@ -263,3 +263,4 @@ func ptrStr(s string) *string {
 func ptrInt32(v int32) *int32 {
 	return &v
 }
+

@@ -13,9 +13,9 @@ import (
 	"log"
 	"os"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
@@ -82,3 +82,4 @@ func getKL(cli *futuapi.Client, security *qotcommon.Security, klType qotcommon.K
 }
 
 func ptrStr(s string) *string { return &s }
+

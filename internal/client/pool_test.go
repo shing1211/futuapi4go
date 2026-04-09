@@ -93,3 +93,4 @@ func TestPoolAvailableInitialState(t *testing.T) {
 		t.Errorf("expected Available 0, got %d", pool.Available(PoolTypeMarketData))
 	}
 }
+

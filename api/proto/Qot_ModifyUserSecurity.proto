@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Qot_ModifyUserSecurity;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity";
 
 import "Common.proto";
 import "Qot_Common.proto";

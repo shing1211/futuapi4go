@@ -5,26 +5,26 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetmarginratio"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetmaxtrdqtys"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderfee"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdreconfirmorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdsubaccpush"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmarginratio"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmaxtrdqtys"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfee"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdreconfirmorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdsubaccpush"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
 
 	"time"
 )
@@ -1319,3 +1319,4 @@ func GetFlowSummary(c *futuapi.Client, req *GetFlowSummaryRequest) (*GetFlowSumm
 		FlowSummaryList: s2c.GetFlowSummaryInfoList(),
 	}, nil
 }
+

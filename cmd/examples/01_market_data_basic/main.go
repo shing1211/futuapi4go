@@ -18,9 +18,9 @@ import (
 	"fmt"
 	"log"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
@@ -247,3 +247,4 @@ func ptrInt32(v int32) *int32       { return &v }
 func ptrInt64(v int64) *int64       { return &v }
 func ptrFloat64(v float64) *float64 { return &v }
 func ptrBool(v bool) *bool          { return &v }
+

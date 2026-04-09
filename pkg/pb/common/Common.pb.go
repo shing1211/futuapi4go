@@ -7,11 +7,12 @@
 package common
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -599,7 +600,7 @@ const file_Common_proto_rawDesc = "" +
 	"\vSession_ETH\x10\x02\x12\x0f\n" +
 	"\vSession_ALL\x10\x03\x12\x15\n" +
 	"\x11Session_OVERNIGHT\x10\x04BC\n" +
-	"\x13com.futu.openapi.pbZ,gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	"\x13com.futu.openapi.pbZ,github.com/shing1211/futuapi4go/pkg/pb/common"
 
 var (
 	file_Common_proto_rawDescOnce sync.Once

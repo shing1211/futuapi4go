@@ -3,10 +3,10 @@ package trd
 import (
 	"testing"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
 )
 
 func TestPlaceOrderRequestValidation(t *testing.T) {
@@ -620,3 +620,4 @@ func TestGetFlowSummaryResponseConstruction(t *testing.T) {
 		t.Fatal("Header should not be nil")
 	}
 }
+

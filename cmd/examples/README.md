@@ -160,10 +160,10 @@ import (
     "fmt"
     "log"
 
-    futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-    "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-    "gitee.com/shing1211/futuapi4go/pkg/qot"
-    "gitee.com/shing1211/futuapi4go/pkg/trd"
+    futuapi "github.com/shing1211/futuapi4go/internal/client"
+    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+    "github.com/shing1211/futuapi4go/pkg/qot"
+    "github.com/shing1211/futuapi4go/pkg/trd"
 )
 
 func main() {
@@ -338,7 +338,7 @@ Subscribe failed: retType=-1
 ## Support
 
 For issues or questions:
-- Open an issue on [Gitee](https://gitee.com/shing1211/futuapi4go)
+- Open an issue on [Gitee](https://github.com/shing1211/futuapi4go)
 - Check existing documentation
 - Review example code for usage patterns
 

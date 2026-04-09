@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/initconnect"
+	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 )
 
 func main() {
@@ -131,3 +131,4 @@ func min(a, b int) int {
 	}
 	return b
 }
+

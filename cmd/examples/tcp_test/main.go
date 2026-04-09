@@ -8,9 +8,9 @@ import (
 	"net"
 	"time"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/initconnect"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -135,3 +135,4 @@ func readResponse(conn net.Conn) (*Header, error) {
 	binary.Read(bytes.NewReader(header), binary.LittleEndian, &h)
 	return &h, nil
 }
+

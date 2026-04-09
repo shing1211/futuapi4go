@@ -7,8 +7,8 @@
 package trdmodifyorder
 
 import (
-	common "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	trdcommon "gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	common "github.com/shing1211/futuapi4go/pkg/pb/common"
+	trdcommon "github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -394,7 +394,7 @@ const file_Trd_ModifyOrder_proto_rawDesc = "" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12&\n" +
 	"\x03s2c\x18\x04 \x01(\v2\x14.Trd_ModifyOrder.S2CR\x03s2cBK\n" +
-	"\x13com.futu.openapi.pbZ4gitee.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
+	"\x13com.futu.openapi.pbZ4github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
 
 var (
 	file_Trd_ModifyOrder_proto_rawDescOnce sync.Once

@@ -1,22 +1,22 @@
 # futuapi4go
 
 <p align="center">
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go" alt="Go">
   </a>
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
   </a>
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/Version-0.4.1-blue.svg" alt="Version">
   </a>
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/Status-Production--Ready-brightgreen.svg" alt="Status">
   </a>
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/Examples-29-brightgreen.svg" alt="Examples">
   </a>
-  <a href="https://gitee.com/shing1211/futuapi4go">
+  <a href="https://github.com/shing1211/futuapi4go">
     <img src="https://img.shields.io/badge/Tests-20/20%20PASS-brightgreen.svg" alt="Tests">
   </a>
 </p>
@@ -31,7 +31,7 @@
 ## Installation
 
 ```bash
-go get gitee.com/shing1211/futuapi4go
+go get github.com/shing1211/futuapi4go
 ```
 
 ### Requirements
@@ -49,9 +49,9 @@ go get gitee.com/shing1211/futuapi4go
 import (
 	"fmt"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/qot"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {

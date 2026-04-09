@@ -3,11 +3,11 @@ package push
 import (
 	"google.golang.org/protobuf/proto"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/notify"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdnotify"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
+	"github.com/shing1211/futuapi4go/pkg/pb/notify"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdnotify"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
 )
 
 const (
@@ -96,3 +96,4 @@ func ParseTrdNotify(body []byte) (*TrdNotify, error) {
 		Type:   rsp.GetType(),
 	}, nil
 }
+

@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Trd_FlowSummary;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/trdflowsummary";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary";
 
 import "Trd_Common.proto";
 

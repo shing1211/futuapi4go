@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Qot_GetFutureInfo;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo";
 
 import "Common.proto";
 import "Qot_Common.proto";

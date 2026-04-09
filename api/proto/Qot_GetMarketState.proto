@@ -1,7 +1,7 @@
 syntax = "proto2";
 package Qot_GetMarketState;
 option java_package = "com.futu.openapi.pb";
-option go_package = "gitee.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate";
+option go_package = "github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate";
 
 import "Common.proto";
 import "Qot_Common.proto";

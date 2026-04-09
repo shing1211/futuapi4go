@@ -3,10 +3,10 @@ package qot
 import (
 	"testing"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
 )
 
 func TestGetOwnerPlateRequestConstruction(t *testing.T) {
@@ -237,3 +237,4 @@ func TestMarketProtoIDConstants(t *testing.T) {
 		})
 	}
 }
+

@@ -3,7 +3,7 @@ package qot
 import (
 	"testing"
 
-	"gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 )
 
 func TestGetKLRequestValidation(t *testing.T) {
@@ -1377,3 +1377,4 @@ func TestRequestHistoryKLQuotaResponseConstruction(t *testing.T) {
 		t.Errorf("expected RemainQuota 450, got %d", rsp.RemainQuota)
 	}
 }
+

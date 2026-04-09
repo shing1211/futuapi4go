@@ -5,12 +5,12 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	futuapi "gitee.com/shing1211/futuapi4go/internal/client"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
-	"gitee.com/shing1211/futuapi4go/pkg/pb/verification"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
+	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
+	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/verification"
 
 	"time"
 )
@@ -270,3 +270,4 @@ func Verification(c *futuapi.Client, req *VerificationRequest) error {
 
 	return nil
 }
+
