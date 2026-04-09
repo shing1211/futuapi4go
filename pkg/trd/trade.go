@@ -30,21 +30,23 @@ import (
 )
 
 const (
-	ProtoID_GetAccList              = 4001
-	ProtoID_UnlockTrade             = 4002
-	ProtoID_GetFunds                = 4003
-	ProtoID_GetOrderFee             = 4004
-	ProtoID_GetMarginRatio          = 4005
-	ProtoID_GetMaxTrdQtys           = 4006
-	ProtoID_GetPositionList         = 6001
-	ProtoID_GetOrderList            = 5003
-	ProtoID_GetOrderFillList        = 5005
-	ProtoID_GetHistoryOrderList     = 5004
-	ProtoID_GetHistoryOrderFillList = 5006
-	ProtoID_PlaceOrder              = 5001
-	ProtoID_ModifyOrder             = 5002
-	ProtoID_ReconfirmOrder          = 7004
-	ProtoID_SubAccPush              = 7005
+	ProtoID_GetAccList              = 2001
+	ProtoID_UnlockTrade             = 2005
+	ProtoID_GetFunds                = 2101
+	ProtoID_GetOrderFee             = 2225
+	ProtoID_GetMarginRatio          = 2223
+	ProtoID_GetMaxTrdQtys           = 2111
+	ProtoID_GetPositionList         = 2102
+	ProtoID_GetOrderList            = 2201
+	ProtoID_GetOrderFillList        = 2211
+	ProtoID_GetHistoryOrderList     = 2221
+	ProtoID_GetHistoryOrderFillList = 2222
+	ProtoID_PlaceOrder              = 2202
+	ProtoID_ModifyOrder             = 2205
+	ProtoID_UpdateOrder             = 2208
+	ProtoID_UpdateOrderFill         = 2218
+	ProtoID_SubAccPush              = 2008
+	ProtoID_ReconfirmOrder          = 2209
 	ProtoID_GetFlowSummary          = 2226
 )
 

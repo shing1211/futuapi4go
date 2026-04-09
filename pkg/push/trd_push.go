@@ -14,11 +14,11 @@ const (
 	ProtoID_InitConnect         = 1001
 	ProtoID_Notify              = 1003
 	ProtoID_KeepAlive           = 1002
-	ProtoID_Trd_UpdateOrder     = 7001
-	ProtoID_Trd_UpdateOrderFill = 7002
-	ProtoID_Trd_Notify          = 7003
-	ProtoID_Trd_ReconfirmOrder  = 7004
-	ProtoID_Trd_SubAccPush      = 7005
+	ProtoID_Trd_UpdateOrder     = 2208
+	ProtoID_Trd_UpdateOrderFill = 2218
+	ProtoID_Trd_Notify          = 2207
+	ProtoID_Trd_ReconfirmOrder  = 2209
+	ProtoID_Trd_SubAccPush      = 2008
 )
 
 type SystemNotify struct {
