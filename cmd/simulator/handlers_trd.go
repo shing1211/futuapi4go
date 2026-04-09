@@ -20,19 +20,19 @@ import (
 )
 
 func (s *Server) RegisterTrdHandlers() {
-	s.RegisterHandler(4001, s.handleGetAccList)
-	s.RegisterHandler(4002, s.handleUnlockTrade)
-	s.RegisterHandler(4003, s.handleGetFunds)
-	s.RegisterHandler(4004, s.handleGetOrderFee)
-	s.RegisterHandler(4005, s.handleGetMarginRatio)
-	s.RegisterHandler(4006, s.handleGetMaxTrdQtys)
-	s.RegisterHandler(5001, s.handlePlaceOrder)
-	s.RegisterHandler(5002, s.handleModifyOrder)
-	s.RegisterHandler(5003, s.handleGetOrderList)
-	s.RegisterHandler(5004, s.handleGetHistoryOrderList)
-	s.RegisterHandler(5005, s.handleGetOrderFillList)
-	s.RegisterHandler(5006, s.handleGetHistoryOrderFillList)
-	s.RegisterHandler(6001, s.handleGetPositionList)
+	s.RegisterHandler(2001, s.handleGetAccList)              // GetAccList
+	s.RegisterHandler(2005, s.handleUnlockTrade)             // UnlockTrade
+	s.RegisterHandler(2101, s.handleGetFunds)                // GetFunds
+	s.RegisterHandler(2225, s.handleGetOrderFee)             // GetOrderFee
+	s.RegisterHandler(2223, s.handleGetMarginRatio)          // GetMarginRatio
+	s.RegisterHandler(2111, s.handleGetMaxTrdQtys)           // GetMaxTrdQtys
+	s.RegisterHandler(2202, s.handlePlaceOrder)              // PlaceOrder
+	s.RegisterHandler(2205, s.handleModifyOrder)             // ModifyOrder
+	s.RegisterHandler(2201, s.handleGetOrderList)            // GetOrderList
+	s.RegisterHandler(2221, s.handleGetHistoryOrderList)     // GetHistoryOrderList
+	s.RegisterHandler(2211, s.handleGetOrderFillList)        // GetOrderFillList
+	s.RegisterHandler(2222, s.handleGetHistoryOrderFillList) // GetHistoryOrderFillList
+	s.RegisterHandler(2102, s.handleGetPositionList)         // GetPositionList
 }
 
 func (s *Server) handleGetAccList(pkt *Packet) (*Packet, error) {

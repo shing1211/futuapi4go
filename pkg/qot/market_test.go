@@ -212,10 +212,10 @@ func TestMarketProtoIDConstants(t *testing.T) {
 		name  string
 		value int
 	}{
-		{"ProtoID_GetOwnerPlate", 2204},
-		{"ProtoID_GetReference", 2205},
-		{"ProtoID_GetMarketState", 2208},
-		{"ProtoID_GetSubInfo", 3002},
+		{"ProtoID_GetOwnerPlate", 3207},
+		{"ProtoID_GetReference", 3206},
+		{"ProtoID_GetMarketState", 3223},
+		{"ProtoID_GetSubInfo", 3003},
 	}
 
 	for _, tc := range tests {

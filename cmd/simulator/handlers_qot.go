@@ -16,41 +16,41 @@ import (
 )
 
 func (s *Server) RegisterQotHandlers() {
-	s.RegisterHandler(2101, s.handleGetBasicQot)
-	s.RegisterHandler(2102, s.handleGetKL)
-	s.RegisterHandler(2106, s.handleGetOrderBook)
-	s.RegisterHandler(2107, s.handleGetTicker)
-	s.RegisterHandler(2108, s.handleGetRT)
-	s.RegisterHandler(2110, s.handleGetSecuritySnapshot)
-	s.RegisterHandler(2111, s.handleGetBroker)
+	s.RegisterHandler(3004, s.handleGetBasicQot)         // GetBasicQot
+	s.RegisterHandler(3006, s.handleGetKL)               // GetKL
+	s.RegisterHandler(3012, s.handleGetOrderBook)        // GetOrderBook
+	s.RegisterHandler(3010, s.handleGetTicker)           // GetTicker
+	s.RegisterHandler(3008, s.handleGetRT)               // GetRT
+	s.RegisterHandler(3203, s.handleGetSecuritySnapshot) // GetSecuritySnapshot
+	s.RegisterHandler(3014, s.handleGetBroker)           // GetBroker
 	s.RegisterHandler(2201, s.handleGetStaticInfo)
 	s.RegisterHandler(2202, s.handleGetPlateSet)
 	s.RegisterHandler(2203, s.handleGetPlateSecurity)
-	s.RegisterHandler(2204, s.handleGetOwnerPlate)
-	s.RegisterHandler(2205, s.handleGetReference)
-	s.RegisterHandler(2206, s.handleGetTradeDate)
-	s.RegisterHandler(2207, s.handleRequestTradeDate)
-	s.RegisterHandler(2208, s.handleGetMarketState)
+	s.RegisterHandler(3207, s.handleGetOwnerPlate) // GetOwnerPlate
+	s.RegisterHandler(3206, s.handleGetReference)  // GetReference
+	s.RegisterHandler(2205, s.handleGetTradeDate)
+	s.RegisterHandler(3219, s.handleRequestTradeDate) // RequestTradeDate
+	s.RegisterHandler(3223, s.handleGetMarketState)   // GetMarketState
 	s.RegisterHandler(2209, s.handleGetSuspend)
 	s.RegisterHandler(2210, s.handleGetCodeChange)
 	s.RegisterHandler(2211, s.handleGetFutureInfo)
 	s.RegisterHandler(2212, s.handleGetIpoList)
 	s.RegisterHandler(2213, s.handleGetHoldingChangeList)
 	s.RegisterHandler(2214, s.handleRequestRehab)
-	s.RegisterHandler(2301, s.handleGetCapitalFlow)
-	s.RegisterHandler(2302, s.handleGetCapitalDistribution)
-	s.RegisterHandler(2303, s.handleStockFilter)
-	s.RegisterHandler(2304, s.handleGetOptionChain)
-	s.RegisterHandler(2305, s.handleGetOptionExpirationDate)
-	s.RegisterHandler(2306, s.handleGetWarrant)
+	s.RegisterHandler(3211, s.handleGetCapitalFlow)          // GetCapitalFlow
+	s.RegisterHandler(3212, s.handleGetCapitalDistribution)  // GetCapitalDistribution
+	s.RegisterHandler(3215, s.handleStockFilter)             // StockFilter
+	s.RegisterHandler(3209, s.handleGetOptionChain)          // GetOptionChain
+	s.RegisterHandler(3224, s.handleGetOptionExpirationDate) // GetOptionExpirationDate
+	s.RegisterHandler(3210, s.handleGetWarrant)              // GetWarrant
 	s.RegisterHandler(2401, s.handleGetUserSecurity)
 	s.RegisterHandler(2402, s.handleGetUserSecurityGroup)
 	s.RegisterHandler(2403, s.handleModifyUserSecurity)
 	s.RegisterHandler(2404, s.handleGetPriceReminder)
 	s.RegisterHandler(2405, s.handleSetPriceReminder)
 	s.RegisterHandler(3001, s.handleSubscribe)
-	s.RegisterHandler(3002, s.handleGetSubInfo)
-	s.RegisterHandler(3003, s.handleRegQotPush)
+	s.RegisterHandler(3003, s.handleGetSubInfo) // GetSubInfo
+	s.RegisterHandler(3003, s.handleRegQotPush) // RegQotPush
 }
 
 func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
