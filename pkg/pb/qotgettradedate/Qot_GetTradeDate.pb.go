@@ -7,14 +7,13 @@
 package qotgettradedate
 
 import (
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
-	_ "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -327,7 +326,7 @@ const file_Qot_GetTradeDate_proto_rawDesc = "" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12'\n" +
 	"\x03s2c\x18\x04 \x01(\v2\x15.Qot_GetTradeDate.S2CR\x03s2cBL\n" +
-	"\x13com.futu.openapi.pbZ5github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
+	"\x13com.futu.openapi.pbZ5gitee.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
 
 var (
 	file_Qot_GetTradeDate_proto_rawDescOnce sync.Once

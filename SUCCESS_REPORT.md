@@ -84,7 +84,7 @@ resp, err := qot.GetMarketState(cli, marketStateReq)
 
 ### Quick Test
 ```bash
-cd D:\gitee\futuapi4go
+cd D:\github\futuapi4go
 go run ./cmd/examples/debug_test/
 ```
 

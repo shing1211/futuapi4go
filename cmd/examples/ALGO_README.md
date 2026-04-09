@@ -247,7 +247,7 @@ For questions or issues:
 1. Check the strategy documentation
 2. Review the logs
 3. Test with simulator first
-4. Open an issue on Gitee
+4. Open an issue on github
 
 ---
 

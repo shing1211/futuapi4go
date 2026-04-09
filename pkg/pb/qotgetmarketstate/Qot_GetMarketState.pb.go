@@ -7,14 +7,13 @@
 package qotgetmarketstate
 
 import (
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -310,7 +309,7 @@ const file_Qot_GetMarketState_proto_rawDesc = "" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12)\n" +
 	"\x03s2c\x18\x04 \x01(\v2\x17.Qot_GetMarketState.S2CR\x03s2cBN\n" +
-	"\x13com.futu.openapi.pbZ7github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
+	"\x13com.futu.openapi.pbZ7gitee.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
 
 var (
 	file_Qot_GetMarketState_proto_rawDescOnce sync.Once

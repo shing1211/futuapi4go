@@ -7,8 +7,8 @@
 package qotstockfilter
 
 import (
-	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -2147,7 +2147,7 @@ const file_Qot_StockFilter_proto_rawDesc = "" +
 	"SortDir_No\x10\x00\x12\x12\n" +
 	"\x0eSortDir_Ascend\x10\x01\x12\x13\n" +
 	"\x0fSortDir_Descend\x10\x02BK\n" +
-	"\x13com.futu.openapi.pbZ4github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
+	"\x13com.futu.openapi.pbZ4gitee.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 
 var (
 	file_Qot_StockFilter_proto_rawDescOnce sync.Once

@@ -58,7 +58,7 @@
 4. **Build examples**: `go build ./cmd/examples/...`
 5. **Tag release**: `git tag -a v0.4.0 -m "Release v0.4.0"`
 6. **Push tag**: `git push origin v0.4.0`
-7. **Create Gitee release** with release notes
+7. **Create github release** with release notes
 
 ---
 

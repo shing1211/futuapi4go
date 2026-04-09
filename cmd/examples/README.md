@@ -338,7 +338,7 @@ Subscribe failed: retType=-1
 ## Support
 
 For issues or questions:
-- Open an issue on [Gitee](https://github.com/shing1211/futuapi4go)
+- Open an issue on [github](https://github.com/shing1211/futuapi4go)
 - Check existing documentation
 - Review example code for usage patterns
 

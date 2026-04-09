@@ -45,7 +45,7 @@ Test-NetConnection -ComputerName 127.0.0.1 -Port 11111
 
 ### Test 2: Run SDK Test
 ```bash
-cd D:\gitee\futuapi4go
+cd D:\github\futuapi4go
 go run ./cmd/examples/test_real_opend/
 ```
 

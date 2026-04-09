@@ -7,8 +7,8 @@
 package qotsetpricereminder
 
 import (
-	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -386,7 +386,7 @@ const file_Qot_SetPriceReminder_proto_rawDesc = "" +
 	"\x1aSetPriceReminderOp_Disable\x10\x04\x12\x1d\n" +
 	"\x19SetPriceReminderOp_Modify\x10\x05\x12\x1d\n" +
 	"\x19SetPriceReminderOp_DelAll\x10\x06BP\n" +
-	"\x13com.futu.openapi.pbZ9github.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
+	"\x13com.futu.openapi.pbZ9gitee.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
 
 var (
 	file_Qot_SetPriceReminder_proto_rawDescOnce sync.Once

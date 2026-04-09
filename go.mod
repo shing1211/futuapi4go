@@ -1,4 +1,4 @@
-module github.com/shing1211/futuapi4go
+module gitee.com/shing1211/futuapi4go
 
 go 1.26.1
 

@@ -114,7 +114,7 @@
 
 ### Build
 ```bash
-cd D:\gitee\futuapi4go
+cd D:\github\futuapi4go
 go build -o simulator.exe ./cmd/simulator/
 ```
 

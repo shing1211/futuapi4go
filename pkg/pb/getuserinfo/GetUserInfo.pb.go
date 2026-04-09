@@ -7,13 +7,12 @@
 package getuserinfo
 
 import (
+	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -685,7 +684,7 @@ const file_GetUserInfo_proto_rawDesc = "" +
 	"\x18UserInfoField_Disclaimer\x10\b\x12\x18\n" +
 	"\x14UserInfoField_Update\x10\x10\x12\x19\n" +
 	"\x14UserInfoField_WebKey\x10\x80\x10BH\n" +
-	"\x13com.futu.openapi.pbZ1github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
+	"\x13com.futu.openapi.pbZ1gitee.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 
 var (
 	file_GetUserInfo_proto_rawDescOnce sync.Once
