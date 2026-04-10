@@ -7,7 +7,7 @@
 package qotcommon
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -5890,7 +5890,7 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x1fPriceReminderMarketStatus_USPre\x10\x02\x12%\n" +
 	"!PriceReminderMarketStatus_USAfter\x10\x03\x12)\n" +
 	"%PriceReminderMarketStatus_USOverNight\x10\x04BF\n" +
-	"\x13com.futu.openapi.pbZ/gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"\x13com.futu.openapi.pbZ/github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 
 var (
 	file_Qot_Common_proto_rawDescOnce sync.Once

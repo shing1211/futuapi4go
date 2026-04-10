@@ -7,8 +7,8 @@
 package qotgetusersecuritygroup
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -367,7 +367,7 @@ const file_Qot_GetUserSecurityGroup_proto_rawDesc = "" +
 	"\x10GroupType_Custom\x10\x01\x12\x14\n" +
 	"\x10GroupType_System\x10\x02\x12\x11\n" +
 	"\rGroupType_All\x10\x03BT\n" +
-	"\x13com.futu.openapi.pbZ=gitee.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
+	"\x13com.futu.openapi.pbZ=github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
 
 var (
 	file_Qot_GetUserSecurityGroup_proto_rawDescOnce sync.Once

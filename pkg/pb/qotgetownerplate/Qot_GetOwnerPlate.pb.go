@@ -7,8 +7,8 @@
 package qotgetownerplate
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
-	qotcommon "gitee.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
+	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -308,7 +308,7 @@ const file_Qot_GetOwnerPlate_proto_rawDesc = "" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12(\n" +
 	"\x03s2c\x18\x04 \x01(\v2\x16.Qot_GetOwnerPlate.S2CR\x03s2cBM\n" +
-	"\x13com.futu.openapi.pbZ6gitee.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
+	"\x13com.futu.openapi.pbZ6github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
 
 var (
 	file_Qot_GetOwnerPlate_proto_rawDescOnce sync.Once

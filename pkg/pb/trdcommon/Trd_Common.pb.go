@@ -7,7 +7,7 @@
 package trdcommon
 
 import (
-	_ "gitee.com/shing1211/futuapi4go/pkg/pb/common"
+	_ "github.com/shing1211/futuapi4go/pkg/pb/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -3701,7 +3701,7 @@ const file_Trd_Common_proto_rawDesc = "" +
 	"\x18TrdAssetCategory_Unknown\x10\x00\x12\x17\n" +
 	"\x13TrdAssetCategory_JP\x10\x01\x12\x17\n" +
 	"\x13TrdAssetCategory_US\x10\x02BF\n" +
-	"\x13com.futu.openapi.pbZ/gitee.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"\x13com.futu.openapi.pbZ/github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 
 var (
 	file_Trd_Common_proto_rawDescOnce sync.Once
