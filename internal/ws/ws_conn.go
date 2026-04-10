@@ -8,21 +8,21 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/shing1211/futuapi4go/internal/client"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
 )
 
 // ============================================================================
 // WebSocket Transport for Futu OpenD
 // ============================================================================
 
-// WSConn wraps a WebSocket connection to implement the client.ConnInterface
+// WSConn wraps a WebSocket connection to implement the futuapi.ConnInterface
 type WSConn struct {
 	conn   *websocket.Conn
 	mu     sync.Mutex
-	disp   map[uint32]chan *client.Packet
+	disp   map[uint32]chan *futuapi.Packet
 	dispMu sync.RWMutex
 
-	pushHandler client.PacketHandler
+	pushHandler futuapi.PacketHandler
 	pushMu     sync.RWMutex
 
 	apiTimeout time.Duration
@@ -33,7 +33,7 @@ type WSConn struct {
 func NewWSConn(wsConn *websocket.Conn, apiTimeout time.Duration) *WSConn {
 	return &WSConn{
 		conn:       wsConn,
-		disp:       make(map[uint32]chan *client.Packet),
+		disp:       make(map[uint32]chan *futuapi.Packet),
 		apiTimeout: apiTimeout,
 	}
 }
@@ -83,7 +83,7 @@ func (w *WSConn) WritePacket(protoID uint32, serialNo uint32, body []byte) error
 	defer w.mu.Unlock()
 
 	if w.closed {
-		return client.ErrNotConnected
+		return futuapi.ErrNotConnected
 	}
 
 	// Construct binary message (same format as TCP)
@@ -128,8 +128,8 @@ func (w *WSConn) WritePacket(protoID uint32, serialNo uint32, body []byte) error
 }
 
 // ReadResponse waits for a response with the given serial number
-func (w *WSConn) ReadResponse(serialNo uint32, timeout time.Duration) (*client.Packet, error) {
-	ch := make(chan *client.Packet, 1)
+func (w *WSConn) ReadResponse(serialNo uint32, timeout time.Duration) (*futuapi.Packet, error) {
+	ch := make(chan *futuapi.Packet, 1)
 
 	w.dispMu.Lock()
 	w.disp[serialNo] = ch
@@ -148,12 +148,12 @@ func (w *WSConn) ReadResponse(serialNo uint32, timeout time.Duration) (*client.P
 	case pkt := <-ch:
 		return pkt, nil
 	case <-timer.C:
-		return nil, client.ErrRequestTimeout
+		return nil, futuapi.ErrRequestTimeout
 	}
 }
 
 // SetPushHandler sets the handler for push notifications
-func (w *WSConn) SetPushHandler(handler client.PacketHandler) {
+func (w *WSConn) SetPushHandler(handler futuapi.PacketHandler) {
 	w.pushMu.Lock()
 	defer w.pushMu.Unlock()
 	w.pushHandler = handler
@@ -226,8 +226,8 @@ func (w *WSConn) readLoop() {
 
 		body := message[44 : 44+bodyLen]
 
-		pkt := &client.Packet{
-			Header: client.Header{
+		pkt := &futuapi.Packet{
+			Header: futuapi.Header{
 				ProtoID:  protoID,
 				SerialNo: serialNo,
 				BodyLen:  bodyLen,

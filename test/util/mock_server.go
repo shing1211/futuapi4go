@@ -160,7 +160,9 @@ func (s *MockServer) acceptLoop() {
 }
 
 func (s *MockServer) handleConnection(conn net.Conn) {
+	fmt.Printf("[MockServer] handleConnection started\n")
 	defer func() {
+		fmt.Printf("[MockServer] handleConnection exiting\n")
 		conn.Close()
 		s.connsMu.Lock()
 		delete(s.conns, conn)
@@ -171,9 +173,12 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 	for s.running {
 		// Read header (44 bytes)
 		header := make([]byte, 44)
+		fmt.Printf("[MockServer] Waiting to read header...\n")
 		if _, err := readFull(conn, header); err != nil {
+			fmt.Printf("[MockServer] Failed to read header: %v\n", err)
 			return
 		}
+		fmt.Printf("[MockServer] Read header: %v\n", header[:10])
 
 		// Validate magic
 		if header[0] != 'F' || header[1] != 'T' {
@@ -183,8 +188,10 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 
 		// Parse header fields
 		protoID := readUint32LE(header[2:])
-		serialNo := readUint32LE(header[6:])
-		bodyLen := readUint32LE(header[16:])
+		serialNo := readUint32LE(header[8:])
+		bodyLen := readUint32LE(header[12:])  // Fixed: was header[16:]
+		
+		fmt.Printf("[MockServer] Parsed header: ProtoID=%d, SerialNo=%d, BodyLen=%d\n", protoID, serialNo, bodyLen)
 
 		// Read body
 		body := make([]byte, bodyLen)
@@ -247,7 +254,7 @@ func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body
 	writeUint32LE(header[8:], serialNo)
 
 	// BodyLen
-	writeUint32LE(header[16:], uint32(len(body)))
+	writeUint32LE(header[12:], uint32(len(body)))  // Fixed: was header[16:]
 
 	// SHA1 (zeros for mock)
 	// Reserved (zeros)
@@ -272,26 +279,35 @@ func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body
 // ============================================================================
 
 func (s *MockServer) handleInitConnect(req []byte) ([]byte, error) {
+	fmt.Printf("[MockServer] handleInitConnect called, req len=%d\n", len(req))
 	var reqMsg initconnect.Request
 	if err := proto.Unmarshal(req, &reqMsg); err != nil {
+		fmt.Printf("[MockServer] Failed to unmarshal: %v\n", err)
 		return nil, fmt.Errorf("failed to unmarshal InitConnect request: %w", err)
 	}
+	fmt.Printf("[MockServer] Unmarshaled successfully, ClientID=%s\n", reqMsg.C2S.GetClientID())
 
-	connID := uint64(1234567890)
+	loginUserID := uint64(123456789)
 	serverVer := int32(10100)
 	keepAliveInterval := int32(30)
+	connID := uint64(1234567890)
 	connAESKey := "mock_aes_key_12345"
+	retType := int32(0)  // Success
 
 	resp := &initconnect.Response{
+		RetType: &retType,
 		S2C: &initconnect.S2C{
-			ConnID:            &connID,
+			LoginUserID:       &loginUserID,
 			ServerVer:         &serverVer,
 			KeepAliveInterval: &keepAliveInterval,
+			ConnID:            &connID,
 			ConnAESKey:        &connAESKey,
 		},
 	}
 
-	return proto.Marshal(resp)
+	body, err := proto.Marshal(resp)
+	fmt.Printf("[MockServer] Marshaled response, body len=%d\n", len(body))
+	return body, err
 }
 
 func (s *MockServer) handleKeepAlive(req []byte) ([]byte, error) {

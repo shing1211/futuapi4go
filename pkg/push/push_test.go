@@ -291,10 +291,10 @@ func TestParseUpdateOrderBookValidData(t *testing.T) {
 		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
 		Name:     &name,
 		OrderBookAskList: []*qotcommon.OrderBook{
-			{Price: &askPrice, Volume: &askVolume, OrederCount: &askOrderCount},
+			{Price: &askPrice, Volume: &askVolume, OrderCount: &askOrderCount},
 		},
 		OrderBookBidList: []*qotcommon.OrderBook{
-			{Price: &bidPrice, Volume: &bidVolume, OrederCount: &bidOrderCount},
+			{Price: &bidPrice, Volume: &bidVolume, OrderCount: &bidOrderCount},
 		},
 		SvrRecvTimeBid:          &svrRecvTimeBid,
 		SvrRecvTimeBidTimestamp: &svrRecvTimeBidTs,

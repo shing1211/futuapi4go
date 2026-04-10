@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"time"
 
 	"google.golang.org/protobuf/proto"
@@ -53,14 +52,13 @@ func (s *Server) handleUnlockTrade(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetFunds(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	
+
 	totalAssets := 500000.00
 	cash := 250000.00
 	marketVal := 74093.80
 	frozenCash := 37046.90
 	power := 425906.10
-	curMargin := 50000.00
-	
+
 	s2c := &trdgetfunds.S2C{
 		Funds: &trdcommon.Funds{
 			TotalAssets: &totalAssets,
@@ -68,7 +66,6 @@ func (s *Server) handleGetFunds(pkt *Packet) (*Packet, error) {
 			MarketVal:   &marketVal,
 			FrozenCash:  &frozenCash,
 			Power:       &power,
-			CurMargin:   &curMargin,
 		},
 	}
 	
@@ -105,7 +102,7 @@ func (s *Server) handlePlaceOrder(pkt *Packet) (*Packet, error) {
 
 	retType := int32(common.RetType_RetType_Succeed)
 	orderID := uint64(9876543210)
-	
+
 	// Store order for later retrieval
 	if s.Orders != nil {
 		code := req.GetCode()
@@ -115,7 +112,7 @@ func (s *Server) handlePlaceOrder(pkt *Packet) (*Packet, error) {
 		qty := req.GetQty()
 		submittedAt := time.Now().Format("2006-01-02 15:04:05")
 		orderStatus := int32(trdcommon.OrderStatus_OrderStatus_Submitted)
-		
+
 		order := &trdcommon.Order{
 			OrderID:     &orderID,
 			Code:        &code,
@@ -126,9 +123,8 @@ func (s *Server) handlePlaceOrder(pkt *Packet) (*Packet, error) {
 			Qty:         &qty,
 			CreateTime:  &submittedAt,
 		}
-		
-		key := fmt.Sprintf("order_%d", orderID)
-		s.Orders[key] = order
+
+		s.Orders[orderID] = order
 	}
 
 	resp := &trdplaceorder.Response{

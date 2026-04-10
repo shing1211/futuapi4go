@@ -185,7 +185,7 @@ func TestOrderBookFields(t *testing.T) {
 		Volume:     10000,
 		OrderCount: 5,
 		DetailList: []*OrderBookDetail{
-			{Price: 350.50, Volume: 500, OrderID: 12345},
+			{Volume: 500, OrderID: 12345},
 		},
 	}
 
@@ -208,14 +208,10 @@ func TestOrderBookFields(t *testing.T) {
 
 func TestOrderBookDetailFields(t *testing.T) {
 	obd := &OrderBookDetail{
-		Price:   350.50,
 		Volume:  500,
 		OrderID: 12345,
 	}
 
-	if obd.Price != 350.50 {
-		t.Errorf("expected Price 350.50, got %f", obd.Price)
-	}
 	if obd.Volume != 500 {
 		t.Errorf("expected Volume 500, got %d", obd.Volume)
 	}
