@@ -236,7 +236,6 @@ Execution Summary:
 
 - [USER_GUIDE.md](../../USER_GUIDE.md) - Complete user guide
 - [SIMULATOR.md](../../SIMULATOR.md) - Test with simulator
-- [PROTO_NOTES.md](../../PROTO_NOTES.md) - Protocol notes
 
 ---
 

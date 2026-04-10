@@ -5,7 +5,7 @@ Local mock server for testing SDK without a real Futu OpenD server.
 ## Project Status
 
 | Module | Status | Description |
-|------|------|------|
+|--------|--------|-------------|
 | Core Server | Complete | TCP listening, protocol parsing (46-byte header), handler registration |
 | System APIs | Complete | InitConnect, KeepAlive, GetGlobalState, GetUserInfo |
 | Qot Market Data APIs | Complete | 42 Handlers registered |
@@ -15,20 +15,18 @@ Local mock server for testing SDK without a real Futu OpenD server.
 ## Architecture
 
 ```
-simulator/
-├── server.go         # TCP server core (46-byte protocol header, LittleEndian)
-├── handlers.go       # System API handlers (4 handlers)
+cmd/simulator/
+├── server.go          # TCP server core (46-byte protocol header, LittleEndian)
+├── handlers.go        # System API handlers (4 handlers)
 ├── handlers_qot.go    # Market data API handlers (42 handlers)
 ├── handlers_trd.go    # Trading API handlers (13 handlers)
-├── handlers_push.go   # Push handlers (11 handlers)
-└── simulator_test.go  # Tests
+└── handlers_push.go  # Push handlers (11 handlers)
 ```
 
 ## Run Simulator
 
 ```bash
-cd examples/simulator
-go run main.go
+go run ./cmd/simulator/main.go
 ```
 
 ## Protocol Compatibility
@@ -36,7 +34,7 @@ go run main.go
 Simulator uses exactly the same protocol format as real Futu OpenD:
 
 | Field | Size | Byte Order | Description |
-|------|------|--------|------|
+|-------|------|------------|-------------|
 | Magic | 2 | - | "FT" |
 | ProtoID | 4 | Little | Protocol ID |
 | ProtoFmt | 4 | Little | Protocol format (Protobuf) |
@@ -48,42 +46,42 @@ Simulator uses exactly the same protocol format as real Futu OpenD:
 
 **Total Header Length: 46 bytes**
 
-## Implemented Qot Handlers (2101-2405)
+## Implemented Qot Handlers (3001-3224)
 
 | API | ProtoID | Status |
-|-----|---------|------|
-| GetBasicQot | 2101 | Full implementation |
-| GetKL | 2102 | Full implementation |
-| GetOrderBook | 2106 | Full implementation |
-| GetTicker | 2107 | Stub |
-| GetRT | 2108 | Stub |
-| GetSecuritySnapshot | 2110 | Stub |
-| GetBroker | 2111 | Stub |
-| GetStaticInfo | 2201 | Full implementation |
-| GetPlateSet | 2202 | Stub |
-| GetPlateSecurity | 2203 | Stub |
-| GetOwnerPlate | 2204 | Stub |
-| GetReference | 2205 | Stub |
-| GetTradeDate | 2206 | Full implementation |
-| RequestTradeDate | 2207 | Stub |
-| GetMarketState | 2208 | Stub |
-| GetSuspend | 2209 | Stub |
-| GetCodeChange | 2210 | Stub |
-| GetFutureInfo | 2211 | Stub |
-| GetIpoList | 2212 | Stub |
-| GetHoldingChangeList | 2213 | Stub |
-| RequestRehab | 2214 | Stub |
-| GetCapitalFlow | 2301 | Stub |
-| GetCapitalDistribution | 2302 | Stub |
-| StockFilter | 2303 | Stub |
-| GetOptionChain | 2304 | Stub |
-| GetOptionExpirationDate | 2305 | Stub |
-| GetWarrant | 2306 | Stub |
-| GetUserSecurity | 2401 | Stub |
-| GetUserSecurityGroup | 2402 | Stub |
-| ModifyUserSecurity | 2403 | Stub |
-| GetPriceReminder | 2404 | Stub |
-| SetPriceReminder | 2405 | Stub |
+|-----|---------|--------|
+| GetBasicQot | 3004 | Full implementation |
+| GetKL | 3006 | Full implementation |
+| GetOrderBook | 3012 | Full implementation |
+| GetTicker | 3010 | Stub |
+| GetRT | 3008 | Stub |
+| GetSecuritySnapshot | 3203 | Stub |
+| GetBroker | 3014 | Stub |
+| GetStaticInfo | 3202 | Full implementation |
+| GetPlateSet | 3204 | Stub |
+| GetPlateSecurity | 3205 | Stub |
+| GetOwnerPlate | 3207 | Stub |
+| GetReference | 3206 | Stub |
+| GetTradeDate | 3201 | Full implementation |
+| RequestTradeDate | 3219 | Stub |
+| GetMarketState | 3223 | Stub |
+| GetSuspend | 3220 | Stub |
+| GetCodeChange | 3216 | Stub |
+| GetFutureInfo | 3218 | Stub |
+| GetIpoList | 3217 | Stub |
+| GetHoldingChangeList | 3230 | Stub |
+| RequestRehab | 3200 | Stub |
+| GetCapitalFlow | 3211 | Stub |
+| GetCapitalDistribution | 3212 | Stub |
+| StockFilter | 3215 | Stub |
+| GetOptionChain | 3209 | Stub |
+| GetOptionExpirationDate | 3224 | Stub |
+| GetWarrant | 3210 | Stub |
+| GetUserSecurity | 3213 | Stub |
+| GetUserSecurityGroup | 3222 | Stub |
+| ModifyUserSecurity | 3214 | Stub |
+| GetPriceReminder | 3221 | Stub |
+| SetPriceReminder | 3220 | Stub |
 | Subscribe | 3001 | Full implementation |
 | GetSubInfo | 3002 | Full implementation |
 | RegQotPush | 3003 | Full implementation |
@@ -97,21 +95,20 @@ package main
 
 import (
     "log"
-
-    "github.com/shing1211/futuapi4go/simulator"
+    "github.com/shing1211/futuapi4go/cmd/simulator"
 )
 
 func main() {
     srv := simulator.New("127.0.0.1:11111")
-    srv.RegisterDefaultHandlers()  // System handlers
-    srv.RegisterQotHandlers()     // Market data handlers
-    
+    srv.RegisterDefaultHandlers()
+    srv.RegisterQotHandlers()
+
     if err := srv.Start(); err != nil {
         log.Fatal(err)
     }
-    
+
     log.Println("Simulator started on 127.0.0.1:11111")
-    <-make(chan struct{}) // Block until signal received
+    <-make(chan struct{})
 }
 ```
 
@@ -123,9 +120,9 @@ package main
 import (
     "log"
 
-    futuapi "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/qot"
-    "github.com/shing1211/futuapi4go/pb/qotcommon"
+    futuapi "github.com/shing1211/futuapi4go/internal/client"
+    "github.com/shing1211/futuapi4go/pkg/qot"
+    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 )
 
 func main() {
@@ -136,8 +133,9 @@ func main() {
     defer cli.Close()
 
     market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+    code := "00700"
     securities := []*qotcommon.Security{
-        {Market: &market, Code: func() *string { s := "00700"; return &s }()},
+        {Market: &market, Code: &code},
     }
 
     result, err := qot.GetBasicQot(cli, securities)
@@ -151,11 +149,9 @@ func main() {
 
 ## Next Steps
 
-1. Implement Qot Market Data API Handler framework
-2. Enhance stub handlers with realistic mock data
-3. Implement Trd Trading API Handler
-4. Add push simulation support
-5. Add configurable mock data
+1. Enhance stub handlers with realistic mock data
+2. Add configurable mock data
+3. Implement scenario recording/playback
 
 ## Advanced Simulator Planning
 
@@ -178,4 +174,4 @@ func main() {
 
 ---
 
-*Last updated: 2026-04-07*
+*Last updated: 2026-04-10*

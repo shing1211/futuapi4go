@@ -18,27 +18,25 @@ This guide is for SDK developers, covering project architecture, code standards,
 
 ```
 futuapi4go/
-├── client/           # Core client
-│   ├── conn.go       # TCP connection and binary protocol encapsulation
-│   ├── client.go     # Main client, connection management
-│   └── errors.go     # Error type definitions
-├── qot/              # Market Data API
-│   └── quote.go      # All Qot API implementations
-├── trd/              # Trading API
-│   └── trade.go      # All Trd API implementations
-├── sys/              # System API
-│   └── system.go     # System-level APIs
-├── push/             # Push notification handling
-│   ├── qot_push.go   # Qot push parsers
-│   └── trd_push.go   # Trd push parsers
-├── pb/               # Protobuf generated Go code (local module)
-├── proto/            # Original Protobuf definition files
-└── examples/         # Usage examples
+├── internal/client/     # Core client (Conn, Client, reconnect, KeepAlive)
+├── pkg/qot/              # Market Data API (quote.go)
+├── pkg/trd/              # Trading API (trade.go)
+├── pkg/sys/              # System API (system.go)
+├── pkg/push/             # Push notification handling (qot_push.go, trd_push.go)
+├── pkg/pb/               # Protobuf generated Go code (local module, flat structure)
+├── pkg/pb/common/        # Common proto types
+├── pkg/pb/qotcommon/     # Qot common types
+├── pkg/pb/qotgetkl/      # Qot_GetKL proto
+│   └── ... (other pb packages, all under pkg/pb/)
+├── api/proto/            # Original Protobuf definition files
+├── cmd/simulator/        # OpenD simulator
+├── cmd/examples/         # Usage examples
+└── scripts/              # Build scripts
 ```
 
 ### Core Components
 
-#### 1. Connection Layer (client/conn.go)
+#### 1. Connection Layer (`internal/client/conn.go`)
 
 TCP connection and custom binary protocol encapsulation:
 
@@ -46,30 +44,15 @@ TCP connection and custom binary protocol encapsulation:
 - **Heartbeat mechanism**: Auto-send KeepAlive for keep-alive
 - **Packet read/write**: WritePacket / ReadPacket
 
-```go
-// Connection structure
-type Conn struct {
-    conn   net.Conn
-    protoID int32
-    serialNo int32
-    mu       sync.Mutex
-}
-
-// Write packet
-func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error
-
-// Read packet
-func (c *Conn) ReadPacket() (*Packet, error)
-```
-
-#### 2. Client (client/client.go)
+#### 2. Client (`internal/client/client.go`)
 
 High-level API, encapsulates connection and serialization:
 
 ```go
 type Client struct {
-    conn *Conn
+    conn     *Conn
     serialNo int32
+    // ...
 }
 
 // Create new client
@@ -94,41 +77,23 @@ func (c *Client) NextSerialNo() int32
 Each request/response packet contains:
 
 | Field | Length | Description |
-|------|------|------|
+|-------|--------|-------------|
 | Magic | 2 bytes | "FT" fixed value |
 | ProtoID | 4 bytes | Protocol number (BigEndian) |
 | SerialNo | 4 bytes | Serial number (BigEndian) |
 | BodyLen | 4 bytes | Body length (BigEndian) |
 | Body | Variable | Protobuf serialized data |
 
-### Protocol Encoding Implementation
-
-```go
-// WritePacket in conn.go
-func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error {
-    // 1. Build protocol header
-    header := make([]byte, 14)
-    binary.BigEndian.PutUint16(header[0:2], 0x4654)  // "FT"
-    binary.BigEndian.PutUint32(header[2:6], uint32(protoID))
-    binary.BigEndian.PutUint32(header[6:10], uint32(serialNo))
-    binary.BigEndian.PutUint32(header[10:14], uint32(len(body)))
-    
-    // 2. Send header + body
-    _, err := c.conn.Write(append(header, body...))
-    return err
-}
-```
-
 ---
 
 ## API Implementation Pattern
 
-All APIs follow a unified pattern, using `GetBasicQot` as example:
+All APIs follow a unified pattern, using `GetKL` as example:
 
 ### 1. Define Request/Response Structs
 
 ```go
-// Request struct - corresponds to Protobuf C2S
+// Request struct
 type GetKLRequest struct {
     Security  *qotcommon.Security
     RehabType int32
@@ -148,7 +113,6 @@ type GetKLResponse struct {
 
 ```go
 func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
-    // 1. Build Protobuf request
     c2s := &qotgetkl.C2S{
         Security:  req.Security,
         RehabType: &req.RehabType,
@@ -157,37 +121,31 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
     }
     pkt := &qotgetkl.Request{C2S: c2s}
 
-    // 2. Serialize
     body, err := proto.Marshal(pkt)
     if err != nil {
         return nil, err
     }
 
-    // 3. Send request
     serialNo := c.NextSerialNo()
     if err := c.Conn().WritePacket(ProtoID_GetKL, serialNo, body); err != nil {
         return nil, err
     }
 
-    // 4. Read response
     pktResp, err := c.Conn().ReadPacket()
     if err != nil {
         return nil, err
     }
 
-    // 5. Deserialize
     var rsp qotgetkl.Response
     if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
         return nil, err
     }
 
-    // 6. Check return code
     if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-        return nil, fmt.Errorf("GetKL failed: retType=%d, retMsg=%s", 
+        return nil, fmt.Errorf("GetKL failed: retType=%d, retMsg=%s",
             rsp.GetRetType(), rsp.GetRetMsg())
     }
 
-    // 7. Transform result
     s2c := rsp.GetS2C()
     if s2c == nil {
         return nil, fmt.Errorf("GetKL: s2c is nil")
@@ -203,7 +161,6 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
         result.KLList = append(result.KLList, &KLine{
             Time:       kl.GetTime(),
             ClosePrice: kl.GetClosePrice(),
-            // ... other fields
         })
     }
 
@@ -213,10 +170,9 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 
 ### 3. Key Notes
 
-- **Pointer fields**: Protobuf-generated struct fields are mostly pointers, must assign address
-- **Naming differences**: Sometimes Protobuf getter method names differ from field names (e.g., `GetOrederCount` instead of `GetOrderCount`)
-- **Required vs Optional**: Required fields must be non-nil, optional fields can be nil
-- **Error handling**: Always check if RetType is success value
+- **Pointer fields**: Protobuf-generated struct fields are pointers, must use address-of
+- **Naming differences**: Protobuf getter names match proto field names (field name is `OrderCount`, getter is `GetOrderCount`)
+- **Error handling**: Always check RetType for success value
 
 ---
 
@@ -225,64 +181,47 @@ func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 ### Protobuf Field Handling
 
 ```go
-// Correct: use pointer assignment
+// Correct: pointer assignment
 c2s := &qotgetkl.C2S{
     Security:  req.Security,
-    RehabType: &req.RehabType,  // int32 needs address-of
+    RehabType: &req.RehabType,
     KlType:    &req.KLType,
     ReqNum:    &req.ReqNum,
 }
 
-// Wrong: pass value directly
+// Wrong: value passed directly
 c2s := &qotgetkl.C2S{
-    Security:  req.Security,
-    RehabType: req.RehabType,  // compilation error
+    RehabType: req.RehabType, // compilation error
 }
 ```
 
 ### String Fields
 
 ```go
-// Correct
 beginTime := "2024-01-01"
 c2s := &xxx.C2S{
     BeginTime: &beginTime,
 }
-
-// Wrong
-c2s := &xxx.C2S{
-    BeginTime: "2024-01-01",  // compilation error
-}
 ```
 
-### Slice Fields
+### ProtoID Constants
+
+Each API package defines ProtoID constants in `pkg/qot/quote.go` (for Qot), `pkg/trd/trade.go` (for Trd), and `pkg/sys/system.go`:
 
 ```go
-// Correct
-typeList := []int32{1, 2, 3}
-c2s := &xxx.C2S{
-    TypeList: typeList,
-}
-
-// Wrong
-c2s := &xxx.C2S{
-    TypeList: []int32{1, 2, 3},  // compilation error
-}
-```
-
-### Protobuf Imports
-
-All protobuf packages use local paths:
-
-```go
-import (
-    "google.golang.org/protobuf/proto"
-    futuapi "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/pb/common"
-    "github.com/shing1211/futuapi4go/pb/qotcommon"
-    "github.com/shing1211/futuapi4go/pb/qotgetkl"
+// pkg/qot/quote.go
+const (
+    ProtoID_GetBasicQot = 3004
+    ProtoID_GetKL       = 3006
+    // ...
 )
 ```
+
+Key ProtoIDs:
+- InitConnect=1001, GetGlobalState=1002, KeepAlive=1004
+- Subscribe=3001, GetSubInfo=3002, RegQotPush=3003
+- GetBasicQot=3004, GetKL=3006, GetRT=3008, GetTicker=3010, GetOrderBook=3012, GetBroker=3014
+- RequestHistoryKL=3103, GetOptionChain=3209, StockFilter=3215
 
 ---
 
@@ -290,39 +229,24 @@ import (
 
 ### File Locations
 
-- **Source definitions**: `proto/` directory
-- **Generated code**: `pb/` directory (local Go module)
+- **Source definitions**: `api/proto/`
+- **Generated code**: `pkg/pb/` (flat structure under local Go module `github.com/shing1211/futuapi4go`)
 
-### Adding New Protobuf
+### Regenerating Protobuf Code
 
-1. If using new proto files, first generate Go code with protoc:
+Use the provided script to regenerate all protobuf files:
+
+```powershell
+./scripts/regen-all-protos.ps1
+```
+
+Or manually:
 
 ```bash
-cd proto
-protoc --go_out=../pb --go_opt=paths=source_relative \
-    -I. \
-    Qot_GetKL.proto Qot_Common.proto Common.proto
+cd api/proto
+protoc --go_out=../../pkg/pb --go_opt=paths=source_relative \
+    -I. Qot_GetKL.proto Qot_Common.proto Common.proto
 ```
-
-2. Update `pb/go.mod` to ensure correct module name:
-
-```go
-module github.com/shing1211/futuapi4go/pb
-```
-
-### ProtoID Constant Definitions
-
-Each API defines constants in quote.go:
-
-```go
-const (
-    ProtoID_GetBasicQot = 2101
-    ProtoID_GetKL       = 2102
-    // ...
-)
-```
-
-Protocol numbers reference Futu OpenD API documentation.
 
 ---
 
@@ -331,13 +255,8 @@ Protocol numbers reference Futu OpenD API documentation.
 ### Compilation Tests
 
 ```bash
-# Compile all packages
 go build ./...
-
-# Run tests
 go test ./...
-
-# Static analysis
 go vet ./...
 ```
 
@@ -346,29 +265,8 @@ go vet ./...
 Requires Futu OpenD running locally:
 
 ```bash
-# Run examples
-go run examples/main.go
+go run ./cmd/examples/01_market_data_basic/main.go
 ```
-
-### Common Compilation Errors
-
-#### 1. Protobuf import error
-
-```
-could not import google.golang.org/protobuf/reflect/protoreflect
-```
-
-Solution: Ensure `go.mod` contains correct dependencies:
-
-```go
-require (
-    google.golang.org/protobuf v1.32.0
-)
-```
-
-#### 2. LSP errors but compilation passes
-
-Some LSPs (like gopls) may not resolve local `replace` directives. As long as `go build` passes, it's fine.
 
 ---
 
@@ -383,11 +281,11 @@ cli.SetDebug(true)
 
 ### View Protocol Packets
 
-Add logging in `conn.go` WritePacket/ReadPacket:
+Add logging in `internal/client/conn.go` WritePacket/ReadPacket:
 
 ```go
 func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error {
-    log.Printf(">>> WritePacket: protoID=%d, serialNo=%d, len=%d", 
+    log.Printf(">>> WritePacket: protoID=%d, serialNo=%d, len=%d",
         protoID, serialNo, len(body))
     // ...
 }
@@ -395,31 +293,11 @@ func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error {
 
 ### Common Troubleshooting
 
-#### 1. Connection refused
-
-- Confirm Futu OpenD is started
-- Confirm port number is correct (default 11111)
-- Confirm firewall allows connection
-
-#### 2. Timeout errors
-
-- Check network connection
-- Increase timeout settings
-
-#### 3. Protobuf deserialization failed
-
-- Check if proto version matches OpenD
-- Confirm body is complete (check BodyLen)
-
-#### 4. Return error codes
-
-```go
-// Common RetType values
-RetType_Succeed      = 0   // Success
-RetType_CommonFail   = -1   // Common failure
-RetType_SystemFail   = -2   // System error
-RetType_NoAuth       = -3   // Unauthorized
-```
+1. **Connection refused**: Confirm Futu OpenD is started, port is correct (default 11111)
+2. **Timeout errors**: Check network connection, increase timeout settings
+3. **Protobuf deserialization failed**: Check proto version matches OpenD
+4. **Return error codes**: Common RetType values:
+   - `RetType_Succeed = 0`, `RetType_CommonFail = -1`, `RetType_SystemFail = -2`, `RetType_NoAuth = -3`
 
 ---
 
@@ -427,9 +305,9 @@ RetType_NoAuth       = -3   // Unauthorized
 
 ### 1. Implement New API
 
-1. Confirm proto definition exists in `proto/`
-2. Confirm Go code generated in `pb/`
-3. Add in `qot/quote.go`:
+1. Confirm proto definition exists in `api/proto/`
+2. Regenerate Go code: `./scripts/regen-all-protos.ps1`
+3. Add to `pkg/qot/quote.go` or `pkg/trd/trade.go`:
    - import statements
    - ProtoID constant
    - Request/response structs
@@ -446,17 +324,15 @@ RetType_NoAuth       = -3   // Unauthorized
 ### 3. Commit Standards
 
 ```
-<module>: <short description>
+<package>: <short description>
 
 Detailed explanation (optional)
-
-Fixed issues: Fixes #xxx
 ```
 
 Example:
 
 ```
-qot: implement GetWarrant (2306)
+qot: implement GetWarrant (3210)
 
 Add support for querying warrant data with comprehensive
 filter options including maturity, price, premium, etc.
@@ -466,33 +342,26 @@ filter options including maturity, price, premium, etc.
 
 ## Module Maintenance
 
-### pb Module Management
+### pb Module
 
-`pb/` is an independent Go module:
-
-```bash
-cd pb
-go mod tidy
-go build ./...
-```
-
-Main project uses `replace` directive for local pb:
+`pkg/pb/` is an independent Go module. The main project uses a `replace` directive:
 
 ```go
 // go.mod
 require (
-    github.com/shing1211/futuapi4go/pb v0.0.0
+    github.com/shing1211/futuapi4go v0.4.1
+    github.com/shing1211/futuapi4go/pkg/pb v0.0.0
 )
 
-replace github.com/shing1211/futuapi4go/pb => ./pb
+replace github.com/shing1211/futuapi4go/pkg/pb => ./pkg/pb
 ```
 
 ### Dependency Updates
 
 ```bash
 # Main project
-go get -u github.com/shing1211/futuapi4go/pb
+go get -u github.com/shing1211/futuapi4go
 
 # pb module
-cd pb && go get -u google.golang.org/protobuf
+cd pkg/pb && go get -u google.golang.org/protobuf
 ```

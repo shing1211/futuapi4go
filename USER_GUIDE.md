@@ -29,37 +29,34 @@ package main
 import (
     "fmt"
     "log"
-    futuapi "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/qot"
-    "github.com/shing1211/futuapi4go/pb/qotcommon"
+
+    futuapi "github.com/shing1211/futuapi4go/internal/client"
+    "github.com/shing1211/futuapi4go/pkg/qot"
+    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 )
 
 func main() {
-    // 1. Create client
     cli := futuapi.New()
-    
-    // 2. Connect to OpenD
+    defer cli.Close()
+
     err := cli.Connect("127.0.0.1:11111")
     if err != nil {
         log.Fatal(err)
     }
-    defer cli.Close()
-    
-    // 3. Call API
+
     market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
     code := "00700"
     securities := []*qotcommon.Security{
         {Market: &market, Code: &code},
     }
-    
+
     result, err := qot.GetBasicQot(cli, securities)
     if err != nil {
         log.Fatal(err)
     }
-    
-    // 4. Process results
+
     for _, bq := range result {
-        fmt.Printf("%s %s: CurPrice=%.2f\n", 
+        fmt.Printf("%s %s: CurPrice=%.2f\n",
             bq.Security.GetCode(), bq.Name, bq.CurPrice)
     }
 }
@@ -73,17 +70,17 @@ func main() {
 
 ```go
 cli := futuapi.New()
+defer cli.Close()
+
 err := cli.Connect("127.0.0.1:11111")
 if err != nil {
     log.Fatal(err)
 }
-defer cli.Close()
 ```
 
-### Initialize Connection (Get Connection ID)
+### Initialize Connection
 
 ```go
-// Initialize connection, get user info
 userInfo, err := sys.InitConnect(cli, "your_app_id", "your_hash")
 if err != nil {
     log.Fatal(err)
@@ -91,9 +88,7 @@ if err != nil {
 fmt.Printf("User: %s, ConnID: %d\n", userInfo.GetNickName(), userInfo.GetConnectionID())
 ```
 
-### Heartbeat Keep-alive
-
-SDK automatically sends heartbeat packets to maintain connection, no manual operation needed.
+SDK automatically handles heartbeat KeepAlive; no manual operation needed.
 
 ---
 
@@ -155,12 +150,14 @@ if err != nil {
 
 fmt.Println("Bid:")
 for _, bid := range result.OrderBookBidList {
-    fmt.Printf("  Price=%.2f, Volume=%d\n", bid.Price, bid.Volume)
+    fmt.Printf("  Price=%.2f, Volume=%d, OrderCount=%d\n",
+        bid.Price, bid.Volume, bid.OrderCount)
 }
 
 fmt.Println("Ask:")
 for _, ask := range result.OrderBookAskList {
-    fmt.Printf("  Price=%.2f, Volume=%d\n", ask.Price, ask.Volume)
+    fmt.Printf("  Price=%.2f, Volume=%d, OrderCount=%d\n",
+        ask.Price, ask.Volume, ask.OrderCount)
 }
 ```
 
@@ -187,7 +184,7 @@ for _, rt := range result.RTList {
 ```go
 req := &qot.GetCapitalFlowRequest{
     Security:   &qotcommon.Security{Market: &market, Code: &code},
-    PeriodType: 1, // Daily
+    PeriodType: 1,
 }
 
 result, err := qot.GetCapitalFlow(cli, req)
@@ -210,9 +207,9 @@ req := &qot.StockFilterRequest{
     BaseFilterList: []*qotstockfilter.BaseFilter{
         {
             FieldName:  int32(qotstockfilter.StockField_StockField_CurPrice),
-            FilterMin:  proto.Float64(10.0),
-            FilterMax:  proto.Float64(100.0),
-            IsNoFilter: proto.Bool(false),
+            FilterMin:  ptrFloat64(10.0),
+            FilterMax:  ptrFloat64(100.0),
+            IsNoFilter: ptrBool(false),
         },
     },
 }
@@ -262,7 +259,6 @@ for _, chain := range result.OptionChain {
 ### Unlock Trading
 
 ```go
-// Must unlock before trading
 err = trd.UnlockTrade(cli, "your_trade_password")
 if err != nil {
     log.Fatal(err)
@@ -272,29 +268,29 @@ if err != nil {
 ### Query Account Funds
 
 ```go
-// Get account list
 accList, err := trd.GetAccList(cli)
 if err != nil {
     log.Fatal(err)
 }
 
-// Use first account
 acc := accList[0]
 
-// Query funds
 funds, err := trd.GetFunds(cli, acc.AccID, int32(trdcommon.TrdMarket_TrdMarket_HK))
 if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Cash: %.2f, Frozen: %.2f\n", 
+fmt.Printf("Cash: %.2f, Frozen: %.2f\n",
     funds.GetCash(), funds.GetFrozenCash())
 ```
 
 ### Query Positions
 
 ```go
-positions, err := trd.GetPositionList(cli, acc.AccID, 0, nil)
+positions, err := trd.GetPositionList(cli, &trd.GetPositionListRequest{
+    AccID: acc.AccID,
+    TrdEnv: int32(trdcommon.TrdEnv_TrdEnv_Simulate),
+})
 if err != nil {
     log.Fatal(err)
 }
@@ -311,16 +307,16 @@ for _, pos := range positions.PositionList {
 ### Place Order
 
 ```go
-// Buy 100 shares of Tencent
 orderID, err := trd.PlaceOrder(cli, &trd.PlaceOrderRequest{
-    AccID:        acc.AccID,
-    TrdSide:      int32(trdcommon.TrdSide_TrdSide_Buy),
-    OrderType:    int32(trdcommon.OrderType_OrderType_Normal),
-    Market:       int32(trdcommon.TrdMarket_TrdMarket_HK),
-    Security:     &trdcommon.Security{Market: &market, Code: &code},
-    Qty:          100,
-    Price:        350.00,
-    PriceType:    int32(trdcommon.PriceType_PriceType_Normal),
+    AccID:     acc.AccID,
+    TrdEnv:    int32(trdcommon.TrdEnv_TrdEnv_Simulate),
+    TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
+    OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+    Market:    int32(trdcommon.TrdMarket_TrdMarket_HK),
+    Security:  &trdcommon.Security{Market: &hkMarket, Code: &stockCode},
+    Qty:       100,
+    Price:     350.00,
+    PriceType: int32(trdcommon.PriceType_PriceType_Normal),
 })
 if err != nil {
     log.Fatal(err)
@@ -332,12 +328,13 @@ fmt.Printf("OrderID: %s\n", orderID)
 
 ```go
 err = trd.ModifyOrder(cli, &trd.ModifyOrderRequest{
-    AccID:     acc.AccID,
-    OrderID:   orderID,
-    Market:    int32(trdcommon.TrdMarket_TrdMarket_HK),
+    AccID:      acc.AccID,
+    TrdEnv:     int32(trdcommon.TrdEnv_TrdEnv_Simulate),
+    OrderID:    orderID,
+    Market:     int32(trdcommon.TrdMarket_TrdMarket_HK),
     ModifyType: int32(trdcommon.ModifyOrderType_ModifyOrderType_Normal),
-    Qty:       200, // Modify quantity
-    Price:     360.00, // Modify price
+    Qty:        200,
+    Price:      360.00,
 })
 if err != nil {
     log.Fatal(err)
@@ -347,7 +344,10 @@ if err != nil {
 ### Query Order List
 
 ```go
-orders, err := trd.GetOrderList(cli, acc.AccID, 0, nil)
+orders, err := trd.GetOrderList(cli, &trd.GetOrderListRequest{
+    AccID:  acc.AccID,
+    TrdEnv: int32(trdcommon.TrdEnv_TrdEnv_Simulate),
+})
 if err != nil {
     log.Fatal(err)
 }
@@ -365,17 +365,15 @@ for _, o := range orders.OrderList {
 ### Subscribe to Quotes
 
 ```go
-// Set push callback
-cli.SetQotPushHandler(func(packet *conn.Packet) {
+cli.SetQotPushHandler(func(packet *client.Packet) {
     switch packet.ProtoID {
-    case qot.ProtoID_GetBasicQot:
+    case qot.ProtoID_Qot_UpdateBasicQot:
         // Handle quote push
-    case qot.ProtoID_GetKL:
+    case qot.ProtoID_Qot_UpdateKL:
         // Handle K-line push
     }
 })
 
-// Subscribe to real-time data
 security := &qotcommon.Security{Market: &market, Code: &code}
 _, err = qot.Subscribe(cli, &qot.SubscribeRequest{
     SecurityList:     []*qotcommon.Security{security},
@@ -388,12 +386,11 @@ _, err = qot.Subscribe(cli, &qot.SubscribeRequest{
 ### Order Status Push
 
 ```go
-// Set trading push callback
-cli.SetTrdPushHandler(func(packet *conn.Packet) {
+cli.SetTrdPushHandler(func(packet *client.Packet) {
     switch packet.ProtoID {
-    case trd.ProtoID_UpdateOrder:
+    case trd.ProtoID_Trd_UpdateOrder:
         // Handle order update
-    case trd.ProtoID_UpdateOrderFill:
+    case trd.ProtoID_Trd_UpdateOrderFill:
         // Handle fill update
     }
 })
@@ -409,21 +406,11 @@ cli.SetTrdPushHandler(func(packet *conn.Packet) {
 2. Confirm port number is correct (default 11111)
 3. Confirm network connection is normal
 
-```go
-err := cli.Connect("127.0.0.1:11111")
-if err != nil {
-    log.Fatal("Connection failed:", err)
-}
-```
-
 ### Q: How to handle errors?
-
-All API calls may return errors, recommended to handle uniformly:
 
 ```go
 result, err := qot.GetBasicQot(cli, securities)
 if err != nil {
-    // Distinguish error types
     if strings.Contains(err.Error(), "timeout") {
         // Handle timeout
     } else if strings.Contains(err.Error(), "not connected") {
@@ -438,21 +425,12 @@ if err != nil {
 
 ```go
 securities := []*qotcommon.Security{
-    {Market: &market, Code: &code1},
-    {Market: &market, Code: &code2},
-    {Market: &market, Code: &code3},
+    {Market: &market, Code: ptrStr("00700")},
+    {Market: &market, Code: ptrStr("09988")},
+    {Market: &market, Code: ptrStr("09999")},
 }
 
 result, err := qot.GetBasicQot(cli, securities)
-```
-
-### Q: How to set price alerts?
-
-```go
-// Get price alerts
-result, err := qot.GetPriceReminder(cli, security, market)
-
-// Setting alerts requires operation in Futu OpenD client
 ```
 
 ### Q: What preparation is needed before trading?
@@ -468,7 +446,7 @@ result, err := qot.GetPriceReminder(cli, security, market)
 ### Stock Markets (QotMarket)
 
 | Market | Value | Description |
-|------|-----|------|
+|--------|-------|-------------|
 | HK_Security | 1 | Hong Kong |
 | US_Security | 11 | US stocks |
 | SH_Security | 31 | Shanghai |
@@ -477,7 +455,7 @@ result, err := qot.GetPriceReminder(cli, security, market)
 ### K-Line Types (KLType)
 
 | Type | Value | Description |
-|------|-----|------|
+|------|-------|-------------|
 | KLType_Min1 | 1 | 1 minute |
 | KLType_Min5 | 2 | 5 minutes |
 | KLType_Min15 | 3 | 15 minutes |
@@ -490,14 +468,14 @@ result, err := qot.GetPriceReminder(cli, security, market)
 ### Trade Direction (TrdSide)
 
 | Direction | Value | Description |
-|------|-----|------|
+|-----------|-------|-------------|
 | Buy | 1 | Buy |
 | Sell | 2 | Sell |
 
 ### Order Status (OrderState)
 
 | Status | Value | Description |
-|------|-----|------|
+|--------|-------|-------------|
 | Unknown | 0 | Unknown |
 | Submitting | 1 | Submitting |
 | Submitted | 2 | Submitted |

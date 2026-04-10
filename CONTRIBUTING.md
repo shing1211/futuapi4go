@@ -4,7 +4,7 @@ Thank you for your interest in futuapi4go! We welcome Issues and Pull Requests.
 
 ## Development Environment Requirements
 
-- Go 1.26+
+- Go 1.21+
 - Futu OpenD client
 
 ## Development Guide

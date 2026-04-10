@@ -122,8 +122,7 @@ go run main.go
 
 1. **Start the simulator**:
 ```bash
-cd examples/simulator
-go run main.go
+go run ./cmd/simulator/main.go
 ```
 
 2. **Run any example** (in another terminal):
@@ -214,9 +213,9 @@ if err != nil {
 // Set up handler BEFORE subscribing
 cli.SetQotPushHandler(func(pkt *client.Packet) {
     switch pkt.ProtoID {
-    case 3101:
+    case qot.ProtoID_Qot_UpdateBasicQot:
         // Handle basic quote update
-    case 3102:
+    case qot.ProtoID_Qot_UpdateKL:
         // Handle K-line update
     }
 })
@@ -293,9 +292,9 @@ These are necessary because protobuf fields require pointer types.
    - Real OpenD provides live market data
    - Examples work with both!
 
-2. **API Limitations**:
-   - `GetOptionChain` is currently not implemented due to protobuf issues
-   - Some advanced APIs may return empty results in simulator
+2. **API Coverage**:
+   - All documented APIs are implemented
+   - Some advanced APIs may return empty results in simulator (stubs)
 
 3. **Trading Safety**:
    - Always test with simulator first

@@ -54,7 +54,7 @@ This directory contains comprehensive examples for every API function in FutuAPI
 
 ```bash
 # Run any example
-cd cmd/examples/qot_get_basic_qot
+cd qot_get_basic_qot
 go run main.go
 
 # Use custom OpenD address
@@ -117,12 +117,7 @@ cd sys_get_global_state && go run main.go
 
 ## Notes
 
-1. **Protocol Issue**:
-   - Some Qot APIs may return parse errors due to proto mismatch
-   - See [PROTO_NOTES.md](../PROTO_NOTES.md) for details
-   - Subscribe and basic connection APIs work correctly
-
-2. **Trading APIs**:
+1. **Trading APIs**:
    - Examples use DRY RUN mode by default
    - Remove `dryRun = true` to execute real trades
    - Always test with simulator first
@@ -135,7 +130,6 @@ cd sys_get_global_state && go run main.go
 
 - [USER_GUIDE.md](../USER_GUIDE.md) - Complete user guide
 - [SIMULATOR.md](../SIMULATOR.md) - OpenD simulator guide
-- [PROTO_NOTES.md](../PROTO_NOTES.md) - Protocol implementation notes
 
 ---
 
