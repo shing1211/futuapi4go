@@ -315,8 +315,8 @@ const file_Qot_GetReference_proto_rawDesc = "" +
 	"\rReferenceType\x12\x18\n" +
 	"\x14ReferenceType_Unknow\x10\x00\x12\x19\n" +
 	"\x15ReferenceType_Warrant\x10\x01\x12\x18\n" +
-	"\x14ReferenceType_Future\x10\x02BL\n" +
-	"\x13com.futu.openapi.pbZ5github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
+	"\x14ReferenceType_Future\x10\x02BM\n" +
+	"\x13com.futu.openapi.pbZ6github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 
 var (
 	file_Qot_GetReference_proto_rawDescOnce sync.Once

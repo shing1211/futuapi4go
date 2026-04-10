@@ -2146,8 +2146,8 @@ const file_Qot_StockFilter_proto_rawDesc = "" +
 	"\n" +
 	"SortDir_No\x10\x00\x12\x12\n" +
 	"\x0eSortDir_Ascend\x10\x01\x12\x13\n" +
-	"\x0fSortDir_Descend\x10\x02BK\n" +
-	"\x13com.futu.openapi.pbZ4github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
+	"\x0fSortDir_Descend\x10\x02BL\n" +
+	"\x13com.futu.openapi.pbZ5github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 
 var (
 	file_Qot_StockFilter_proto_rawDescOnce sync.Once

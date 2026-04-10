@@ -444,8 +444,8 @@ const file_Trd_FlowSummary_proto_rawDesc = "" +
 	"\x14TrdCashFlowDirection\x12 \n" +
 	"\x1cTrdCashFlowDirection_Unknown\x10\x00\x12\x1b\n" +
 	"\x17TrdCashFlowDirection_In\x10\x01\x12\x1c\n" +
-	"\x18TrdCashFlowDirection_Out\x10\x02BK\n" +
-	"\x13com.futu.openapi.pbZ4github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
+	"\x18TrdCashFlowDirection_Out\x10\x02BL\n" +
+	"\x13com.futu.openapi.pbZ5github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
 
 var (
 	file_Trd_FlowSummary_proto_rawDescOnce sync.Once

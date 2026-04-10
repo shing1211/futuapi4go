@@ -948,8 +948,8 @@ const file_Notify_proto_rawDesc = "" +
 	"\x1cGtwEventType_AppDataNotExist\x10\f\x12#\n" +
 	"\x1fGtwEventType_NessaryDataMissing\x10\r\x12 \n" +
 	"\x1cGtwEventType_TradePwdChanged\x10\x0e\x12!\n" +
-	"\x1dGtwEventType_EnableDeviceLock\x10\x0fBC\n" +
-	"\x13com.futu.openapi.pbZ,github.com/shing1211/futuapi4go/pkg/pb/notify"
+	"\x1dGtwEventType_EnableDeviceLock\x10\x0fBD\n" +
+	"\x13com.futu.openapi.pbZ-github.com/shing1211/futuapi4go/pkg/pb/notify"
 
 var (
 	file_Notify_proto_rawDescOnce sync.Once

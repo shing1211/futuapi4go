@@ -319,8 +319,8 @@ const file_Qot_ModifyUserSecurity_proto_rawDesc = "" +
 	"\x1cModifyUserSecurityOp_Unknown\x10\x00\x12\x1c\n" +
 	"\x18ModifyUserSecurityOp_Add\x10\x01\x12\x1c\n" +
 	"\x18ModifyUserSecurityOp_Del\x10\x02\x12 \n" +
-	"\x1cModifyUserSecurityOp_MoveOut\x10\x03BR\n" +
-	"\x13com.futu.openapi.pbZ;github.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity"
+	"\x1cModifyUserSecurityOp_MoveOut\x10\x03BS\n" +
+	"\x13com.futu.openapi.pbZ<github.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity"
 
 var (
 	file_Qot_ModifyUserSecurity_proto_rawDescOnce sync.Once

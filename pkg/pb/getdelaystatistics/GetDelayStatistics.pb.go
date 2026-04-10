@@ -828,8 +828,8 @@ const file_GetDelayStatistics_proto_rawDesc = "" +
 	"\x11QotPushType_Price\x10\x01\x12\x16\n" +
 	"\x12QotPushType_Ticker\x10\x02\x12\x19\n" +
 	"\x15QotPushType_OrderBook\x10\x03\x12\x16\n" +
-	"\x12QotPushType_Broker\x10\x04BO\n" +
-	"\x13com.futu.openapi.pbZ8github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
+	"\x12QotPushType_Broker\x10\x04BP\n" +
+	"\x13com.futu.openapi.pbZ9github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
 
 var (
 	file_GetDelayStatistics_proto_rawDescOnce sync.Once

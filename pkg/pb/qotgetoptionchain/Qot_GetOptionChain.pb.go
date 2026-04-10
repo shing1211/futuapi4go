@@ -686,8 +686,8 @@ const file_Qot_GetOptionChain_proto_rawDesc = "" +
 	"\x0eOptionCondType\x12\x19\n" +
 	"\x15OptionCondType_Unknow\x10\x00\x12\x19\n" +
 	"\x15OptionCondType_WithIn\x10\x01\x12\x1a\n" +
-	"\x16OptionCondType_Outside\x10\x02BN\n" +
-	"\x13com.futu.openapi.pbZ7github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
+	"\x16OptionCondType_Outside\x10\x02BO\n" +
+	"\x13com.futu.openapi.pbZ8github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
 
 var (
 	file_Qot_GetOptionChain_proto_rawDescOnce sync.Once

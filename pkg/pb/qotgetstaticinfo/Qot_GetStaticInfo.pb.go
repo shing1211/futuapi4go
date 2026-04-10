@@ -262,8 +262,8 @@ const file_Qot_GetStaticInfo_proto_rawDesc = "" +
 	"\aretType\x18\x01 \x02(\x05:\x04-400R\aretType\x12\x16\n" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12(\n" +
-	"\x03s2c\x18\x04 \x01(\v2\x16.Qot_GetStaticInfo.S2CR\x03s2cBM\n" +
-	"\x13com.futu.openapi.pbZ6github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
+	"\x03s2c\x18\x04 \x01(\v2\x16.Qot_GetStaticInfo.S2CR\x03s2cBN\n" +
+	"\x13com.futu.openapi.pbZ7github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
 
 var (
 	file_Qot_GetStaticInfo_proto_rawDescOnce sync.Once

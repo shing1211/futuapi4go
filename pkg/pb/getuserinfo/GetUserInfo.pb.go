@@ -683,8 +683,8 @@ const file_GetUserInfo_proto_rawDesc = "" +
 	"\x16UserInfoField_QotRight\x10\x04\x12\x1c\n" +
 	"\x18UserInfoField_Disclaimer\x10\b\x12\x18\n" +
 	"\x14UserInfoField_Update\x10\x10\x12\x19\n" +
-	"\x14UserInfoField_WebKey\x10\x80\x10BH\n" +
-	"\x13com.futu.openapi.pbZ1github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
+	"\x14UserInfoField_WebKey\x10\x80\x10BI\n" +
+	"\x13com.futu.openapi.pbZ2github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 
 var (
 	file_GetUserInfo_proto_rawDescOnce sync.Once

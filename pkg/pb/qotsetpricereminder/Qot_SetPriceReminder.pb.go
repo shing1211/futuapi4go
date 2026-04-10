@@ -385,8 +385,8 @@ const file_Qot_SetPriceReminder_proto_rawDesc = "" +
 	"\x19SetPriceReminderOp_Enable\x10\x03\x12\x1e\n" +
 	"\x1aSetPriceReminderOp_Disable\x10\x04\x12\x1d\n" +
 	"\x19SetPriceReminderOp_Modify\x10\x05\x12\x1d\n" +
-	"\x19SetPriceReminderOp_DelAll\x10\x06BP\n" +
-	"\x13com.futu.openapi.pbZ9github.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
+	"\x19SetPriceReminderOp_DelAll\x10\x06BQ\n" +
+	"\x13com.futu.openapi.pbZ:github.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
 
 var (
 	file_Qot_SetPriceReminder_proto_rawDescOnce sync.Once

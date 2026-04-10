@@ -5889,8 +5889,8 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x1ePriceReminderMarketStatus_Open\x10\x01\x12#\n" +
 	"\x1fPriceReminderMarketStatus_USPre\x10\x02\x12%\n" +
 	"!PriceReminderMarketStatus_USAfter\x10\x03\x12)\n" +
-	"%PriceReminderMarketStatus_USOverNight\x10\x04BF\n" +
-	"\x13com.futu.openapi.pbZ/github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"%PriceReminderMarketStatus_USOverNight\x10\x04BG\n" +
+	"\x13com.futu.openapi.pbZ0github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 
 var (
 	file_Qot_Common_proto_rawDescOnce sync.Once

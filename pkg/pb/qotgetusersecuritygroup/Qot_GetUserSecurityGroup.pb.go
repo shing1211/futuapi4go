@@ -366,8 +366,8 @@ const file_Qot_GetUserSecurityGroup_proto_rawDesc = "" +
 	"\x11GroupType_Unknown\x10\x00\x12\x14\n" +
 	"\x10GroupType_Custom\x10\x01\x12\x14\n" +
 	"\x10GroupType_System\x10\x02\x12\x11\n" +
-	"\rGroupType_All\x10\x03BT\n" +
-	"\x13com.futu.openapi.pbZ=github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
+	"\rGroupType_All\x10\x03BU\n" +
+	"\x13com.futu.openapi.pbZ>github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
 
 var (
 	file_Qot_GetUserSecurityGroup_proto_rawDescOnce sync.Once

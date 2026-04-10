@@ -381,8 +381,8 @@ const file_Verification_proto_rawDesc = "" +
 	"\x0eVerificationOp\x12\x19\n" +
 	"\x15VerificationOp_Unknow\x10\x00\x12\x1a\n" +
 	"\x16VerificationOp_Request\x10\x01\x12 \n" +
-	"\x1cVerificationOp_InputAndLogin\x10\x02BI\n" +
-	"\x13com.futu.openapi.pbZ2github.com/shing1211/futuapi4go/pkg/pb/verification"
+	"\x1cVerificationOp_InputAndLogin\x10\x02BJ\n" +
+	"\x13com.futu.openapi.pbZ3github.com/shing1211/futuapi4go/pkg/pb/verification"
 
 var (
 	file_Verification_proto_rawDescOnce sync.Once

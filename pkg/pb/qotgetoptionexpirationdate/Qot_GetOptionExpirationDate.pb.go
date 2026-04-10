@@ -327,8 +327,8 @@ const file_Qot_GetOptionExpirationDate_proto_rawDesc = "" +
 	"\aretType\x18\x01 \x02(\x05:\x04-400R\aretType\x12\x16\n" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x122\n" +
-	"\x03s2c\x18\x04 \x01(\v2 .Qot_GetOptionExpirationDate.S2CR\x03s2cBT\n" +
-	"\x13com.futu.openapi.pbZ=github.com/shing1211/futuapi4go/pkg/pb/getoptionexpirationdate"
+	"\x03s2c\x18\x04 \x01(\v2 .Qot_GetOptionExpirationDate.S2CR\x03s2cBU\n" +
+	"\x13com.futu.openapi.pbZ>github.com/shing1211/futuapi4go/pkg/pb/getoptionexpirationdate"
 
 var (
 	file_Qot_GetOptionExpirationDate_proto_rawDescOnce sync.Once

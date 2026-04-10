@@ -609,8 +609,8 @@ const file_Qot_GetCodeChange_proto_rawDesc = "" +
 	"\x15TimeFilterType_Unknow\x10\x00\x12\x19\n" +
 	"\x15TimeFilterType_Public\x10\x01\x12\x1c\n" +
 	"\x18TimeFilterType_Effective\x10\x02\x12\x16\n" +
-	"\x12TimeFilterType_End\x10\x03BM\n" +
-	"\x13com.futu.openapi.pbZ6github.com/shing1211/futuapi4go/pkg/pb/qotgetcodechange"
+	"\x12TimeFilterType_End\x10\x03BN\n" +
+	"\x13com.futu.openapi.pbZ7github.com/shing1211/futuapi4go/pkg/pb/qotgetcodechange"
 
 var (
 	file_Qot_GetCodeChange_proto_rawDescOnce sync.Once

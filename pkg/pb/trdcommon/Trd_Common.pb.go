@@ -3700,8 +3700,8 @@ const file_Trd_Common_proto_rawDesc = "" +
 	"\x10TrdAssetCategory\x12\x1c\n" +
 	"\x18TrdAssetCategory_Unknown\x10\x00\x12\x17\n" +
 	"\x13TrdAssetCategory_JP\x10\x01\x12\x17\n" +
-	"\x13TrdAssetCategory_US\x10\x02BF\n" +
-	"\x13com.futu.openapi.pbZ/github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"\x13TrdAssetCategory_US\x10\x02BG\n" +
+	"\x13com.futu.openapi.pbZ0github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 
 var (
 	file_Trd_Common_proto_rawDescOnce sync.Once
