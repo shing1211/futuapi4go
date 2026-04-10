@@ -14,10 +14,10 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotsubscribe"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/test/fixtures"
-	"github.com/shing1211/futuapi4go/test/util"
+	testutil "github.com/shing1211/futuapi4go/test/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -32,7 +32,7 @@ func TestGetBasicQot_HSI(t *testing.T) {
 		}
 
 		// Build realistic HSI response
-		hsiQuote := testutil.HSIQuote()
+		hsiQuote := fixtures.HSIQuote()
 
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
@@ -50,7 +50,7 @@ func TestGetBasicQot_HSI(t *testing.T) {
 	defer cleanup()
 
 	// Call API
-	result, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+	result, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
 	if err != nil {
 		t.Fatalf("GetBasicQot failed: %v", err)
 	}
@@ -61,8 +61,8 @@ func TestGetBasicQot_HSI(t *testing.T) {
 	}
 
 	quote := result[0]
-	if quote.Security.GetCode() != testutil.HSICode {
-		t.Errorf("Expected code %s, got %s", testutil.HSICode, quote.Security.GetCode())
+	if quote.Security.GetCode() != fixtures.HSICode {
+		t.Errorf("Expected code %s, got %s", fixtures.HSICode, quote.Security.GetCode())
 	}
 
 	if quote.CurPrice != 18523.45 {
@@ -82,11 +82,11 @@ func TestGetKL_HSI_Day(t *testing.T) {
 		}
 
 		reqNum := int(reqMsg.C2S.GetReqNum())
-		klList := testutil.HSIKLineData(reqNum, reqMsg.C2S.GetKLType())
+		klList := fixtures.HSIKLineData(reqNum, reqMsg.C2S.GetKlType())
 
 		s2c := &qotgetkl.S2C{
-			Security: testutil.HSISecurity(),
-			Name:     proto.String(testutil.HSIName),
+			Security: fixtures.HSISecurity(),
+			Name:     proto.String(fixtures.HSIName),
 			KlList:   klList,
 		}
 
@@ -103,7 +103,7 @@ func TestGetKL_HSI_Day(t *testing.T) {
 
 	// Request 10 days of HSI K-line
 	req := &qot.GetKLRequest{
-		Security:  testutil.HSISecurity(),
+		Security:  fixtures.HSISecurity(),
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    10,
@@ -141,11 +141,11 @@ func TestGetKL_HSI_Min1(t *testing.T) {
 		}
 
 		reqNum := int(reqMsg.C2S.GetReqNum())
-		klList := testutil.HSIKLineData(reqNum, reqMsg.C2S.GetKLType())
+		klList := fixtures.HSIKLineData(reqNum, reqMsg.C2S.GetKlType())
 
 		s2c := &qotgetkl.S2C{
-			Security: testutil.HSISecurity(),
-			Name:     proto.String(testutil.HSIName),
+			Security: fixtures.HSISecurity(),
+			Name:     proto.String(fixtures.HSIName),
 			KlList:   klList,
 		}
 
@@ -161,9 +161,9 @@ func TestGetKL_HSI_Min1(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetKLRequest{
-		Security:  testutil.HSISecurity(),
+		Security:  fixtures.HSISecurity(),
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
-		KLType:    int32(qotcommon.KLType_KLType_Min1),
+		KLType:    int32(qotcommon.KLType_KLType_1Min),
 		ReqNum:    5,
 	}
 
@@ -189,11 +189,11 @@ func TestGetOrderBook_HSI(t *testing.T) {
 		}
 
 		num := int(reqMsg.C2S.GetNum())
-		asks, bids := testutil.HSIOrderBookLevels(num)
+		asks, bids := fixtures.HSIOrderBookLevels(num)
 
 		s2c := &qotgetorderbook.S2C{
-			Security:         testutil.HSISecurity(),
-			Name:             proto.String(testutil.HSIName),
+			Security:         fixtures.HSISecurity(),
+			Name:             proto.String(fixtures.HSIName),
 			OrderBookAskList: asks,
 			OrderBookBidList: bids,
 		}
@@ -210,7 +210,7 @@ func TestGetOrderBook_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetOrderBookRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 		Num:      10,
 	}
 
@@ -249,11 +249,11 @@ func TestGetTicker_HSI(t *testing.T) {
 		}
 
 		maxRet := int(reqMsg.C2S.GetMaxRetNum())
-		tickers := testutil.HSITickerData(maxRet)
+		tickers := fixtures.HSITickerData(maxRet)
 
 		s2c := &qotgetticker.S2C{
-			Security:   testutil.HSISecurity(),
-			Name:       proto.String(testutil.HSIName),
+			Security:   fixtures.HSISecurity(),
+			Name:       proto.String(fixtures.HSIName),
 			TickerList: tickers,
 		}
 
@@ -269,8 +269,8 @@ func TestGetTicker_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetTickerRequest{
-		Security:  testutil.HSISecurity(),
-		MaxRetNum: 20,
+		Security: fixtures.HSISecurity(),
+		Num:      20,
 	}
 
 	result, err := qot.GetTicker(cli, req)
@@ -305,12 +305,12 @@ func TestGetRT_HSI(t *testing.T) {
 		}
 
 		// Return 240 minutes (full HK trading day)
-		rtList := testutil.HSIRTDData(240)
+		rtList := fixtures.HSIRTDData(240)
 
 		s2c := &qotgetrt.S2C{
-			Security: testutil.HSISecurity(),
-			Name:     proto.String(testutil.HSIName),
-			RTList:   rtList,
+			Security: fixtures.HSISecurity(),
+			Name:     proto.String(fixtures.HSIName),
+			RtList:   rtList,
 		}
 
 		return proto.Marshal(&qotgetrt.Response{S2C: s2c})
@@ -325,7 +325,7 @@ func TestGetRT_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetRTRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 	}
 
 	result, err := qot.GetRT(cli, req)
@@ -344,29 +344,24 @@ func TestGetBroker_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(3014, func(req []byte) ([]byte, error) {
-		var reqMsg qotgetbroker.Request
-		if err := proto.Unmarshal(req, &reqMsg); err != nil {
-			return nil, err
-		}
-
-		num := int(reqMsg.C2S.GetNum())
+		num := 10
 		askBrokers := make([]*qotcommon.Broker, 0, num)
 		bidBrokers := make([]*qotcommon.Broker, 0, num)
 
 		for i := 0; i < num; i++ {
-			brokerID := uint64(1000 + i)
-			volume := uint64(10000 + i*1000)
+			brokerID := int64(1000 + i)
+			volume := int64(10000 + i*1000)
 			pos := int32(i)
 
 			askBrokers = append(askBrokers, &qotcommon.Broker{
-				ID:     &brokerID,
+				Id:     &brokerID,
 				Name:   proto.String("Test Broker"),
 				Pos:    &pos,
 				Volume: &volume,
 			})
 
 			bidBrokers = append(bidBrokers, &qotcommon.Broker{
-				ID:     &brokerID,
+				Id:     &brokerID,
 				Name:   proto.String("Test Broker"),
 				Pos:    &pos,
 				Volume: &volume,
@@ -374,10 +369,10 @@ func TestGetBroker_HSI(t *testing.T) {
 		}
 
 		s2c := &qotgetbroker.S2C{
-			Security:     testutil.HSISecurity(),
-			Name:         proto.String(testutil.HSIName),
-			AskBrokerList: askBrokers,
-			BidBrokerList: bidBrokers,
+			Security:      fixtures.HSISecurity(),
+			Name:          proto.String(fixtures.HSIName),
+			BrokerAskList: askBrokers,
+			BrokerBidList: bidBrokers,
 		}
 
 		return proto.Marshal(&qotgetbroker.Response{S2C: s2c})
@@ -392,7 +387,7 @@ func TestGetBroker_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetBrokerRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 		Num:      10,
 	}
 
@@ -416,14 +411,24 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(3202, func(req []byte) ([]byte, error) {
+		sec := fixtures.HSISecurity()
+		id := int64(800100)
+		lotSize := int32(1)
+		secType := int32(qotcommon.SecurityType_SecurityType_Index)
+		listTime := "1969-07-31"
+		name := fixtures.HSIName
+
 		s2c := &qotgetstaticinfo.S2C{
 			StaticInfoList: []*qotcommon.SecurityStaticInfo{
 				{
-					Security: testutil.HSISecurity(),
-					Id:       proto.Uint64(800100),
-					LotSize:  proto.Int32(1), // Index lot size
-					SecType:  proto.Int32(int32(qotcommon.SecurityType_SecurityType_Index)),
-					ListTime: proto.String("1969-07-31"),
+					Basic: &qotcommon.SecurityStaticBasic{
+						Security: sec,
+						Id:       &id,
+						LotSize:  &lotSize,
+						SecType:  &secType,
+						Name:     &name,
+						ListTime: &listTime,
+					},
 				},
 			},
 		}
@@ -440,7 +445,7 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetStaticInfoRequest{
-		SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+		SecurityList: []*qotcommon.Security{fixtures.HSISecurity()},
 	}
 
 	result, err := qot.GetStaticInfo(cli, req)
@@ -453,8 +458,8 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 	}
 
 	info := result.StaticInfoList[0]
-	if info.Security.GetCode() != testutil.HSICode {
-		t.Errorf("Expected code %s, got %s", testutil.HSICode, info.Security.GetCode())
+	if info.GetBasic().GetSecurity().GetCode() != fixtures.HSICode {
+		t.Errorf("Expected code %s, got %s", fixtures.HSICode, info.GetBasic().GetSecurity().GetCode())
 	}
 
 	server.AssertProtoID(t, 3202)
@@ -464,14 +469,16 @@ func TestGetTradeDate_HK(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(3201, func(req []byte) ([]byte, error) {
+		tradeDates := []*qotgettradedate.TradeDate{
+			{Time: proto.String("2026-04-01")},
+			{Time: proto.String("2026-04-02")},
+			{Time: proto.String("2026-04-03")},
+			{Time: proto.String("2026-04-06")},
+			{Time: proto.String("2026-04-07")},
+		}
+
 		s2c := &qotgettradedate.S2C{
-			TradeDateList: []string{
-				"2026-04-01",
-				"2026-04-02",
-				"2026-04-03",
-				"2026-04-06",
-				"2026-04-07",
-			},
+			TradeDateList: tradeDates,
 		}
 
 		return proto.Marshal(&qotgettradedate.Response{S2C: s2c})
@@ -486,7 +493,7 @@ func TestGetTradeDate_HK(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetTradeDateRequest{
-		Market: testutil.HSIMarket,
+		Market: fixtures.HSIMarket,
 	}
 
 	result, err := qot.GetTradeDate(cli, req)
@@ -505,8 +512,8 @@ func TestSubscribe_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(3001, func(req []byte) ([]byte, error) {
-		s2c := &qotsubscribe.S2C{}
-		return proto.Marshal(&qotsubscribe.Response{S2C: s2c})
+		s2c := &qotsub.S2C{}
+		return proto.Marshal(&qotsub.Response{S2C: s2c})
 	})
 
 	if err := server.Start(); err != nil {
@@ -518,7 +525,7 @@ func TestSubscribe_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.SubscribeRequest{
-		SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+		SecurityList: []*qotcommon.Security{fixtures.HSISecurity()},
 		SubTypeList:  []qot.SubType{qot.SubType_Basic, qot.SubType_KL},
 		IsSubOrUnSub: true,
 	}
@@ -535,14 +542,22 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(3211, func(req []byte) ([]byte, error) {
+		inFlow := 12345678.90
+		mainInFlow := 12345678.90
+		bigInFlow := 23456789.01
+		midInFlow := 34567890.12
+		smlInFlow := 45678901.23
+		timeStr := "2026-04-10 10:00:00"
+
 		s2c := &qotgetcapitalflow.S2C{
-			FlowItemList: []*qotcommon.CapitalFlowItem{
+			FlowItemList: []*qotgetcapitalflow.CapitalFlowItem{
 				{
-					Time:       proto.String("2026-04-10 10:00:00"),
-					MainInFlow: proto.Float64(12345678.90),
-					BigInFlow:  proto.Float64(23456789.01),
-					MidInFlow:  proto.Float64(34567890.12),
-					SmallInFlow: proto.Float64(45678901.23),
+					InFlow:      &inFlow,
+					Time:        &timeStr,
+					MainInFlow:  &mainInFlow,
+					BigInFlow:   &bigInFlow,
+					MidInFlow:   &midInFlow,
+					SmlInFlow:   &smlInFlow,
 				},
 			},
 		}
@@ -559,7 +574,7 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &qot.GetCapitalFlowRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 	}
 
 	result, err := qot.GetCapitalFlow(cli, req)
@@ -598,12 +613,12 @@ func TestGetCapitalDistribution_HSI(t *testing.T) {
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
 
-	result, err := qot.GetCapitalDistribution(cli, testutil.HSISecurity())
+	result, err := qot.GetCapitalDistribution(cli, fixtures.HSISecurity())
 	if err != nil {
 		t.Fatalf("GetCapitalDistribution failed: %v", err)
 	}
 
-	if result.CapitalInBig <= 0 {
+	if result.CapitalDistribution.CapitalInBig <= 0 {
 		t.Error("CapitalInBig should be positive")
 	}
 

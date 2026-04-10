@@ -1,6 +1,7 @@
 package benchmark_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
@@ -8,8 +9,8 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
 	"github.com/shing1211/futuapi4go/pkg/qot"
-	"github.com/seefutuapi4go/test/fixtures"
-	"github.com/shing1211/futuapi4go/test/util"
+	"github.com/shing1211/futuapi4go/test/fixtures"
+	testutil "github.com/shing1211/futuapi4go/test/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -23,7 +24,7 @@ func BenchmarkGetBasicQot_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
 	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
-		hsiQuote := testutil.HSIQuote()
+		hsiQuote := fixtures.HSIQuote()
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
 		}
@@ -42,7 +43,7 @@ func BenchmarkGetBasicQot_Mock(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
 		if err != nil {
 			b.Fatalf("GetBasicQot failed: %v", err)
 		}
@@ -54,10 +55,10 @@ func BenchmarkGetKL_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
 	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
-		klList := testutil.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
+		klList := fixtures.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
 		s2c := &qotgetkl.S2C{
-			Security: testutil.HSISecurity(),
-			Name:     ptrStr(testutil.HSIName),
+			Security: fixtures.HSISecurity(),
+			Name:     ptrStr(fixtures.HSIName),
 			KlList:   klList,
 		}
 		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
@@ -72,7 +73,7 @@ func BenchmarkGetKL_Mock(b *testing.B) {
 	defer cleanup()
 
 	req := &qot.GetKLRequest{
-		Security:  testutil.HSISecurity(),
+		Security:  fixtures.HSISecurity(),
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    100,
@@ -94,10 +95,10 @@ func BenchmarkGetOrderBook_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
 	server.RegisterHandler(3012, func(req []byte) ([]byte, error) {
-		asks, bids := testutil.HSIOrderBookLevels(10)
+		asks, bids := fixtures.HSIOrderBookLevels(10)
 		s2c := &qotgetorderbook.S2C{
-			Security:         testutil.HSISecurity(),
-			Name:             ptrStr(testutil.HSIName),
+			Security:         fixtures.HSISecurity(),
+			Name:             ptrStr(fixtures.HSIName),
 			OrderBookAskList: asks,
 			OrderBookBidList: bids,
 		}
@@ -113,7 +114,7 @@ func BenchmarkGetOrderBook_Mock(b *testing.B) {
 	defer cleanup()
 
 	req := &qot.GetOrderBookRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 		Num:      10,
 	}
 
@@ -130,7 +131,7 @@ func BenchmarkGetOrderBook_Mock(b *testing.B) {
 
 // BenchmarkProtobufMarshal_HSIQuote benchmarks protobuf marshaling
 func BenchmarkProtobufMarshal_HSIQuote(b *testing.B) {
-	hsiQuote := testutil.HSIQuote()
+	hsiQuote := fixtures.HSIQuote()
 	resp := &qotgetbasicqot.Response{
 		S2C: &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
@@ -150,7 +151,7 @@ func BenchmarkProtobufMarshal_HSIQuote(b *testing.B) {
 
 // BenchmarkProtobufUnmarshal_HSIQuote benchmarks protobuf unmarshaling
 func BenchmarkProtobufUnmarshal_HSIQuote(b *testing.B) {
-	hsiQuote := testutil.HSIQuote()
+	hsiQuote := fixtures.HSIQuote()
 	resp := &qotgetbasicqot.Response{
 		S2C: &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
@@ -182,7 +183,7 @@ func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 		// Return multiple quotes
 		quotes := make([]*qotcommon.BasicQot, 10)
 		for i := range quotes {
-			quote := testutil.HSIQuote()
+			quote := fixtures.HSIQuote()
 			code := fmt.Sprintf("%06d", 700+i)
 			quote.Security.Code = &code
 			quotes[i] = quote
@@ -206,7 +207,7 @@ func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 	securities := make([]*qotcommon.Security, 10)
 	for i := 0; i < 10; i++ {
 		code := fmt.Sprintf("%06d", 700+i)
-		securities[i] = testutil.SecurityPtr(testutil.HSIMarket, code)
+		securities[i] = fixtures.SecurityPtr(fixtures.HSIMarket, code)
 	}
 
 	b.ResetTimer()
@@ -225,7 +226,7 @@ func BenchmarkConcurrentRequests_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
 	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
-		hsiQuote := testutil.HSIQuote()
+		hsiQuote := fixtures.HSIQuote()
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
 		}
@@ -245,7 +246,7 @@ func BenchmarkConcurrentRequests_Mock(b *testing.B) {
 		defer cleanup()
 
 		for pb.Next() {
-			_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+			_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
 			if err != nil {
 				b.Fatalf("GetBasicQot failed: %v", err)
 			}
@@ -259,7 +260,7 @@ func BenchmarkHSIFixtures_Quote(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_ = testutil.HSIQuote()
+		_ = fixtures.HSIQuote()
 	}
 }
 
@@ -268,7 +269,7 @@ func BenchmarkHSIFixtures_KLine(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_ = testutil.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
+		_ = fixtures.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
 	}
 }
 
@@ -277,7 +278,7 @@ func BenchmarkHSIFixtures_OrderBook(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, _ = testutil.HSIOrderBookLevels(10)
+		_, _ = fixtures.HSIOrderBookLevels(10)
 	}
 }
 

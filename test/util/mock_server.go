@@ -7,8 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/shing1211/futuapi4go/internal/client"
-	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
@@ -319,10 +318,7 @@ func (s *MockServer) handleGetGlobalState(req []byte) ([]byte, error) {
 	serverBuildNo := int32(6208)
 	qotLogined := true
 	trdLogined := true
-	marketHK := int32(common.QotMarketState_QotMarketState_Normal)
-	marketUS := int32(common.QotMarketState_QotMarketState_Normal)
-	marketSH := int32(common.QotMarketState_QotMarketState_Normal)
-	marketSZ := int32(common.QotMarketState_QotMarketState_Normal)
+	marketState := int32(2) // Normal market state
 
 	resp := &getglobalstate.Response{
 		S2C: &getglobalstate.S2C{
@@ -331,10 +327,10 @@ func (s *MockServer) handleGetGlobalState(req []byte) ([]byte, error) {
 			ServerBuildNo: &serverBuildNo,
 			QotLogined:    &qotLogined,
 			TrdLogined:    &trdLogined,
-			MarketHK:      &marketHK,
-			MarketUS:      &marketUS,
-			MarketSH:      &marketSH,
-			MarketSZ:      &marketSZ,
+			MarketHK:      &marketState,
+			MarketUS:      &marketState,
+			MarketSH:      &marketState,
+			MarketSZ:      &marketState,
 		},
 	}
 
@@ -347,25 +343,21 @@ func (s *MockServer) handleGetUserInfo(req []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to unmarshal GetUserInfo request: %w", err)
 	}
 
-	userID := uint64(123456789)
+	userID := int64(123456789)
 	nickName := "TestUser"
-	apiLevel := int32(100)
+	apiLevel := "100"
 	hkQotRight := int32(2)
 	usQotRight := int32(2)
 	cnQotRight := int32(1)
-	subQuota := int32(100)
-	historyKLQuota := int32(100)
 
 	resp := &getuserinfo.Response{
 		S2C: &getuserinfo.S2C{
-			UserID:         &userID,
-			NickName:       &nickName,
-			APILevel:       &apiLevel,
-			HkQotRight:     &hkQotRight,
-			UsQotRight:     &usQotRight,
-			CnQotRight:     &cnQotRight,
-			SubQuota:       &subQuota,
-			HistoryKLQuota: &historyKLQuota,
+			UserID:     &userID,
+			NickName:   &nickName,
+			ApiLevel:   &apiLevel,
+			HkQotRight: &hkQotRight,
+			UsQotRight: &usQotRight,
+			CnQotRight: &cnQotRight,
 		},
 	}
 
@@ -405,15 +397,15 @@ func writeUint32LE(b []byte, v uint32) {
 // ============================================================================
 
 // NewTestClient creates a client connected to the mock server
-func NewTestClient(t *testing.T, server *MockServer) (*client.Client, func()) {
+func NewTestClient(t *testing.T, server *MockServer) (*futuapi.Client, func()) {
 	t.Helper()
 
-	cli := client.New(
-		client.WithDialTimeout(5*time.Second),
-		client.WithAPITimeout(5*time.Second),
-		client.WithKeepAliveInterval(10*time.Second),
-		client.WithMaxRetries(0), // disable retries for tests
-		client.WithLogLevel(3),   // silent
+	cli := futuapi.New(
+		futuapi.WithDialTimeout(5*time.Second),
+		futuapi.WithAPITimeout(5*time.Second),
+		futuapi.WithKeepAliveInterval(10*time.Second),
+		futuapi.WithMaxRetries(0), // disable retries for tests
+		futuapi.WithLogLevel(3),   // silent
 	)
 
 	err := cli.Connect(server.Addr())

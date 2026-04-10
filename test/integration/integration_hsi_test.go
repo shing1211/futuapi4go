@@ -81,7 +81,7 @@ func TestIntegration_HSI_BasicQot(t *testing.T) {
 	}
 
 	// Get HSI basic quote
-	hsiSecurity := testutil.HSISecurity()
+	hsiSecurity := fixtures.HSISecurity()
 	quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{hsiSecurity})
 	if err != nil {
 		t.Fatalf("GetBasicQot for HSI failed: %v", err)
@@ -119,7 +119,7 @@ func TestIntegration_HSI_KLine(t *testing.T) {
 
 	// Get HSI daily K-line
 	req := &qot.GetKLRequest{
-		Security:  testutil.HSISecurity(),
+		Security:  fixtures.HSISecurity(),
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    10,
@@ -157,7 +157,7 @@ func TestIntegration_HSI_OrderBook(t *testing.T) {
 	}
 
 	req := &qot.GetOrderBookRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 		Num:      10,
 	}
 
@@ -200,8 +200,8 @@ func TestIntegration_HSI_Ticker(t *testing.T) {
 	}
 
 	req := &qot.GetTickerRequest{
-		Security:  testutil.HSISecurity(),
-		MaxRetNum: 20,
+		Security: fixtures.HSISecurity(),
+		Num:      20,
 	}
 
 	result, err := qot.GetTicker(cli, req)
@@ -230,7 +230,7 @@ func TestIntegration_HSI_RT(t *testing.T) {
 	}
 
 	req := &qot.GetRTRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 	}
 
 	result, err := qot.GetRT(cli, req)
@@ -267,7 +267,7 @@ func TestIntegration_HSI_Subscribe_Push(t *testing.T) {
 
 	// Subscribe to HSI basic quote
 	req := &qot.SubscribeRequest{
-		SecurityList:     []*qotcommon.Security{testutil.HSISecurity()},
+		SecurityList:     []*qotcommon.Security{fixtures.HSISecurity()},
 		SubTypeList:      []qot.SubType{qot.SubType_Basic},
 		IsSubOrUnSub:     true,
 		IsRegOrUnRegPush: true,
@@ -308,7 +308,7 @@ func TestIntegration_HSI_StationaryInfo(t *testing.T) {
 	}
 
 	req := &qot.GetStaticInfoRequest{
-		SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+		SecurityList: []*qotcommon.Security{fixtures.HSISecurity()},
 	}
 
 	result, err := qot.GetStaticInfo(cli, req)
@@ -321,8 +321,11 @@ func TestIntegration_HSI_StationaryInfo(t *testing.T) {
 	}
 
 	info := result.StaticInfoList[0]
-	t.Logf("HSI Static Info: Name=%s, SecType=%d, LotSize=%d",
-		info.Security.GetCode(), info.SecType, info.LotSize)
+	basic := info.GetBasic()
+	if basic != nil {
+		t.Logf("HSI Static Info: Name=%s, SecType=%d, LotSize=%d",
+			basic.GetSecurity().GetCode(), basic.GetSecType(), basic.GetLotSize())
+	}
 }
 
 func TestIntegration_HSI_TradeDate(t *testing.T) {
@@ -339,7 +342,7 @@ func TestIntegration_HSI_TradeDate(t *testing.T) {
 	}
 
 	req := &qot.GetTradeDateRequest{
-		Market: testutil.HSIMarket,
+		Market: fixtures.HSIMarket,
 	}
 
 	result, err := qot.GetTradeDate(cli, req)
@@ -368,7 +371,7 @@ func TestIntegration_HSI_CapitalFlow(t *testing.T) {
 	}
 
 	req := &qot.GetCapitalFlowRequest{
-		Security: testutil.HSISecurity(),
+		Security: fixtures.HSISecurity(),
 	}
 
 	result, err := qot.GetCapitalFlow(cli, req)
@@ -412,7 +415,7 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 
 	t.Log("=== Step 2: Get Funds ===")
 	funds, err := trd.GetFunds(cli, &trd.GetFundsRequest{
-		AccID:     acc.GetAccID(),
+		AccID:     acc.AccID,
 		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
 	})
 	if err != nil {
@@ -420,11 +423,11 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 	}
 
 	t.Logf("Funds: Total=%.2f, Cash=%.2f, Power=%.2f",
-		funds.Funds.GetTotalAssets(), funds.Funds.GetCash(), funds.Funds.GetPower())
+		funds.Funds.TotalAssets, funds.Funds.Cash, funds.Funds.Power)
 
 	t.Log("=== Step 3: Get Positions ===")
 	positions, err := trd.GetPositionList(cli, &trd.GetPositionListRequest{
-		AccID:     acc.GetAccID(),
+		AccID:     acc.AccID,
 		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
 	})
 	if err != nil {
@@ -438,7 +441,7 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 
 	t.Log("=== Step 4: Get Orders ===")
 	orders, err := trd.GetOrderList(cli, &trd.GetOrderListRequest{
-		AccID:     acc.GetAccID(),
+		AccID:     acc.AccID,
 		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
 	})
 	if err != nil {
@@ -474,7 +477,7 @@ func TestIntegration_ContextCancellation(t *testing.T) {
 	cancel()
 
 	// Next API call should fail or timeout
-	_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+	_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
 	if err == nil {
 		t.Log("API succeeded before context cancellation propagated")
 	}
@@ -486,7 +489,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 	cli := futuapi.New(
 		futuapi.WithDialTimeout(10*time.Second),
 		futuapi.WithAPITimeout(10*time.Second),
-		WithMaxRetries(2),
+		futuapi.WithMaxRetries(2),
 	)
 	defer cli.Close()
 
@@ -496,7 +499,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	// Test all major Qot APIs with HSI
 	t.Run("GetBasicQot", func(t *testing.T) {
-		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
 		if err != nil {
 			t.Errorf("GetBasicQot failed: %v", err)
 		}
@@ -504,7 +507,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetKL", func(t *testing.T) {
 		req := &qot.GetKLRequest{
-			Security:  testutil.HSISecurity(),
+			Security:  fixtures.HSISecurity(),
 			RehabType: int32(qotcommon.RehabType_RehabType_None),
 			KLType:    int32(qotcommon.KLType_KLType_Day),
 			ReqNum:    5,
@@ -517,7 +520,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetOrderBook", func(t *testing.T) {
 		req := &qot.GetOrderBookRequest{
-			Security: testutil.HSISecurity(),
+			Security: fixtures.HSISecurity(),
 			Num:      5,
 		}
 		_, err := qot.GetOrderBook(cli, req)
@@ -528,8 +531,8 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetTicker", func(t *testing.T) {
 		req := &qot.GetTickerRequest{
-			Security:  testutil.HSISecurity(),
-			MaxRetNum: 10,
+			Security: fixtures.HSISecurity(),
+			Num:      10,
 		}
 		_, err := qot.GetTicker(cli, req)
 		if err != nil {
@@ -539,7 +542,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetRT", func(t *testing.T) {
 		req := &qot.GetRTRequest{
-			Security: testutil.HSISecurity(),
+			Security: fixtures.HSISecurity(),
 		}
 		_, err := qot.GetRT(cli, req)
 		if err != nil {
@@ -549,7 +552,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetBroker", func(t *testing.T) {
 		req := &qot.GetBrokerRequest{
-			Security: testutil.HSISecurity(),
+			Security: fixtures.HSISecurity(),
 			Num:      5,
 		}
 		_, err := qot.GetBroker(cli, req)
@@ -560,7 +563,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetStaticInfo", func(t *testing.T) {
 		req := &qot.GetStaticInfoRequest{
-			SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+			SecurityList: []*qotcommon.Security{fixtures.HSISecurity()},
 		}
 		_, err := qot.GetStaticInfo(cli, req)
 		if err != nil {
@@ -570,7 +573,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetTradeDate", func(t *testing.T) {
 		req := &qot.GetTradeDateRequest{
-			Market: testutil.HSIMarket,
+			Market: fixtures.HSIMarket,
 		}
 		_, err := qot.GetTradeDate(cli, req)
 		if err != nil {
@@ -580,7 +583,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	t.Run("GetCapitalFlow", func(t *testing.T) {
 		req := &qot.GetCapitalFlowRequest{
-			Security: testutil.HSISecurity(),
+			Security: fixtures.HSISecurity(),
 		}
 		_, err := qot.GetCapitalFlow(cli, req)
 		if err != nil {
@@ -589,7 +592,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 	})
 
 	t.Run("GetCapitalDistribution", func(t *testing.T) {
-		_, err := qot.GetCapitalDistribution(cli, testutil.HSISecurity())
+		_, err := qot.GetCapitalDistribution(cli, fixtures.HSISecurity())
 		if err != nil {
 			t.Errorf("GetCapitalDistribution failed: %v", err)
 		}

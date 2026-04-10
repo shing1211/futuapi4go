@@ -14,7 +14,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
 	"github.com/shing1211/futuapi4go/pkg/trd"
 	"github.com/shing1211/futuapi4go/test/fixtures"
-	"github.com/shing1211/futuapi4go/test/util"
+	testutil "github.com/shing1211/futuapi4go/test/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -22,15 +22,15 @@ func TestGetAccList(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(2001, func(req []byte) ([]byte, error) {
-		accID := testutil.TestAccID
-		accType := int32(trdcommon.TrdType_TrdType_Security)
-		accStatus := int32(trdcommon.TrdAccStatus_TrdAccStatus_Enable)
+		accID := fixtures.TestAccID
+		accType := int32(1 /* TrdType_Security */)
+		accStatus := int32(trdcommon.TrdAccStatus_TrdAccStatus_Active)
 
 		s2c := &trdgetacclist.S2C{
 			AccList: []*trdcommon.TrdAcc{
 				{
 					AccID:     &accID,
-					TrdEnv:    proto.Int32(testutil.TestTrdEnv),
+					TrdEnv:    proto.Int32(fixtures.TestTrdEnv),
 					AccType:   &accType,
 					AccStatus: &accStatus,
 				},
@@ -58,8 +58,8 @@ func TestGetAccList(t *testing.T) {
 	}
 
 	acc := result.AccList[0]
-	if acc.GetAccID() != testutil.TestAccID {
-		t.Errorf("Expected AccID %d, got %d", testutil.TestAccID, acc.GetAccID())
+	if acc.AccID != fixtures.TestAccID {
+		t.Errorf("Expected AccID %d, got %d", fixtures.TestAccID, acc.AccID)
 	}
 
 	server.AssertProtoID(t, 2001)
@@ -101,7 +101,7 @@ func TestGetFunds_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(2101, func(req []byte) ([]byte, error) {
-		funds := testutil.HSIFunds()
+		funds := fixtures.HSIFunds()
 
 		s2c := &trdgetfunds.S2C{
 			Funds: funds,
@@ -119,8 +119,8 @@ func TestGetFunds_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.GetFundsRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
 	}
 
 	result, err := trd.GetFunds(cli, req)
@@ -128,17 +128,17 @@ func TestGetFunds_HSI(t *testing.T) {
 		t.Fatalf("GetFunds failed: %v", err)
 	}
 
-	if result.Funds.GetTotalAssets() <= 0 {
+	if result.Funds.TotalAssets <= 0 {
 		t.Error("TotalAssets should be positive")
 	}
 
-	if result.Funds.GetPower() <= 0 {
+	if result.Funds.Power <= 0 {
 		t.Error("Power should be positive")
 	}
 
 	// Validate realistic values
-	if result.Funds.GetTotalAssets() != 500000.0 {
-		t.Errorf("Expected TotalAssets 500000, got %f", result.Funds.GetTotalAssets())
+	if result.Funds.TotalAssets != 500000.0 {
+		t.Errorf("Expected TotalAssets 500000, got %f", result.Funds.TotalAssets)
 	}
 
 	server.AssertProtoID(t, 2101)
@@ -148,7 +148,7 @@ func TestGetPositionList_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(2102, func(req []byte) ([]byte, error) {
-		position := testutil.HSIPosition()
+		position := fixtures.HSIPosition()
 
 		s2c := &trdgetpositionlist.S2C{
 			PositionList: []*trdcommon.Position{position},
@@ -166,8 +166,8 @@ func TestGetPositionList_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.GetPositionListRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
 	}
 
 	result, err := trd.GetPositionList(cli, req)
@@ -180,18 +180,18 @@ func TestGetPositionList_HSI(t *testing.T) {
 	}
 
 	pos := result.PositionList[0]
-	if pos.GetCode() != testutil.HSIFuturesCode {
-		t.Errorf("Expected code %s, got %s", testutil.HSIFuturesCode, pos.GetCode())
+	if pos.Code != fixtures.HSIFuturesCode {
+		t.Errorf("Expected code %s, got %s", fixtures.HSIFuturesCode, pos.Code)
 	}
 
-	if pos.GetQty() != 2 {
-		t.Errorf("Expected qty 2, got %f", pos.GetQty())
+	if pos.Qty != 2 {
+		t.Errorf("Expected qty 2, got %f", pos.Qty)
 	}
 
 	// Validate P/L calculation
 	expectedPL := (18523.45 - 18480.00) * 2
-	if pos.GetPlVal() != expectedPL {
-		t.Errorf("Expected P/L %f, got %f", expectedPL, pos.GetPlVal())
+	if pos.PlVal != expectedPL {
+		t.Errorf("Expected P/L %f, got %f", expectedPL, pos.PlVal)
 	}
 
 	server.AssertProtoID(t, 2102)
@@ -233,9 +233,9 @@ func TestPlaceOrder_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.PlaceOrderRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
-		Code:      testutil.HSIFuturesCode,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
+		Code:      fixtures.HSIFuturesCode,
 		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
 		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
 		Price:     18520.00,
@@ -276,9 +276,9 @@ func TestPlaceOrder_HSI_Sell(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.PlaceOrderRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
-		Code:      testutil.HSIFuturesCode,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
+		Code:      fixtures.HSIFuturesCode,
 		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Sell),
 		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
 		Price:     18530.00,
@@ -301,8 +301,8 @@ func TestGetOrderList(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(2201, func(req []byte) ([]byte, error) {
-		order1 := testutil.HSIOrder(1001)
-		order2 := testutil.HSIOrder(1002)
+		order1 := fixtures.HSIOrder(1001)
+		order2 := fixtures.HSIOrder(1002)
 
 		s2c := &trdgetorderlist.S2C{
 			OrderList: []*trdcommon.Order{order1, order2},
@@ -320,8 +320,8 @@ func TestGetOrderList(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.GetOrderListRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
 	}
 
 	result, err := trd.GetOrderList(cli, req)
@@ -335,16 +335,16 @@ func TestGetOrderList(t *testing.T) {
 
 	// Validate order fields
 	for _, order := range result.OrderList {
-		if order.GetPrice() <= 0 {
-			t.Errorf("Order %d has invalid price: %f", order.GetOrderID(), order.GetPrice())
+		if order.Price <= 0 {
+			t.Errorf("Order %d has invalid price: %f", order.OrderID, order.Price)
 		}
 
-		if order.GetQty() <= 0 {
-			t.Errorf("Order %d has invalid qty: %f", order.GetOrderID(), order.GetQty())
+		if order.Qty <= 0 {
+			t.Errorf("Order %d has invalid qty: %f", order.OrderID, order.Qty)
 		}
 
-		if order.GetCode() != testutil.HSIFuturesCode {
-			t.Errorf("Order has wrong code: %s", order.GetCode())
+		if order.Code != fixtures.HSIFuturesCode {
+			t.Errorf("Order has wrong code: %s", order.Code)
 		}
 	}
 
@@ -374,8 +374,8 @@ func TestModifyOrder_HSI(t *testing.T) {
 
 	// Test modify order price
 	req := &trd.ModifyOrderRequest{
-		AccID:         testutil.TestAccID,
-		TrdMarket:     testutil.TestTrdMkt,
+		AccID:         fixtures.TestAccID,
+		TrdMarket:     fixtures.TestTrdMkt,
 		OrderID:       1001,
 		ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Normal),
 		Price:         18525.00,
@@ -408,8 +408,8 @@ func TestModifyOrder_Cancel(t *testing.T) {
 
 	// Test cancel order
 	req := &trd.ModifyOrderRequest{
-		AccID:         testutil.TestAccID,
-		TrdMarket:     testutil.TestTrdMkt,
+		AccID:         fixtures.TestAccID,
+		TrdMarket:     fixtures.TestTrdMkt,
 		OrderID:       1001,
 		ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Cancel),
 		Price:         0,
@@ -428,8 +428,8 @@ func TestGetOrderFillList_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	server.RegisterHandler(2211, func(req []byte) ([]byte, error) {
-		fill1 := testutil.HSIOrderFill(5001, 1001)
-		fill2 := testutil.HSIOrderFill(5002, 1002)
+		fill1 := fixtures.HSIOrderFill(5001, 1001)
+		fill2 := fixtures.HSIOrderFill(5002, 1002)
 
 		s2c := &trdgetorderfilllist.S2C{
 			OrderFillList: []*trdcommon.OrderFill{fill1, fill2},
@@ -447,8 +447,8 @@ func TestGetOrderFillList_HSI(t *testing.T) {
 	defer cleanup()
 
 	req := &trd.GetOrderFillListRequest{
-		AccID:     testutil.TestAccID,
-		TrdMarket: testutil.TestTrdMkt,
+		AccID:     fixtures.TestAccID,
+		TrdMarket: fixtures.TestTrdMkt,
 	}
 
 	result, err := trd.GetOrderFillList(cli, req)
@@ -462,16 +462,16 @@ func TestGetOrderFillList_HSI(t *testing.T) {
 
 	// Validate fill data
 	for _, fill := range result.OrderFillList {
-		if fill.GetPrice() <= 0 {
-			t.Errorf("Fill has invalid price: %f", fill.GetPrice())
+		if fill.Price <= 0 {
+			t.Errorf("Fill has invalid price: %f", fill.Price)
 		}
 
-		if fill.GetQty() <= 0 {
-			t.Errorf("Fill has invalid qty: %f", fill.GetQty())
+		if fill.Qty <= 0 {
+			t.Errorf("Fill has invalid qty: %f", fill.Qty)
 		}
 
-		if fill.GetCode() != testutil.HSIFuturesCode {
-			t.Errorf("Fill has wrong code: %s", fill.GetCode())
+		if fill.Code != fixtures.HSIFuturesCode {
+			t.Errorf("Fill has wrong code: %s", fill.Code)
 		}
 	}
 
@@ -483,12 +483,12 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 
 	// Register all handlers
 	server.RegisterHandler(2001, func(req []byte) ([]byte, error) {
-		accID := testutil.TestAccID
+		accID := fixtures.TestAccID
 		s2c := &trdgetacclist.S2C{
 			AccList: []*trdcommon.TrdAcc{
 				{
 					AccID:  &accID,
-					TrdEnv: proto.Int32(testutil.TestTrdEnv),
+					TrdEnv: proto.Int32(fixtures.TestTrdEnv),
 				},
 			},
 		}
@@ -500,7 +500,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	})
 
 	server.RegisterHandler(2101, func(req []byte) ([]byte, error) {
-		funds := testutil.HSIFunds()
+		funds := fixtures.HSIFunds()
 		return proto.Marshal(&trdgetfunds.Response{S2C: &trdgetfunds.S2C{Funds: funds}})
 	})
 
@@ -510,7 +510,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	})
 
 	server.RegisterHandler(2201, func(req []byte) ([]byte, error) {
-		order := testutil.HSIOrder(9999)
+		order := fixtures.HSIOrder(9999)
 		return proto.Marshal(&trdgetorderlist.Response{S2C: &trdgetorderlist.S2C{
 			OrderList: []*trdcommon.Order{order},
 		}})
@@ -529,7 +529,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Step 1 - GetAccList failed: %v", err)
 	}
-	accID := accList.AccList[0].GetAccID()
+	accID := accList.AccList[0].AccID
 
 	// Step 2: Unlock trade
 	err = trd.UnlockTrade(cli, &trd.UnlockTradeRequest{
@@ -543,21 +543,21 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	// Step 3: Check funds
 	funds, err := trd.GetFunds(cli, &trd.GetFundsRequest{
 		AccID:     accID,
-		TrdMarket: testutil.TestTrdMkt,
+		TrdMarket: fixtures.TestTrdMkt,
 	})
 	if err != nil {
 		t.Fatalf("Step 3 - GetFunds failed: %v", err)
 	}
 
-	if funds.Funds.GetPower() < 100000 {
-		t.Errorf("Insufficient buying power: %f", funds.Funds.GetPower())
+	if funds.Funds.Power < 100000 {
+		t.Errorf("Insufficient buying power: %f", funds.Funds.Power)
 	}
 
 	// Step 4: Place order
-	orderResult, err := trd.PlaceOrder(cli, &trd.PlaceOrderRequest{
+	_, err = trd.PlaceOrder(cli, &trd.PlaceOrderRequest{
 		AccID:     accID,
-		TrdMarket: testutil.TestTrdMkt,
-		Code:      testutil.HSIFuturesCode,
+		TrdMarket: fixtures.TestTrdMkt,
+		Code:      fixtures.HSIFuturesCode,
 		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
 		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
 		Price:     18500.00,
@@ -570,7 +570,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	// Step 5: Verify order
 	orders, err := trd.GetOrderList(cli, &trd.GetOrderListRequest{
 		AccID:     accID,
-		TrdMarket: testutil.TestTrdMkt,
+		TrdMarket: fixtures.TestTrdMkt,
 	})
 	if err != nil {
 		t.Fatalf("Step 5 - GetOrderList failed: %v", err)
