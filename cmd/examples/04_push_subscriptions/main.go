@@ -1,68 +1,208 @@
-// Real-time Push Subscription Examples
+// Real-time Push Stream Example
 //
-// This example demonstrates how to use push notification APIs:
-// - Subscribe: Subscribe to real-time data streams
-// - GetSubInfo: Get subscription information
-// - RegQotPush: Register for push notifications
-// - Push Handlers: Handle real-time market data pushes
-// - Trading Push Handlers: Handle order/fill notifications
+// This example demonstrates live streaming via the futuapi4go SDK:
+//   - Connect to Futu OpenD (TCP, not WebSocket)
+//   - Subscribe to HK.HSImain for multiple data types
+//   - Handle real-time push notifications and print live data
+//   - Graceful shutdown on interrupt signal
 //
 // Usage:
 //   go run main.go
-//
-// Note: Push notifications work asynchronously - the SDK receives
-//       updates automatically after subscription
+//   # or with custom address:
+//   FUTU_ADDR=127.0.0.1:11111 go run main.go
 
 package main
 
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"sync/atomic"
+	"syscall"
 	"time"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/push"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
+var (
+	interrupt atomic.Bool
+	stats     streamStats
+)
+
+type streamStats struct {
+	basicQot     atomic.Int64
+	kl           atomic.Int64
+	orderBook    atomic.Int64
+	ticker       atomic.Int64
+	rt           atomic.Int64
+	broker       atomic.Int64
+	unknownProto atomic.Int64
+}
+
 func main() {
-	// Create and connect client
+	addr := os.Getenv("FUTU_ADDR")
+	if addr == "" {
+		addr = "127.0.0.1:11111"
+	}
+
+	fmt.Printf("=== Real-time Push Stream Test ===\n")
+	fmt.Printf("Connecting to %s ...\n", addr)
+
 	cli := futuapi.New()
 	defer cli.Close()
 
-	addr := "127.0.0.1:11111"
-	fmt.Printf("=== Connecting to %s ===\n", addr)
+	setupPushHandler(cli)
 
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("Connection failed: %v", err)
 	}
-	fmt.Printf("✓ Connected! ConnID=%d\n\n", cli.GetConnID())
+	fmt.Printf("Connected! ConnID=%d, ServerVer=%d\n\n", cli.GetConnID(), cli.GetServerVer())
 
-	// Define securities to subscribe
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
-
-	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("HK.HSImain")}, // Tencent
-		{Market: &hkMarket, Code: ptrStr("09988")},      // Alibaba
-		{Market: &usMarket, Code: ptrStr("AAPL")},       // Apple
+	if err := runStreamTest(cli); err != nil {
+		log.Printf("Stream test error: %v", err)
 	}
 
-	// 1. Subscribe to Real-time Data
-	fmt.Println("=== 1. Subscribe to Real-time Data (Subscribe) ===")
+	printSummary()
+}
 
-	// Subscribe to multiple data types
+func setupPushHandler(cli *futuapi.Client) {
+	cli.SetPushHandler(func(pkt *futuapi.Packet) {
+		var handled bool
+		switch pkt.Header.ProtoID {
+		case push.ProtoID_Qot_UpdateBasicQot:
+			data, err := push.ParseUpdateBasicQot(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateBasicQot error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.basicQot.Add(1)
+				fmt.Printf("[BasicQot] %s %s: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
+					data.Security.GetMarket(), data.Security.GetCode(), data.CurPrice,
+					data.OpenPrice, data.HighPrice, data.LowPrice, data.Volume)
+			}
+			handled = true
+
+		case push.ProtoID_Qot_UpdateKL:
+			data, err := push.ParseUpdateKL(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateKL error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.kl.Add(1)
+				for _, kl := range data.KLList {
+					fmt.Printf("[KL]       %s %s: open=%.2f high=%.2f low=%.2f close=%.2f vol=%d\n",
+						data.Security.GetMarket(), data.Security.GetCode(),
+						kl.OpenPrice, kl.HighPrice, kl.LowPrice, kl.ClosePrice, kl.Volume)
+				}
+			}
+			handled = true
+
+		case push.ProtoID_Qot_UpdateOrderBook:
+			data, err := push.ParseUpdateOrderBook(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateOrderBook error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.orderBook.Add(1)
+				fmt.Printf("[OrderBook] %s %s: ask_count=%d bid_count=%d\n",
+					data.Security.GetMarket(), data.Security.GetCode(),
+					len(data.OrderBookAskList), len(data.OrderBookBidList))
+				for i, ask := range data.OrderBookAskList {
+					if i >= 3 {
+						fmt.Printf("           ... +%d more asks\n", len(data.OrderBookAskList)-3)
+						break
+					}
+					fmt.Printf("           Ask[%d] price=%.2f vol=%d\n", i, ask.Price, ask.Volume)
+				}
+				for i, bid := range data.OrderBookBidList {
+					if i >= 3 {
+						fmt.Printf("           ... +%d more bids\n", len(data.OrderBookBidList)-3)
+						break
+					}
+					fmt.Printf("           Bid[%d] price=%.2f vol=%d\n", i, bid.Price, bid.Volume)
+				}
+			}
+			handled = true
+
+		case push.ProtoID_Qot_UpdateTicker:
+			data, err := push.ParseUpdateTicker(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateTicker error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.ticker.Add(1)
+				for _, t := range data.TickerList {
+					fmt.Printf("[Ticker]   %s %s: price=%.2f vol=%d turnover=%.2f dir=%s time=%s\n",
+						data.Security.GetMarket(), data.Security.GetCode(),
+						t.Price, t.Volume, t.Turnover, direction(t.GetDir()), t.Time)
+				}
+			}
+			handled = true
+
+		case push.ProtoID_Qot_UpdateRT:
+			data, err := push.ParseUpdateRT(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateRT error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.rt.Add(1)
+				for _, rt := range data.RTList {
+					fmt.Printf("[RT]       %s %s: price=%.2f vol=%d avg_price=%.2f time=%s\n",
+						data.Security.GetMarket(), data.Security.GetCode(),
+						rt.Price, rt.Volume, rt.AvgPrice, rt.Time)
+				}
+			}
+			handled = true
+
+		case push.ProtoID_Qot_UpdateBroker:
+			data, err := push.ParseUpdateBroker(pkt.Body)
+			if err != nil {
+				log.Printf("ParseUpdateBroker error: %v", err)
+				return
+			}
+			if data != nil {
+				stats.broker.Add(1)
+				fmt.Printf("[Broker]   %s %s: asks=%d bids=%d\n",
+					data.Security.GetMarket(), data.Security.GetCode(),
+					len(data.AskBrokerList), len(data.BidBrokerList))
+			}
+			handled = true
+		}
+
+		if !handled {
+			stats.unknownProto.Add(1)
+			fmt.Printf("[Unknown]  ProtoID=%d, BodyLen=%d\n", pkt.Header.ProtoID, len(pkt.Body))
+		}
+	})
+}
+
+func runStreamTest(cli *futuapi.Client) error {
+	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	security := &qotcommon.Security{
+		Market: &hkMarket,
+		Code:   ptrStr("HK.HSImain"),
+	}
+
+	fmt.Printf("Subscribing to HK.HSImain (HK futures main contract)...\n\n")
 	subTypes := []qot.SubType{
-		qot.SubType_Basic,     // Real-time quotes
-		qot.SubType_OrderBook, // Order book
-		qot.SubType_Ticker,    // Tick-by-tick trades
-		qot.SubType_KL,        // K-line data
-		qot.SubType_RT,        // Real-time minute data
-		qot.SubType_Broker,    // Broker queue
+		qot.SubType_Basic,
+		qot.SubType_KL,
+		qot.SubType_OrderBook,
+		qot.SubType_Ticker,
+		qot.SubType_RT,
 	}
 
 	subReq := &qot.SubscribeRequest{
-		SecurityList:     securities,
+		SecurityList:     []*qotcommon.Security{security},
 		SubTypeList:      subTypes,
 		IsSubOrUnSub:     true,
 		IsRegOrUnRegPush: true,
@@ -70,197 +210,97 @@ func main() {
 
 	subResp, err := qot.Subscribe(cli, subReq)
 	if err != nil {
-		log.Printf("Subscribe failed: %v", err)
+		return fmt.Errorf("Subscribe failed: %w", err)
+	}
+	if subResp.RetType != 0 {
+		return fmt.Errorf("Subscribe returned error: RetType=%d, RetMsg=%s", subResp.RetType, subResp.RetMsg)
+	}
+	fmt.Printf("Subscribe OK: RetType=%d RetMsg=%s\n\n", subResp.RetType, subResp.RetMsg)
+
+	subInfo, err := qot.GetSubInfo(cli)
+	if err != nil {
+		fmt.Printf("GetSubInfo: %v\n", err)
 	} else {
-		fmt.Printf("  ✓ Successfully subscribed to %d data types for %d securities\n",
-			len(subTypes), len(securities))
-		fmt.Printf("  Return Type: %d\n", subResp.RetType)
-		fmt.Printf("  Return Message: %s\n", subResp.RetMsg)
+		fmt.Printf("Subscription Info: TotalUsed=%d Remain=%d\n", subInfo.TotalUsedQuota, subInfo.RemainQuota)
 	}
 	fmt.Println()
+	fmt.Println("Waiting for push data... (Ctrl+C to stop)")
+	fmt.Println("---")
 
-	// 2. Get Subscription Info
-	fmt.Println("=== 2. Subscription Info (GetSubInfo) ===")
-	subInfoResp, err := qot.GetSubInfo(cli)
-	if err != nil {
-		log.Printf("GetSubInfo failed: %v", err)
-	} else {
-		fmt.Printf("  Total Used Quota: %d\n", subInfoResp.TotalUsedQuota)
-		fmt.Printf("  Remaining Quota: %d\n", subInfoResp.RemainQuota)
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
-		if len(subInfoResp.ConnSubInfoList) > 0 {
-			fmt.Printf("  Active Subscriptions:\n")
-			for _, connInfo := range subInfoResp.ConnSubInfoList {
-				for _, info := range connInfo.GetSubInfoList() {
-					for _, sec := range info.GetSecurityList() {
-						fmt.Printf("    %s | SubType=%d\n",
-							sec.GetCode(), info.GetSubType())
-					}
-				}
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	lastPrint := time.Now()
+	for {
+		select {
+		case <-sigCh:
+			fmt.Println("\nInterrupted, cleaning up...")
+
+			fmt.Println("Unsubscribing from HK.HSImain...")
+			unsubReq := &qot.SubscribeRequest{
+				SecurityList:     []*qotcommon.Security{security},
+				SubTypeList:      subTypes,
+				IsSubOrUnSub:     false,
+				IsRegOrUnRegPush: false,
 			}
+			qot.Subscribe(cli, unsubReq)
+
+			interrupt.Store(true)
+			return nil
+		case <-ticker.C:
+			elapsed := time.Since(lastPrint).Seconds()
+			lastPrint = time.Now()
+			fmt.Printf("\n[Stats %.0fs] basicQot=%d kl=%d orderBook=%d ticker=%d rt=%d broker=%d unknown=%d\n",
+				elapsed,
+				stats.basicQot.Load(),
+				stats.kl.Load(),
+				stats.orderBook.Load(),
+				stats.ticker.Load(),
+				stats.rt.Load(),
+				stats.broker.Load(),
+				stats.unknownProto.Load(),
+			)
+			fmt.Println("---")
 		}
 	}
-	fmt.Println()
-
-	// 3. Register for Push Notifications
-	fmt.Println("=== 3. Register for Push Notifications (RegQotPush) ===")
-
-	regReq := &qot.RegQotPushRequest{
-		SecurityList: securities,
-		SubTypeList:  []int32{int32(qotcommon.SubType_SubType_Basic)},
-		IsRegOrUnReg: true,
-		IsFirstPush:  true,
-	}
-
-	regResp, err := qot.RegQotPush(cli, regReq)
-	if err != nil {
-		log.Printf("RegQotPush failed: %v", err)
-	} else {
-		fmt.Printf("  ✓ Push notifications registered\n")
-		fmt.Printf("  Return Type: %d\n", regResp.RetType)
-		fmt.Printf("  Return Message: %s\n", regResp.RetMsg)
-	}
-	fmt.Println()
-
-	// 4. Set up Push Notification Handlers
-	fmt.Println("=== 4. Push Notification Setup ===")
-	fmt.Println("  In real applications, you would set up handlers like:")
-	fmt.Println()
-	fmt.Println("  cli.SetQotPushHandler(func(pkt *	futuapi.Packet) {")
-	fmt.Println("    switch pkt.ProtoID {")
-	fmt.Println("    case 3101: // Basic quote update")
-	fmt.Println("      // Handle basic quote")
-	fmt.Println("    case 3102: // K-line update")
-	fmt.Println("      // Handle K-line")
-	fmt.Println("    case 3103: // Order book update")
-	fmt.Println("      // Handle order book")
-	fmt.Println("    case 3104: // Ticker update")
-	fmt.Println("      // Handle ticker")
-	fmt.Println("    case 3105: // RT update")
-	fmt.Println("      // Handle RT")
-	fmt.Println("    case 3106: // Broker update")
-	fmt.Println("      // Handle broker")
-	fmt.Println("    }")
-	fmt.Println("  })")
-	fmt.Println()
-
-	// 5. Example: What you'll receive in push notifications
-	fmt.Println("=== 5. Push Notification Examples ===")
-	fmt.Println()
-
-	fmt.Println("  Basic Quote Push (3101):")
-	fmt.Println("  ┌─────────────┬────────┬────────┬────────┬──────────┐")
-	fmt.Println("  │ Code        │ Price  │ Open   │ High   │ Volume   │")
-	fmt.Println("  ├─────────────┼────────┼────────┼────────┼──────────┤")
-	fmt.Println("  │ 00700       │ 350.00 │ 348.00 │ 352.00 │ 10000000 │")
-	fmt.Println("  │ 09988       │ 180.00 │ 178.00 │ 182.00 │ 5000000  │")
-	fmt.Println("  └─────────────┴────────┴────────┴────────┴──────────┘")
-	fmt.Println()
-
-	fmt.Println("  Order Book Push (3103):")
-	fmt.Println("  ┌──────┬────────┬────────┬──────┬────────┬────────┐")
-	fmt.Println("  │ Side │ Price  │ Volume │ Side │ Price  │ Volume │")
-	fmt.Println("  ├──────┼────────┼────────┼──────┼────────┼────────┤")
-	fmt.Println("  │ Ask5 │ 350.05 │ 5000   │ Bid5 │ 349.95 │ 6000   │")
-	fmt.Println("  │ Ask4 │ 350.04 │ 4000   │ Bid4 │ 349.96 │ 5500   │")
-	fmt.Println("  │ Ask3 │ 350.03 │ 3000   │ Bid3 │ 349.97 │ 5000   │")
-	fmt.Println("  │ Ask2 │ 350.02 │ 2000   │ Bid2 │ 349.98 │ 4500   │")
-	fmt.Println("  │ Ask1 │ 350.01 │ 1000   │ Bid1 │ 349.99 │ 4000   │")
-	fmt.Println("  └──────┴────────┴────────┴──────┴────────┴────────┘")
-	fmt.Println()
-
-	fmt.Println("  Ticker Push (3104):")
-	fmt.Println("  ┌────────────────────┬────────┬────────┬──────────┬────────┐")
-	fmt.Println("  │ Time               │ Price  │ Volume │ Turnover │ Dir    │")
-	fmt.Println("  ├────────────────────┼────────┼────────┼──────────┼────────┤")
-	fmt.Println("  │ 2026-04-08 10:30:00│ 350.00 │ 100    │ 35000.00 │ Buy    │")
-	fmt.Println("  │ 2026-04-08 10:30:01│ 350.10 │ 200    │ 70020.00 │ Sell   │")
-	fmt.Println("  │ 2026-04-08 10:30:02│ 349.90 │ 150    │ 52485.00 │ Neutral│")
-	fmt.Println("  └────────────────────┴────────┴────────┴──────────┴────────┘")
-	fmt.Println()
-
-	fmt.Println("  K-line Push (3102):")
-	fmt.Println("  ┌────────────────────┬────────┬────────┬────────┬────────┬──────────┐")
-	fmt.Println("  │ Time               │ Open   │ High   │ Low    │ Close  │ Volume   │")
-	fmt.Println("  ├────────────────────┼────────┼────────┼────────┼────────┼──────────┤")
-	fmt.Println("  │ 2026-04-08 10:30:00│ 349.50 │ 350.50 │ 349.00 │ 350.00 │ 50000    │")
-	fmt.Println("  │ 2026-04-08 10:31:00│ 350.00 │ 351.00 │ 349.80 │ 350.50 │ 45000    │")
-	fmt.Println("  └────────────────────┴────────┴────────┴────────┴────────┴──────────┘")
-	fmt.Println()
-
-	// 6. Trading Push Notifications
-	fmt.Println("=== 6. Trading Push Notifications ===")
-	fmt.Println("  Trading push notifications include:")
-	fmt.Println()
-	fmt.Println("  • Order Status Update (7001)")
-	fmt.Println("    - Triggered when order status changes")
-	fmt.Println("    - Contains: OrderID, Status, Price, Qty, Filled Qty")
-	fmt.Println()
-	fmt.Println("  • Order Fill Update (7002)")
-	fmt.Println("    - Triggered when order is partially or fully filled")
-	fmt.Println("    - Contains: FillID, OrderID, Price, Qty, Turnover")
-	fmt.Println()
-	fmt.Println("  • Trade Notification (7003)")
-	fmt.Println("    - General trade notifications")
-	fmt.Println("    - Contains: Trade event type and details")
-	fmt.Println()
-	fmt.Println("  Setup example:")
-	fmt.Println("  cli.SetTrdPushHandler(func(pkt *	futuapi.Packet) {")
-	fmt.Println("    switch pkt.ProtoID {")
-	fmt.Println("    case 7001: // Order status update")
-	fmt.Println("      // Handle order update")
-	fmt.Println("    case 7002: // Order fill update")
-	fmt.Println("      // Handle fill update")
-	fmt.Println("    case 7003: // Trade notification")
-	fmt.Println("      // Handle trade notification")
-	fmt.Println("    }")
-	fmt.Println("  })")
-	fmt.Println()
-
-	// 7. Unsubscribe from Data
-	fmt.Println("=== 7. Unsubscribe from Data ===")
-	fmt.Println("  To unsubscribe:")
-	fmt.Println()
-	fmt.Println("  unsubReq := &qot.SubscribeRequest{")
-	fmt.Println("    SecurityList:     securities,")
-	fmt.Println("    SubTypeList:      subTypes,")
-	fmt.Println("    IsSubOrUnSub:     false, // Set to false")
-	fmt.Println("    IsRegOrUnRegPush: false, // Set to false")
-	fmt.Println("  }")
-	fmt.Println("  qot.Subscribe(cli, unsubReq)")
-	fmt.Println()
-
-	// 8. Best Practices
-	fmt.Println("=== 8. Best Practices ===")
-	fmt.Println("  1. Subscribe only to data types you actually need")
-	fmt.Println("  2. Monitor your subscription quota with GetSubInfo")
-	fmt.Println("  3. Unsubscribe when no longer needed")
-	fmt.Println("  4. Handle push notifications asynchronously")
-	fmt.Println("  5. Don't block in push handlers - process data in goroutines")
-	fmt.Println("  6. Use thread-safe data structures for push data")
-	fmt.Println()
-
-	// Wait to receive some pushes (in real app, this would be event-driven)
-	fmt.Println("=== Waiting for Push Notifications ===")
-	fmt.Println("  In a real application, push notifications arrive asynchronously.")
-	fmt.Println("  Waiting 5 seconds to demonstrate...")
-	time.Sleep(5 * time.Second)
-	fmt.Println("  Done!")
-	fmt.Println()
-
-	fmt.Println("=== Push Subscription Examples Complete ===")
-	fmt.Println("💡  Tips:")
-	fmt.Println("  • Use simulator to test push without real market data")
-	fmt.Println("  • Push notifications are event-driven - set up handlers early")
-	fmt.Println("  • Always check subscription quota to avoid hitting limits")
 }
 
-// Helper functions
+func printSummary() {
+	fmt.Println("\n=== Stream Test Summary ===")
+	fmt.Printf("  BasicQot pushes received:  %d\n", stats.basicQot.Load())
+	fmt.Printf("  KL pushes received:         %d\n", stats.kl.Load())
+	fmt.Printf("  OrderBook pushes received:  %d\n", stats.orderBook.Load())
+	fmt.Printf("  Ticker pushes received:     %d\n", stats.ticker.Load())
+	fmt.Printf("  RT pushes received:         %d\n", stats.rt.Load())
+	fmt.Printf("  Broker pushes received:     %d\n", stats.broker.Load())
+	fmt.Printf("  Unknown proto IDs:          %d\n", stats.unknownProto.Load())
+
+	total := stats.basicQot.Load() + stats.kl.Load() + stats.orderBook.Load() +
+		stats.ticker.Load() + stats.rt.Load() + stats.broker.Load() + stats.unknownProto.Load()
+	fmt.Printf("  Total pushes:               %d\n", total)
+
+	if total == 0 {
+		fmt.Println("\nNo pushes received. Possible causes:")
+		fmt.Println("  - HK.HSImain may not be trading right now (market closed or holiday)")
+		fmt.Println("  - Futu OpenD is not connected to the market data feed")
+		fmt.Println("  - Check that OpenD is running: Tools -> Market Alerts & Trading")
+	}
+}
+
+func direction(d int32) string {
+	switch d {
+	case 1:
+		return "Buy"
+	case 2:
+		return "Sell"
+	default:
+		return "Neutral"
+	}
+}
+
 func ptrStr(s string) *string {
 	return &s
 }
-
-func ptrInt32(v int32) *int32 {
-	return &v
-}
-
