@@ -44,3 +44,4 @@ dist/
 # Temp files
 tmp/
 temp/
+/.qwen
