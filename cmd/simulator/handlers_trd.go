@@ -1,9 +1,13 @@
 package simulator
 
 import (
+	"fmt"
+	"time"
+
 	"google.golang.org/protobuf/proto"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
@@ -49,7 +53,29 @@ func (s *Server) handleUnlockTrade(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetFunds(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	resp := &trdgetfunds.Response{RetType: &retType}
+	
+	totalAssets := 500000.00
+	cash := 250000.00
+	marketVal := 74093.80
+	frozenCash := 37046.90
+	power := 425906.10
+	curMargin := 50000.00
+	
+	s2c := &trdgetfunds.S2C{
+		Funds: &trdcommon.Funds{
+			TotalAssets: &totalAssets,
+			Cash:        &cash,
+			MarketVal:   &marketVal,
+			FrozenCash:  &frozenCash,
+			Power:       &power,
+			CurMargin:   &curMargin,
+		},
+	}
+	
+	resp := &trdgetfunds.Response{
+		RetType: &retType,
+		S2C:     s2c,
+	}
 	return s.successResponse(pkt, resp)
 }
 
@@ -78,7 +104,32 @@ func (s *Server) handlePlaceOrder(pkt *Packet) (*Packet, error) {
 	}
 
 	retType := int32(common.RetType_RetType_Succeed)
-	orderID := uint64(1234567890)
+	orderID := uint64(9876543210)
+	
+	// Store order for later retrieval
+	if s.Orders != nil {
+		code := req.GetCode()
+		trdSide := req.GetTrdSide()
+		orderType := req.GetOrderType()
+		price := req.GetPrice()
+		qty := req.GetQty()
+		submittedAt := time.Now().Format("2006-01-02 15:04:05")
+		orderStatus := int32(trdcommon.OrderStatus_OrderStatus_Submitted)
+		
+		order := &trdcommon.Order{
+			OrderID:     &orderID,
+			Code:        &code,
+			TrdSide:     &trdSide,
+			OrderType:   &orderType,
+			OrderStatus: &orderStatus,
+			Price:       &price,
+			Qty:         &qty,
+			CreateTime:  &submittedAt,
+		}
+		
+		key := fmt.Sprintf("order_%d", orderID)
+		s.Orders[key] = order
+	}
 
 	resp := &trdplaceorder.Response{
 		RetType: &retType,
@@ -95,7 +146,49 @@ func (s *Server) handleModifyOrder(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetOrderList(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	resp := &trdgetorderlist.Response{RetType: &retType}
+	
+	orderList := make([]*trdcommon.Order, 0)
+	
+	// Return stored orders if any
+	if s.Orders != nil {
+		for _, order := range s.Orders {
+			orderList = append(orderList, order)
+		}
+	}
+	
+	// If no orders, return a sample HSI order
+	if len(orderList) == 0 {
+		orderID := uint64(1001)
+		code := "HSImain"
+		name := "HANG SENG INDEX FUTURES"
+		trdSide := int32(trdcommon.TrdSide_TrdSide_Buy)
+		orderType := int32(trdcommon.OrderType_OrderType_Normal)
+		orderStatus := int32(trdcommon.OrderStatus_OrderStatus_Submitted)
+		price := 18520.00
+		qty := 1.0
+		fillQty := 0.0
+		createTime := time.Now().Format("2006-01-02 15:04:05")
+		
+		orderList = append(orderList, &trdcommon.Order{
+			OrderID:     &orderID,
+			Code:        &code,
+			Name:        &name,
+			TrdSide:     &trdSide,
+			OrderType:   &orderType,
+			OrderStatus: &orderStatus,
+			Price:       &price,
+			Qty:         &qty,
+			FillQty:     &fillQty,
+			CreateTime:  &createTime,
+		})
+	}
+	
+	resp := &trdgetorderlist.Response{
+		RetType: &retType,
+		S2C: &trdgetorderlist.S2C{
+			OrderList: orderList,
+		},
+	}
 	return s.successResponse(pkt, resp)
 }
 
@@ -119,7 +212,45 @@ func (s *Server) handleGetHistoryOrderFillList(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	resp := &trdgetpositionlist.Response{RetType: &retType}
+	
+	positionList := make([]*trdcommon.Position, 0)
+	
+	// Return stored positions if any
+	if s.Positions != nil {
+		for _, pos := range s.Positions {
+			positionList = append(positionList, pos)
+		}
+	}
+	
+	// If no positions, return a sample HSI futures position
+	if len(positionList) == 0 {
+		code := "HSImain"
+		name := "HANG SENG INDEX FUTURES"
+		qty := 2.0
+		canSellQty := 2.0
+		price := 18523.45
+		costPrice := 18480.00
+		plVal := 86.90 // (18523.45 - 18480.00) * 2
+		plRatio := 0.235
+		
+		positionList = append(positionList, &trdcommon.Position{
+			Code:       &code,
+			Name:       &name,
+			Qty:        &qty,
+			CanSellQty: &canSellQty,
+			Price:      &price,
+			CostPrice:  &costPrice,
+			PlVal:      &plVal,
+			PlRatio:    &plRatio,
+		})
+	}
+	
+	resp := &trdgetpositionlist.Response{
+		RetType: &retType,
+		S2C: &trdgetpositionlist.S2C{
+			PositionList: positionList,
+		},
+	}
 	return s.successResponse(pkt, resp)
 }
 

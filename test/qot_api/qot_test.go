@@ -1,0 +1,611 @@
+package qot_test
+
+import (
+	"testing"
+
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbroker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitaldistribution"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsubscribe"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/test/fixtures"
+	"github.com/shing1211/futuapi4go/test/util"
+	"google.golang.org/protobuf/proto"
+)
+
+func TestGetBasicQot_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	// Register GetBasicQot handler
+	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetbasicqot.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		// Build realistic HSI response
+		hsiQuote := testutil.HSIQuote()
+
+		s2c := &qotgetbasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
+		}
+
+		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	// Call API
+	result, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+	if err != nil {
+		t.Fatalf("GetBasicQot failed: %v", err)
+	}
+
+	// Assertions
+	if len(result) != 1 {
+		t.Fatalf("Expected 1 quote, got %d", len(result))
+	}
+
+	quote := result[0]
+	if quote.Security.GetCode() != testutil.HSICode {
+		t.Errorf("Expected code %s, got %s", testutil.HSICode, quote.Security.GetCode())
+	}
+
+	if quote.CurPrice != 18523.45 {
+		t.Errorf("Expected price 18523.45, got %f", quote.CurPrice)
+	}
+
+	server.AssertProtoID(t, 3004)
+}
+
+func TestGetKL_HSI_Day(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetkl.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		reqNum := int(reqMsg.C2S.GetReqNum())
+		klList := testutil.HSIKLineData(reqNum, reqMsg.C2S.GetKLType())
+
+		s2c := &qotgetkl.S2C{
+			Security: testutil.HSISecurity(),
+			Name:     proto.String(testutil.HSIName),
+			KlList:   klList,
+		}
+
+		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	// Request 10 days of HSI K-line
+	req := &qot.GetKLRequest{
+		Security:  testutil.HSISecurity(),
+		RehabType: int32(qotcommon.RehabType_RehabType_None),
+		KLType:    int32(qotcommon.KLType_KLType_Day),
+		ReqNum:    10,
+	}
+
+	result, err := qot.GetKL(cli, req)
+	if err != nil {
+		t.Fatalf("GetKL failed: %v", err)
+	}
+
+	if len(result.KLList) != 10 {
+		t.Errorf("Expected 10 K-lines, got %d", len(result.KLList))
+	}
+
+	// Validate first K-line
+	kl := result.KLList[0]
+	if kl.OpenPrice < 18000 || kl.OpenPrice > 19000 {
+		t.Errorf("HSI open price out of range: %f", kl.OpenPrice)
+	}
+
+	if kl.Volume == 0 {
+		t.Error("K-line volume should not be zero")
+	}
+
+	server.AssertProtoID(t, 3006)
+}
+
+func TestGetKL_HSI_Min1(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetkl.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		reqNum := int(reqMsg.C2S.GetReqNum())
+		klList := testutil.HSIKLineData(reqNum, reqMsg.C2S.GetKLType())
+
+		s2c := &qotgetkl.S2C{
+			Security: testutil.HSISecurity(),
+			Name:     proto.String(testutil.HSIName),
+			KlList:   klList,
+		}
+
+		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetKLRequest{
+		Security:  testutil.HSISecurity(),
+		RehabType: int32(qotcommon.RehabType_RehabType_None),
+		KLType:    int32(qotcommon.KLType_KLType_Min1),
+		ReqNum:    5,
+	}
+
+	result, err := qot.GetKL(cli, req)
+	if err != nil {
+		t.Fatalf("GetKL 1min failed: %v", err)
+	}
+
+	if len(result.KLList) != 5 {
+		t.Errorf("Expected 5 K-lines, got %d", len(result.KLList))
+	}
+
+	server.AssertProtoID(t, 3006)
+}
+
+func TestGetOrderBook_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3012, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetorderbook.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		num := int(reqMsg.C2S.GetNum())
+		asks, bids := testutil.HSIOrderBookLevels(num)
+
+		s2c := &qotgetorderbook.S2C{
+			Security:         testutil.HSISecurity(),
+			Name:             proto.String(testutil.HSIName),
+			OrderBookAskList: asks,
+			OrderBookBidList: bids,
+		}
+
+		return proto.Marshal(&qotgetorderbook.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetOrderBookRequest{
+		Security: testutil.HSISecurity(),
+		Num:      10,
+	}
+
+	result, err := qot.GetOrderBook(cli, req)
+	if err != nil {
+		t.Fatalf("GetOrderBook failed: %v", err)
+	}
+
+	if len(result.OrderBookAskList) != 10 {
+		t.Errorf("Expected 10 ask levels, got %d", len(result.OrderBookAskList))
+	}
+
+	if len(result.OrderBookBidList) != 10 {
+		t.Errorf("Expected 10 bid levels, got %d", len(result.OrderBookBidList))
+	}
+
+	// Verify ask > bid (no crossed book)
+	if len(result.OrderBookAskList) > 0 && len(result.OrderBookBidList) > 0 {
+		bestAsk := result.OrderBookAskList[0].Price
+		bestBid := result.OrderBookBidList[0].Price
+		if bestAsk <= bestBid {
+			t.Errorf("Crossed book: ask %f <= bid %f", bestAsk, bestBid)
+		}
+	}
+
+	server.AssertProtoID(t, 3012)
+}
+
+func TestGetTicker_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3010, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetticker.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		maxRet := int(reqMsg.C2S.GetMaxRetNum())
+		tickers := testutil.HSITickerData(maxRet)
+
+		s2c := &qotgetticker.S2C{
+			Security:   testutil.HSISecurity(),
+			Name:       proto.String(testutil.HSIName),
+			TickerList: tickers,
+		}
+
+		return proto.Marshal(&qotgetticker.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetTickerRequest{
+		Security:  testutil.HSISecurity(),
+		MaxRetNum: 20,
+	}
+
+	result, err := qot.GetTicker(cli, req)
+	if err != nil {
+		t.Fatalf("GetTicker failed: %v", err)
+	}
+
+	if len(result.TickerList) != 20 {
+		t.Errorf("Expected 20 tickers, got %d", len(result.TickerList))
+	}
+
+	// Validate ticker data
+	for i, ticker := range result.TickerList {
+		if ticker.Price <= 0 {
+			t.Errorf("Ticker %d has invalid price: %f", i, ticker.Price)
+		}
+		if ticker.Volume == 0 {
+			t.Errorf("Ticker %d has zero volume", i)
+		}
+	}
+
+	server.AssertProtoID(t, 3010)
+}
+
+func TestGetRT_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3008, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetrt.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		// Return 240 minutes (full HK trading day)
+		rtList := testutil.HSIRTDData(240)
+
+		s2c := &qotgetrt.S2C{
+			Security: testutil.HSISecurity(),
+			Name:     proto.String(testutil.HSIName),
+			RTList:   rtList,
+		}
+
+		return proto.Marshal(&qotgetrt.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetRTRequest{
+		Security: testutil.HSISecurity(),
+	}
+
+	result, err := qot.GetRT(cli, req)
+	if err != nil {
+		t.Fatalf("GetRT failed: %v", err)
+	}
+
+	if len(result.RTList) != 240 {
+		t.Errorf("Expected 240 RT data points, got %d", len(result.RTList))
+	}
+
+	server.AssertProtoID(t, 3008)
+}
+
+func TestGetBroker_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3014, func(req []byte) ([]byte, error) {
+		var reqMsg qotgetbroker.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		num := int(reqMsg.C2S.GetNum())
+		askBrokers := make([]*qotcommon.Broker, 0, num)
+		bidBrokers := make([]*qotcommon.Broker, 0, num)
+
+		for i := 0; i < num; i++ {
+			brokerID := uint64(1000 + i)
+			volume := uint64(10000 + i*1000)
+			pos := int32(i)
+
+			askBrokers = append(askBrokers, &qotcommon.Broker{
+				ID:     &brokerID,
+				Name:   proto.String("Test Broker"),
+				Pos:    &pos,
+				Volume: &volume,
+			})
+
+			bidBrokers = append(bidBrokers, &qotcommon.Broker{
+				ID:     &brokerID,
+				Name:   proto.String("Test Broker"),
+				Pos:    &pos,
+				Volume: &volume,
+			})
+		}
+
+		s2c := &qotgetbroker.S2C{
+			Security:     testutil.HSISecurity(),
+			Name:         proto.String(testutil.HSIName),
+			AskBrokerList: askBrokers,
+			BidBrokerList: bidBrokers,
+		}
+
+		return proto.Marshal(&qotgetbroker.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetBrokerRequest{
+		Security: testutil.HSISecurity(),
+		Num:      10,
+	}
+
+	result, err := qot.GetBroker(cli, req)
+	if err != nil {
+		t.Fatalf("GetBroker failed: %v", err)
+	}
+
+	if len(result.AskBrokerList) != 10 {
+		t.Errorf("Expected 10 ask brokers, got %d", len(result.AskBrokerList))
+	}
+
+	if len(result.BidBrokerList) != 10 {
+		t.Errorf("Expected 10 bid brokers, got %d", len(result.BidBrokerList))
+	}
+
+	server.AssertProtoID(t, 3014)
+}
+
+func TestGetStaticInfo_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3202, func(req []byte) ([]byte, error) {
+		s2c := &qotgetstaticinfo.S2C{
+			StaticInfoList: []*qotcommon.SecurityStaticInfo{
+				{
+					Security: testutil.HSISecurity(),
+					Id:       proto.Uint64(800100),
+					LotSize:  proto.Int32(1), // Index lot size
+					SecType:  proto.Int32(int32(qotcommon.SecurityType_SecurityType_Index)),
+					ListTime: proto.String("1969-07-31"),
+				},
+			},
+		}
+
+		return proto.Marshal(&qotgetstaticinfo.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetStaticInfoRequest{
+		SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+	}
+
+	result, err := qot.GetStaticInfo(cli, req)
+	if err != nil {
+		t.Fatalf("GetStaticInfo failed: %v", err)
+	}
+
+	if len(result.StaticInfoList) != 1 {
+		t.Errorf("Expected 1 static info, got %d", len(result.StaticInfoList))
+	}
+
+	info := result.StaticInfoList[0]
+	if info.Security.GetCode() != testutil.HSICode {
+		t.Errorf("Expected code %s, got %s", testutil.HSICode, info.Security.GetCode())
+	}
+
+	server.AssertProtoID(t, 3202)
+}
+
+func TestGetTradeDate_HK(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3201, func(req []byte) ([]byte, error) {
+		s2c := &qotgettradedate.S2C{
+			TradeDateList: []string{
+				"2026-04-01",
+				"2026-04-02",
+				"2026-04-03",
+				"2026-04-06",
+				"2026-04-07",
+			},
+		}
+
+		return proto.Marshal(&qotgettradedate.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetTradeDateRequest{
+		Market: testutil.HSIMarket,
+	}
+
+	result, err := qot.GetTradeDate(cli, req)
+	if err != nil {
+		t.Fatalf("GetTradeDate failed: %v", err)
+	}
+
+	if len(result.TradeDateList) != 5 {
+		t.Errorf("Expected 5 trade dates, got %d", len(result.TradeDateList))
+	}
+
+	server.AssertProtoID(t, 3201)
+}
+
+func TestSubscribe_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3001, func(req []byte) ([]byte, error) {
+		s2c := &qotsubscribe.S2C{}
+		return proto.Marshal(&qotsubscribe.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.SubscribeRequest{
+		SecurityList: []*qotcommon.Security{testutil.HSISecurity()},
+		SubTypeList:  []qot.SubType{qot.SubType_Basic, qot.SubType_KL},
+		IsSubOrUnSub: true,
+	}
+
+	_, err := qot.Subscribe(cli, req)
+	if err != nil {
+		t.Fatalf("Subscribe failed: %v", err)
+	}
+
+	server.AssertProtoID(t, 3001)
+}
+
+func TestGetCapitalFlow_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3211, func(req []byte) ([]byte, error) {
+		s2c := &qotgetcapitalflow.S2C{
+			FlowItemList: []*qotcommon.CapitalFlowItem{
+				{
+					Time:       proto.String("2026-04-10 10:00:00"),
+					MainInFlow: proto.Float64(12345678.90),
+					BigInFlow:  proto.Float64(23456789.01),
+					MidInFlow:  proto.Float64(34567890.12),
+					SmallInFlow: proto.Float64(45678901.23),
+				},
+			},
+		}
+
+		return proto.Marshal(&qotgetcapitalflow.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	req := &qot.GetCapitalFlowRequest{
+		Security: testutil.HSISecurity(),
+	}
+
+	result, err := qot.GetCapitalFlow(cli, req)
+	if err != nil {
+		t.Fatalf("GetCapitalFlow failed: %v", err)
+	}
+
+	if len(result.FlowItemList) != 1 {
+		t.Errorf("Expected 1 capital flow item, got %d", len(result.FlowItemList))
+	}
+
+	server.AssertProtoID(t, 3211)
+}
+
+func TestGetCapitalDistribution_HSI(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(3212, func(req []byte) ([]byte, error) {
+		s2c := &qotgetcapitaldistribution.S2C{
+			CapitalInBig:    proto.Float64(100000000.0),
+			CapitalInMid:    proto.Float64(50000000.0),
+			CapitalInSmall:  proto.Float64(25000000.0),
+			CapitalOutBig:   proto.Float64(90000000.0),
+			CapitalOutMid:   proto.Float64(55000000.0),
+			CapitalOutSmall: proto.Float64(20000000.0),
+		}
+
+		return proto.Marshal(&qotgetcapitaldistribution.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	result, err := qot.GetCapitalDistribution(cli, testutil.HSISecurity())
+	if err != nil {
+		t.Fatalf("GetCapitalDistribution failed: %v", err)
+	}
+
+	if result.CapitalInBig <= 0 {
+		t.Error("CapitalInBig should be positive")
+	}
+
+	server.AssertProtoID(t, 3212)
+}

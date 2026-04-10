@@ -72,22 +72,45 @@ func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
 		if quote, ok := s.Quotes[key]; ok {
 			bqList = append(bqList, quote)
 		} else {
+			// Detect HSI
+			isHSI := market == 1 && code == "800100"
+			
 			name := fmt.Sprintf("Mock_%s", code)
 			price := 100.0
 			high := 105.0
 			low := 95.0
 			open := 99.0
+			lastClose := 98.5
 			vol := int64(1000000)
 			turn := 100000000.0
+			turnoverRate := 0.01
+			amplitude := 1.5
+			
+			if isHSI {
+				name = "HANG SENG INDEX"
+				price = 18523.45
+				high = 18590.12
+				low = 18420.50
+				open = 18480.00
+				lastClose = 18498.23
+				vol = 2345678900
+				turn = 98765432100.50
+				turnoverRate = 0.0234
+				amplitude = 0.92
+			}
+			
 			bq := &qotcommon.BasicQot{
-				Security:  sec,
-				Name:      &name,
-				CurPrice:  &price,
-				HighPrice: &high,
-				LowPrice:  &low,
-				OpenPrice: &open,
-				Volume:    &vol,
-				Turnover:  &turn,
+				Security:     sec,
+				Name:         &name,
+				CurPrice:     &price,
+				HighPrice:    &high,
+				LowPrice:     &low,
+				OpenPrice:    &open,
+				LastClosePrice: &lastClose,
+				Volume:       &vol,
+				Turnover:     &turn,
+				TurnoverRate: &turnoverRate,
+				Amplitude:    &amplitude,
 			}
 			bqList = append(bqList, bq)
 		}
@@ -108,19 +131,35 @@ func (s *Server) handleGetKL(pkt *Packet) (*Packet, error) {
 	c2s := req.GetC2S()
 
 	retType := int32(common.RetType_RetType_Succeed)
+	
+	// Detect if requesting HSI
+	sec := c2s.GetSecurity()
+	isHSI := sec.GetMarket() == 1 && sec.GetCode() == "800100"
+	
 	name := "Mock"
+	if isHSI {
+		name = "HANG SENG INDEX"
+	}
 
 	klList := make([]*qotcommon.KLine, 0, c2s.GetReqNum())
+	basePrice := 18400.0
+	if isHSI {
+		basePrice = 18400.0
+	} else {
+		basePrice = 100.0
+	}
+	
 	for i := int32(0); i < c2s.GetReqNum(); i++ {
 		timeStr := fmt.Sprintf("2026-01-%02d 15:00:00", i+1)
 		ts := float64(1735689600 + int64(i)*86400)
-		open := 100.0
-		close := 101.0
-		high := 102.0
-		low := 99.0
-		vol := int64(10000)
-		turn := 1000000.0
-		lastClose := 99.5
+		
+		open := basePrice + float64(i)*2.5
+		close := open + float64(i%5)*5.0 - 10.0
+		high := close + float64(i%3)*3.0
+		low := open - float64(i%3)*3.0
+		vol := int64(1000000 + i*10000)
+		turn := float64(vol) * (open + close) / 2.0
+		lastClose := open
 
 		kl := &qotcommon.KLine{
 			Time:           &timeStr,
@@ -150,17 +189,35 @@ func (s *Server) handleGetOrderBook(pkt *Packet) (*Packet, error) {
 	}
 
 	retType := int32(common.RetType_RetType_Succeed)
+	
+	// Detect HSI
+	sec := req.GetSecurity()
+	isHSI := sec.GetMarket() == 1 && sec.GetCode() == "800100"
+	
 	name := "Mock"
+	if isHSI {
+		name = "HANG SENG INDEX"
+	}
 
 	askList := make([]*qotcommon.OrderBook, 0, req.GetNum())
 	bidList := make([]*qotcommon.OrderBook, 0, req.GetNum())
+	
+	basePrice := 100.0
+	if isHSI {
+		basePrice = 18523.45
+	}
 
 	for i := int32(0); i < req.GetNum(); i++ {
-		askPrice := 100.0 + float64(i)*0.01
-		bidPrice := 100.0 - float64(i)*0.01
-		askVol := int64(1000)
-		bidVol := int64(1000)
-		orderCount := int32(10)
+		spread := 0.01
+		if isHSI {
+			spread = 5.0
+		}
+		
+		askPrice := basePrice + float64(i+1)*spread
+		bidPrice := basePrice - float64(i+1)*spread
+		askVol := int64(1000 + i*100)
+		bidVol := int64(1000 + i*100)
+		orderCount := int32(10 + i*2)
 
 		askList = append(askList, &qotcommon.OrderBook{
 			Price:      &askPrice,

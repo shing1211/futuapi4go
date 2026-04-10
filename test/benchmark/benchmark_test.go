@@ -1,0 +1,285 @@
+package benchmark_test
+
+import (
+	"testing"
+
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/seefutuapi4go/test/fixtures"
+	"github.com/shing1211/futuapi4go/test/util"
+	"google.golang.org/protobuf/proto"
+)
+
+// ============================================================================
+// Benchmark Tests for Critical Paths
+// Run with: go test -bench=. -benchmem ./test/benchmark
+// ============================================================================
+
+// BenchmarkGetBasicQot_Mock benchmarks GetBasicQot with mock server
+func BenchmarkGetBasicQot_Mock(b *testing.B) {
+	server := testutil.NewMockServer(&testing.T{})
+
+	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+		hsiQuote := testutil.HSIQuote()
+		s2c := &qotgetbasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
+		}
+		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		b.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(&testing.T{}, server)
+	defer cleanup()
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+		if err != nil {
+			b.Fatalf("GetBasicQot failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkGetKL_Mock benchmarks GetKL with mock server
+func BenchmarkGetKL_Mock(b *testing.B) {
+	server := testutil.NewMockServer(&testing.T{})
+
+	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+		klList := testutil.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
+		s2c := &qotgetkl.S2C{
+			Security: testutil.HSISecurity(),
+			Name:     ptrStr(testutil.HSIName),
+			KlList:   klList,
+		}
+		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		b.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(&testing.T{}, server)
+	defer cleanup()
+
+	req := &qot.GetKLRequest{
+		Security:  testutil.HSISecurity(),
+		RehabType: int32(qotcommon.RehabType_RehabType_None),
+		KLType:    int32(qotcommon.KLType_KLType_Day),
+		ReqNum:    100,
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, err := qot.GetKL(cli, req)
+		if err != nil {
+			b.Fatalf("GetKL failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkGetOrderBook_Mock benchmarks GetOrderBook with mock server
+func BenchmarkGetOrderBook_Mock(b *testing.B) {
+	server := testutil.NewMockServer(&testing.T{})
+
+	server.RegisterHandler(3012, func(req []byte) ([]byte, error) {
+		asks, bids := testutil.HSIOrderBookLevels(10)
+		s2c := &qotgetorderbook.S2C{
+			Security:         testutil.HSISecurity(),
+			Name:             ptrStr(testutil.HSIName),
+			OrderBookAskList: asks,
+			OrderBookBidList: bids,
+		}
+		return proto.Marshal(&qotgetorderbook.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		b.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(&testing.T{}, server)
+	defer cleanup()
+
+	req := &qot.GetOrderBookRequest{
+		Security: testutil.HSISecurity(),
+		Num:      10,
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, err := qot.GetOrderBook(cli, req)
+		if err != nil {
+			b.Fatalf("GetOrderBook failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkProtobufMarshal_HSIQuote benchmarks protobuf marshaling
+func BenchmarkProtobufMarshal_HSIQuote(b *testing.B) {
+	hsiQuote := testutil.HSIQuote()
+	resp := &qotgetbasicqot.Response{
+		S2C: &qotgetbasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
+		},
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, err := proto.Marshal(resp)
+		if err != nil {
+			b.Fatalf("Marshal failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkProtobufUnmarshal_HSIQuote benchmarks protobuf unmarshaling
+func BenchmarkProtobufUnmarshal_HSIQuote(b *testing.B) {
+	hsiQuote := testutil.HSIQuote()
+	resp := &qotgetbasicqot.Response{
+		S2C: &qotgetbasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
+		},
+	}
+
+	data, err := proto.Marshal(resp)
+	if err != nil {
+		b.Fatalf("Marshal failed: %v", err)
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		var unmarshaled qotgetbasicqot.Response
+		err := proto.Unmarshal(data, &unmarshaled)
+		if err != nil {
+			b.Fatalf("Unmarshal failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkMultipleSecurities benchmarks fetching quotes for multiple securities
+func BenchmarkMultipleSecurities_Mock(b *testing.B) {
+	server := testutil.NewMockServer(&testing.T{})
+
+	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+		// Return multiple quotes
+		quotes := make([]*qotcommon.BasicQot, 10)
+		for i := range quotes {
+			quote := testutil.HSIQuote()
+			code := fmt.Sprintf("%06d", 700+i)
+			quote.Security.Code = &code
+			quotes[i] = quote
+		}
+
+		s2c := &qotgetbasicqot.S2C{
+			BasicQotList: quotes,
+		}
+		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		b.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(&testing.T{}, server)
+	defer cleanup()
+
+	// Create 10 securities
+	securities := make([]*qotcommon.Security, 10)
+	for i := 0; i < 10; i++ {
+		code := fmt.Sprintf("%06d", 700+i)
+		securities[i] = testutil.SecurityPtr(testutil.HSIMarket, code)
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, err := qot.GetBasicQot(cli, securities)
+		if err != nil {
+			b.Fatalf("GetBasicQot failed: %v", err)
+		}
+	}
+}
+
+// BenchmarkConcurrentRequests benchmarks concurrent API calls
+func BenchmarkConcurrentRequests_Mock(b *testing.B) {
+	server := testutil.NewMockServer(&testing.T{})
+
+	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+		hsiQuote := testutil.HSIQuote()
+		s2c := &qotgetbasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
+		}
+		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+	})
+
+	if err := server.Start(); err != nil {
+		b.Fatal(err)
+	}
+	defer server.Stop()
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	b.RunParallel(func(pb *testing.PB) {
+		cli, cleanup := testutil.NewTestClient(&testing.T{}, server)
+		defer cleanup()
+
+		for pb.Next() {
+			_, err := qot.GetBasicQot(cli, []*qotcommon.Security{testutil.HSISecurity()})
+			if err != nil {
+				b.Fatalf("GetBasicQot failed: %v", err)
+			}
+		}
+	})
+}
+
+// BenchmarkHSIFixtures benchmarks fixture creation
+func BenchmarkHSIFixtures_Quote(b *testing.B) {
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_ = testutil.HSIQuote()
+	}
+}
+
+func BenchmarkHSIFixtures_KLine(b *testing.B) {
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_ = testutil.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
+	}
+}
+
+func BenchmarkHSIFixtures_OrderBook(b *testing.B) {
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = testutil.HSIOrderBookLevels(10)
+	}
+}
+
+// Helper function
+func ptrStr(s string) *string { return &s }
