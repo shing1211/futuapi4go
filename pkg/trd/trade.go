@@ -143,6 +143,7 @@ type Funds struct {
 type GetFundsRequest struct {
 	AccID     uint64
 	TrdMarket int32
+	TrdEnv    int32
 }
 
 // GetFundsResponse is the response containing account funds information.
@@ -157,6 +158,7 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -217,6 +219,7 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 
 // Position represents a stock position with quantity, price, cost, and profit/loss information.
 type Position struct {
+	PositionID uint64
 	Code       string
 	Name       string
 	Qty        float64
@@ -232,6 +235,7 @@ type Position struct {
 type GetPositionListRequest struct {
 	AccID     uint64
 	TrdMarket int32
+	TrdEnv    int32
 }
 
 // GetPositionListResponse is the response containing a list of positions.
@@ -246,6 +250,7 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -295,6 +300,7 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 
 	for _, p := range s2c.GetPositionList() {
 		result.PositionList = append(result.PositionList, &Position{
+			PositionID: p.GetPositionID(),
 			Code:       p.GetCode(),
 			Name:       p.GetName(),
 			Qty:        p.GetQty(),
@@ -312,24 +318,40 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 
 // Order represents an order with its ID, code, side, type, status, price, quantity, and fill information.
 type Order struct {
-	OrderID      uint64
-	Code         string
-	Name         string
-	TrdSide      int32
-	OrderType    int32
-	OrderStatus  int32
-	Price        float64
-	Qty          float64
-	FillQty      float64
-	CreateTime   string
-	UpdateTime   string
-	FillAvgPrice float64
+	OrderID         uint64
+	OrderIDEx       string
+	Code            string
+	Name            string
+	TrdSide         int32
+	OrderType       int32
+	OrderStatus     int32
+	Price           float64
+	Qty             float64
+	FillQty         float64
+	FillAvgPrice    float64
+	CreateTime      string
+	UpdateTime      string
+	LastErrMsg      string
+	SecMarket       int32
+	CreateTimestamp float64
+	UpdateTimestamp float64
+	Remark          string
+	TimeInForce     int32
+	FillOutsideRTH  bool
+	AuxPrice        float64
+	TrailType       int32
+	TrailValue      float64
+	TrailSpread     float64
+	Currency        int32
+	TrdMarket       int32
+	Session         int32
 }
 
 // GetOrderListRequest is the request to retrieve order list.
 type GetOrderListRequest struct {
 	AccID     uint64
 	TrdMarket int32
+	TrdEnv    int32
 }
 
 // GetOrderListResponse is the response containing a list of orders.
@@ -344,6 +366,7 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -393,18 +416,33 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 
 	for _, o := range s2c.GetOrderList() {
 		result.OrderList = append(result.OrderList, &Order{
-			OrderID:      o.GetOrderID(),
-			Code:         o.GetCode(),
-			Name:         o.GetName(),
-			TrdSide:      o.GetTrdSide(),
-			OrderType:    o.GetOrderType(),
-			OrderStatus:  o.GetOrderStatus(),
-			Price:        o.GetPrice(),
-			Qty:          o.GetQty(),
-			FillQty:      o.GetFillQty(),
-			CreateTime:   o.GetCreateTime(),
-			UpdateTime:   o.GetUpdateTime(),
-			FillAvgPrice: o.GetFillAvgPrice(),
+			OrderID:         o.GetOrderID(),
+			OrderIDEx:       o.GetOrderIDEx(),
+			Code:            o.GetCode(),
+			Name:            o.GetName(),
+			TrdSide:         o.GetTrdSide(),
+			OrderType:       o.GetOrderType(),
+			OrderStatus:     o.GetOrderStatus(),
+			Price:           o.GetPrice(),
+			Qty:             o.GetQty(),
+			FillQty:         o.GetFillQty(),
+			FillAvgPrice:    o.GetFillAvgPrice(),
+			CreateTime:      o.GetCreateTime(),
+			UpdateTime:      o.GetUpdateTime(),
+			LastErrMsg:      o.GetLastErrMsg(),
+			SecMarket:       o.GetSecMarket(),
+			CreateTimestamp: o.GetCreateTimestamp(),
+			UpdateTimestamp: o.GetUpdateTimestamp(),
+			Remark:          o.GetRemark(),
+			TimeInForce:     o.GetTimeInForce(),
+			FillOutsideRTH:  o.GetFillOutsideRTH(),
+			AuxPrice:        o.GetAuxPrice(),
+			TrailType:       o.GetTrailType(),
+			TrailValue:      o.GetTrailValue(),
+			TrailSpread:     o.GetTrailSpread(),
+			Currency:        o.GetCurrency(),
+			TrdMarket:       o.GetTrdMarket(),
+			Session:         o.GetSession(),
 		})
 	}
 
@@ -413,20 +451,30 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 
 // OrderFill represents a filled (executed) order with its order ID, fill ID, code, side, price, and quantity.
 type OrderFill struct {
-	OrderID    uint64
-	FillID     uint64
-	Code       string
-	Name       string
-	TrdSide    int32
-	Price      float64
-	Qty        float64
-	CreateTime string
+	FillID            uint64
+	FillIDEx          string
+	OrderID           uint64
+	OrderIDEx         string
+	Code              string
+	Name              string
+	TrdSide           int32
+	Price             float64
+	Qty               float64
+	CreateTime        string
+	CounterBrokerID   int32
+	CounterBrokerName string
+	SecMarket         int32
+	CreateTimestamp   float64
+	UpdateTimestamp   float64
+	Status            int32
+	TrdMarket         int32
 }
 
 // GetOrderFillListRequest is the request to retrieve order fill list.
 type GetOrderFillListRequest struct {
 	AccID     uint64
 	TrdMarket int32
+	TrdEnv    int32
 }
 
 // GetOrderFillListResponse is the response containing a list of order fills.
@@ -441,6 +489,7 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -490,14 +539,23 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 
 	for _, f := range s2c.GetOrderFillList() {
 		result.OrderFillList = append(result.OrderFillList, &OrderFill{
-			OrderID:    f.GetOrderID(),
-			FillID:     f.GetFillID(),
-			Code:       f.GetCode(),
-			Name:       f.GetName(),
-			TrdSide:    f.GetTrdSide(),
-			Price:      f.GetPrice(),
-			Qty:        f.GetQty(),
-			CreateTime: f.GetCreateTime(),
+			FillID:            f.GetFillID(),
+			FillIDEx:          f.GetFillIDEx(),
+			OrderID:           f.GetOrderID(),
+			OrderIDEx:         f.GetOrderIDEx(),
+			Code:              f.GetCode(),
+			Name:              f.GetName(),
+			TrdSide:           f.GetTrdSide(),
+			Price:             f.GetPrice(),
+			Qty:               f.GetQty(),
+			CreateTime:        f.GetCreateTime(),
+			CounterBrokerID:   f.GetCounterBrokerID(),
+			CounterBrokerName: f.GetCounterBrokerName(),
+			SecMarket:         f.GetSecMarket(),
+			CreateTimestamp:   f.GetCreateTimestamp(),
+			UpdateTimestamp:   f.GetUpdateTimestamp(),
+			Status:            f.GetStatus(),
+			TrdMarket:         f.GetTrdMarket(),
 		})
 	}
 
@@ -508,6 +566,7 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 type PlaceOrderRequest struct {
 	AccID     uint64
 	TrdMarket int32
+	TrdEnv    int32
 	Code      string
 	TrdSide   int32
 	OrderType int32
@@ -527,6 +586,7 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -584,6 +644,7 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 type ModifyOrderRequest struct {
 	AccID         uint64
 	TrdMarket     int32
+	TrdEnv        int32
 	OrderID       uint64
 	ModifyOrderOp int32
 	Price         float64
@@ -597,6 +658,7 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 		return err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -699,6 +761,7 @@ func UnlockTrade(c *futuapi.Client, req *UnlockTradeRequest) error {
 type GetOrderFeeRequest struct {
 	AccID         uint64
 	TrdMarket     int32
+	TrdEnv        int32
 	OrderIDExList []string
 }
 
@@ -727,6 +790,7 @@ func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeRespon
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -797,6 +861,7 @@ func GetOrderFee(c *futuapi.Client, req *GetOrderFeeRequest) (*GetOrderFeeRespon
 type GetMarginRatioRequest struct {
 	AccID        uint64
 	TrdMarket    int32
+	TrdEnv       int32
 	SecurityList []*qotcommon.Security
 }
 
@@ -829,6 +894,7 @@ func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRa
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -902,6 +968,7 @@ func GetMarginRatio(c *futuapi.Client, req *GetMarginRatioRequest) (*GetMarginRa
 type GetMaxTrdQtysRequest struct {
 	AccID              uint64
 	TrdMarket          int32
+	TrdEnv             int32
 	OrderType          int32
 	Code               string
 	Price              float64
@@ -935,6 +1002,7 @@ func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtys
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -1004,6 +1072,7 @@ func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtys
 type GetHistoryOrderListRequest struct {
 	AccID            uint64
 	TrdMarket        int32
+	TrdEnv           int32
 	FilterConditions *trdcommon.TrdFilterConditions
 	FilterStatusList []int32
 }
@@ -1020,6 +1089,7 @@ func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*G
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -1074,12 +1144,13 @@ func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*G
 type GetHistoryOrderFillListRequest struct {
 	AccID            uint64
 	TrdMarket        int32
+	TrdEnv           int32
 	FilterConditions *trdcommon.TrdFilterConditions
 }
 
 // GetHistoryOrderFillListResponse is the response containing historical order fills.
 type GetHistoryOrderFillListResponse struct {
-	OrderFillList []*trdcommon.OrderFill
+	OrderFillList []*OrderFill
 }
 
 // GetHistoryOrderFillList retrieves the historical order fill (execution) list based on filter conditions.
@@ -1089,6 +1160,7 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
+		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
 		TrdMarket: &req.TrdMarket,
 	}
@@ -1133,8 +1205,31 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 		return nil, fmt.Errorf("GetHistoryOrderFillList: s2c is nil")
 	}
 
+	list := make([]*OrderFill, 0, len(s2c.GetOrderFillList()))
+	for _, f := range s2c.GetOrderFillList() {
+		list = append(list, &OrderFill{
+			FillID:            f.GetFillID(),
+			FillIDEx:          f.GetFillIDEx(),
+			OrderID:           f.GetOrderID(),
+			OrderIDEx:         f.GetOrderIDEx(),
+			Code:              f.GetCode(),
+			Name:              f.GetName(),
+			TrdSide:           f.GetTrdSide(),
+			Price:             f.GetPrice(),
+			Qty:               f.GetQty(),
+			CreateTime:        f.GetCreateTime(),
+			CounterBrokerID:   f.GetCounterBrokerID(),
+			CounterBrokerName: f.GetCounterBrokerName(),
+			SecMarket:         f.GetSecMarket(),
+			CreateTimestamp:   f.GetCreateTimestamp(),
+			UpdateTimestamp:   f.GetUpdateTimestamp(),
+			Status:            f.GetStatus(),
+			TrdMarket:         f.GetTrdMarket(),
+		})
+	}
+
 	return &GetHistoryOrderFillListResponse{
-		OrderFillList: s2c.GetOrderFillList(),
+		OrderFillList: list,
 	}, nil
 }
 
@@ -1319,4 +1414,3 @@ func GetFlowSummary(c *futuapi.Client, req *GetFlowSummaryRequest) (*GetFlowSumm
 		FlowSummaryList: s2c.GetFlowSummaryInfoList(),
 	}, nil
 }
-

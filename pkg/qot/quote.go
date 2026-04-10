@@ -54,26 +54,26 @@ const (
 	ProtoID_GetMarketSnapshot       = 3203
 	ProtoID_GetSecuritySnapshot     = 3203
 	ProtoID_GetBroker               = 3014
-	ProtoID_GetStaticInfo           = 2201
-	ProtoID_GetPlateSet             = 2202
-	ProtoID_GetPlateSecurity        = 2203
+	ProtoID_GetStaticInfo           = 3202
+	ProtoID_GetPlateSet             = 3204
+	ProtoID_GetPlateSecurity        = 3205
 	ProtoID_GetSuspend              = 2209
 	ProtoID_GetCodeChange           = 2210
-	ProtoID_GetFutureInfo           = 2211
-	ProtoID_GetIpoList              = 2212
+	ProtoID_GetFutureInfo           = 3218
+	ProtoID_GetIpoList              = 3217
 	ProtoID_GetHoldingChangeList    = 2213
-	ProtoID_RequestRehab            = 2214
-	ProtoID_GetUserSecurityGroup    = 2402
-	ProtoID_ModifyUserSecurity      = 2403
-	ProtoID_SetPriceReminder        = 2405
+	ProtoID_RequestRehab            = 3105
+	ProtoID_GetUserSecurityGroup    = 3222
+	ProtoID_ModifyUserSecurity      = 3214
+	ProtoID_SetPriceReminder        = 3220
 	ProtoID_GetCapitalFlow          = 3211
 	ProtoID_GetCapitalDistribution  = 3212
 	ProtoID_StockFilter             = 3215
 	ProtoID_GetOptionChain          = 3209
 	ProtoID_GetOptionExpirationDate = 3224
 	ProtoID_GetWarrant              = 3210
-	ProtoID_GetUserSecurity         = 2401
-	ProtoID_GetPriceReminder        = 2404
+	ProtoID_GetUserSecurity         = 3213
+	ProtoID_GetPriceReminder        = 3221
 	ProtoID_GetTradeDate            = 2205
 	ProtoID_RequestTradeDate        = 3219
 	ProtoID_Subscribe               = 3001
@@ -277,9 +277,8 @@ type OrderBook struct {
 
 // OrderBookDetail represents a single order in the order book.
 type OrderBookDetail struct {
-	Price   float64
-	Volume  int64
 	OrderID int64
+	Volume  int64
 }
 
 // GetOrderBookRequest defines parameters for GetOrderBook.
@@ -355,18 +354,34 @@ func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookRes
 	}
 
 	for _, ob := range s2c.GetOrderBookAskList() {
+		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
+		for _, d := range ob.GetDetailList() {
+			details = append(details, &OrderBookDetail{
+				OrderID: d.GetOrderID(),
+				Volume:  d.GetVolume(),
+			})
+		}
 		result.OrderBookAskList = append(result.OrderBookAskList, &OrderBook{
 			Price:      ob.GetPrice(),
 			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrederCount(),
+			OrderCount: ob.GetOrderCount(),
+			DetailList: details,
 		})
 	}
 
 	for _, ob := range s2c.GetOrderBookBidList() {
+		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
+		for _, d := range ob.GetDetailList() {
+			details = append(details, &OrderBookDetail{
+				OrderID: d.GetOrderID(),
+				Volume:  d.GetVolume(),
+			})
+		}
 		result.OrderBookBidList = append(result.OrderBookBidList, &OrderBook{
 			Price:      ob.GetPrice(),
 			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrederCount(),
+			OrderCount: ob.GetOrderCount(),
+			DetailList: details,
 		})
 	}
 

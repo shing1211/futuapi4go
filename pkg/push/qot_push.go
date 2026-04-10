@@ -14,13 +14,13 @@ import (
 )
 
 const (
-	ProtoID_Qot_UpdateBasicQot      = 3101
-	ProtoID_Qot_UpdateKL            = 3102
-	ProtoID_Qot_UpdateOrderBook     = 3103
-	ProtoID_Qot_UpdateTicker        = 3104
-	ProtoID_Qot_UpdateRT            = 3105
-	ProtoID_Qot_UpdateBroker        = 3106
-	ProtoID_Qot_UpdatePriceReminder = 3107
+	ProtoID_Qot_UpdateBasicQot      = 3005
+	ProtoID_Qot_UpdateKL            = 3007
+	ProtoID_Qot_UpdateOrderBook     = 3013
+	ProtoID_Qot_UpdateTicker        = 3011
+	ProtoID_Qot_UpdateRT            = 3009
+	ProtoID_Qot_UpdateBroker        = 3015
+	ProtoID_Qot_UpdatePriceReminder = 3019
 )
 
 type UpdateBasicQot struct {
@@ -194,4 +194,3 @@ func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 		CurValue:     rsp.GetCurValue(),
 	}, nil
 }
-

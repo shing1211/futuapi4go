@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	ProtoID_GetGlobalState     = 1004
+	ProtoID_GetGlobalState     = 1002
 	ProtoID_GetUserInfo        = 1005
 	ProtoID_GetDelayStatistics = 1006
 	ProtoID_Verification       = 8001
@@ -270,4 +270,3 @@ func Verification(c *futuapi.Client, req *VerificationRequest) error {
 
 	return nil
 }
-

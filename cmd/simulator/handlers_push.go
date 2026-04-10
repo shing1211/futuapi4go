@@ -123,14 +123,14 @@ func (s *Server) handlePushOrderBook(pkt *Packet) (*Packet, error) {
 		orderCount := int32(100 - i*5)
 
 		askList = append(askList, &qotcommon.OrderBook{
-			Price:       &askPrice,
-			Volume:      &askVol,
-			OrederCount: &orderCount,
+			Price:      &askPrice,
+			Volume:     &askVol,
+			OrderCount: &orderCount,
 		})
 		bidList = append(bidList, &qotcommon.OrderBook{
-			Price:       &bidPrice,
-			Volume:      &bidVol,
-			OrederCount: &orderCount,
+			Price:      &bidPrice,
+			Volume:     &bidVol,
+			OrderCount: &orderCount,
 		})
 	}
 
@@ -366,4 +366,3 @@ func (s *Server) handlePushNotify(pkt *Packet) (*Packet, error) {
 
 	return s.successResponse(pkt, resp)
 }
-

@@ -163,14 +163,14 @@ func (s *Server) handleGetOrderBook(pkt *Packet) (*Packet, error) {
 		orderCount := int32(10)
 
 		askList = append(askList, &qotcommon.OrderBook{
-			Price:       &askPrice,
-			Volume:      &askVol,
-			OrederCount: &orderCount,
+			Price:      &askPrice,
+			Volume:     &askVol,
+			OrderCount: &orderCount,
 		})
 		bidList = append(bidList, &qotcommon.OrderBook{
-			Price:       &bidPrice,
-			Volume:      &bidVol,
-			OrederCount: &orderCount,
+			Price:      &bidPrice,
+			Volume:     &bidVol,
+			OrderCount: &orderCount,
 		})
 	}
 
@@ -409,4 +409,3 @@ func (s *Server) handleGetSecuritySnapshot(pkt *Packet) (*Packet, error) {
 	resp := &qotgetbasicqot.Response{RetType: &retType}
 	return s.successResponse(pkt, resp)
 }
-

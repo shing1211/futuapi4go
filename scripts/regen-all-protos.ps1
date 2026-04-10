@@ -24,71 +24,29 @@ Write-Host "✓ Clean complete" -ForegroundColor Green
 
 # Define file groups
 $commonFiles = @("Common.proto", "Qot_Common.proto", "Trd_Common.proto")
-$systemFiles = @("InitConnect.proto", "KeepAlive.proto", "GetGlobalState.proto", 
+$systemFiles = @("InitConnect.proto", "KeepAlive.proto", "GetGlobalState.proto",
                  "GetUserInfo.proto", "GetDelayStatistics.proto", "Verification.proto",
                  "Notify.proto", "UsedQuota.proto")
 $qotFiles = Get-ChildItem "$PROTO_DIR\Qot_*.proto" | Select-Object -ExpandProperty Name
 $trdFiles = Get-ChildItem "$PROTO_DIR\Trd_*.proto" | Select-Object -ExpandProperty Name
 
-$totalFiles = $commonFiles.Count + $systemFiles.Count + $qotFiles.Count + $trdFiles.Count
+$allFiles = @($commonFiles) + @($systemFiles) + @($qotFiles) + @($trdFiles)
+$totalFiles = $allFiles.Count
 Write-Host "Step 2: Generating $totalFiles protobuf files..." -ForegroundColor Yellow
 Write-Host ""
 
-$generated = 0
-
-# Generate common files
-Write-Host "  [Common Files]" -ForegroundColor Cyan
-foreach ($file in $commonFiles) {
-    Write-Host "    Generating $file..." -NoNewline
-    & protoc --go_out=$PB_DIR --go_opt=paths=source_relative --proto_path=$PROTO_DIR $file 2>$null
-    if ($LASTEXITCODE -eq 0) { 
-        Write-Host " ✓" -ForegroundColor Green
-        $generated++
-    } else { 
-        Write-Host " ✗" -ForegroundColor Red 
-    }
-}
-
-# Generate system files  
-Write-Host "  [System Files]" -ForegroundColor Cyan
-foreach ($file in $systemFiles) {
-    Write-Host "    Generating $file..." -NoNewline
-    & protoc --go_out=$PB_DIR --go_opt=paths=source_relative --proto_path=$PROTO_DIR $file 2>$null
-    if ($LASTEXITCODE -eq 0) { 
-        Write-Host " ✓" -ForegroundColor Green
-        $generated++
-    } else { 
-        Write-Host " ✗" -ForegroundColor Red 
-    }
-}
-
-# Generate Qot files
-Write-Host "  [Qot Files - $($qotFiles.Count) files]" -ForegroundColor Cyan
-foreach ($file in $qotFiles) {
-    Write-Host "    Generating $file..." -NoNewline
-    & protoc --go_out=$PB_DIR --go_opt=paths=source_relative --proto_path=$PROTO_DIR $file 2>$null
-    if ($LASTEXITCODE -eq 0) { 
-        Write-Host " ✓" -ForegroundColor Green
-        $generated++
-    } else { 
-        Write-Host " ✗" -ForegroundColor Red 
-    }
-}
-
-# Generate Trd files
-Write-Host "  [Trd Files - $($trdFiles.Count) files]" -ForegroundColor Cyan
-foreach ($file in $trdFiles) {
-    Write-Host "    Generating $file..." -NoNewline
-    & protoc --go_out=$PB_DIR --go_opt=paths=source_relative --proto_path=$PROTO_DIR $file 2>$null
-    if ($LASTEXITCODE -eq 0) { 
-        Write-Host " ✓" -ForegroundColor Green
-        $generated++
-    } else { 
-        Write-Host " ✗" -ForegroundColor Red 
-    }
+# Generate all at once with module option for proper subdirectory structure
+Write-Host "  Generating all files..." -ForegroundColor Cyan
+$fileList = $allFiles -join " "
+& protoc --go_out=. --go_opt=module=$PROJECT --proto_path=$PROTO_DIR $fileList 2>$null
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "  ✓ All $totalFiles files generated successfully" -ForegroundColor Green
+} else {
+    Write-Host "  ✗ Generation failed" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "   ✓ Generated $generated / $totalFiles protobuf files" -ForegroundColor Green
+Write-Host "   ✓ Generated $totalFiles protobuf files" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════╝" -ForegroundColor Green

@@ -73,8 +73,8 @@ func (c *Client) logError(format string, v ...interface{}) {
 
 const (
 	ProtoID_InitConnect    = 1001
-	ProtoID_KeepAlive      = 1002
-	ProtoID_GetGlobalState = 1004
+	ProtoID_GetGlobalState = 1002
+	ProtoID_KeepAlive      = 1004
 )
 
 const (
@@ -192,6 +192,8 @@ type Client struct {
 	addr         string
 	reconnecting int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
 
+	rsaKey string // RSA public key used during last successful connection
+
 	// Metrics / 指標
 	metrics   *Metrics
 	metricsMu sync.RWMutex
@@ -284,6 +286,7 @@ func (c *Client) Connect(addr string) error {
 func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.mu.Lock()
 	c.addr = addr
+	c.rsaKey = rsaPublicKeyPEM
 	c.mu.Unlock()
 
 	// Dial with configured timeout
@@ -411,10 +414,6 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 			keepAliveInterval = DefaultKeepAliveInterval
 		}
 	}
-	interval := keepAliveInterval
-	if interval > 0 && interval < keepAliveInterval {
-		interval = keepAliveInterval
-	}
 	if keepAliveInterval > 0 {
 		c.wg.Add(1)
 		go c.keepAliveLoop(keepAliveInterval)
@@ -535,6 +534,15 @@ func (c *Client) reconnect() {
 
 	atomic.StoreInt32(&c.connActive, 0)
 
+	if c.conn != nil {
+		c.conn.Close()
+	}
+
+	c.mu.RLock()
+	addr := c.addr
+	rsaKey := c.rsaKey
+	c.mu.RUnlock()
+
 	interval := baseInterval
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		select {
@@ -546,7 +554,7 @@ func (c *Client) reconnect() {
 		c.logInfo("reconnect attempt %d/%d...\n", attempt, maxRetries)
 		time.Sleep(interval)
 
-		if err := c.Connect(c.addr); err != nil {
+		if err := c.ConnectWithRSA(addr, rsaKey); err != nil {
 			c.logWarn("reconnect failed: %v\n", err)
 			interval = time.Duration(float64(interval) * backoff)
 			continue
@@ -689,4 +697,3 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 
 	return nil
 }
-
