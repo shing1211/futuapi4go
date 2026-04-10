@@ -2,7 +2,7 @@
 //
 // This example demonstrates live streaming via the futuapi4go SDK:
 //   - Connect to Futu OpenD (TCP, not WebSocket)
-//   - Subscribe to HK.HSImain for multiple data types
+//   - Subscribe to HSImain for multiple data types
 //   - Handle real-time push notifications and print live data
 //   - Graceful shutdown on interrupt signal
 //
@@ -189,10 +189,10 @@ func runStreamTest(cli *futuapi.Client) error {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
 	security := &qotcommon.Security{
 		Market: &hkMarket,
-		Code:   ptrStr("HK.HSImain"),
+		Code:   ptrStr("HSImain"),
 	}
 
-	fmt.Printf("Subscribing to HK.HSImain (HK futures main contract)...\n\n")
+	fmt.Printf("Subscribing to HSImain (HK futures main contract)...\n\n")
 	subTypes := []qot.SubType{
 		qot.SubType_Basic,
 		qot.SubType_KL,
@@ -239,7 +239,7 @@ func runStreamTest(cli *futuapi.Client) error {
 		case <-sigCh:
 			fmt.Println("\nInterrupted, cleaning up...")
 
-			fmt.Println("Unsubscribing from HK.HSImain...")
+			fmt.Println("Unsubscribing from HSImain...")
 			unsubReq := &qot.SubscribeRequest{
 				SecurityList:     []*qotcommon.Security{security},
 				SubTypeList:      subTypes,
@@ -284,7 +284,7 @@ func printSummary() {
 
 	if total == 0 {
 		fmt.Println("\nNo pushes received. Possible causes:")
-		fmt.Println("  - HK.HSImain may not be trading right now (market closed or holiday)")
+		fmt.Println("  - HSImain may not be trading right now (market closed or holiday)")
 		fmt.Println("  - Futu OpenD is not connected to the market data feed")
 		fmt.Println("  - Check that OpenD is running: Tools -> Market Alerts & Trading")
 	}
