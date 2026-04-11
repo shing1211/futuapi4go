@@ -891,6 +891,270 @@ func RequestTradeDate(c *Client, market int32, startDate, endDate string, code s
 	return dates, nil
 }
 
+// OptChainItem represents a pair of call and put options at the same strike price.
+type OptChainItem struct {
+	Call *qotcommon.SecurityStaticInfo
+	Put  *qotcommon.SecurityStaticInfo
+}
+
+// OptChain represents the option chain for a single expiration date.
+type OptChain struct {
+	StrikeTime      string
+	StrikeTimestamp float64
+	Option          []*OptChainItem
+}
+
+// GetOptionChain returns the option chain for the given underlying security.
+func GetOptionChain(c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
+	marketPtr := market
+	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetOptionChain(c.inner, &qot.GetOptionChainRequest{
+		Owner:           owner,
+		IndexOptionType: indexOptionType,
+		Type:            optType,
+		Condition:       condition,
+		BeginTime:       beginTime,
+		EndTime:         endTime,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*OptChain, 0, len(resp.OptionChain))
+	for _, chain := range resp.OptionChain {
+		if chain == nil {
+			continue
+		}
+		oc := &OptChain{
+			StrikeTime:      chain.StrikeTime,
+			StrikeTimestamp: chain.StrikeTimestamp,
+			Option:          make([]*OptChainItem, 0, len(chain.Option)),
+		}
+		for _, opt := range chain.Option {
+			if opt == nil {
+				continue
+			}
+			item := &OptChainItem{
+				Call: opt.Call,
+				Put:  opt.Put,
+			}
+			oc.Option = append(oc.Option, item)
+		}
+		result = append(result, oc)
+	}
+	return result, nil
+}
+
+// WarrantData represents warrant data.
+type WarrantData struct {
+	Stock              *qotcommon.Security
+	Owner              *qotcommon.Security
+	Type               int32
+	Issuer             int32
+	MaturityTime       string
+	MaturityTimestamp  float64
+	ListTime           string
+	ListTimestamp      float64
+	LastTradeTime      string
+	LastTradeTimestamp float64
+	RecoveryPrice      float64
+	ConversionRatio    float64
+	LotSize            int32
+	StrikePrice        float64
+	LastClosePrice     float64
+	Name               string
+	CurPrice           float64
+	PriceChangeVal     float64
+	ChangeRate         float64
+	Status             int32
+	BidPrice           float64
+	AskPrice           float64
+	BidVol             int64
+	AskVol             int64
+	Volume             int64
+	Turnover           float64
+	Score              float64
+	Premium            float64
+	BreakEvenPoint     float64
+	Leverage           float64
+	Ipop               float64
+	PriceRecoveryRatio float64
+	ConversionPrice    float64
+	StreetRate         float64
+	StreetVol          int64
+	Amplitude          float64
+	IssueSize          int64
+	HighPrice          float64
+	LowPrice           float64
+	ImpliedVolatility  float64
+	Delta              float64
+	EffectiveLeverage  float64
+	UpperStrikePrice   float64
+	LowerStrikePrice   float64
+	InLinePriceStatus  int32
+}
+
+// GetWarrant returns the list of warrants for the given underlying security.
+func GetWarrant(c *Client, market int32, code string, begin, num int32, sortField int32, ascend bool, optType, issuer, status int32) ([]*WarrantData, error) {
+	marketPtr := market
+	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetWarrant(c.inner, &qot.GetWarrantRequest{
+		Begin:     begin,
+		Num:       num,
+		SortField: sortField,
+		Ascend:    ascend,
+		Owner:     owner,
+		TypeList:  []int32{optType},
+		Status:    status,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*WarrantData, 0, len(resp.WarrantDataList))
+	for _, w := range resp.WarrantDataList {
+		if w == nil {
+			continue
+		}
+		result = append(result, &WarrantData{
+			Stock:              w.Stock,
+			Owner:              w.Owner,
+			Type:               w.Type,
+			Issuer:             w.Issuer,
+			MaturityTime:       w.MaturityTime,
+			MaturityTimestamp:  w.MaturityTimestamp,
+			ListTime:           w.ListTime,
+			ListTimestamp:      w.ListTimestamp,
+			LastTradeTime:      w.LastTradeTime,
+			LastTradeTimestamp: w.LastTradeTimestamp,
+			RecoveryPrice:      w.RecoveryPrice,
+			ConversionRatio:    w.ConversionRatio,
+			LotSize:            w.LotSize,
+			StrikePrice:        w.StrikePrice,
+			LastClosePrice:     w.LastClosePrice,
+			Name:               w.Name,
+			CurPrice:           w.CurPrice,
+			PriceChangeVal:     w.PriceChangeVal,
+			ChangeRate:         w.ChangeRate,
+			Status:             w.Status,
+			BidPrice:           w.BidPrice,
+			AskPrice:           w.AskPrice,
+			BidVol:             w.BidVol,
+			AskVol:             w.AskVol,
+			Volume:             w.Volume,
+			Turnover:           w.Turnover,
+			Score:              w.Score,
+			Premium:            w.Premium,
+			BreakEvenPoint:     w.BreakEvenPoint,
+			Leverage:           w.Leverage,
+			Ipop:               w.Ipop,
+			PriceRecoveryRatio: w.PriceRecoveryRatio,
+			ConversionPrice:    w.ConversionPrice,
+			StreetRate:         w.StreetRate,
+			StreetVol:          w.StreetVol,
+			Amplitude:          w.Amplitude,
+			IssueSize:          w.IssueSize,
+			HighPrice:          w.HighPrice,
+			LowPrice:           w.LowPrice,
+			ImpliedVolatility:  w.ImpliedVolatility,
+			Delta:              w.Delta,
+			EffectiveLeverage:  w.EffectiveLeverage,
+			UpperStrikePrice:   w.UpperStrikePrice,
+			LowerStrikePrice:   w.LowerStrikePrice,
+			InLinePriceStatus:  w.InLinePriceStatus,
+		})
+	}
+	return result, nil
+}
+
+// Snapshot represents security snapshot data.
+type Snapshot struct {
+	Security  *qotcommon.Security
+	Name      string
+	Type      int32
+	IsSuspend bool
+	LotSize   int32
+	CurPrice  float64
+	ChangeVal float64
+	HighPrice float64
+	LowPrice  float64
+	OpenPrice float64
+	LastClose float64
+	Volume    int64
+	Turnover  float64
+}
+
+// GetSecuritySnapshot returns snapshot data for the given securities.
+func GetSecuritySnapshot(c *Client, securities []*qotcommon.Security) ([]*Snapshot, error) {
+	resp, err := qot.GetSecuritySnapshot(c.inner, &qot.GetSecuritySnapshotRequest{
+		SecurityList: securities,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*Snapshot, 0, len(resp.SnapshotList))
+	for _, s := range resp.SnapshotList {
+		if s == nil || s.Basic == nil {
+			continue
+		}
+		basic := s.Basic
+		result = append(result, &Snapshot{
+			Security:  basic.Security,
+			Name:      getStr(basic.Name),
+			Type:      getInt32(basic.Type),
+			IsSuspend: getBool(basic.IsSuspend),
+			LotSize:   getInt32(basic.LotSize),
+			CurPrice:  getFloat64(basic.CurPrice),
+			ChangeVal: getFloat64(basic.CurPrice) - getFloat64(basic.LastClosePrice),
+			HighPrice: getFloat64(basic.HighPrice),
+			LowPrice:  getFloat64(basic.LowPrice),
+			OpenPrice: getFloat64(basic.OpenPrice),
+			LastClose: getFloat64(basic.LastClosePrice),
+			Volume:    getInt64(basic.Volume),
+			Turnover:  getFloat64(basic.Turnover),
+		})
+	}
+	return result, nil
+}
+
+func getStr(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func getInt32(i *int32) int32 {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func getBool(b *bool) bool {
+	if b == nil {
+		return false
+	}
+	return *b
+}
+
+func getFloat64(f *float64) float64 {
+	if f == nil {
+		return 0
+	}
+	return *f
+}
+
+func getInt64(i *int64) int64 {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
 // GlobalState represents global connection state.
 type GlobalState struct {
 	ServerVer     int32
