@@ -494,6 +494,78 @@ func GetPlateSet(c *Client, market int32) ([]Plate, error) {
 	return plates, nil
 }
 
+// GetIpoList retrieves IPO list.
+func GetIpoList(c *Client, market int32) ([]IpoData, error) {
+	resp, err := qot.GetIpoList(c.inner, &qot.GetIpoListRequest{Market: market})
+	if err != nil {
+		return nil, err
+	}
+
+	ipos := make([]IpoData, 0)
+	for _, ip := range resp.IpoList {
+		if ip.Basic == nil {
+			continue
+		}
+		code := ""
+		if ip.Basic.Security != nil && ip.Basic.Security.Code != nil {
+			code = *ip.Basic.Security.Code
+		}
+		ipos = append(ipos, IpoData{
+			Code:     code,
+			Name:     ip.Basic.Name,
+			ListDate: ip.Basic.ListTime,
+		})
+	}
+	return ipos, nil
+}
+
+// GetUserSecurityGroup retrieves user security group list.
+func GetUserSecurityGroup(c *Client) ([]UserSecurityGroup, error) {
+	resp, err := qot.GetUserSecurityGroup(c.inner, &qot.GetUserSecurityGroupRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	groups := make([]UserSecurityGroup, 0)
+	for _, g := range resp.GroupList {
+		groups = append(groups, UserSecurityGroup{Name: g.GroupName})
+	}
+	return groups, nil
+}
+
+// GetUserSecurity retrieves user security list by group name.
+func GetUserSecurity(c *Client, groupName string) ([]StaticInfo, error) {
+	resp, err := qot.GetUserSecurity(c.inner, groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]StaticInfo, 0)
+	for _, s := range resp.StaticInfoList {
+		if s == nil || s.Basic == nil {
+			continue
+		}
+		code := ""
+		if s.Basic.Security != nil && s.Basic.Security.Code != nil {
+			code = *s.Basic.Security.Code
+		}
+		name := ""
+		if s.Basic.Name != nil {
+			name = *s.Basic.Name
+		}
+		secType := int32(0)
+		if s.Basic.SecType != nil {
+			secType = *s.Basic.SecType
+		}
+		infos = append(infos, StaticInfo{
+			Code: code,
+			Name: name,
+			Type: secType,
+		})
+	}
+	return infos, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -627,6 +699,76 @@ type FutureInfo struct {
 type Plate struct {
 	Code string
 	Name string
+}
+
+// IpoData represents IPO data.
+type IpoData struct {
+	Code     string
+	Name     string
+	ListDate string
+}
+
+// UserSecurityGroup represents user security group.
+type UserSecurityGroup struct {
+	Name string
+}
+
+// SubInfo represents subscription info.
+type SubInfo struct {
+	IsSub    bool
+	SubTypes []int32
+	Security string
+}
+
+// CapitalDistribution represents capital distribution.
+type CapitalDistribution struct {
+	MainInflow   float64
+	MainOutflow  float64
+	MidInflow    float64
+	MidOutflow   float64
+	SmallInflow  float64
+	SmallOutflow float64
+	BigInflow    float64
+	BigOutflow   float64
+}
+
+// OptionExpiration represents option expiration date.
+type OptionExpiration struct {
+	Date string
+	Days int32
+	Desc string
+}
+
+// OptionItem represents option chain item.
+type OptionItem struct {
+	Code         string
+	Name         string
+	CallPut      int32
+	Strike       float64
+	Expire       string
+	Volume       int64
+	OpenInterest int64
+}
+
+// WarrantItem represents warrant data.
+type WarrantItem struct {
+	Code    string
+	Name    string
+	CallPut int32
+	Strike  float64
+	Expire  string
+	Volume  int64
+	Price   float64
+}
+
+// StockFilterItem represents stock filter result.
+type StockFilterItem struct {
+	Code      string
+	Name      string
+	Price     float64
+	ChangePct float64
+	Volume    int64
+	Amount    float64
 }
 
 // Common market constants.
