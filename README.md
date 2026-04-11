@@ -33,81 +33,65 @@
 
 ### Key Highlights
 
-- **🚀 Production-Ready**: Battle-tested with 71 APIs implemented
+- **🚀 Production-Ready**: Battle-tested with 37 wrapper functions + 74 protobuf APIs
 - **📊 Real-Time Data**: Live quotes, K-lines, order books, tick-by-tick
 - **💼 Full Trading**: Order placement, modification, position management
 - **🔔 Push Notifications**: Real-time market data and order updates
 - **🧪 Comprehensive Tests**: 46 tests + 10 benchmarks, all passing
-- **📖 Complete Documentation**: 12 detailed guides
+- **📖 Complete Documentation**: 13 detailed guides
 - **🎯 29 Examples**: From basic usage to algorithmic trading strategies
+- **🔧 High-Level Wrappers**: 37 easy-to-use wrapper functions
 
 ### Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   Your Trading System                     │
-│  (Algorithms, Strategies, Risk Management, UI)           │
-└────────────────┬────────────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────────────────────┐
 │                  futuapi4go SDK                          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ pkg/qot  │  │ pkg/trd  │  │ pkg/sys  │  High-Level  │
-│  │  (37)    │  │  (16)    │  │  (5)     │   APIs       │
-│  └──────────┘  └──────────┘  └──────────┘              │
-│  ┌──────────────────────────────────────────┐           │
-│  │       internal/client (Core)            │           │
-│  │  TCP • Reconnect • Heartbeat • Metrics  │           │
-│  └──────────────────────────────────────────┘           │
-└────────────────┬────────────────────────────────────────┘
-                 │ TCP Protocol (44-byte header + protobuf)
-                 ▼
-┌─────────────────────────────────────────────────────────┐
-│               Futu OpenD Gateway                         │
-│         (Local daemon on 127.0.0.1:11111)               │
-└────────────────┬────────────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────────────────────┐
-│              Futu Backend Servers                        │
-│         (Market Data & Trading Systems)                  │
-└─────────────────────────────────────────────────────────┘
+│  │ client/  │  High-Level Wrapper APIs (37)            │
+│  └──────────┘  ┌────────────────────────────────────┐ │
+│                │       pkg/ (Low-Level)               │ │
+│  ┌──────────┐  │ pkg/qot (37) | pkg/trd (16) |       │ │
+│  │internal/ │  │ pkg/sys (5) | pkg/pb (74)          │ │
+│  │ client/  │  └────────────────────────────────────┘ │
+│  │ Conn,etc │                                            │
+│  └──────────┘                                            │
 ```
 
 ---
 
 ## ✨ Features
 
-### Market Data (37 APIs)
+### Market Data (37 wrapper functions)
 
-| Category | APIs | Description |
-|----------|------|-------------|
-| **Real-Time Quotes** | GetBasicQot, GetKL, GetOrderBook | Live prices, K-lines, order books |
-| **Tick Data** | GetTicker, GetRT, GetBroker | Tick-by-tick trades, minute data, broker queue |
-| **Market Info** | GetStaticInfo, GetTradeDate, GetMarketState | Security details, trading dates, market status |
+| Category | Wrapper Functions | Description |
+|----------|-------------------|-------------|
+| **Real-Time Quotes** | GetQuote, GetKLines, RequestHistoryKL | Live prices, K-lines, historical data |
+| **Tick Data** | GetOrderBook, GetTicker, GetRT, GetBroker | Order book, tick-by-tick, minute data, broker queue |
+| **Market Info** | GetStaticInfo, GetTradeDate, RequestTradeDate, GetMarketState | Security details, trading dates, market status |
 | **Capital Flow** | GetCapitalFlow, GetCapitalDistribution | Money flow analysis |
 | **Options** | GetOptionChain, GetOptionExpirationDate | Options data |
-| **Screening** | StockFilter, GetWarrant, GetIpoList | Stock screening, warrants, IPOs |
-| **User Data** | GetUserSecurity, SetPriceReminder | Watchlists, price alerts |
-| **Subscriptions** | Subscribe, GetSubInfo, RegQotPush | Real-time push notifications |
+| **Warrants** | GetWarrant | Warrant data |
+| **Screening** | GetSecuritySnapshot, GetCodeChange, GetIpoList | Snapshots, code changes, IPOs |
+| **User Data** | GetUserSecurity, GetUserSecurityGroup, ModifyUserSecurity | Watchlists, security groups |
+| **Subscriptions** | Subscribe, GetSubInfo | Real-time push subscriptions |
+| **Reference** | GetReference, GetPlateSecurity, GetOwnerPlate, GetPlateSet | Stock references, plates |
 
-### Trading (16 APIs)
+### Trading (7 wrapper functions)
 
-| Category | APIs | Description |
-|----------|------|-------------|
-| **Account** | GetAccList, GetFunds, UnlockTrade | Account management, funds, unlock |
-| **Orders** | PlaceOrder, ModifyOrder, GetOrderList | Order placement, modification, queries |
+| Category | Wrapper Functions | Description |
+|----------|-------------------|-------------|
+| **Account** | GetAccountList, UnlockTrading | Account management, unlock |
+| **Orders** | PlaceOrder, GetOrderList | Order placement, queries |
 | **Positions** | GetPositionList | Current positions with P/L |
-| **Fills** | GetOrderFillList, GetHistoryOrderFillList | Execution history |
-| **Advanced** | GetMarginRatio, GetMaxTrdQtys, GetOrderFee | Margin, max quantity, fee calculation |
+| **Funds** | GetFunds | Account funds |
+| **Fills** | GetOrderFillList | Execution history |
 
-### System & Push (10 APIs)
+### System (3 wrapper functions)
 
-| Category | APIs | Description |
-|----------|------|-------------|
+| Category | Wrapper Functions | Description |
+|----------|-------------------|-------------|
 | **System** | GetGlobalState, GetUserInfo, GetDelayStatistics | Connection state, user info, latency stats |
-| **Push** | Qot/Trd push handlers (11 types) | Real-time quotes, orders, fills notifications |
 
 ---
 
@@ -256,6 +240,8 @@ Futu OpenD 10.2.6208+
 
 ```
 futuapi4go/
+├── client/                     # High-level wrapper APIs (37 functions)
+│
 ├── api/proto/                   # Protobuf definitions (74 files)
 │   ├── Common.proto            # Shared types
 │   ├── Qot_*.proto             # Market data protocols
@@ -273,6 +259,8 @@ futuapi4go/
 │   │   └── algo_*/             # 5 algorithmic strategies
 │   └── simulator/              # Mock OpenD server
 │
+├── client/                     # High-level wrapper APIs (37 functions)
+│
 ├── internal/
 │   ├── client/                 # Core client implementation
 │   │   ├── client.go           # Main Client type
@@ -283,9 +271,9 @@ futuapi4go/
 │   └── ws/                     # WebSocket transport (alternative)
 │
 ├── pkg/
-│   ├── qot/                    # Market Data APIs (37 functions)
-│   ├── trd/                    # Trading APIs (16 functions)
-│   ├── sys/                    # System APIs (5 functions)
+│   ├── qot/                    # Market Data Low-Level APIs (37 functions)
+│   ├── trd/                    # Trading Low-Level APIs (16 functions)
+│   ├── sys/                    # System Low-Level APIs (5 functions)
 │   ├── push/                   # Push notification parsers
 │   └── pb/                     # Generated protobuf code (74 packages)
 │
