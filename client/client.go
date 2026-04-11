@@ -1155,6 +1155,40 @@ func getInt64(i *int64) int64 {
 	return *i
 }
 
+// CodeChangeInfo represents information about a code change.
+type CodeChangeInfo struct {
+	Type            int32
+	Security        *qotcommon.Security
+	RelatedSecurity *qotcommon.Security
+	PublicTime      string
+	EffectiveTime   string
+}
+
+// GetCodeChange returns code change information for the given securities.
+func GetCodeChange(c *Client, securities []*qotcommon.Security) ([]*CodeChangeInfo, error) {
+	resp, err := qot.GetCodeChange(c.inner, &qot.GetCodeChangeRequest{
+		SecurityList: securities,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*CodeChangeInfo, 0, len(resp.CodeChangeList))
+	for _, cc := range resp.CodeChangeList {
+		if cc == nil {
+			continue
+		}
+		result = append(result, &CodeChangeInfo{
+			Type:            cc.Type,
+			Security:        cc.Security,
+			RelatedSecurity: cc.RelatedSecurity,
+			PublicTime:      cc.PublicTime,
+			EffectiveTime:   cc.EffectiveTime,
+		})
+	}
+	return result, nil
+}
+
 // GlobalState represents global connection state.
 type GlobalState struct {
 	ServerVer     int32
