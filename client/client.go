@@ -476,6 +476,24 @@ func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
 	return infos, nil
 }
 
+// GetPlateSet retrieves plate set (板块) list.
+func GetPlateSet(c *Client, market int32) ([]Plate, error) {
+	resp, err := qot.GetPlateSet(c.inner, &qot.GetPlateSetRequest{Market: market})
+	if err != nil {
+		return nil, err
+	}
+
+	plates := make([]Plate, len(resp.PlateSetList))
+	for i, p := range resp.PlateSetList {
+		code := ""
+		if p.Plate != nil && p.Plate.Code != nil {
+			code = *p.Plate.Code
+		}
+		plates[i] = Plate{Code: code, Name: p.Name}
+	}
+	return plates, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -603,6 +621,12 @@ type FutureInfo struct {
 	Name     string
 	Expire   string
 	InstType int32
+}
+
+// Plate represents a market plate (板块).
+type Plate struct {
+	Code string
+	Name string
 }
 
 // Common market constants.
