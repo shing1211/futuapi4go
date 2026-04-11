@@ -8,7 +8,7 @@
 ### Current State
 
 ✅ **All Systems Operational**
-- 37 high-level wrapper functions implemented
+- 43 high-level wrapper functions implemented
 - 74 low-level protobuf APIs available
 - 46 tests + 10 benchmarks passing
 - 29 example programs compile and run
@@ -120,9 +120,9 @@ PASS (27.521s)
 
 ### Phase 2: High-Level Wrappers (IN PROGRESS 🚧)
 
-**Progress**: 37/74 wrapper functions implemented (50%)
+**Progress**: 43/74 wrapper functions implemented (58%)
 
-#### Completed Wrapper Functions (37)
+#### Completed Wrapper Functions (43)
 
 | # | Category | Function | Status |
 |---|----------|----------|--------|
@@ -151,20 +151,24 @@ PASS (27.521s)
 | 23 | Market Data | GetOptionExpirationDate | ✅ |
 | 24 | Market Data | ModifyUserSecurity | ✅ |
 | 25 | Market Data | GetSubInfo | ✅ |
-| 26 | Market Data | GetOptionChain | ✅ |
-| 27 | Market Data | GetWarrant | ✅ |
-| 28 | Market Data | GetSecuritySnapshot | ✅ |
-| 29 | Market Data | GetCodeChange | ✅ |
-| 30 | Trading | GetAccountList | ✅ |
-| 31 | Trading | UnlockTrading | ✅ |
-| 32 | Trading | PlaceOrder | ✅ |
-| 33 | Trading | GetPositionList | ✅ |
-| 34 | Trading | GetFunds | ✅ |
-| 35 | Trading | GetOrderList | ✅ |
-| 36 | Trading | GetOrderFillList | ✅ |
-| 37 | System | GetGlobalState | ✅ |
-| 38 | System | GetUserInfo | ✅ |
-| 39 | System | GetDelayStatistics | ✅ |
+| 26 | Market Data | StockFilter | ✅ |
+| 27 | Market Data | GetOptionChain | ✅ |
+| 28 | Market Data | GetWarrant | ✅ |
+| 29 | Market Data | GetSecuritySnapshot | ✅ |
+| 30 | Market Data | GetCodeChange | ✅ |
+| 31 | Trading | GetAccountList | ✅ |
+| 32 | Trading | UnlockTrading | ✅ |
+| 33 | Trading | PlaceOrder | ✅ |
+| 34 | Trading | ModifyOrder | ✅ |
+| 35 | Trading | GetPositionList | ✅ |
+| 36 | Trading | GetFunds | ✅ |
+| 37 | Trading | GetMaxTrdQtys | ✅ |
+| 38 | Trading | GetOrderList | ✅ |
+| 39 | Trading | GetHistoryOrderList | ✅ |
+| 40 | Trading | GetOrderFillList | ✅ |
+| 41 | System | GetGlobalState | ✅ |
+| 42 | System | GetUserInfo | ✅ |
+| 43 | System | GetDelayStatistics | ✅ |
 
 #### Remaining Wrapper Functions (TBD)
 

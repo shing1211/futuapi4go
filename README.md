@@ -33,14 +33,14 @@
 
 ### Key Highlights
 
-- **🚀 Production-Ready**: Battle-tested with 37 wrapper functions + 74 protobuf APIs
+- **🚀 Production-Ready**: Battle-tested with 43 wrapper functions + 74 protobuf APIs
 - **📊 Real-Time Data**: Live quotes, K-lines, order books, tick-by-tick
 - **💼 Full Trading**: Order placement, modification, position management
 - **🔔 Push Notifications**: Real-time market data and order updates
 - **🧪 Comprehensive Tests**: 46 tests + 10 benchmarks, all passing
 - **📖 Complete Documentation**: 13 detailed guides
 - **🎯 29 Examples**: From basic usage to algorithmic trading strategies
-- **🔧 High-Level Wrappers**: 37 easy-to-use wrapper functions
+- **🔧 High-Level Wrappers**: 43 easy-to-use wrapper functions
 
 ### Architecture
 
@@ -48,7 +48,7 @@
 ┌─────────────────────────────────────────────────────────┐
 │                  futuapi4go SDK                          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ client/  │  High-Level Wrapper APIs (37)            │
+│  │ client/  │  High-Level Wrapper APIs (43)            │
 │  └──────────┘  ┌────────────────────────────────────┐ │
 │                │       pkg/ (Low-Level)               │ │
 │  ┌──────────┐  │ pkg/qot (37) | pkg/trd (16) |       │ │
@@ -62,7 +62,7 @@
 
 ## ✨ Features
 
-### Market Data (37 wrapper functions)
+### Market Data (40 wrapper functions)
 
 | Category | Wrapper Functions | Description |
 |----------|-------------------|-------------|
@@ -72,19 +72,19 @@
 | **Capital Flow** | GetCapitalFlow, GetCapitalDistribution | Money flow analysis |
 | **Options** | GetOptionChain, GetOptionExpirationDate | Options data |
 | **Warrants** | GetWarrant | Warrant data |
-| **Screening** | GetSecuritySnapshot, GetCodeChange, GetIpoList | Snapshots, code changes, IPOs |
+| **Screening** | StockFilter, GetSecuritySnapshot, GetCodeChange, GetIpoList | Stock screening, snapshots, IPOs |
 | **User Data** | GetUserSecurity, GetUserSecurityGroup, ModifyUserSecurity | Watchlists, security groups |
 | **Subscriptions** | Subscribe, GetSubInfo | Real-time push subscriptions |
 | **Reference** | GetReference, GetPlateSecurity, GetOwnerPlate, GetPlateSet | Stock references, plates |
 
-### Trading (7 wrapper functions)
+### Trading (9 wrapper functions)
 
 | Category | Wrapper Functions | Description |
 |----------|-------------------|-------------|
 | **Account** | GetAccountList, UnlockTrading | Account management, unlock |
-| **Orders** | PlaceOrder, GetOrderList | Order placement, queries |
+| **Orders** | PlaceOrder, ModifyOrder, GetOrderList, GetHistoryOrderList | Order placement, modification, queries |
 | **Positions** | GetPositionList | Current positions with P/L |
-| **Funds** | GetFunds | Account funds |
+| **Funds** | GetFunds, GetMaxTrdQtys | Account funds, max quantities |
 | **Fills** | GetOrderFillList | Execution history |
 
 ### System (3 wrapper functions)
