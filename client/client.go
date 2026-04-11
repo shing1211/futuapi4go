@@ -673,6 +673,59 @@ func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
 	return plates, nil
 }
 
+// RequestHistoryKL requests historical K-line data.
+func RequestHistoryKL(c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.RequestHistoryKL(c.inner, &qot.RequestHistoryKLRequest{
+		Security:  sec,
+		KlType:    klType,
+		BeginTime: startDate,
+		EndTime:   endDate,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	klines := make([]KLine, 0)
+	for _, kl := range resp.KLList {
+		t := ""
+		if kl.Time != nil {
+			t = *kl.Time
+		}
+		o := float64(0)
+		if kl.OpenPrice != nil {
+			o = *kl.OpenPrice
+		}
+		h := float64(0)
+		if kl.HighPrice != nil {
+			h = *kl.HighPrice
+		}
+		l := float64(0)
+		if kl.LowPrice != nil {
+			l = *kl.LowPrice
+		}
+		c := float64(0)
+		if kl.ClosePrice != nil {
+			c = *kl.ClosePrice
+		}
+		v := int64(0)
+		if kl.Volume != nil {
+			v = *kl.Volume
+		}
+		klines = append(klines, KLine{
+			Time:   t,
+			Open:   o,
+			High:   h,
+			Low:    l,
+			Close:  c,
+			Volume: v,
+		})
+	}
+	return klines, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
