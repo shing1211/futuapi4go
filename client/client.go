@@ -203,6 +203,27 @@ func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderT
 	return &PlaceOrderResult{OrderID: resp.OrderID}, nil
 }
 
+// ModifyOrderOp constants for modifying orders.
+const (
+	ModifyOrderOpAmendPrice       = 1
+	ModifyOrderOpAmendQty         = 2
+	ModifyOrderOpAmendPriceAndQty = 3
+	ModifyOrderOpAmendToCancel    = 4
+)
+
+// ModifyOrder modifies or cancels an existing order.
+func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) error {
+	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
+		AccID:         accID,
+		TrdMarket:     market,
+		TrdEnv:        1,
+		OrderID:       orderID,
+		ModifyOrderOp: modifyOp,
+		Price:         price,
+		Qty:           qty,
+	})
+}
+
 // GetPositionList retrieves the current positions.
 func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 	resp, err := trd.GetPositionList(c.inner, &trd.GetPositionListRequest{
