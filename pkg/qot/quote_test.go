@@ -369,10 +369,10 @@ func TestSubTypeConstants(t *testing.T) {
 	}{
 		{SubType_Basic, 1},
 		{SubType_OrderBook, 2},
-		{SubType_Ticker, 3},
-		{SubType_KL, 4},
+		{SubType_Ticker, 4},
+		{SubType_KL, 6},
 		{SubType_RT, 5},
-		{SubType_Broker, 6},
+		{SubType_Broker, 14},
 	}
 
 	for _, tc := range tests {
@@ -396,9 +396,9 @@ func TestProtoIDConstants(t *testing.T) {
 		{"ProtoID_GetMarketSnapshot", 3203},
 		{"ProtoID_GetSecuritySnapshot", 3203},
 		{"ProtoID_GetBroker", 3014},
-		{"ProtoID_GetStaticInfo", 2201},
-		{"ProtoID_GetPlateSet", 2202},
-		{"ProtoID_GetPlateSecurity", 2203},
+		{"ProtoID_GetStaticInfo", 3202},
+		{"ProtoID_GetPlateSet", 3204},
+		{"ProtoID_GetPlateSecurity", 3205},
 		{"ProtoID_GetOwnerPlate", 3207},
 		{"ProtoID_GetReference", 3206},
 		{"ProtoID_GetTradeDate", 2205},
@@ -406,21 +406,21 @@ func TestProtoIDConstants(t *testing.T) {
 		{"ProtoID_GetMarketState", 3223},
 		{"ProtoID_GetSuspend", 2209},
 		{"ProtoID_GetCodeChange", 2210},
-		{"ProtoID_GetFutureInfo", 2211},
-		{"ProtoID_GetIpoList", 2212},
+		{"ProtoID_GetFutureInfo", 3218},
+		{"ProtoID_GetIpoList", 3217},
 		{"ProtoID_GetHoldingChangeList", 2213},
-		{"ProtoID_RequestRehab", 2214},
+		{"ProtoID_RequestRehab", 3105},
 		{"ProtoID_GetCapitalFlow", 3211},
 		{"ProtoID_GetCapitalDistribution", 3212},
 		{"ProtoID_StockFilter", 3215},
 		{"ProtoID_GetOptionChain", 3209},
 		{"ProtoID_GetOptionExpirationDate", 3224},
 		{"ProtoID_GetWarrant", 3210},
-		{"ProtoID_GetUserSecurity", 2401},
-		{"ProtoID_GetUserSecurityGroup", 2402},
-		{"ProtoID_ModifyUserSecurity", 2403},
-		{"ProtoID_GetPriceReminder", 2404},
-		{"ProtoID_SetPriceReminder", 2405},
+		{"ProtoID_GetUserSecurity", 3213},
+		{"ProtoID_GetUserSecurityGroup", 3222},
+		{"ProtoID_ModifyUserSecurity", 3214},
+		{"ProtoID_GetPriceReminder", 3221},
+		{"ProtoID_SetPriceReminder", 3220},
 		{"ProtoID_Subscribe", 3001},
 		{"ProtoID_GetSubInfo", 3003},
 		{"ProtoID_RegQotPush", 3003},
@@ -1373,4 +1373,3 @@ func TestRequestHistoryKLQuotaResponseConstruction(t *testing.T) {
 		t.Errorf("expected RemainQuota 450, got %d", rsp.RemainQuota)
 	}
 }
-
