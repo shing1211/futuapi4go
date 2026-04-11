@@ -566,6 +566,113 @@ func GetUserSecurity(c *Client, groupName string) ([]StaticInfo, error) {
 	return infos, nil
 }
 
+// GetMarketState retrieves market state (trading status).
+func GetMarketState(c *Client, market int32, code string) (int32, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetMarketState(c.inner, &qot.GetMarketStateRequest{
+		SecurityList: []*qotcommon.Security{sec},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	if len(resp.MarketInfoList) == 0 {
+		return 0, nil
+	}
+
+	return resp.MarketInfoList[0].MarketState, nil
+}
+
+// CapitalFlow represents capital flow data.
+type CapitalFlow struct {
+	Time        string
+	InFlow      float64
+	MainInFlow  float64
+	SuperInFlow float64
+	BigInFlow   float64
+	MidInFlow   float64
+	SmlInFlow   float64
+}
+
+// GetCapitalFlow retrieves capital flow data.
+func GetCapitalFlow(c *Client, market int32, code string) ([]CapitalFlow, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetCapitalFlow(c.inner, &qot.GetCapitalFlowRequest{
+		Security: sec,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	flows := make([]CapitalFlow, 0)
+	for _, f := range resp.FlowItemList {
+		flows = append(flows, CapitalFlow{
+			Time:        f.Time,
+			InFlow:      f.InFlow,
+			MainInFlow:  f.MainInFlow,
+			SuperInFlow: f.SuperInFlow,
+			BigInFlow:   f.BigInFlow,
+			MidInFlow:   f.MidInFlow,
+			SmlInFlow:   f.SmlInFlow,
+		})
+	}
+	return flows, nil
+}
+
+// GetCapitalDistribution retrieves capital distribution.
+func GetCapitalDistribution(c *Client, market int32, code string) (*CapitalDistribution, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetCapitalDistribution(c.inner, sec)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.CapitalDistribution == nil {
+		return nil, nil
+	}
+
+	cd := resp.CapitalDistribution
+	return &CapitalDistribution{
+		MainInflow:   cd.CapitalInSuper,
+		BigInflow:    cd.CapitalInBig,
+		MidInflow:    cd.CapitalInMid,
+		SmallInflow:  cd.CapitalInSmall,
+		MainOutflow:  cd.CapitalOutSuper,
+		BigOutflow:   cd.CapitalOutBig,
+		MidOutflow:   cd.CapitalOutMid,
+		SmallOutflow: cd.CapitalOutSmall,
+	}, nil
+}
+
+// GetOwnerPlate retrieves owner plates.
+func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetOwnerPlate(c.inner, &qot.GetOwnerPlateRequest{
+		SecurityList: []*qotcommon.Security{sec},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	plates := make([]string, 0)
+	for _, p := range resp.OwnerPlateList {
+		for _, pi := range p.PlateInfoList {
+			if pi.Name != nil {
+				plates = append(plates, *pi.Name)
+			}
+		}
+	}
+	return plates, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -769,6 +876,13 @@ type StockFilterItem struct {
 	ChangePct float64
 	Volume    int64
 	Amount    float64
+}
+
+// MarketStateInfo represents market state info.
+type MarketStateInfo struct {
+	Code        string
+	Name        string
+	MarketState int32
 }
 
 // Common market constants.
