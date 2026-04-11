@@ -955,6 +955,46 @@ type OptChain struct {
 	Option          []*OptChainItem
 }
 
+// StockFilterResult represents a single stock filter result.
+type StockFilterResult struct {
+	Security   *qotcommon.Security
+	Name       string
+	CurPrice   float64
+	ChangeRate float64
+	Volume     int64
+	Turnover   float64
+	HighPrice  float64
+	LowPrice   float64
+}
+
+// StockFilter filters stocks based on basic criteria.
+func StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResult, error) {
+	resp, err := qot.StockFilter(c.inner, &qot.StockFilterRequest{
+		Market: market,
+		Begin:  begin,
+		Num:    num,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*StockFilterResult, 0, len(resp.DataList))
+	for _, d := range resp.DataList {
+		if d == nil {
+			continue
+		}
+		result = append(result, &StockFilterResult{
+			Security:   d.Security,
+			Name:       d.Name,
+			CurPrice:   0,
+			ChangeRate: 0,
+			Volume:     0,
+			Turnover:   0,
+		})
+	}
+	return result, nil
+}
+
 // GetOptionChain returns the option chain for the given underlying security.
 func GetOptionChain(c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
 	marketPtr := market
