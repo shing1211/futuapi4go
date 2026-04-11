@@ -69,8 +69,8 @@ func main() {
 	}
 	fmt.Printf("InitConnect response: ProtoID=%d, BodyLen=%d\n", resp.ProtoID, resp.BodyLen)
 
-	market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700"
+	market := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain"
 	sec := &qotcommon.Security{Market: &market, Code: &code}
 	qotReq := &qotgetbasicqot.C2S{SecurityList: []*qotcommon.Security{sec}}
 	qotPkt := &qotgetbasicqot.Request{C2S: qotReq}
@@ -135,4 +135,3 @@ func readResponse(conn net.Conn) (*Header, error) {
 	binary.Read(bytes.NewReader(header), binary.LittleEndian, &h)
 	return &h, nil
 }
-

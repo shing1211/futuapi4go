@@ -37,16 +37,11 @@ func main() {
 	}
 	fmt.Printf("✓ Connected! ConnID=%d\n\n", cli.GetConnID())
 
-	// Define securities to query
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
-	shMarket := int32(qotcommon.QotMarket_QotMarket_CNSH_Security)
+	// Define securities to query (using HK futures for HSI)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")},  // Tencent
-		{Market: &hkMarket, Code: ptrStr("09988")},  // Alibaba
-		{Market: &usMarket, Code: ptrStr("AAPL")},   // Apple
-		{Market: &shMarket, Code: ptrStr("600519")}, // Kweichow Moutai
+		{Market: &hkFutureMarket, Code: ptrStr("HSImain")}, // HSI Futures Main Contract
 	}
 
 	// 1. Get Real-time Quotes
@@ -247,4 +242,3 @@ func ptrInt32(v int32) *int32       { return &v }
 func ptrInt64(v int64) *int64       { return &v }
 func ptrFloat64(v float64) *float64 { return &v }
 func ptrBool(v bool) *bool          { return &v }
-

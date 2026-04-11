@@ -24,35 +24,35 @@ func main() {
 	if addr == "" {
 		addr = "127.0.0.1:11111"
 	}
-	
+
 	fmt.Println("╔════════════════════════════════════════════════╗")
 	fmt.Println("║   FutuAPI4Go - Real OpenD Connection Test     ║")
 	fmt.Println("╚════════════════════════════════════════════════╝")
 	fmt.Println()
-	
+
 	// Create client
 	cli := futuapi.New()
 	defer cli.Close()
-	
+
 	// Connect
 	fmt.Printf("📡 Connecting to %s...\n", addr)
 	if err := cli.Connect(addr); err != nil {
 		log.Fatalf("❌ Connection failed: %v", err)
 	}
 	fmt.Printf("✅ Connected! ConnID=%d, ServerVer=%d\n\n", cli.GetConnID(), cli.GetServerVer())
-	
+
 	// Test 1: System APIs
 	fmt.Println("=== Test 1: System APIs ===")
 	testSystemAPIs(cli)
-	
+
 	// Test 2: Market Data
 	fmt.Println("\n=== Test 2: Market Data ===")
 	testMarketData(cli)
-	
+
 	// Test 3: Trading APIs
 	fmt.Println("\n=== Test 3: Trading APIs ===")
 	testTradingAPIs(cli)
-	
+
 	fmt.Println("\n╔════════════════════════════════════════════════╗")
 	fmt.Println("║   ✅ All Tests Complete! SDK is working!       ║")
 	fmt.Println("╚════════════════════════════════════════════════╝")
@@ -65,61 +65,61 @@ func testSystemAPIs(cli *futuapi.Client) {
 		fmt.Printf("❌ GetGlobalState failed: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("✓ GetGlobalState:\n")
 	fmt.Printf("  HK Market: %d | US Market: %d\n", state.MarketHK, state.MarketUS)
 	fmt.Printf("  Qot Logged: %v | Trd Logged: %v\n", state.QotLogined, state.TrdLogined)
 	fmt.Printf("  ServerVer: %d | BuildNo: %d\n", state.ServerVer, state.ServerBuildNo)
-	
+
 	// GetUserInfo
 	user, err := sys.GetUserInfo(cli)
 	if err != nil {
 		fmt.Printf("❌ GetUserInfo failed: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("✓ GetUserInfo:\n")
 	fmt.Printf("  NickName: %s | UserID: %d\n", user.NickName, user.UserID)
 	fmt.Printf("  ApiLevel: %s | Need Agree Disclaimer: %v\n", user.ApiLevel, user.IsNeedAgreeDisclaimer)
 }
 
 func testMarketData(cli *futuapi.Client) {
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+
 	// Test GetBasicQot
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")}, // Tencent
+		{Market: &hkFutureMarket, Code: ptrStr("HSImain")}, // HSI Futures Main Contract
 	}
-	
-	fmt.Printf("📊 Getting quotes for: %s...\n", "00700")
+
+	fmt.Printf("📊 Getting quotes for: %s...\n", "HSImain")
 	quotes, err := qot.GetBasicQot(cli, securities)
 	if err != nil {
 		fmt.Printf("❌ GetBasicQot failed: %v\n", err)
 		return
 	}
-	
+
 	for _, q := range quotes {
 		fmt.Printf("✓ %s (%s):\n", q.Security.GetCode(), q.Name)
 		fmt.Printf("  Price: %.2f | Open: %.2f | High: %.2f | Low: %.2f\n",
 			q.CurPrice, q.OpenPrice, q.HighPrice, q.LowPrice)
 		fmt.Printf("  Volume: %d | Turnover: %.0f\n", q.Volume, q.Turnover)
 	}
-	
+
 	// Test GetKL
-	fmt.Printf("\n📈 Getting K-line data for %s...\n", "00700")
+	fmt.Printf("\n📈 Getting K-line data for %s...\n", "HSImain")
 	klReq := &qot.GetKLRequest{
 		Security:  securities[0],
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
 		KLType:    int32(qotcommon.KLType_KLType_Day),
 		ReqNum:    3,
 	}
-	
+
 	klResp, err := qot.GetKL(cli, klReq)
 	if err != nil {
 		fmt.Printf("❌ GetKL failed: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("✓ K-line Data (%s):\n", klResp.Name)
 	for i, kl := range klResp.KLList {
 		fmt.Printf("  [%d] %s | O:%.2f H:%.2f L:%.2f C:%.2f | V:%d\n",
@@ -129,7 +129,7 @@ func testMarketData(cli *futuapi.Client) {
 
 func testTradingAPIs(cli *futuapi.Client) {
 	trdCategory := int32(trdcommon.TrdCategory_TrdCategory_Security)
-	
+
 	// GetAccList
 	fmt.Printf("👤 Getting account list...\n")
 	accResp, err := trd.GetAccList(cli, trdCategory, false)
@@ -137,7 +137,7 @@ func testTradingAPIs(cli *futuapi.Client) {
 		fmt.Printf("❌ GetAccList failed: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("✓ Found %d accounts\n", len(accResp.AccList))
 	for i, acc := range accResp.AccList {
 		trdEnv := "Simulation"
@@ -147,24 +147,24 @@ func testTradingAPIs(cli *futuapi.Client) {
 		fmt.Printf("  [%d] AccID: %d | TrdEnv: %s | AccType: %d\n",
 			i+1, acc.AccID, trdEnv, acc.AccType)
 	}
-	
+
 	// GetFunds (if we have an account)
 	if len(accResp.AccList) > 0 {
 		accID := accResp.AccList[0].AccID
 		hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
-		
+
 		fmt.Printf("\n💰 Getting funds for account %d...\n", accID)
 		fundsReq := &trd.GetFundsRequest{
 			AccID:     accID,
 			TrdMarket: hkMarket,
 		}
-		
+
 		fundsResp, err := trd.GetFunds(cli, fundsReq)
 		if err != nil {
 			fmt.Printf("❌ GetFunds failed: %v\n", err)
 			return
 		}
-		
+
 		f := fundsResp.Funds
 		fmt.Printf("✓ Account Funds:\n")
 		fmt.Printf("  TotalAssets: %.2f | Cash: %.2f | MarketVal: %.2f\n",
@@ -174,4 +174,3 @@ func testTradingAPIs(cli *futuapi.Client) {
 }
 
 func ptrStr(s string) *string { return &s }
-

@@ -60,15 +60,15 @@ func main() {
 	fmt.Println()
 
 	// Define market and security
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700"
-	sec := &qotcommon.Security{Market: &hkMarket, Code: &code}
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain"
+	sec := &qotcommon.Security{Market: &hkFutureMarket, Code: &code}
 
 	// Test 1: GetStaticInfo
 	fmt.Println("📋 Test 1: GetStaticInfo")
 	staticReq := &qot.GetStaticInfoRequest{
-		Market:  hkMarket,
-		SecType: int32(qotcommon.SecurityType_SecurityType_Eqty),
+		Market:  hkFutureMarket,
+		SecType: int32(qotcommon.SecurityType_SecurityType_Future),
 	}
 	staticResp, err := qot.GetStaticInfo(cli, staticReq)
 	if err != nil {
@@ -156,4 +156,3 @@ func main() {
 
 // Wait briefly for any push notifications
 func wait() { time.Sleep(2 * time.Second) }
-

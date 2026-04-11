@@ -93,16 +93,11 @@ func connect(cli *futuapi.Client, addr string) error {
 func runMarketDataDemo(cli *futuapi.Client) {
 	printSection("1. Market Data - Basic")
 
-	// Define securities
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
-	shMarket := int32(qotcommon.QotMarket_QotMarket_CNSH_Security)
+	// Define securities (using HK futures for HSI)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")},  // Tencent
-		{Market: &hkMarket, Code: ptrStr("09988")},  // Alibaba
-		{Market: &usMarket, Code: ptrStr("AAPL")},   // Apple
-		{Market: &shMarket, Code: ptrStr("600519")}, // Kweichow Moutai
+		{Market: &hkFutureMarket, Code: ptrStr("HSImain")}, // HSI Futures Main Contract
 	}
 
 	// 1.1 Real-time Quotes
@@ -449,4 +444,3 @@ func ptrFloat64(v float64) *float64 {
 
 // Ensure time import is used
 var _ = time.Now
-

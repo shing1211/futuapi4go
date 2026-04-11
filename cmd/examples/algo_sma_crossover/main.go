@@ -30,8 +30,8 @@ import (
 
 // Strategy parameters / 策略參數
 const (
-	ShortPeriod = 5  // Short-term SMA period / 短期SMA週期
-	LongPeriod  = 20 // Long-term SMA period / 長期SMA週期
+	ShortPeriod = 5   // Short-term SMA period / 短期SMA週期
+	LongPeriod  = 20  // Long-term SMA period / 長期SMA週期
 	TradeQty    = 100 // Number of shares to trade / 交易股數
 )
 
@@ -53,10 +53,10 @@ func main() {
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	// Configuration / 配置
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700" // Tencent / 騰訊
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain" // HSI Futures Main Contract
 	security := &qotcommon.Security{
-		Market: &hkMarket,
+		Market: &hkFutureMarket,
 		Code:   &code,
 	}
 
@@ -290,4 +290,3 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
-

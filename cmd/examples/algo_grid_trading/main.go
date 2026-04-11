@@ -32,10 +32,10 @@ import (
 
 // Grid configuration / 網格配置
 const (
-	GridCount    = 10    // Number of grids / 網格數量
-	GridSize     = 1.0   // Grid size in HKD / 每格大小（港幣）
-	OrderPerGrid = 100   // Shares per grid / 每格股數
-	MaxOrders    = 20    // Maximum open orders / 最大掛單數
+	GridCount    = 10  // Number of grids / 網格數量
+	GridSize     = 1.0 // Grid size in HKD / 每格大小（港幣）
+	OrderPerGrid = 100 // Shares per grid / 每格股數
+	MaxOrders    = 20  // Maximum open orders / 最大掛單數
 )
 
 func main() {
@@ -56,10 +56,10 @@ func main() {
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	// Configuration / 配置
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700" // Tencent / 騰訊
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain" // HSI Futures Main Contract / 恆生指數期貨
 	security := &qotcommon.Security{
-		Market: &hkMarket,
+		Market: &hkFutureMarket,
 		Code:   &code,
 	}
 
@@ -162,9 +162,9 @@ func calculateGridLevels(currentPrice float64) ([]float64, []float64) {
 
 // placeGridOrders places orders at specified price levels
 // 在指定價格級別下單
-func placeGridOrders(cli *futuapi.Client, accID uint64, security *qotcommon.Security, 
+func placeGridOrders(cli *futuapi.Client, accID uint64, security *qotcommon.Security,
 	prices []float64, side string, qty int, dryRun bool) int {
-	
+
 	orderCount := 0
 	trdSide := int32(trdcommon.TrdSide_TrdSide_Buy)
 	if side == "Sell" {
@@ -226,4 +226,3 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
-

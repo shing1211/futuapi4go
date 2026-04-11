@@ -39,14 +39,11 @@ func main() {
 	}
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
-	// Define securities to query / 定義要查詢的股票
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	usMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
+	// Define securities to query / 定義要查詢的股票 (using HK futures for HSI)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")},  // Tencent / 騰訊
-		{Market: &hkMarket, Code: ptrStr("09988")},  // Alibaba / 阿里巴巴
-		{Market: &usMarket, Code: ptrStr("AAPL")},   // Apple / 蘋果
+		{Market: &hkFutureMarket, Code: ptrStr("HSImain")}, // HSI Futures Main Contract / 恆生指數期貨
 	}
 
 	fmt.Printf("Querying quotes for %d securities...\n", len(securities))
@@ -77,4 +74,3 @@ func main() {
 
 // Helper functions / 輔助函數
 func ptrStr(s string) *string { return &s }
-

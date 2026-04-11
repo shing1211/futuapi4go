@@ -57,10 +57,10 @@ func main() {
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	// Configuration / 配置
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700" // Tencent / 騰訊
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain" // HSI Futures Main Contract / 恆生指數期貨
 	security := &qotcommon.Security{
-		Market: &hkMarket,
+		Market: &hkFutureMarket,
 		Code:   &code,
 	}
 
@@ -308,4 +308,3 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
-

@@ -33,10 +33,10 @@ import (
 
 // VWAP execution parameters / VWAP執行參數
 const (
-	HistoryDays    = 10   // Days to calculate VWAP / 計算VWAP的天數
-	ChildOrderPct  = 10   // % of total per child order / 每子單百分比
-	PriceThreshold = 0.3  // Execute if price is X% better than VWAP / 價格優於VWAP X%時執行
-	MaxAttempts    = 5    // Maximum execution attempts / 最大執行次數
+	HistoryDays    = 10  // Days to calculate VWAP / 計算VWAP的天數
+	ChildOrderPct  = 10  // % of total per child order / 每子單百分比
+	PriceThreshold = 0.3 // Execute if price is X% better than VWAP / 價格優於VWAP X%時執行
+	MaxAttempts    = 5   // Maximum execution attempts / 最大執行次數
 )
 
 func main() {
@@ -57,10 +57,10 @@ func main() {
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	// Configuration / 配置
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700" // Tencent / 騰訊
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain" // HSI Futures Main Contract / 恆生指數期貨
 	security := &qotcommon.Security{
-		Market: &hkMarket,
+		Market: &hkFutureMarket,
 		Code:   &code,
 	}
 
@@ -84,7 +84,7 @@ func main() {
 	fmt.Printf("   Security / 股票:         %s\n", code)
 	fmt.Printf("   Total Shares / 總股數:    %d\n", totalShares)
 	fmt.Printf("   History Days / 歷史天數:  %d\n", HistoryDays)
-	fmt.Printf("   Child Order Size / 子單大小: %d shares (%d%%)\n", 
+	fmt.Printf("   Child Order Size / 子單大小: %d shares (%d%%)\n",
 		totalShares*ChildOrderPct/100, ChildOrderPct)
 	fmt.Printf("   Price Threshold / 價格閾值: %.1f%%\n", PriceThreshold)
 	fmt.Println()
@@ -139,7 +139,7 @@ func main() {
 	dryRun := true // Set to false for live execution / 設置為false以進行真實執行
 
 	fmt.Println("🚀 Executing Orders / 正在執行訂單...")
-	executeVWAPOrders(cli, accID, security, totalShares, childOrderSize, numChildOrders, 
+	executeVWAPOrders(cli, accID, security, totalShares, childOrderSize, numChildOrders,
 		vwap, currentPrice, dryRun)
 
 	fmt.Println("\n=== Execution Complete / 執行完成 ===")
@@ -234,7 +234,7 @@ func executeVWAPOrders(cli *futuapi.Client, accID uint64, security *qotcommon.Se
 
 		// Check if price is favorable / 檢查價格是否有利
 		priceDiff := (price - vwap) / vwap * 100
-		
+
 		orderSize := childOrderSize
 		if filledShares+orderSize > totalShares {
 			orderSize = totalShares - filledShares
@@ -278,14 +278,14 @@ func executeVWAPOrders(cli *futuapi.Client, accID uint64, security *qotcommon.Se
 
 	// Execution summary / 執行摘要
 	fmt.Println("\n   📋 Execution Summary / 執行摘要:")
-	fmt.Printf("      Total Filled / 總成交:     %d/%d shares (%.1f%%)\n", 
+	fmt.Printf("      Total Filled / 總成交:     %d/%d shares (%.1f%%)\n",
 		filledShares, totalShares, float64(filledShares)/float64(totalShares)*100)
-	
+
 	if filledShares > 0 {
 		avgPrice := totalCost / float64(filledShares)
 		fmt.Printf("      Average Price / 平均價:  HK$%.2f\n", avgPrice)
 		fmt.Printf("      VWAP / VWAP:            HK$%.2f\n", vwap)
-		
+
 		savings := (vwap - avgPrice) / vwap * 100
 		if savings > 0 {
 			fmt.Printf("      ✅ Execution Savings / 執行節省: HK$%.2f (%.2f%% better than VWAP)\n",
@@ -318,4 +318,3 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
-

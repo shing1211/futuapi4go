@@ -41,8 +41,12 @@ func main() {
 	fmt.Printf("✓ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	_ = int32(qotcommon.QotMarket_QotMarket_US_Security)
-	_ = int32(qotcommon.QotMarket_QotMarket_CNSH_Security)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+
+	security := &qotcommon.Security{
+		Market: &hkFutureMarket,
+		Code:   ptrStr("HSImain"),
+	}
 
 	// 1. Get Stock Static Info
 	fmt.Println("=== 1. Stock Static Info (GetStaticInfo) ===")
@@ -93,10 +97,6 @@ func main() {
 
 	// 3. Get Capital Flow
 	fmt.Println("=== 3. Capital Flow (GetCapitalFlow) ===")
-	security := &qotcommon.Security{
-		Market: &hkMarket,
-		Code:   ptrStr("00700"),
-	}
 
 	capFlowReq := &qot.GetCapitalFlowRequest{
 		Security:   security,
@@ -330,4 +330,3 @@ func ptrBool(v bool) *bool {
 
 // Ensure imports are used
 var _ = qotstockfilter.StockField_StockField_CurPrice
-

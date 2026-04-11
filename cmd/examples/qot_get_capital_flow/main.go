@@ -35,10 +35,10 @@ func main() {
 	}
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 	security := &qotcommon.Security{
-		Market: &hkMarket,
-		Code:   ptrStr("00700"), // Tencent / 騰訊
+		Market: &hkFutureMarket,
+		Code:   ptrStr("HSImain"), // HSI Futures Main Contract / 恆生指數期貨
 	}
 
 	// Get capital flow (daily) / 獲取資金流向（日線）
@@ -75,4 +75,3 @@ func main() {
 }
 
 func ptrStr(s string) *string { return &s }
-

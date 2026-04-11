@@ -35,10 +35,10 @@ func main() {
 	}
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 	security := &qotcommon.Security{
-		Market: &hkMarket,
-		Code:   ptrStr("00700"), // Tencent / 騰訊
+		Market: &hkFutureMarket,
+		Code:   ptrStr("HSImain"), // HSI Futures Main Contract / 恆生指數期貨
 	}
 
 	// Get real-time minute data / 獲取實時分時數據
@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("📊 Real-time Minute Data / 實時分時數據 for %s (%s)\n", 
+	fmt.Printf("📊 Real-time Minute Data / 實時分時數據 for %s (%s)\n",
 		security.GetCode(), resp.Name)
 	fmt.Printf("Retrieved %d minute records\n\n", len(resp.RTList))
 
@@ -80,4 +80,3 @@ func main() {
 }
 
 func ptrStr(s string) *string { return &s }
-

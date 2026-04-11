@@ -56,10 +56,10 @@ func main() {
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
 	// Configuration / 配置
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	code := "00700" // Tencent / 騰訊
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
+	code := "HSImain" // HSI Futures Main Contract / 恆生指數期貨
 	security := &qotcommon.Security{
-		Market: &hkMarket,
+		Market: &hkFutureMarket,
 		Code:   &code,
 	}
 
@@ -96,13 +96,13 @@ func main() {
 
 	fmt.Printf("   Bid Levels (Buy Orders) / 買入級別:\n")
 	for i, price := range bidLevels {
-		fmt.Printf("     Layer %d: HK$%.2f (spread: %.2f%%)\n", 
+		fmt.Printf("     Layer %d: HK$%.2f (spread: %.2f%%)\n",
 			i+1, price, (currentPrice-price)/currentPrice*100)
 	}
 
 	fmt.Printf("\n   Ask Levels (Sell Orders) / 賣出級別:\n")
 	for i, price := range askLevels {
-		fmt.Printf("     Layer %d: HK$%.2f (spread: %.2f%%)\n", 
+		fmt.Printf("     Layer %d: HK$%.2f (spread: %.2f%%)\n",
 			i+1, price, (price-currentPrice)/currentPrice*100)
 	}
 	fmt.Println()
@@ -259,4 +259,3 @@ func getAccountID(cli *futuapi.Client) uint64 {
 
 	return accResp.AccList[0].AccID
 }
-

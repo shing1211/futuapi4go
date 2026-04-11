@@ -35,10 +35,10 @@ func main() {
 	}
 	fmt.Printf("✅ Connected! ConnID=%d\n\n", cli.GetConnID())
 
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 	security := &qotcommon.Security{
-		Market: &hkMarket,
-		Code:   ptrStr("00700"), // Tencent / 騰訊
+		Market: &hkFutureMarket,
+		Code:   ptrStr("HSImain"), // HSI Futures Main Contract / 恆生指數期貨
 	}
 
 	// Get last 20 tick records / 獲取最近20筆逐筆成交
@@ -61,11 +61,11 @@ func main() {
 	fmt.Println("  " + "------------------------------------------------------------")
 
 	for _, t := range resp.TickerList {
-		dir := "N"  // Neutral / 中性
+		dir := "N" // Neutral / 中性
 		if t.Dir == 1 {
-			dir = "B"  // Buy / 買
+			dir = "B" // Buy / 買
 		} else if t.Dir == 2 {
-			dir = "S"  // Sell / 賣
+			dir = "S" // Sell / 賣
 		}
 
 		fmt.Printf("  %-20s %-10.2f %-10d %-12.2f %-8s\n",
@@ -76,4 +76,3 @@ func main() {
 }
 
 func ptrStr(s string) *string { return &s }
-

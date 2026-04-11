@@ -35,9 +35,9 @@ func main() {
 
 	// Test GetBasicQot
 	fmt.Println("📊 Testing GetBasicQot...")
-	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	hkFutureMarket := int32(qotcommon.QotMarket_QotMarket_HK_Future)
 	securities := []*qotcommon.Security{
-		{Market: &hkMarket, Code: ptrStr("00700")},
+		{Market: &hkFutureMarket, Code: ptrStr("HSImain")},
 	}
 
 	quotes, err := qot.GetBasicQot(cli, securities)
@@ -54,4 +54,3 @@ func main() {
 }
 
 func ptrStr(s string) *string { return &s }
-
