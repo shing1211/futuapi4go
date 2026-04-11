@@ -299,16 +299,22 @@ futuapi4go/
 │
 ├── docs/
 │   ├── Futu-API-Doc-hk-Proto.md    # Protocol specification
-│   └── RELEASE_CHECKLIST.md        # Release process
+│   ├── RELEASE_CHECKLIST.md        # Release process
+│   ├── API_REFERENCE.md           # Complete SDK function reference
+│   ├── USER_GUIDE.md              # User guide for market data and trading
+│   ├── DEVELOPER.md              # SDK development setup and architecture
+│   ├── TESTING.md                 # Test suite guide with HSI examples
+│   ├── CONTRIBUTING.md            # How to contribute to the project
+│   ├── SIMULATOR.md               # Mock OpenD server documentation
+│   ├── CHANGELOG.md               # Version history and release notes
+│   ├── PROJECT_STATUS.md          # Current development status
+│   ├── DOCUMENTATION.md           # Additional documentation
+│   ├── PROTO_ANALYSIS.md          # Protocol analysis
+│   ├── TESTING_GUIDE.md           # Detailed testing guide
+│   ├── TEST_ISSUES.md             # Known test issues
+│   └── TEST_FIXES_COMPLETE.md     # Completed test fixes
 │
 ├── README.md                   # This file
-├── API_REFERENCE.md            # Complete API reference
-├── USER_GUIDE.md               # User guide
-├── DEVELOPER.md                # Developer guide
-├── TESTING.md                  # Testing guide
-├── CONTRIBUTING.md             # Contribution guide
-├── SIMULATOR.md                # Simulator documentation
-├── CHANGELOG.md                # Version history
 ├── LICENSE                     # MIT License
 ├── go.mod                      # Go module definition
 └── go.sum                      # Dependency checksums
@@ -321,14 +327,15 @@ futuapi4go/
 | Document | Audience | Description |
 |----------|----------|-------------|
 | **[README.md](README.md)** | Everyone | Project overview and quick start |
-| **[API_REFERENCE.md](API_REFERENCE.md)** | Developers | Complete SDK function reference with examples |
-| **[USER_GUIDE.md](USER_GUIDE.md)** | Traders | User guide for market data and trading |
-| **[DEVELOPER.md](DEVELOPER.md)** | Contributors | SDK development setup and architecture |
-| **[TESTING.md](TESTING.md)** | QA/Devs | Test suite guide with HSI examples |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Contributors | How to contribute to the project |
-| **[SIMULATOR.md](SIMULATOR.md)** | Testers | Mock OpenD server documentation |
-| **[CHANGELOG.md](CHANGELOG.md)** | Everyone | Version history and release notes |
-| **[PROJECT_STATUS.md](PROJECT_STATUS.md)** | Maintainers | Current development status |
+| **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** | Developers | Complete SDK function reference with examples |
+| **[docs/USER_GUIDE.md](docs/USER_GUIDE.md)** | Traders | User guide for market data and trading |
+| **[docs/DEVELOPER.md](docs/DEVELOPER.md)** | Contributors | SDK development setup and architecture |
+| **[docs/TESTING.md](docs/TESTING.md)** | QA/Devs | Test suite guide with HSI examples |
+| **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** | Contributors | How to contribute to the project |
+| **[docs/SIMULATOR.md](docs/SIMULATOR.md)** | Testers | Mock OpenD server documentation |
+| **[docs/CHANGELOG.md](docs/CHANGELOG.md)** | Everyone | Version history and release notes |
+| **[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)** | Maintainers | Current development status |
+| **[docs/DOCUMENTATION.md](docs/DOCUMENTATION.md)** | Everyone | Additional documentation |
 | **[docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)** | Maintainers | Pre-release verification steps |
 | **[docs/Futu-API-Doc-hk-Proto.md](docs/Futu-API-Doc-hk-Proto.md)** | Protocol devs | Official Futu protocol specification |
 | **[cmd/examples/README.md](cmd/examples/README.md)** | Users | Example programs guide |
@@ -378,7 +385,7 @@ asks, bids := fixtures.HSIOrderBookLevels(10)  // 10 levels
 klines := fixtures.HSIKLineData(100, qotcommon.KLType_Day)
 ```
 
-See **[TESTING.md](TESTING.md)** for complete testing guide.
+See **[docs/TESTING.md](docs/TESTING.md)** for complete testing guide.
 
 ---
 
@@ -431,7 +438,7 @@ cli := futuapi.New(
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see **[CONTRIBUTING.md](CONTRIBUTING.md)** for details.
+We welcome contributions! Please see **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** for details.
 
 ### Quick Start for Contributors
 

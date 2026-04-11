@@ -305,10 +305,10 @@ These are necessary because protobuf fields require pointer types.
 
 ## Additional Resources
 
-- [USER_GUIDE.md](../USER_GUIDE.md) - Complete user documentation
-- [SIMULATOR.md](../SIMULATOR.md) - Simulator documentation
-- [IMPLEMENTATION.md](../IMPLEMENTATION.md) - API implementation details
-- [CHANGELOG.md](../CHANGELOG.md) - Version history
+- [USER_GUIDE.md](../docs/USER_GUIDE.md) - Complete user documentation
+- [SIMULATOR.md](../docs/SIMULATOR.md) - Simulator documentation
+- [API_REFERENCE.md](../docs/API_REFERENCE.md) - API implementation details
+- [CHANGELOG.md](../docs/CHANGELOG.md) - Version history
 
 ---
 
