@@ -1,12 +1,13 @@
 # futuapi4go
 
 <p align="center">
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go" alt="Go"></a>
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Version-0.4.1-blue.svg" alt="Version"></a>
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Status-Production--Ready-brightgreen.svg" alt="Status"></a>
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Tests-46/46%20PASS-brightgreen.svg" alt="Tests"></a>
-  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Examples-29-brightgreen.svg" alt="Examples"></a>
+  <a href="https://github.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go" alt="Go"></a>
+  <a href="https://github.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
+  <a href="https://github.com/shing1211/futuapi4go/releases"><img src="https://img.shields.io/badge/Version-0.4.1-blue.svg" alt="Version"></a>
+  <a href="https://github.com/shing1211/futuapi4go/actions"><img src="https://img.shields.io/badge/Status-Production--Ready-brightgreen.svg" alt="Status"></a>
+  <a href="https://github.com/shing1211/futuapi4go/tree/main/test"><img src="https://img.shields.io/badge/Tests-All%20PASS-brightgreen.svg" alt="Tests"></a>
+  <a href="https://github.com/shing1211/futuapi4go/tree/main/cmd/examples"><img src="https://img.shields.io/badge/Examples-29-brightgreen.svg" alt="Examples"></a>
+  <a href="https://gitee.com/shing1211/futuapi4go"><img src="https://img.shields.io/badge/Gitee-available-red.svg" alt="Gitee"></a>
 </p>
 
 <p align="center">
@@ -223,8 +224,12 @@ go get github.com/shing1211/futuapi4go
 ### Development Setup
 
 ```bash
-# Clone repository
+# Clone from GitHub (recommended)
+git clone https://github.com/shing1211/futuapi4go.git
+
+# Or from Gitee
 git clone https://gitee.com/shing1211/futuapi4go.git
+
 cd futuapi4go
 
 # Install dependencies
@@ -520,8 +525,8 @@ SOFTWARE.
 
 ## 📞 Support
 
-- **Issues**: [Gitee Issues](https://gitee.com/shing1211/futuapi4go/issues)
-- **Discussions**: [Gitee Discussions](https://gitee.com/shing1211/futuapi4go/discussions)
+- **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues) | [Gitee Issues](https://gitee.com/shing1211/futuapi4go/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/shing1211/futuapi4go/discussions) | [Gitee Discussions](https://gitee.com/shing1211/futuapi4go/discussions)
 - **Email**: shing1211@users.noreply.github.com
 
 ---
@@ -535,5 +540,6 @@ SOFTWARE.
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://gitee.com/shing1211">Terence Chan</a>
+  Made with ❤️ by <a href="https://github.com/shing1211">Terence Chan</a> |
+  <a href="https://gitee.com/shing1211/futuapi4go">Gitee</a>
 </p>
