@@ -292,6 +292,36 @@ func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	return orders, nil
 }
 
+// GetHistoryOrderList retrieves historical orders.
+func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDate string) ([]Order, error) {
+	resp, err := trd.GetHistoryOrderList(c.inner, &trd.GetHistoryOrderListRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    1,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	orders := make([]Order, 0)
+	for _, o := range resp.OrderList {
+		if o == nil {
+			continue
+		}
+		orders = append(orders, Order{
+			OrderID:    getUint64(o.OrderID),
+			Code:       getStr(o.Code),
+			Name:       getStr(o.Name),
+			TrdSide:    getInt32(o.TrdSide),
+			OrderType:  getInt32(o.OrderType),
+			Price:      getFloat64(o.Price),
+			Qty:        getFloat64(o.Qty),
+			OrderState: getInt32(o.OrderStatus),
+		})
+	}
+	return orders, nil
+}
+
 // GetOrderFillList retrieves order fills (executions).
 func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	resp, err := trd.GetOrderFillList(c.inner, &trd.GetOrderFillListRequest{
@@ -1170,6 +1200,13 @@ func getFloat64(f *float64) float64 {
 }
 
 func getInt64(i *int64) int64 {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func getUint64(i *uint64) uint64 {
 	if i == nil {
 		return 0
 	}
