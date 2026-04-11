@@ -726,6 +726,149 @@ func RequestHistoryKL(c *Client, market int32, code string, klType int32, startD
 	return klines, nil
 }
 
+// GetReference retrieves related/reference securities.
+func GetReference(c *Client, market int32, code string, refType int32) ([]StaticInfo, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetReference(c.inner, &qot.GetReferenceRequest{
+		Security:      sec,
+		ReferenceType: refType,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]StaticInfo, 0)
+	for _, s := range resp.StaticInfoList {
+		if s == nil || s.Basic == nil {
+			continue
+		}
+		code := ""
+		if s.Basic.Security != nil && s.Basic.Security.Code != nil {
+			code = *s.Basic.Security.Code
+		}
+		name := ""
+		if s.Basic.Name != nil {
+			name = *s.Basic.Name
+		}
+		secType := int32(0)
+		if s.Basic.SecType != nil {
+			secType = *s.Basic.SecType
+		}
+		infos = append(infos, StaticInfo{
+			Code: code,
+			Name: name,
+			Type: secType,
+		})
+	}
+	return infos, nil
+}
+
+// GetPlateSecurity retrieves securities in a plate.
+func GetPlateSecurity(c *Client, market int32, plateCode string) ([]StaticInfo, error) {
+	marketPtr := market
+	plate := &qotcommon.Security{Market: &marketPtr, Code: &plateCode}
+
+	resp, err := qot.GetPlateSecurity(c.inner, &qot.GetPlateSecurityRequest{Plate: plate})
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]StaticInfo, 0)
+	for _, s := range resp.StaticInfoList {
+		if s == nil || s.Basic == nil {
+			continue
+		}
+		code := ""
+		if s.Basic.Security != nil && s.Basic.Security.Code != nil {
+			code = *s.Basic.Security.Code
+		}
+		name := ""
+		if s.Basic.Name != nil {
+			name = *s.Basic.Name
+		}
+		secType := int32(0)
+		if s.Basic.SecType != nil {
+			secType = *s.Basic.SecType
+		}
+		infos = append(infos, StaticInfo{
+			Code: code,
+			Name: name,
+			Type: secType,
+		})
+	}
+	return infos, nil
+}
+
+// GetOptionExpirationDate retrieves option expiration dates.
+func GetOptionExpirationDate(c *Client, market int32, code string) ([]OptionExpiration, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetOptionExpirationDate(c.inner, &qot.GetOptionExpirationDateRequest{
+		Owner: sec,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	expirations := make([]OptionExpiration, 0)
+	for _, e := range resp.DateList {
+		if e == nil {
+			continue
+		}
+		expirations = append(expirations, OptionExpiration{
+			Date: e.StrikeTime,
+			Days: e.OptionExpiryDateDistance,
+			Desc: fmt.Sprintf("Cycle %d", e.Cycle),
+		})
+	}
+	return expirations, nil
+}
+
+// ModifyUserSecurity adds/removes securities from user group.
+func ModifyUserSecurity(c *Client, groupName string, op int32, market int32, codes []string) error {
+	securities := make([]*qotcommon.Security, len(codes))
+	for i, code := range codes {
+		securities[i] = &qotcommon.Security{Market: &market, Code: &code}
+	}
+
+	_, err := qot.ModifyUserSecurity(c.inner, &qot.ModifyUserSecurityRequest{
+		GroupName:    groupName,
+		Op:           op,
+		SecurityList: securities,
+	})
+	return err
+}
+
+// GetSubInfo retrieves subscription info.
+func GetSubInfo(c *Client) (*SubInfo, error) {
+	resp, err := qot.GetSubInfo(c.inner)
+	if err != nil {
+		return nil, err
+	}
+
+	quota := int32(0)
+	for _, si := range resp.ConnSubInfoList {
+		if si != nil && si.UsedQuota != nil {
+			quota += *si.UsedQuota
+		}
+	}
+
+	return &SubInfo{
+		IsSub:    len(resp.ConnSubInfoList) > 0,
+		SubTypes: []int32{},
+		Security: fmt.Sprintf("Used: %d, Remain: %d", quota, resp.RemainQuota),
+	}, nil
+}
+
+// ============================================================================
+// Types
+// ============================================================================
+
+// ============================================================================
+// Types
 // ============================================================================
 // Types
 // ============================================================================
