@@ -11,6 +11,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/sys"
 	"github.com/shing1211/futuapi4go/pkg/trd"
 )
 
@@ -861,6 +862,105 @@ func GetSubInfo(c *Client) (*SubInfo, error) {
 		SubTypes: []int32{},
 		Security: fmt.Sprintf("Used: %d, Remain: %d", quota, resp.RemainQuota),
 	}, nil
+}
+
+// RequestTradeDate requests trade dates for a specific security.
+func RequestTradeDate(c *Client, market int32, startDate, endDate string, code string) ([]string, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.RequestTradeDate(c.inner, &qot.RequestTradeDateRequest{
+		Market:    market,
+		BeginTime: startDate,
+		EndTime:   endDate,
+		Security:  sec,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	dates := make([]string, 0)
+	for _, td := range resp.TradeDateList {
+		if td == nil {
+			continue
+		}
+		if td.Time != nil {
+			dates = append(dates, *td.Time)
+		}
+	}
+	return dates, nil
+}
+
+// GlobalState represents global connection state.
+type GlobalState struct {
+	ServerVer     int32
+	ServerBuildNo int32
+	Time          int64
+	LocalTime     float64
+	QotLogined    bool
+	TrdLogined    bool
+	MarketHK      int32
+	MarketUS      int32
+	MarketSH      int32
+	MarketSZ      int32
+}
+
+// GetGlobalState retrieves global connection state.
+func GetGlobalState(c *Client) (*GlobalState, error) {
+	resp, err := sys.GetGlobalState(c.inner)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GlobalState{
+		ServerVer:     resp.ServerVer,
+		ServerBuildNo: resp.ServerBuildNo,
+		Time:          resp.Time,
+		LocalTime:     resp.LocalTime,
+		QotLogined:    resp.QotLogined,
+		TrdLogined:    resp.TrdLogined,
+		MarketHK:      resp.MarketHK,
+		MarketUS:      resp.MarketUS,
+		MarketSH:      resp.MarketSH,
+		MarketSZ:      resp.MarketSZ,
+	}, nil
+}
+
+// UserInfo represents user information.
+type UserInfo struct {
+	UserID    int64
+	NickName  string
+	AvatarUrl string
+	ApiLevel  string
+}
+
+// GetUserInfo retrieves user information.
+func GetUserInfo(c *Client) (*UserInfo, error) {
+	resp, err := sys.GetUserInfo(c.inner)
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserInfo{
+		UserID:   resp.UserID,
+		NickName: resp.NickName,
+		ApiLevel: resp.ApiLevel,
+	}, nil
+}
+
+// DelayStatistics represents delay statistics.
+type DelayStatistics struct {
+	Count int32
+}
+
+// GetDelayStatistics retrieves delay statistics.
+func GetDelayStatistics(c *Client) (*DelayStatistics, error) {
+	_, err := sys.GetDelayStatistics(c.inner)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DelayStatistics{Count: 0}, nil
 }
 
 // ============================================================================
