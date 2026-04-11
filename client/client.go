@@ -265,6 +265,38 @@ func GetFunds(c *Client, accID uint64) (*Funds, error) {
 	}, nil
 }
 
+// MaxTrdQtysInfo represents maximum tradable quantities.
+type MaxTrdQtysInfo struct {
+	MaxCashBuy          float64
+	MaxCashAndMarginBuy float64
+	MaxPositionSell     float64
+	MaxSellShort        float64
+	MaxBuyBack          float64
+}
+
+// GetMaxTrdQtys retrieves maximum tradable quantities.
+func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*MaxTrdQtysInfo, error) {
+	resp, err := trd.GetMaxTrdQtys(c.inner, &trd.GetMaxTrdQtysRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    1,
+		Code:      code,
+		OrderType: orderType,
+		Price:     price,
+	})
+	if err != nil {
+		return nil, err
+	}
+	m := resp.MaxTrdQtys
+	return &MaxTrdQtysInfo{
+		MaxCashBuy:          m.MaxCashBuy,
+		MaxCashAndMarginBuy: m.MaxCashAndMarginBuy,
+		MaxPositionSell:     m.MaxPositionSell,
+		MaxSellShort:        m.MaxSellShort,
+		MaxBuyBack:          m.MaxBuyBack,
+	}, nil
+}
+
 // GetOrderList retrieves active orders.
 func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	resp, err := trd.GetOrderList(c.inner, &trd.GetOrderListRequest{
