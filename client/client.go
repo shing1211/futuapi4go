@@ -295,6 +295,187 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	return fills, nil
 }
 
+// GetOrderBook retrieves order book data.
+func GetOrderBook(c *Client, market int32, code string, num int) (*OrderBook, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetOrderBook(c.inner, &qot.GetOrderBookRequest{
+		Security: sec,
+		Num:      int32(num),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	book := &OrderBook{
+		Bids: make([]OrderBookItem, len(resp.OrderBookBidList)),
+		Asks: make([]OrderBookItem, len(resp.OrderBookAskList)),
+	}
+	for i, b := range resp.OrderBookBidList {
+		book.Bids[i] = OrderBookItem{Price: b.Price, Volume: b.Volume}
+	}
+	for i, a := range resp.OrderBookAskList {
+		book.Asks[i] = OrderBookItem{Price: a.Price, Volume: a.Volume}
+	}
+	return book, nil
+}
+
+// GetTicker retrieves ticker data.
+func GetTicker(c *Client, market int32, code string, num int) ([]Ticker, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetTicker(c.inner, &qot.GetTickerRequest{
+		Security: sec,
+		Num:      int32(num),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	tickers := make([]Ticker, len(resp.TickerList))
+	for i, t := range resp.TickerList {
+		dir := "N/A"
+		switch t.Dir {
+		case 1:
+			dir = "Buy"
+		case 2:
+			dir = "Sell"
+		}
+		tickers[i] = Ticker{
+			Time:      t.Time,
+			Price:     t.Price,
+			Volume:    t.Volume,
+			Direction: dir,
+		}
+	}
+	return tickers, nil
+}
+
+// GetRT retrieves real-time data.
+func GetRT(c *Client, market int32, code string) ([]RT, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetRT(c.inner, &qot.GetRTRequest{Security: sec})
+	if err != nil {
+		return nil, err
+	}
+
+	rtData := make([]RT, len(resp.RTList))
+	for i, r := range resp.RTList {
+		rtData[i] = RT{
+			Time:   r.Time,
+			Price:  r.Price,
+			Volume: r.Volume,
+		}
+	}
+	return rtData, nil
+}
+
+// GetBroker retrieves broker data.
+func GetBroker(c *Client, market int32, code string, num int) ([]Broker, []Broker, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetBroker(c.inner, &qot.GetBrokerRequest{
+		Security: sec,
+		Num:      int32(num),
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	bidBrokers := make([]Broker, len(resp.BidBrokerList))
+	for i, b := range resp.BidBrokerList {
+		bidBrokers[i] = Broker{ID: b.ID, Name: b.Name}
+	}
+	askBrokers := make([]Broker, len(resp.AskBrokerList))
+	for i, a := range resp.AskBrokerList {
+		askBrokers[i] = Broker{ID: a.ID, Name: a.Name}
+	}
+	return bidBrokers, askBrokers, nil
+}
+
+// GetStaticInfo retrieves static security info.
+func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetStaticInfo(c.inner, &qot.GetStaticInfoRequest{
+		Market:       market,
+		SecurityList: []*qotcommon.Security{sec},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]StaticInfo, len(resp.StaticInfoList))
+	for i, s := range resp.StaticInfoList {
+		var name string
+		var secType int32
+		if s.Basic != nil {
+			if s.Basic.Name != nil {
+				name = *s.Basic.Name
+			}
+			if s.Basic.SecType != nil {
+				secType = *s.Basic.SecType
+			}
+		}
+		infos[i] = StaticInfo{Code: code, Name: name, Type: secType}
+	}
+	return infos, nil
+}
+
+// GetTradeDate retrieves trade dates.
+func GetTradeDate(c *Client, market int32, startDate, endDate string) ([]string, error) {
+	resp, err := qot.GetTradeDate(c.inner, &qot.GetTradeDateRequest{
+		Market:    market,
+		BeginTime: startDate,
+		EndTime:   endDate,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	dates := make([]string, len(resp.TradeDateList))
+	for i, td := range resp.TradeDateList {
+		if td.Time != nil {
+			dates[i] = *td.Time
+		}
+	}
+	return dates, nil
+}
+
+// GetFutureInfo retrieves futures information.
+func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
+	marketPtr := int32(2) // HK Future
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetFutureInfo(c.inner, &qot.GetFutureInfoRequest{
+		SecurityList: []*qotcommon.Security{sec},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]FutureInfo, len(resp.FutureInfoList))
+	for i, f := range resp.FutureInfoList {
+		secCode := ""
+		if f.Security != nil && f.Security.Code != nil {
+			secCode = *f.Security.Code
+		}
+		infos[i] = FutureInfo{
+			Code:     secCode,
+			Name:     f.Name,
+			Expire:   f.LastTradeTime,
+			InstType: 0,
+		}
+	}
+	return infos, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -376,6 +557,54 @@ type OrderFill struct {
 	Qty     float64
 }
 
+// OrderBook represents order book data.
+type OrderBook struct {
+	Bids []OrderBookItem
+	Asks []OrderBookItem
+}
+
+// OrderBookItem represents a single order book entry.
+type OrderBookItem struct {
+	Price  float64
+	Volume int64
+}
+
+// Ticker represents ticker data.
+type Ticker struct {
+	Time      string
+	Price     float64
+	Volume    int64
+	Direction string
+}
+
+// RT represents real-time data.
+type RT struct {
+	Time   string
+	Price  float64
+	Volume int64
+}
+
+// Broker represents broker data.
+type Broker struct {
+	ID   int64
+	Name string
+}
+
+// StaticInfo represents static security info.
+type StaticInfo struct {
+	Code string
+	Name string
+	Type int32
+}
+
+// FutureInfo represents futures info.
+type FutureInfo struct {
+	Code     string
+	Name     string
+	Expire   string
+	InstType int32
+}
+
 // Common market constants.
 const (
 	// QotMarket
@@ -410,6 +639,14 @@ const (
 	SubType_Ticker    = int32(qot.SubType_Ticker)
 	SubType_RT        = int32(qot.SubType_RT)
 	SubType_KL        = int32(qot.SubType_KL)
+	SubType_KL_1Min   = int32(qot.SubType_KL_1Min)
+	SubType_KL_5Min   = int32(qot.SubType_KL_5Min)
+	SubType_KL_15Min  = int32(qot.SubType_KL_15Min)
+	SubType_KL_30Min  = int32(qot.SubType_KL_30Min)
+	SubType_KL_60Min  = int32(qot.SubType_KL_60Min)
+	SubType_KL_Day    = int32(qot.SubType_KL_Day)
+	SubType_KL_Week   = int32(qot.SubType_KL_Week)
+	SubType_KL_Month  = int32(qot.SubType_KL_Month)
 	SubType_Broker    = int32(qot.SubType_Broker)
 )
 
