@@ -265,19 +265,11 @@ func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderT
 	if err != nil {
 		return nil, err
 	}
-	return &PlaceOrderResult{OrderID: resp.OrderID}, nil
+	return &PlaceOrderResult{OrderID: resp.OrderID, OrderIDEx: resp.OrderIDEx}, nil
 }
 
-// ModifyOrderOp constants for modifying orders.
-const (
-	ModifyOrderOpAmendPrice       = 1
-	ModifyOrderOpAmendQty         = 2
-	ModifyOrderOpAmendPriceAndQty = 3
-	ModifyOrderOpAmendToCancel    = 4
-)
-
 // ModifyOrder modifies or cancels an existing order.
-func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) error {
+func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
 	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
@@ -292,7 +284,7 @@ func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp
 // CancelAllOrder cancels all pending orders for the specified account and market.
 // Note: Simulate trading and HKCC accounts do not support CancelAllOrder.
 func CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error {
-	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
+	_, err := trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
 		TrdEnv:        trdEnv,
@@ -302,6 +294,7 @@ func CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error {
 		Qty:           0,
 		ForAll:        true,
 	})
+	return err
 }
 
 // GetPositionList retrieves the current positions.
@@ -1106,39 +1099,19 @@ func RequestHistoryKL(c *Client, market int32, code string, klType int32, startD
 		return nil, err
 	}
 
-	klines := make([]KLine, 0)
+	klines := make([]KLine, 0, len(resp.KLList))
 	for _, kl := range resp.KLList {
-		t := ""
-		if kl.Time != nil {
-			t = *kl.Time
-		}
-		o := float64(0)
-		if kl.OpenPrice != nil {
-			o = *kl.OpenPrice
-		}
-		h := float64(0)
-		if kl.HighPrice != nil {
-			h = *kl.HighPrice
-		}
-		l := float64(0)
-		if kl.LowPrice != nil {
-			l = *kl.LowPrice
-		}
-		c := float64(0)
-		if kl.ClosePrice != nil {
-			c = *kl.ClosePrice
-		}
-		v := int64(0)
-		if kl.Volume != nil {
-			v = *kl.Volume
-		}
 		klines = append(klines, KLine{
-			Time:   t,
-			Open:   o,
-			High:   h,
-			Low:    l,
-			Close:  c,
-			Volume: v,
+			Time:       kl.Time,
+			Open:       kl.OpenPrice,
+			High:       kl.HighPrice,
+			Low:        kl.LowPrice,
+			Close:      kl.ClosePrice,
+			Volume:     kl.Volume,
+			LastClose:  kl.LastClosePrice,
+			Turnover:   kl.Turnover,
+			ChangeRate: kl.ChangeRate,
+			Timestamp:  kl.Timestamp,
 		})
 	}
 	return klines, nil
@@ -1734,16 +1707,22 @@ func GetCodeChange(c *Client, securities []*qotcommon.Security) ([]*CodeChangeIn
 
 // GlobalState represents global connection state.
 type GlobalState struct {
-	ServerVer     int32
-	ServerBuildNo int32
-	Time          int64
-	LocalTime     float64
-	QotLogined    bool
-	TrdLogined    bool
-	MarketHK      int32
-	MarketUS      int32
-	MarketSH      int32
-	MarketSZ      int32
+	ServerVer         int32
+	ServerBuildNo     int32
+	Time              int64
+	LocalTime         float64
+	QotLogined        bool
+	TrdLogined        bool
+	MarketHK          int32
+	MarketUS          int32
+	MarketSH          int32
+	MarketSZ          int32
+	MarketHKFuture    int32
+	MarketUSFuture    int32
+	MarketSGFuture    int32
+	MarketJPFuture    int32
+	ProgramStatus     int32
+	ProgramStatusDesc string
 }
 
 // GetGlobalState retrieves global connection state.
@@ -1754,16 +1733,34 @@ func GetGlobalState(c *Client) (*GlobalState, error) {
 	}
 
 	return &GlobalState{
-		ServerVer:     resp.ServerVer,
-		ServerBuildNo: resp.ServerBuildNo,
-		Time:          resp.Time,
-		LocalTime:     resp.LocalTime,
-		QotLogined:    resp.QotLogined,
-		TrdLogined:    resp.TrdLogined,
-		MarketHK:      resp.MarketHK,
-		MarketUS:      resp.MarketUS,
-		MarketSH:      resp.MarketSH,
-		MarketSZ:      resp.MarketSZ,
+		ServerVer:      resp.ServerVer,
+		ServerBuildNo:  resp.ServerBuildNo,
+		Time:           resp.Time,
+		LocalTime:      resp.LocalTime,
+		QotLogined:     resp.QotLogined,
+		TrdLogined:     resp.TrdLogined,
+		MarketHK:       resp.MarketHK,
+		MarketUS:       resp.MarketUS,
+		MarketSH:       resp.MarketSH,
+		MarketSZ:       resp.MarketSZ,
+		MarketHKFuture: resp.MarketHKFuture,
+		MarketUSFuture: resp.MarketUSFuture,
+		MarketSGFuture: resp.MarketSGFuture,
+		MarketJPFuture: resp.MarketJPFuture,
+		ProgramStatus: func() int32 {
+			ps := resp.ProgramStatus
+			if ps != nil && ps.Type != nil {
+				return int32(*ps.Type)
+			}
+			return 0
+		}(),
+		ProgramStatusDesc: func() string {
+			ps := resp.ProgramStatus
+			if ps != nil {
+				return ps.GetStrExtDesc()
+			}
+			return ""
+		}(),
 	}, nil
 }
 
@@ -1792,10 +1789,12 @@ func GetUserInfo(c *Client) (*UserInfo, error) {
 
 // DelayStatistics represents delay statistics for Qot push.
 type DelayStatistics struct {
-	QotPushType int32
-	DelayAvg    float64
-	Count       int32
-	ItemList    []DelayStatisticsItem
+	QotPushType    int32
+	DelayAvg       float64
+	Count          int32
+	ItemList       []DelayStatisticsItem
+	ReqReplyList   []ReqReplyStatisticsItem
+	PlaceOrderList []PlaceOrderStatisticsItem
 }
 
 // DelayStatisticsItem represents a single delay statistics item.
@@ -1805,6 +1804,25 @@ type DelayStatisticsItem struct {
 	Count           int32
 	Proportion      float64
 	CumulativeRatio float64
+}
+
+// ReqReplyStatisticsItem represents request-reply statistics.
+type ReqReplyStatisticsItem struct {
+	ProtoID      int32
+	Count        int32
+	TotalCostAvg float64
+	OpenDCostAvg float64
+	NetDelayAvg  float64
+	IsLocalReply bool
+}
+
+// PlaceOrderStatisticsItem represents order placement statistics.
+type PlaceOrderStatisticsItem struct {
+	OrderID    string
+	TotalCost  float64
+	OpenDCost  float64
+	NetDelay   float64
+	UpdateCost float64
 }
 
 // GetDelayStatistics retrieves delay statistics.
@@ -1830,11 +1848,36 @@ func GetDelayStatistics(c *Client) (*DelayStatistics, error) {
 		})
 	}
 
+	reqReplyList := make([]ReqReplyStatisticsItem, 0, len(resp.ReqReplyStatisticsList))
+	for _, r := range resp.ReqReplyStatisticsList {
+		reqReplyList = append(reqReplyList, ReqReplyStatisticsItem{
+			ProtoID:      r.GetProtoID(),
+			Count:        r.GetCount(),
+			TotalCostAvg: float64(r.GetTotalCostAvg()),
+			OpenDCostAvg: float64(r.GetOpenDCostAvg()),
+			NetDelayAvg:  float64(r.GetNetDelayAvg()),
+			IsLocalReply: r.GetIsLocalReply(),
+		})
+	}
+
+	placeOrderList := make([]PlaceOrderStatisticsItem, 0, len(resp.PlaceOrderStatisticsList))
+	for _, p := range resp.PlaceOrderStatisticsList {
+		placeOrderList = append(placeOrderList, PlaceOrderStatisticsItem{
+			OrderID:    p.GetOrderID(),
+			TotalCost:  float64(p.GetTotalCost()),
+			OpenDCost:  float64(p.GetOpenDCost()),
+			NetDelay:   float64(p.GetNetDelay()),
+			UpdateCost: float64(p.GetUpdateCost()),
+		})
+	}
+
 	return &DelayStatistics{
-		QotPushType: stats.GetQotPushType(),
-		DelayAvg:    float64(stats.GetDelayAvg()),
-		Count:       stats.GetCount(),
-		ItemList:    items,
+		QotPushType:    stats.GetQotPushType(),
+		DelayAvg:       float64(stats.GetDelayAvg()),
+		Count:          stats.GetCount(),
+		ItemList:       items,
+		ReqReplyList:   reqReplyList,
+		PlaceOrderList: placeOrderList,
 	}, nil
 }
 
@@ -1902,27 +1945,55 @@ func SetPriceReminder(c *Client, market int32, code string, op, reminderType, fr
 type PriceReminderInfo struct {
 	Security *qotcommon.Security
 	Name     string
-	ItemList []*PriceReminderItemInfo
+	ItemList []PriceReminderItemInfo
 }
 
 // PriceReminderItemInfo represents a single price reminder item.
 type PriceReminderItemInfo struct {
-	Key   int64
-	Type  int32
-	Freq  int32
-	Value float64
-	Note  string
+	Key                 int64
+	Type                int32
+	Freq                int32
+	Value               float64
+	Note                string
+	IsEnable            bool
+	ReminderSessionList []int32
 }
 
 // GetPriceReminder retrieves price reminders for a security.
-func GetPriceReminder(c *Client, market int32, code string) ([]*qot.PriceReminderInfo, error) {
+func GetPriceReminder(c *Client, market int32, code string) ([]*PriceReminderInfo, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.GetPriceReminder(c.inner, sec, market)
 	if err != nil {
 		return nil, err
 	}
-	return resp.PriceReminderList, nil
+	result := make([]*PriceReminderInfo, 0, len(resp.PriceReminderList))
+	for _, pr := range resp.PriceReminderList {
+		if pr == nil {
+			continue
+		}
+		items := make([]PriceReminderItemInfo, 0, len(pr.ItemList))
+		for _, item := range pr.ItemList {
+			if item == nil {
+				continue
+			}
+			items = append(items, PriceReminderItemInfo{
+				Key:                 item.Key,
+				Type:                item.Type,
+				Freq:                item.Freq,
+				Value:               item.Value,
+				Note:                item.Note,
+				IsEnable:            item.IsEnable,
+				ReminderSessionList: item.ReminderSessionList,
+			})
+		}
+		result = append(result, &PriceReminderInfo{
+			Security: pr.Security,
+			Name:     pr.Name,
+			ItemList: items,
+		})
+	}
+	return result, nil
 }
 
 // SubAccPush subscribes to account push notifications.
@@ -1933,17 +2004,32 @@ func SubAccPush(c *Client, accIDList []uint64) error {
 }
 
 // ReconfirmOrder reconfirms an order requiring additional verification.
-func ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reason int32) error {
+func ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
 		TrdMarket: &market,
 	}
-	_, err := trd.ReconfirmOrder(c.inner, &trd.ReconfirmOrderRequest{
+	resp, err := trd.ReconfirmOrder(c.inner, &trd.ReconfirmOrderRequest{
 		Header:          header,
 		OrderID:         orderID,
 		ReconfirmReason: reason,
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return &ReconfirmOrderResult{
+		AccID:     resp.Header.GetAccID(),
+		TrdEnv:    resp.Header.GetTrdEnv(),
+		TrdMarket: resp.Header.GetTrdMarket(),
+		OrderID:   resp.OrderID,
+	}, nil
+}
+
+type ReconfirmOrderResult struct {
+	AccID     uint64
+	TrdEnv    int32
+	TrdMarket int32
+	OrderID   uint64
 }
 
 // HoldingChangeInfo represents a holding change entry.
@@ -2047,19 +2133,40 @@ func RequestRehab(c *Client, market int32, code string) ([]*RehabInfo, error) {
 type HistoryKLQuotaInfo struct {
 	UsedQuota   int32
 	RemainQuota int32
+	DetailList  []HistoryKLQuotaDetail
+}
+
+type HistoryKLQuotaDetail struct {
+	Security         *qotcommon.Security
+	Name             string
+	RequestTime      string
+	RequestTimestamp int64
 }
 
 // RequestHistoryKLQuota queries historical K-line quota.
 func RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error) {
 	resp, err := qot.RequestHistoryKLQuota(c.inner, &qot.RequestHistoryKLQuotaRequest{
-		GetDetail: false,
+		GetDetail: true,
 	})
 	if err != nil {
 		return nil, err
 	}
+	details := make([]HistoryKLQuotaDetail, 0, len(resp.DetailList))
+	for _, d := range resp.DetailList {
+		if d == nil {
+			continue
+		}
+		details = append(details, HistoryKLQuotaDetail{
+			Security:         d.GetSecurity(),
+			Name:             d.GetName(),
+			RequestTime:      d.GetRequestTime(),
+			RequestTimestamp: d.GetRequestTimeStamp(),
+		})
+	}
 	return &HistoryKLQuotaInfo{
 		UsedQuota:   resp.UsedQuota,
 		RemainQuota: resp.RemainQuota,
+		DetailList:  details,
 	}, nil
 }
 
@@ -2123,7 +2230,8 @@ type Account struct {
 
 // PlaceOrderResult represents a place order result.
 type PlaceOrderResult struct {
-	OrderID uint64
+	OrderID   uint64
+	OrderIDEx string
 }
 
 // Position represents a position.

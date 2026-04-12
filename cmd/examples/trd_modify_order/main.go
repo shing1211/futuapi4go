@@ -85,14 +85,13 @@ func main() {
 		fmt.Println("   fmt.Println(\"Order modified successfully\")")
 	} else {
 		// Live modification / 實際修改
-		err := trd.ModifyOrder(cli, req)
+		resp, err := trd.ModifyOrder(cli, req)
 		if err != nil {
 			log.Printf("ModifyOrder failed: %v", err)
 			return
 		}
-		fmt.Println("✅ Order modified successfully! / 訂單修改成功！")
+		fmt.Printf("✅ Order modified successfully! / 訂單修改成功！ OrderID=%d OrderIDEx=%s\n", resp.OrderID, resp.OrderIDEx)
 	}
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")
 }
-

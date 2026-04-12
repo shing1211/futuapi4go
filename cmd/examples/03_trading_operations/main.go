@@ -226,11 +226,12 @@ func main() {
 			Price:         360.00,
 		}
 
-		modifyErr := trd.ModifyOrder(cli, modifyReq)
+		modifyResp, modifyErr := trd.ModifyOrder(cli, modifyReq)
 		if modifyErr != nil {
 			log.Printf("ModifyOrder failed: %v", modifyErr)
 		} else {
 			fmt.Println("  ✓ Order modified successfully!")
+			fmt.Printf("  OrderID: %d, OrderIDEx: %s\n", modifyResp.OrderID, modifyResp.OrderIDEx)
 			fmt.Printf("  New Qty: 200, New Price: 360.00\n")
 		}
 	} else {
@@ -411,4 +412,3 @@ func ptrFloat64(v float64) *float64 {
 // Ensure imports are used
 var _ = time.Now
 var _ = trdcommon.TrdCategory_TrdCategory_Security
-

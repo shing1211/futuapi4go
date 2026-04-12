@@ -633,7 +633,7 @@ func TestRequestHistoryKLResponseConstruction(t *testing.T) {
 	rsp := &RequestHistoryKLResponse{
 		Security:   security,
 		Name:       "Tencent",
-		KLList:     []*qotcommon.KLine{},
+		KLList:     []*KLine{},
 		NextReqKey: []byte("nextkey"),
 	}
 

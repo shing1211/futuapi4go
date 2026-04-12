@@ -1,7 +1,7 @@
 # Proto Field Verification Report
 
 **Generated:** 2026-04-12
-**SDK Version:** v0.5.0
+**SDK Version:** v0.6.0
 **Total Wrapper Functions:** 59
 
 ---
@@ -129,6 +129,15 @@ All 59 wrapper functions now map all proto fields without any hardcoded zeros or
 - **WarrantData**: All 32 proto fields now fully mapped
 - **DelayStatistics**: Fixed hardcoded zeros - now returns actual statistics
 - **StockFilter**: Fixed hardcoded zeros - now parses BaseDataList
+- **GlobalState**: Added MarketHKFuture, MarketUSFuture, MarketSGFuture, MarketJPFuture, ProgramStatus fields
+- **PlaceOrderResult**: Added OrderIDEx field
+- **ModifyOrder**: Now returns response with Header, OrderID, OrderIDEx
+- **ReconfirmOrder**: Now returns ReconfirmOrderResult with AccID, TrdEnv, TrdMarket, OrderID
+- **GetDelayStatistics**: Added ReqReplyStatisticsList and PlaceOrderStatisticsList
+- **GetPriceReminder**: Added ReminderSessionList to PriceReminderItemInfo, uses own struct instead of raw proto
+- **RequestHistoryKLQuota**: Added DetailList with HistoryKLQuotaDetail struct
+- **RequestHistoryKL**: Fixed all 11 KLine fields mapped (Time, Open, High, Low, Close, Volume, LastClose, Turnover, ChangeRate, Timestamp)
+- **SubAccPush**: Verified S2C has no fields - returns error only (correct)
 
 ---
 

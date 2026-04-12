@@ -24,19 +24,24 @@ const (
 
 // GetGlobalStateResponse represents the global connection state including server info, login status, and market availability.
 type GetGlobalStateResponse struct {
-	ConnID        uint64
-	ServerVer     int32
-	ServerBuildNo int32
-	Time          int64
-	LocalTime     float64
-	QotLogined    bool
-	TrdLogined    bool
-	QotSvrIpAddr  string
-	TrdSvrIpAddr  string
-	MarketHK      int32
-	MarketUS      int32
-	MarketSH      int32
-	MarketSZ      int32
+	ConnID         uint64
+	ServerVer      int32
+	ServerBuildNo  int32
+	Time           int64
+	LocalTime      float64
+	QotLogined     bool
+	TrdLogined     bool
+	QotSvrIpAddr   string
+	TrdSvrIpAddr   string
+	MarketHK       int32
+	MarketUS       int32
+	MarketSH       int32
+	MarketSZ       int32
+	MarketHKFuture int32
+	MarketUSFuture int32
+	MarketSGFuture int32
+	MarketJPFuture int32
+	ProgramStatus  *common.ProgramStatus
 }
 
 // GetGlobalState retrieves the global connection state including server version, login status, and market information.
@@ -85,19 +90,24 @@ func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
 	}
 
 	return &GetGlobalStateResponse{
-		ConnID:        s2c.GetConnID(),
-		ServerVer:     s2c.GetServerVer(),
-		ServerBuildNo: s2c.GetServerBuildNo(),
-		Time:          s2c.GetTime(),
-		LocalTime:     s2c.GetLocalTime(),
-		QotLogined:    s2c.GetQotLogined(),
-		TrdLogined:    s2c.GetTrdLogined(),
-		QotSvrIpAddr:  s2c.GetQotSvrIpAddr(),
-		TrdSvrIpAddr:  s2c.GetTrdSvrIpAddr(),
-		MarketHK:      s2c.GetMarketHK(),
-		MarketUS:      s2c.GetMarketUS(),
-		MarketSH:      s2c.GetMarketSH(),
-		MarketSZ:      s2c.GetMarketSZ(),
+		ConnID:         s2c.GetConnID(),
+		ServerVer:      s2c.GetServerVer(),
+		ServerBuildNo:  s2c.GetServerBuildNo(),
+		Time:           s2c.GetTime(),
+		LocalTime:      s2c.GetLocalTime(),
+		QotLogined:     s2c.GetQotLogined(),
+		TrdLogined:     s2c.GetTrdLogined(),
+		QotSvrIpAddr:   s2c.GetQotSvrIpAddr(),
+		TrdSvrIpAddr:   s2c.GetTrdSvrIpAddr(),
+		MarketHK:       s2c.GetMarketHK(),
+		MarketUS:       s2c.GetMarketUS(),
+		MarketSH:       s2c.GetMarketSH(),
+		MarketSZ:       s2c.GetMarketSZ(),
+		MarketHKFuture: s2c.GetMarketHKFuture(),
+		MarketUSFuture: s2c.GetMarketUSFuture(),
+		MarketSGFuture: s2c.GetMarketSGFuture(),
+		MarketJPFuture: s2c.GetMarketJPFuture(),
+		ProgramStatus:  s2c.GetProgramStatus(),
 	}, nil
 }
 

@@ -1005,7 +1005,7 @@ type RequestHistoryKLRequest struct {
 type RequestHistoryKLResponse struct {
 	Security   *qotcommon.Security
 	Name       string
-	KLList     []*qotcommon.KLine
+	KLList     []*KLine
 	NextReqKey []byte
 }
 
@@ -1060,12 +1060,30 @@ func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*Request
 		return nil, fmt.Errorf("RequestHistoryKL: s2c is nil")
 	}
 
-	return &RequestHistoryKLResponse{
+	result := &RequestHistoryKLResponse{
 		Security:   s2c.GetSecurity(),
 		Name:       s2c.GetName(),
-		KLList:     s2c.GetKlList(),
 		NextReqKey: s2c.GetNextReqKey(),
-	}, nil
+		KLList:     make([]*KLine, 0, len(s2c.GetKlList())),
+	}
+
+	for _, kl := range s2c.GetKlList() {
+		result.KLList = append(result.KLList, &KLine{
+			Time:           kl.GetTime(),
+			IsBlank:        kl.GetIsBlank(),
+			HighPrice:      kl.GetHighPrice(),
+			OpenPrice:      kl.GetOpenPrice(),
+			LowPrice:       kl.GetLowPrice(),
+			ClosePrice:     kl.GetClosePrice(),
+			LastClosePrice: kl.GetLastClosePrice(),
+			Volume:         kl.GetVolume(),
+			Turnover:       kl.GetTurnover(),
+			ChangeRate:     kl.GetChangeRate(),
+			Timestamp:      kl.GetTimestamp(),
+		})
+	}
+
+	return result, nil
 }
 
 // GetSecuritySnapshotRequest defines parameters for GetSecuritySnapshot.
@@ -1455,12 +1473,13 @@ func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityRespo
 
 // PriceReminderItemInfo represents a single price reminder item.
 type PriceReminderItemInfo struct {
-	Key      int64
-	Type     int32
-	Value    float64
-	Note     string
-	Freq     int32
-	IsEnable bool
+	Key                 int64
+	Type                int32
+	Value               float64
+	Note                string
+	Freq                int32
+	IsEnable            bool
+	ReminderSessionList []int32
 }
 
 // PriceReminderInfo represents the price reminder settings for a security.
@@ -1532,12 +1551,13 @@ func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market in
 		}
 		for _, item := range pr.GetItemList() {
 			info.ItemList = append(info.ItemList, &PriceReminderItemInfo{
-				Key:      item.GetKey(),
-				Type:     item.GetType(),
-				Value:    item.GetValue(),
-				Note:     item.GetNote(),
-				Freq:     item.GetFreq(),
-				IsEnable: item.GetIsEnable(),
+				Key:                 item.GetKey(),
+				Type:                item.GetType(),
+				Value:               item.GetValue(),
+				Note:                item.GetNote(),
+				Freq:                item.GetFreq(),
+				IsEnable:            item.GetIsEnable(),
+				ReminderSessionList: item.GetReminderSessionList(),
 			})
 		}
 		result.PriceReminderList = append(result.PriceReminderList, info)

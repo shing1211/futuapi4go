@@ -660,7 +660,8 @@ type PlaceOrderRequest struct {
 
 // PlaceOrderResponse is the response containing the newly placed order ID.
 type PlaceOrderResponse struct {
-	OrderID uint64
+	OrderID   uint64
+	OrderIDEx string
 }
 
 // PlaceOrder places a new order and returns the order ID.
@@ -720,7 +721,8 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 	}
 
 	return &PlaceOrderResponse{
-		OrderID: s2c.GetOrderID(),
+		OrderID:   s2c.GetOrderID(),
+		OrderIDEx: s2c.GetOrderIDEx(),
 	}, nil
 }
 
@@ -737,11 +739,20 @@ type ModifyOrderRequest struct {
 	TrdMarket2    int32
 }
 
+// ModifyOrderResponse is the response returned after modifying an order.
+type ModifyOrderResponse struct {
+	AccID     uint64
+	TrdEnv    int32
+	TrdMarket int32
+	OrderID   uint64
+	OrderIDEx string
+}
+
 // ModifyOrder modifies or cancels an existing order.
-// Returns an error if the modification fails.
-func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
+// Returns the modification response or an error if it fails.
+func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
-		return err
+		return nil, err
 	}
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
@@ -766,12 +777,12 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 
 	body, err := proto.Marshal(pkt)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	serialNo := c.NextSerialNo()
 	if err := c.Conn().WritePacket(ProtoID_ModifyOrder, serialNo, body); err != nil {
-		return err
+		return nil, err
 	}
 
 	apiTimeout := c.Conn().APITimeout()
@@ -780,19 +791,30 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 	}
 	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var rsp trdmodifyorder.Response
 	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
-		return err
+		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return fmt.Errorf("ModifyOrder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, fmt.Errorf("ModifyOrder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
-	return nil
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("ModifyOrder: s2c is nil")
+	}
+
+	return &ModifyOrderResponse{
+		AccID:     s2c.GetHeader().GetAccID(),
+		TrdEnv:    s2c.GetHeader().GetTrdEnv(),
+		TrdMarket: s2c.GetHeader().GetTrdMarket(),
+		OrderID:   s2c.GetOrderID(),
+		OrderIDEx: s2c.GetOrderIDEx(),
+	}, nil
 }
 
 // UnlockTradeRequest is the request to unlock or lock trading with a password.
