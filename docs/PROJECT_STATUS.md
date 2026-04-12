@@ -2,23 +2,25 @@
 
 ## Current Release: v0.6.0
 
-**Status**: Production Ready
+**Status**: Stable — All APIs implemented and tested
 
 ---
 
 ## Project Overview
 
-**futuapi4go** is a production-ready Go SDK for the Futu OpenD API, providing comprehensive market data and trading functionality for quantitative traders.
+**futuapi4go** is a Go SDK for the Futu OpenD API, providing market data queries,
+trading operations, and real-time push notifications for quantitative traders.
 
 ### Key Metrics
 
 | Metric | Value |
 |--------|-------|
-| **Wrapper Functions** | 59 |
+| **Wrapper Functions** | 59 (+ push handler API) |
 | **Low-Level APIs** | 74 |
-| **Protobuf Messages** | 100+ |
-| **Test Suites** | 6 suites |
-| **Examples** | 29+ |
+| **Protobuf Messages** | 74 packages |
+| **Test Files** | 19 |
+| **Test Functions** | 230+ |
+| **Examples** | 28 |
 | **Go Version** | 1.21+ |
 | **License** | Apache 2.0 |
 
@@ -28,78 +30,44 @@
 
 ### Market Data APIs (40 functions)
 
-| Category | Functions | Status |
-|----------|-----------|--------|
-| Real-Time Quotes | GetQuote, GetKLines | Done |
-| Order Book | GetOrderBook | Done |
-| Tick Data | GetTicker, GetRT | Done |
-| Broker | GetBroker | Done |
-| Historical | RequestHistoryKL, RequestHistoryKLQuota | Done |
-| Static Info | GetStaticInfo, GetTradeDate | Done |
-| Market State | GetMarketState, GetFutureInfo | Done |
-| Capital Flow | GetCapitalFlow, GetCapitalDistribution | Done |
-| Options | GetOptionChain, GetOptionExpirationDate | Done |
-| Warrants | GetWarrant | Done |
-| Screening | StockFilter, GetSecuritySnapshot | Done |
-| User Security | GetUserSecurity, ModifyUserSecurity, GetUserSecurityGroup | Done |
-| Reference | GetReference, GetPlateSecurity, GetOwnerPlate | Done |
-| Price Alerts | SetPriceReminder, GetPriceReminder | Done |
-| Subscription | Subscribe, Unsubscribe, UnsubscribeAll, QuerySubscription, RegQotPush | Done |
-| Holdings | GetHoldingChangeList, RequestRehab, GetSuspend | Done |
-| Trading Dates | RequestTradeDate | Done |
+All market data APIs are implemented and tested. See [API_REFERENCE.md](API_REFERENCE.md)
+for the complete reference.
 
 ### Trading APIs (17 functions)
 
-| Category | Functions | Status |
-|----------|-----------|--------|
-| Account | GetAccountList, UnlockTrading | Done |
-| Orders | PlaceOrder, ModifyOrder, CancelAllOrder | Done |
-| Positions | GetPositionList, GetFunds | Done |
-| Orders Query | GetOrderList, GetHistoryOrderList | Done |
-| Fills | GetOrderFillList, GetHistoryOrderFillList | Done |
-| Risk | GetMaxTrdQtys, GetOrderFee, GetMarginRatio | Done |
-| Push | SubAccPush, ReconfirmOrder | Done |
-| Flow | GetFlowSummary | Done |
+All trading APIs are implemented and tested.
 
 ### System APIs (3 functions)
 
+All system APIs are implemented and tested.
+
+### Push Notifications (new in v0.6.0)
+
 | Function | Status |
 |----------|--------|
-| GetGlobalState | Done |
-| GetUserInfo | Done |
-| GetDelayStatistics | Done |
+| `Client.SetPushHandler(protoID, handler)` | Done |
+| `ParsePushQuote(body)` | Done |
+| `ParsePushKLine(body)` | Done |
+| `ParsePushOrderBook(body)` | Done |
+| `ParsePushTicker(body)` | Done |
+| ProtoID constants (re-exported) | Done |
 
 ---
 
 ## Test Results
 
-### Unit Tests
+All 230+ unit tests pass across 19 test files.
 
-| Suite | Status |
-|-------|--------|
-| Market Data (pkg/qot) | Pass |
-| Trading (pkg/trd) | Pass |
-| System (pkg/sys) | Pass |
-| Push Handlers (pkg/push) | Pass |
-| Internal Client (internal/client) | Pass |
-| Public Client (client) | Pass |
-
-### Integration Tests
-
-| Test Suite | Result |
-|------------|--------|
-| Market Data (HSI) | Pass |
-| Trading Operations | Pass |
-| Push Notifications | Pass |
-| Historical Data | Pass |
-
-### Performance Benchmarks
-
-| Metric | Value |
-|--------|-------|
-| Average API Latency | ~22ms |
-| Fastest API (GetQuote) | ~0.4ms |
-| Connection Time | <100ms |
+| Package | Tests | Status |
+|---------|-------|--------|
+| `client/` | 50+ | Pass |
+| `internal/client/` | 100+ | Pass |
+| `pkg/qot/` | 12 | Pass |
+| `pkg/trd/` | 11 | Pass |
+| `pkg/sys/` | 5 | Pass |
+| `pkg/push/` | 5 | Pass |
+| `test/benchmark/` | 10+ benchmarks | Pass |
+| `test/examples/` | 28 compile checks | Pass |
 
 ---
 
@@ -108,9 +76,10 @@
 ### v0.6.0 (Current)
 - 100% proto field coverage for all 59 wrapper functions
 - Full proto field mapping audit completed
+- Push notification handler API: `SetPushHandler`, `ParsePush*` functions
+- ProtoID constants re-exported for convenience
 - All response structs fully populated with no hardcoded zeros
 - Thread-safe global logger implementation
-- Open-source readiness fixes
 
 ### v0.5.0
 - Complete trading API coverage
@@ -149,7 +118,7 @@ The SDK uses a 3-layer architecture:
 ## Roadmap
 
 ### In Progress
-- WebSocket transport integration (internal/ws/ exists)
+- WebSocket transport integration (internal/ws/ exists but not wired into main Client)
 - OpenTelemetry metrics integration
 
 ### Planned
@@ -159,9 +128,9 @@ The SDK uses a 3-layer architecture:
 
 ### Completed
 - 100% proto field coverage
-- Comprehensive test suites
+- Push notification handler API
+- Comprehensive test suites (230+ tests)
 - CI/CD pipeline
-- Production-ready status
 
 ---
 

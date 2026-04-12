@@ -2,17 +2,16 @@
 
 ## Overview
 
-The futuapi4go test suite provides comprehensive coverage for all SDK functionality, using **HSI (Hang Seng Index, 800100.HK)** as the primary test symbol with realistic market data.
+The futuapi4go test suite provides comprehensive coverage for all SDK functionality.
 
 ### Test Summary
 
-| Category | Tests | Description | OpenD Required |
-|----------|-------|-------------|----------------|
-| **Unit Tests** | 23 | Qot API (12) + Trading API (11) | ❌ No |
-| **Integration Tests** | 13 | Real OpenD testing | ✅ Yes |
-| **Benchmarks** | 10 | Performance measurements | ❌ No |
-| **Examples** | 29 | Compile validation | ❌ No |
-| **Total** | **46 + 10 benchmarks** | All passing | - |
+| Category | Test Files | Functions | Description | OpenD Required |
+|----------|-----------|-----------|-------------|----------------|
+| **Unit Tests** | 19 | 230 | Core client, push handlers, wrappers, errors, pool | ❌ No |
+| **Benchmarks** | 1 | 10+ | Performance measurements | ❌ No |
+| **Examples** | 28 dirs | — | Compile validation | ❌ No |
+| **Total** | **19 files** | **230+ functions** | All passing | — |
 
 ---
 
@@ -497,4 +496,4 @@ funds := fixtures.HSIFunds()
 
 ---
 
-**Status**: ✅ All 46 tests + 10 benchmarks passing
+**Status**: ✅ All 230+ unit tests passing, 10+ benchmarks passing

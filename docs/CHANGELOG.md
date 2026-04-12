@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Push Notification Handler API
+The public `client.Client` wrapper had zero push handler support. Added:
+
+- `Client.SetPushHandler(protoID, handler)` — register per-protoID push handler
+- `PushQuote`, `PushKLine`, `PushOrderBook`, `PushTicker` types
+- `ParsePushQuote()`, `ParsePushKLine()`, `ParsePushOrderBook()`, `ParsePushTicker()`
+- `OBItem` type for order book push data
+- ProtoID constants re-exported for convenience (3005, 3007, 3011, 3013, 3009, 3015)
+
 #### 100% Proto Field Coverage
 Complete proto field audit across all 59 wrapper functions — zero data loss, no partial mappings.
 
@@ -16,7 +25,9 @@ Complete proto field audit across all 59 wrapper functions — zero data loss, n
 - `GetDelayStatistics`: Added `ReqReplyList` and `PlaceOrderList` (was only mapping QotPushStatisticsList)
 - `GetPriceReminder`: Added `ReminderSessionList` to `PriceReminderItemInfo`, switched to own struct types instead of raw proto
 - `RequestHistoryKLQuota`: Added `DetailList` with `HistoryKLQuotaDetail` struct
-- `RequestHistoryKL`: Fixed all 11 KLine fields mapped (`Time`, `Open`, `High`, `Low`, `Close`, `Volume`, `LastClose`, `Turnover`, `ChangeRate`, `Timestamp`); fixed manual pointer unwrapping
+- `RequestHistoryKL`: Fixed all 11 KLine fields mapped; fixed manual pointer unwrapping
+- `RequestHistoryKL`: Added automatic pagination via `NextReqKey` — fetches all available K-lines automatically
+- `RequestHistoryKLWithLimit`: New function with configurable page size
 - `DelayStatistics`: Fixed hardcoded zeros — now returns actual statistics
 - `StockFilter`: Fixed hardcoded zeros — now parses BaseDataList (`CurPrice`, `ChangeRate`, `Volume`)
 - `FutureInfo`: Removed non-existent `InstType` field

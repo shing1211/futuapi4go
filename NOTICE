@@ -1,0 +1,41 @@
+futuapi4go
+Copyright 2026 shing1211
+
+This product includes software developed by shing1211
+(https://github.com/shing1211/futuapi4go).
+
+---
+
+Third-Party Dependencies
+
+This product includes the following third-party software:
+
+google.golang.org/protobuf
+  Copyright (c) Google LLC
+  License: BSD 3-Clause
+  https://github.com/protocolbuffers/protobuf-go
+
+github.com/gorilla/websocket
+  Copyright (c) 2013 The Gorilla WebSocket Authors
+  License: BSD 2-Clause
+  https://github.com/gorilla/websocket
+
+---
+
+Futu OpenAPI Protocol
+
+This SDK implements a client for the Futu OpenD protocol based on publicly
+available API documentation from Futu Holdings Limited. This implementation is
+a clean-room reverse engineering effort and does not contain any proprietary
+code from Futu Holdings Limited.
+
+Futu OpenAPI documentation is Copyright (c) Futu Holdings Limited.
+Official documentation: https://openapi.futunn.com/
+
+---
+
+Trademarks
+
+"Futu", "moomoo", "富途", and related marks are trademarks of Futu Holdings
+Limited. This project is not affiliated with, sponsored by, or endorsed by
+Futu Holdings Limited.

@@ -200,6 +200,7 @@ futuapi4go/
         │  - GetKLines                │
         │  - Subscribe                │
         │  - PlaceOrder               │
+        │  - SetPushHandler (new)     │
         │  - ...                      │
         └──────────────┬──────────────┘
                        │ uses low-level functions
@@ -215,12 +216,12 @@ futuapi4go/
         ┌──────────────▼──────────────┐
         │   internal/client/          │  ← TCP connection
         │   - Conn (TCP)              │
-        │   - Packet I/O            │
+        │   - Packet I/O              │
         └──────────────┬──────────────┘
                        │ network
         ┌──────────────▼──────────────┐
         │      Futu OpenD             │  ← Local Gateway
-        │   (127.0.0.1:11111)        │
+        │   (127.0.0.1:11111)         │
         └─────────────────────────────┘
 ```
 
