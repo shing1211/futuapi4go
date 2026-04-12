@@ -41,31 +41,77 @@
 
 ---
 
-## ✨ Features
+## 🤖 Futu AI Skills Integration
 
-### Market Data (40+ APIs)
+Futu provides **AI Agent Skills** that integrate with OpenClaw, Claude Code, Cursor and other AI agents. These skills enable natural language trading through 65+ API interfaces across 7 markets.
 
-- **Real-Time Quotes**: `GetQuote`, `GetKLines`, `GetOrderBook`, `GetTicker`, `GetRT`, `GetBroker`
-- **Historical Data**: `RequestHistoryKL`, `RequestHistoryKLQuota`, `RequestTradeDate`
-- **Market Info**: `GetStaticInfo`, `GetTradeDate`, `GetMarketState`, `GetFutureInfo`, `GetIpoList`
-- **Capital Flow**: `GetCapitalFlow`, `GetCapitalDistribution`
-- **Options & Warrants**: `GetOptionChain`, `GetOptionExpirationDate`, `GetWarrant`
-- **Stock Screening**: `StockFilter`, `GetSecuritySnapshot`, `GetCodeChange`
-- **User Data**: `GetUserSecurity`, `GetUserSecurityGroup`, `ModifyUserSecurity`
-- **Reference**: `GetReference`, `GetPlateSecurity`, `GetOwnerPlate`, `GetPlateSet`
-- **Price Alerts**: `SetPriceReminder`, `GetPriceReminder`
-- **Subscription**: `Subscribe`, `Unsubscribe`, `UnsubscribeAll`, `QuerySubscription`, `RegQotPush`, `GetSubInfo`
+### What are Futu Skills?
 
-### Trading (17 APIs)
+Futu Skills are AI agent plugins that provide:
+- **📊 Real-Time Market Data**: Quotes, K-lines, order books, tick-by-tick data
+- **💹 Smart Trading**: Place orders, modify/cancel, check positions - all via natural language
+- **⚡ Real-Time Push**: Live price alerts and order notifications
+- **🌏 7 Market Coverage**: Hong Kong, US, Singapore, Japan, Canada, Australia, Malaysia
 
-- **Account**: `GetAccountList`, `UnlockTrading`, `SubAccPush`, `ReconfirmOrder`
-- **Orders**: `PlaceOrder`, `ModifyOrder`, `CancelAllOrder`, `GetOrderList`, `GetHistoryOrderList`
-- **Positions**: `GetPositionList`, `GetFunds`, `GetMaxTrdQtys`, `GetOrderFee`, `GetMarginRatio`
-- **Fills**: `GetOrderFillList`, `GetHistoryOrderFillList`, `GetFlowSummary`
+### Supported Markets (7)
 
-### System (3 APIs)
+| Market | Coverage |
+|--------|----------|
+| 🇭🇰 Hong Kong | Stocks, Futures, Options, Warrants |
+| 🇺🇸 US | Stocks, Options |
+| 🇸🇬 Singapore | Stocks |
+| 🇯🇵 Japan | Stocks |
+| 🇨🇦 Canada | Stocks |
+| 🇦🇺 Australia | Stocks |
+| 🇲🇾 Malaysia | Stocks |
 
-- `GetGlobalState`, `GetUserInfo`, `GetDelayStatistics`
+### Key Capabilities
+
+| Category | Functions | Description |
+|----------|-----------|-------------|
+| **Market Data** | 35 APIs | Real-time quotes, K-lines, snapshots, order book, ticks, sector data |
+| **Trading** | 15 APIs | Order placement, modification, cancellation, position/fund queries |
+| **Push Notifications** | 9+ Types | Quote updates, K-line updates, tick data, price alerts, order changes |
+
+### Installation
+
+Follow the [official Futu AI guide](https://openapi.futunn.com/futu-api-doc/intro/ai.html) to install skills in your AI agent:
+
+```bash
+# In OpenClaw / Claude Code / Cursor, run:
+/install-opend
+```
+
+### Comparison: futuapi4go vs Futu Skills
+
+| Aspect | futuapi4go | Futu Skills |
+|--------|------------|-------------|
+| **Language** | Go | Natural Language (AI) |
+| **Control** | Full programmatic control | Conversational interface |
+| **Flexibility** | Build custom trading systems | Quick ad-hoc queries |
+| **Best For** | Production trading bots | Exploration & prototyping |
+
+> **Tip**: Use Futu Skills for exploring API capabilities and quick tests, then use futuapi4go for building production trading systems.
+
+### Bundled Skills
+
+This repository includes the official Futu AI Skills in the `skills/opend-skills/` directory:
+
+```
+skills/opend-skills/
+├── skills/
+│   ├── futuapi/          # Market & trading AI skill
+│   └── install-futu-opend/  # OpenD installation skill
+├── LEGAL_Futu_api_cn.md  # Chinese terms
+└── LEGAL_Futu_api_en.md  # English terms
+```
+
+Extract and use with your AI agent:
+```bash
+cd skills
+unzip opend-skills.zip
+# Follow AI agent integration guide
+```
 
 ---
 
