@@ -8,7 +8,7 @@
 ### Current State
 
 ✅ **All Systems Operational**
-- 43 high-level wrapper functions implemented
+- 54 high-level wrapper functions implemented
 - 74 low-level protobuf APIs available
 - 46 tests + 10 benchmarks passing
 - 29 example programs compile and run
@@ -120,7 +120,7 @@ PASS (27.521s)
 
 ### Phase 2: High-Level Wrappers (IN PROGRESS 🚧)
 
-**Progress**: 43/74 wrapper functions implemented (58%)
+**Progress**: 54/74 wrapper functions implemented (73%)
 
 #### Completed Wrapper Functions (43)
 
@@ -169,23 +169,17 @@ PASS (27.521s)
 | 41 | System | GetGlobalState | ✅ |
 | 42 | System | GetUserInfo | ✅ |
 | 43 | System | GetDelayStatistics | ✅ |
-
-#### Remaining Wrapper Functions (TBD)
-
-| # | Category | Function | Priority |
-|---|----------|----------|----------|
-| 1 | Trading | ModifyOrder | High |
-| 2 | Trading | GetHistoryOrderList | High |
-| 3 | Trading | GetHistoryOrderFillList | High |
-| 4 | Trading | GetMarginRatio | Medium |
-| 5 | Trading | GetMaxTrdQtys | Medium |
-| 6 | Trading | GetOrderFee | Medium |
-| 7 | Trading | GetAccTradingInfo | Medium |
-| 8 | Market Data | StockFilter | Medium |
-| 9 | Market Data | SetPriceReminder | Medium |
-| 10 | Market Data | GetPriceReminder | Medium |
-| 11 | Market Data | GetSuspend | Low |
-| 12 | Market Data | GetHoldingChangeList | Low |
+| 44 | Market Data | GetSuspend | ✅ |
+| 45 | Market Data | SetPriceReminder | ✅ |
+| 46 | Market Data | GetPriceReminder | ✅ |
+| 47 | Trading | SubAccPush | ✅ |
+| 48 | Trading | ReconfirmOrder | ✅ |
+| 49 | Trading | GetOrderFee | ✅ |
+| 50 | Trading | GetMarginRatio | ✅ |
+| 51 | Trading | GetHistoryOrderFillList | ✅ |
+| 52 | Market Data | GetHoldingChangeList | ✅ |
+| 53 | Market Data | RequestRehab | ✅ |
+| 54 | Market Data | RequestHistoryKLQuota | ✅ |
 
 ### Phase 3: Additional Features (PLANNED 📋)
 

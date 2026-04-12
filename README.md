@@ -33,14 +33,14 @@
 
 ### Key Highlights
 
-- **🚀 Production-Ready**: Battle-tested with 43 wrapper functions + 74 protobuf APIs
+- **🚀 Production-Ready**: Battle-tested with 54 wrapper functions + 74 protobuf APIs
 - **📊 Real-Time Data**: Live quotes, K-lines, order books, tick-by-tick
 - **💼 Full Trading**: Order placement, modification, position management
 - **🔔 Push Notifications**: Real-time market data and order updates
 - **🧪 Comprehensive Tests**: 46 tests + 10 benchmarks, all passing
 - **📖 Complete Documentation**: 13 detailed guides
 - **🎯 29 Examples**: From basic usage to algorithmic trading strategies
-- **🔧 High-Level Wrappers**: 43 easy-to-use wrapper functions
+- **🔧 High-Level Wrappers**: 54 easy-to-use wrapper functions
 
 ### Architecture
 
@@ -48,11 +48,11 @@
 ┌─────────────────────────────────────────────────────────┐
 │                  futuapi4go SDK                          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ client/  │  High-Level Wrapper APIs (43)            │
+│  │ client/  │  High-Level Wrapper APIs (54)            │
 │  └──────────┘  ┌────────────────────────────────────┐ │
 │                │       pkg/ (Low-Level)               │ │
-│  ┌──────────┐  │ pkg/qot (37) | pkg/trd (16) |       │ │
-│  │internal/ │  │ pkg/sys (5) | pkg/pb (74)          │ │
+│  ┌──────────┐  │ pkg/qot (32) | pkg/trd (17) |       │ │
+│  │internal/ │  │ pkg/sys (3) | pkg/pb (74)          │ │
 │  │ client/  │  └────────────────────────────────────┘ │
 │  │ Conn,etc │                                            │
 │  └──────────┘                                            │
@@ -62,7 +62,7 @@
 
 ## ✨ Features
 
-### Market Data (40 wrapper functions)
+### Market Data (32 wrapper functions)
 
 | Category | Wrapper Functions | Description |
 |----------|-------------------|-------------|
@@ -74,18 +74,22 @@
 | **Warrants** | GetWarrant | Warrant data |
 | **Screening** | StockFilter, GetSecuritySnapshot, GetCodeChange, GetIpoList | Stock screening, snapshots, IPOs |
 | **User Data** | GetUserSecurity, GetUserSecurityGroup, ModifyUserSecurity | Watchlists, security groups |
+| **Price Alerts** | SetPriceReminder, GetPriceReminder | Price reminder (涨跌幅提醒) |
 | **Subscriptions** | Subscribe, GetSubInfo | Real-time push subscriptions |
 | **Reference** | GetReference, GetPlateSecurity, GetOwnerPlate, GetPlateSet | Stock references, plates |
+| **Holding** | GetHoldingChangeList, RequestRehab | Shareholding changes, rehabilitation |
+| **Other** | GetSuspend, GetFutureInfo, RequestHistoryKLQuota | Suspension, futures, quota |
 
-### Trading (9 wrapper functions)
+### Trading (17 wrapper functions)
 
 | Category | Wrapper Functions | Description |
 |----------|-------------------|-------------|
-| **Account** | GetAccountList, UnlockTrading | Account management, unlock |
+| **Account** | GetAccountList, UnlockTrading, SubAccPush, ReconfirmOrder | Account, unlock, push, reconfirm |
 | **Orders** | PlaceOrder, ModifyOrder, GetOrderList, GetHistoryOrderList | Order placement, modification, queries |
 | **Positions** | GetPositionList | Current positions with P/L |
-| **Funds** | GetFunds, GetMaxTrdQtys | Account funds, max quantities |
-| **Fills** | GetOrderFillList | Execution history |
+| **Funds** | GetFunds, GetMaxTrdQtys, GetOrderFee, GetMarginRatio | Account funds, max qty, fees, margin |
+| **Fills** | GetOrderFillList, GetHistoryOrderFillList | Execution history |
+| **Flow** | GetFlowSummary | Fund flow summary |
 
 ### System (3 wrapper functions)
 
