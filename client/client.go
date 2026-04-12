@@ -1084,37 +1084,65 @@ func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
 	return plates, nil
 }
 
-// RequestHistoryKL requests historical K-line data.
+// RequestHistoryKL requests historical K-line data with automatic pagination.
+// It fetches all available K-lines between startDate and endDate (inclusive),
+// automatically handling page boundaries via NextReqKey.
+// Each page requests up to 1000 K-lines (API maximum).
+// A 200ms delay is added between pages to respect rate limits.
 func RequestHistoryKL(c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
+	return RequestHistoryKLWithLimit(c, market, code, klType, startDate, endDate, 1000)
+}
+
+// RequestHistoryKLWithLimit requests historical K-line data with a configurable
+// page size. It automatically paginates until all data is retrieved.
+// maxPerPage controls how many K-lines are requested per API call (max 1000).
+// A 200ms delay is added between pages to respect rate limits.
+func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int32, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.RequestHistoryKL(c.inner, &qot.RequestHistoryKLRequest{
-		Security:  sec,
-		KlType:    klType,
-		BeginTime: startDate,
-		EndTime:   endDate,
-	})
-	if err != nil {
-		return nil, err
+	var allKLines []KLine
+	var nextReqKey []byte
+
+	for {
+		resp, err := qot.RequestHistoryKL(c.inner, &qot.RequestHistoryKLRequest{
+			Security:     sec,
+			KlType:       klType,
+			BeginTime:    startDate,
+			EndTime:      endDate,
+			MaxAckKLNum:  maxPerPage,
+			NextReqKey:   nextReqKey,
+		})
+		if err != nil {
+			return allKLines, err
+		}
+
+		for _, kl := range resp.KLList {
+			allKLines = append(allKLines, KLine{
+				Time:       kl.Time,
+				Open:       kl.OpenPrice,
+				High:       kl.HighPrice,
+				Low:        kl.LowPrice,
+				Close:      kl.ClosePrice,
+				Volume:     kl.Volume,
+				LastClose:  kl.LastClosePrice,
+				Turnover:   kl.Turnover,
+				ChangeRate: kl.ChangeRate,
+				Timestamp:  kl.Timestamp,
+			})
+		}
+
+		// Check if there are more pages
+		if len(resp.NextReqKey) == 0 {
+			break
+		}
+		nextReqKey = resp.NextReqKey
+
+		// Rate limit: 200ms between pages
+		time.Sleep(200 * time.Millisecond)
 	}
 
-	klines := make([]KLine, 0, len(resp.KLList))
-	for _, kl := range resp.KLList {
-		klines = append(klines, KLine{
-			Time:       kl.Time,
-			Open:       kl.OpenPrice,
-			High:       kl.HighPrice,
-			Low:        kl.LowPrice,
-			Close:      kl.ClosePrice,
-			Volume:     kl.Volume,
-			LastClose:  kl.LastClosePrice,
-			Turnover:   kl.Turnover,
-			ChangeRate: kl.ChangeRate,
-			Timestamp:  kl.Timestamp,
-		})
-	}
-	return klines, nil
+	return allKLines, nil
 }
 
 // GetReference retrieves related/reference securities.
