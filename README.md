@@ -376,6 +376,16 @@ go run cmd/examples/01_market_data_basic/main.go
 
 ---
 
+## ⚠️ Disclaimer
+
+**futuapi4go** is an open source project and is **not affiliated with**, **sponsored by**, or **endorsed by** Futu Holdings Limited (Futu), moomoo, or any of their subsidiaries.
+
+This SDK implements a client for the Futu OpenD protocol. It is a clean-room implementation that does not contain any proprietary code from Futu. Users must comply with Futu's terms of service when using the OpenD API.
+
+Use at your own risk. Trading involves financial risk. The authors assume no liability for any losses incurred while using this software.
+
+---
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) for details.

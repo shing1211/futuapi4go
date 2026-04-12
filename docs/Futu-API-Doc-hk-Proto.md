@@ -1,3 +1,13 @@
+<!--
+This documentation is based on official Futu OpenAPI documentation.
+Used for reference purposes in this SDK implementation.
+
+Source: https://openapi.futunn.com/
+Copyright: Futu Holdings Limited
+
+This is a derivative work for SDK implementation purposes.
+-->
+
 # Futu OpenAPI 文檔 (Proto)
 
 
