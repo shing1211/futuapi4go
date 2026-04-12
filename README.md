@@ -93,25 +93,22 @@ Follow the [official Futu AI guide](https://openapi.futunn.com/futu-api-doc/intr
 
 > **Tip**: Use Futu Skills for exploring API capabilities and quick tests, then use futuapi4go for building production trading systems.
 
-### Bundled Skills
+### Optional: Futu AI Skills
 
-This repository includes the official Futu AI Skills in the `skills/opend-skills/` directory:
+For AI agent integration (OpenClaw, Claude Code, Cursor), you can download the official Futu Skills:
 
-```
-skills/opend-skills/
-├── skills/
-│   ├── futuapi/          # Market & trading AI skill
-│   └── install-futu-opend/  # OpenD installation skill
-├── LEGAL_Futu_api_cn.md  # Chinese terms
-└── LEGAL_Futu_api_en.md  # English terms
-```
-
-Extract and use with your AI agent:
 ```bash
-cd skills
-unzip opend-skills.zip
-# Follow AI agent integration guide
+# Download official Futu AI Skills
+curl -L -o skills.zip https://openapi.futunn.com/skills/opend-skills.zip
+
+# Extract to project root
+unzip skills.zip
+
+# Follow AI agent integration guide:
+# https://openapi.futunn.com/futu-api-doc/intro/ai.html
 ```
+
+The skills provide natural language access to 65+ API interfaces. See official docs for setup.
 
 ---
 
