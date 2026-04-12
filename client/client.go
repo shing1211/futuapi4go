@@ -1640,6 +1640,80 @@ func GetHoldingChangeList(c *Client, market int32, code string, holderCategory i
 	return result, nil
 }
 
+// RehabInfo represents rehabilitation (复权) data.
+type RehabInfo struct {
+	Time       string
+	FwdFactorA float64
+	FwdFactorB float64
+	BwdFactorA float64
+	BwdFactorB float64
+	SplitBase  int32
+	SplitErt   int32
+	JoinBase   int32
+	JoinErt    int32
+	BonusBase  int32
+	BonusErt   int32
+	AllotBase  int32
+	AllotErt   int32
+	AllotPrice float64
+}
+
+// RequestRehab requests rehabilitation (复权) data.
+func RequestRehab(c *Client, market int32, code string) ([]*RehabInfo, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	resp, err := qot.RequestRehab(c.inner, &qot.RequestRehabRequest{
+		Security: sec,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*RehabInfo, 0, len(resp.RehabList))
+	for _, r := range resp.RehabList {
+		if r == nil {
+			continue
+		}
+		result = append(result, &RehabInfo{
+			Time:       getStr(r.Time),
+			FwdFactorA: getFloat64(r.FwdFactorA),
+			FwdFactorB: getFloat64(r.FwdFactorB),
+			BwdFactorA: getFloat64(r.BwdFactorA),
+			BwdFactorB: getFloat64(r.BwdFactorB),
+			SplitBase:  getInt32(r.SplitBase),
+			SplitErt:   getInt32(r.SplitErt),
+			JoinBase:   getInt32(r.JoinBase),
+			JoinErt:    getInt32(r.JoinErt),
+			BonusBase:  getInt32(r.BonusBase),
+			BonusErt:   getInt32(r.BonusErt),
+			AllotBase:  getInt32(r.AllotBase),
+			AllotErt:   getInt32(r.AllotErt),
+			AllotPrice: getFloat64(r.AllotPrice),
+		})
+	}
+	return result, nil
+}
+
+// HistoryKLQuotaInfo represents historical K-line quota info.
+type HistoryKLQuotaInfo struct {
+	UsedQuota   int32
+	RemainQuota int32
+}
+
+// RequestHistoryKLQuota queries historical K-line quota.
+func RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error) {
+	resp, err := qot.RequestHistoryKLQuota(c.inner, &qot.RequestHistoryKLQuotaRequest{
+		GetDetail: false,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &HistoryKLQuotaInfo{
+		UsedQuota:   resp.UsedQuota,
+		RemainQuota: resp.RemainQuota,
+	}, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
