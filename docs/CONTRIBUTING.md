@@ -508,7 +508,7 @@ See [DEVELOPER.md](DEVELOPER.md) for detailed architecture.
 
 ### Resources
 
-- **[README.md](README.md)**: Project overview
+- **[../README.md](../README.md)**: Project overview
 - **[API_REFERENCE.md](API_REFERENCE.md)**: Complete API docs
 - **[TESTING.md](TESTING.md)**: Testing guide
 - **[DEVELOPER.md](DEVELOPER.md)**: Development guide
@@ -551,7 +551,7 @@ A:
 
 ## 📜 License
 
-By contributing to futuapi4go, you agree that your contributions will be licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
+By contributing to futuapi4go, you agree that your contributions will be licensed under the Apache License 2.0. See [../LICENSE](../LICENSE) for details.
 
 ---
 

@@ -122,12 +122,12 @@ go run main.go
 
 1. **Start the simulator**:
 ```bash
-go run ./cmd/simulator/main.go
+go run ./cmd/simulator
 ```
 
 2. **Run any example** (in another terminal):
 ```bash
-cd examples/01_market_data_basic
+cd cmd/examples/01_market_data_basic
 go run main.go
 ```
 
@@ -306,9 +306,9 @@ These are necessary because protobuf fields require pointer types.
 ## Additional Resources
 
 - [USER_GUIDE.md](../docs/USER_GUIDE.md) - Complete user documentation
-- [SIMULATOR.md](../docs/SIMULATOR.md) - Simulator documentation
-- [API_REFERENCE.md](../docs/API_REFERENCE.md) - API implementation details
+- [API_REFERENCE.md](../docs/API_REFERENCE.md) - API reference
 - [CHANGELOG.md](../docs/CHANGELOG.md) - Version history
+- [DEVELOPER.md](../docs/DEVELOPER.md) - Developer guide
 
 ---
 

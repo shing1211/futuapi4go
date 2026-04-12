@@ -134,7 +134,7 @@ go get github.com/shing1211/futuapi4go@latest
 Or use the latest development version:
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.6.0
+go get github.com/shing1211/futuapi4go@main
 ```
 
 ### Requirements
@@ -163,34 +163,26 @@ futuapi4go/
 ├── client/                 # High-level wrapper APIs (59 functions)
 │   └── client.go          # Main client with all wrappers
 ├── pkg/
-│   ├── qot/              # Market data APIs (quote + market)
-│   │   ├── quote.go      # Real-time quote functions
-│   │   └── market.go     # Market info functions
-│   ├── trd/              # Trading APIs
-│   │   └── trade.go      # Order, position, account functions
-│   ├── sys/              # System APIs
-│   │   └── system.go     # Global state, user info
-│   └── pb/               # Protobuf definitions (74 APIs)
-│       ├── qotcommon/   # Common QOT types
-│       └── trdcommon/   # Common trading types
+│   ├── qot/               # Market data APIs
+│   │   ├── quote.go       # Real-time quote functions
+│   │   └── market.go      # Market info, owner plate, reference
+│   ├── trd/               # Trading APIs
+│   │   └── trade.go       # Order, position, account functions
+│   ├── sys/               # System APIs
+│   │   └── system.go      # Global state, user info
+│   ├── push/              # Push notification parsers
+│   └── pb/                # Generated protobuf code (74 packages)
 ├── internal/
-│   └── client/           # Low-level TCP connection
-│       ├── conn.go      # Connection handling
-│       ├── client.go    # Main client
-│       └── pool.go      # Connection pool
-├── push/                 # Push notification handlers
-├── test/                 # Integration tests
-│   ├── integration/      # Integration tests
-│   ├── qot_api/         # Market data API tests
-│   └── trd_api/         # Trading API tests
-├── cmd/examples/         # Example programs (29 examples)
-│   ├── 01_market_data_basic/
-│   ├── 02_market_data_advanced/
-│   ├── 03_trading_operations/
-│   ├── 04_push_subscriptions/
-│   ├── 05_comprehensive_demo/
-│   └── algo_*/          # Algorithm examples
-└── docs/                 # Documentation
+│   ├── client/            # Low-level TCP connection + pool
+│   └── ws/                # WebSocket transport (experimental)
+├── test/                  # Test suite
+│   ├── integration/       # Integration tests
+│   ├── benchmark/         # Benchmarks
+│   └── fixtures/          # Test data fixtures
+├── cmd/
+│   ├── examples/          # Example programs (28 examples)
+│   └── simulator/         # Mock OpenD server
+└── docs/                  # Documentation
 ```
 
 ---

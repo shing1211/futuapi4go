@@ -234,8 +234,9 @@ Execution Summary:
 
 ## Additional Resources
 
-- [USER_GUIDE.md](../../USER_GUIDE.md) - Complete user guide
-- [SIMULATOR.md](../../SIMULATOR.md) - Test with simulator
+- [docs/USER_GUIDE.md](../../docs/USER_GUIDE.md) - Complete user guide
+- [docs/DEVELOPER.md](../../docs/DEVELOPER.md) - Developer guide
+- [docs/API_REFERENCE.md](../../docs/API_REFERENCE.md) - API reference
 
 ---
 
