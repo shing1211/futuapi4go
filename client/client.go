@@ -157,6 +157,55 @@ func Subscribe(c *Client, market int32, code string, subTypes []int32) error {
 	return err
 }
 
+// Unsubscribe unsubscribes from real-time market data.
+func Unsubscribe(c *Client, market int32, code string, subTypes []int32) error {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	subTypesConverted := make([]qot.SubType, len(subTypes))
+	for i, st := range subTypes {
+		subTypesConverted[i] = qot.SubType(st)
+	}
+
+	_, err := qot.Subscribe(c.inner, &qot.SubscribeRequest{
+		SecurityList:     []*qotcommon.Security{sec},
+		SubTypeList:      subTypesConverted,
+		IsSubOrUnSub:     false,
+		IsRegOrUnRegPush: false,
+	})
+	return err
+}
+
+// UnsubscribeAll unsubscribes from all market data.
+func UnsubscribeAll(c *Client) error {
+	_, err := qot.Subscribe(c.inner, &qot.SubscribeRequest{
+		SubTypeList:  []qot.SubType{},
+		IsSubOrUnSub: false,
+		IsUnsubAll:   true,
+	})
+	return err
+}
+
+// QuerySubscription queries the current subscription status.
+func QuerySubscription(c *Client) (*qot.GetSubInfoResponse, error) {
+	return qot.GetSubInfo(c.inner)
+}
+
+// RegQotPush registers or unregisters real-time push notifications for a security.
+func RegQotPush(c *Client, market int32, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	_, err := qot.RegQotPush(c.inner, &qot.RegQotPushRequest{
+		SecurityList:  []*qotcommon.Security{sec},
+		SubTypeList:   subTypes,
+		RehabTypeList: rehabTypes,
+		IsRegOrUnReg:  isReg,
+		IsFirstPush:   isFirstPush,
+	})
+	return err
+}
+
 // GetAccountList retrieves the list of trading accounts.
 func GetAccountList(c *Client) ([]Account, error) {
 	resp, err := trd.GetAccList(c.inner, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
@@ -221,6 +270,21 @@ func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp
 		ModifyOrderOp: modifyOp,
 		Price:         price,
 		Qty:           qty,
+	})
+}
+
+// CancelAllOrder cancels all pending orders for the specified account and market.
+// Note: Simulate trading and HKCC accounts do not support CancelAllOrder.
+func CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error {
+	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
+		AccID:         accID,
+		TrdMarket:     market,
+		TrdEnv:        trdEnv,
+		OrderID:       0,
+		ModifyOrderOp: 1, // Cancel
+		Price:         0,
+		Qty:           0,
+		ForAll:        true,
 	})
 }
 

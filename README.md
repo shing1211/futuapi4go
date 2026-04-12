@@ -33,14 +33,14 @@
 
 ### Key Highlights
 
-- **🚀 Production-Ready**: Battle-tested with 54 wrapper functions + 74 protobuf APIs
+- **🚀 Production-Ready**: Battle-tested with 59 wrapper functions + 74 protobuf APIs
 - **📊 Real-Time Data**: Live quotes, K-lines, order books, tick-by-tick
 - **💼 Full Trading**: Order placement, modification, position management
 - **🔔 Push Notifications**: Real-time market data and order updates
 - **🧪 Comprehensive Tests**: 46 tests + 10 benchmarks, all passing
 - **📖 Complete Documentation**: 13 detailed guides
 - **🎯 29 Examples**: From basic usage to algorithmic trading strategies
-- **🔧 High-Level Wrappers**: 54 easy-to-use wrapper functions
+- **🔧 High-Level Wrappers**: 59 easy-to-use wrapper functions
 
 ### Architecture
 
@@ -48,7 +48,7 @@
 ┌─────────────────────────────────────────────────────────┐
 │                  futuapi4go SDK                          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ client/  │  High-Level Wrapper APIs (54)            │
+│  │ client/  │  High-Level Wrapper APIs (59)            │
 │  └──────────┘  ┌────────────────────────────────────┐ │
 │                │       pkg/ (Low-Level)               │ │
 │  ┌──────────┐  │ pkg/qot (32) | pkg/trd (17) |       │ │

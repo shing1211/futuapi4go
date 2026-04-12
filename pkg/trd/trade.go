@@ -649,6 +649,8 @@ type ModifyOrderRequest struct {
 	ModifyOrderOp int32
 	Price         float64
 	Qty           float64
+	ForAll        bool
+	TrdMarket2    int32
 }
 
 // ModifyOrder modifies or cancels an existing order.
@@ -664,12 +666,16 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) error {
 	}
 
 	orderID := req.OrderID
+	forAll := req.ForAll
+	trdMarket2 := req.TrdMarket2
 	c2s := &trdmodifyorder.C2S{
 		Header:        header,
 		OrderID:       &orderID,
 		ModifyOrderOp: &req.ModifyOrderOp,
 		Price:         &req.Price,
 		Qty:           &req.Qty,
+		ForAll:        &forAll,
+		TrdMarket:     &trdMarket2,
 	}
 
 	pkt := &trdmodifyorder.Request{C2S: c2s}
