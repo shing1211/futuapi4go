@@ -1524,6 +1524,33 @@ func GetSuspend(c *Client, securities []*qotcommon.Security, beginTime, endTime 
 	return result, nil
 }
 
+// PriceReminderOp constants for price reminder operations.
+const (
+	PriceReminderOpAdd    = 1
+	PriceReminderOpUpdate = 2
+	PriceReminderOpDelete = 3
+)
+
+// SetPriceReminder creates/updates/deletes a price reminder.
+func SetPriceReminder(c *Client, market int32, code string, op, reminderType, freq int32, value float64, note string) (int64, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	resp, err := qot.SetPriceReminder(c.inner, &qot.SetPriceReminderRequest{
+		Security: sec,
+		Op:       op,
+		Type:     reminderType,
+		Freq:     freq,
+		Value:    value,
+		Note:     note,
+	})
+	if err != nil {
+		return 0, err
+	}
+	return resp.Key, nil
+}
+
+// ============================================================================
+// Types
 // ============================================================================
 // Types
 // ============================================================================
