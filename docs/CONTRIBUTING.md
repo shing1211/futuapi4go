@@ -52,14 +52,14 @@ We pledge to make participation in this project a harassment-free experience for
 ### Setup Development Environment
 
 ```bash
-# 1. Fork the repository on Gitee
+# 1. Fork the repository on GitHub
 
 # 2. Clone your fork
-git clone https://gitee.com/YOUR_USERNAME/futuapi4go.git
+git clone https://github.com/YOUR_USERNAME/futuapi4go.git
 cd futuapi4go
 
 # 3. Add upstream remote
-git remote add upstream https://gitee.com/shing1211/futuapi4go.git
+git remote add upstream https://github.com/shing1211/futuapi4go.git
 
 # 4. Install dependencies
 go mod download
@@ -80,8 +80,7 @@ futuapi4go/
 │   ├── examples/        # Example programs
 │   └── simulator/       # Mock OpenD server
 ├── internal/
-│   ├── client/          # Core client implementation
-│   └── ws/              # WebSocket transport
+│   └── client/          # Core client implementation (TCP + WebSocket)
 ├── pkg/
 │   ├── qot/             # Market Data APIs
 │   ├── trd/             # Trading APIs
@@ -141,7 +140,7 @@ See [Commit Message Guidelines](#commit-message-guidelines) below.
 # Push to your fork
 git push origin feature/your-feature-name
 
-# Create Pull Request on Gitee
+# Create Pull Request on GitHub
 # Navigate to your fork and click "Create Pull Request"
 ```
 
@@ -517,8 +516,8 @@ See [DEVELOPER.md](DEVELOPER.md) for detailed architecture.
 
 ### Communication
 
-- **Issues**: [Gitee Issues](https://gitee.com/shing1211/futuapi4go/issues)
-- **Discussions**: [Gitee Discussions](https://gitee.com/shing1211/futuapi4go/discussions)
+- **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/shing1211/futuapi4go/discussions)
 - **Email**: shing1211@users.noreply.github.com
 
 ### FAQs

@@ -159,4 +159,3 @@ func TestConnReadResponseTimeout(t *testing.T) {
 		t.Error("expected timeout error")
 	}
 }
-

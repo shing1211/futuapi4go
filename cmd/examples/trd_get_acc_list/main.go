@@ -70,4 +70,3 @@ func main() {
 
 	fmt.Println("=== Example Complete / 示例完成 ===")
 }
-

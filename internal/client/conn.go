@@ -226,4 +226,3 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 
 	return nil
 }
-

@@ -620,4 +620,3 @@ func TestGetFlowSummaryResponseConstruction(t *testing.T) {
 		t.Fatal("Header should not be nil")
 	}
 }
-

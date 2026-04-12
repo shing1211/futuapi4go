@@ -382,7 +382,7 @@ func TestModifyOrder_HSI(t *testing.T) {
 		Qty:           0, // Keep unchanged
 	}
 
-	err := trd.ModifyOrder(cli, req)
+	_, err := trd.ModifyOrder(cli, req)
 	if err != nil {
 		t.Fatalf("ModifyOrder failed: %v", err)
 	}
@@ -416,7 +416,7 @@ func TestModifyOrder_Cancel(t *testing.T) {
 		Qty:           0,
 	}
 
-	err := trd.ModifyOrder(cli, req)
+	_, err := trd.ModifyOrder(cli, req)
 	if err != nil {
 		t.Fatalf("CancelOrder failed: %v", err)
 	}

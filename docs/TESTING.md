@@ -491,7 +491,7 @@ funds := fixtures.HSIFunds()
 
 ## 📞 Support
 
-- **Issues**: [Gitee Issues](https://gitee.com/shing1211/futuapi4go/issues)
+- **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues)
 - **Questions**: See [USER_GUIDE.md](USER_GUIDE.md)
 - **Development**: See [DEVELOPER.md](DEVELOPER.md)
 

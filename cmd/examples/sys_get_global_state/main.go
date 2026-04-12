@@ -72,7 +72,7 @@ func main() {
 	fmt.Printf("  Server Version / 服務器版本:  %d\n", resp.ServerVer)
 	fmt.Printf("  Build Number / 構建號:        %d\n", resp.ServerBuildNo)
 	fmt.Printf("  ConnID / 連接ID:              %d\n", resp.ConnID)
-	
+
 	// Time info / 時間信息
 	fmt.Println("\n🕐 Time Info / 時間信息:")
 	serverTime := time.Unix(resp.Time, 0)
@@ -81,4 +81,3 @@ func main() {
 
 	fmt.Println("\n=== Example Complete / 示例完成 ===")
 }
-

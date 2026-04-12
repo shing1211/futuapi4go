@@ -80,4 +80,3 @@ func TestErrorsAreComparable(t *testing.T) {
 		t.Error("ErrNotConnected should be comparable with itself")
 	}
 }
-

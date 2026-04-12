@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -101,7 +102,7 @@ func (s *Server) acceptLoop() {
 			case <-s.closeChan:
 				return
 			default:
-				fmt.Printf("accept error: %v\n", err)
+				log.Printf("accept error: %v\n", err)
 				continue
 			}
 		}
@@ -115,7 +116,7 @@ func (s *Server) handleConnection(conn net.Conn) {
 	defer s.wg.Done()
 	defer conn.Close()
 
-	fmt.Printf("New connection from %v\n", conn.RemoteAddr())
+	log.Printf("New connection from %v\n", conn.RemoteAddr())
 
 	for {
 		pkt, err := s.readPacket(conn)
@@ -123,7 +124,7 @@ func (s *Server) handleConnection(conn net.Conn) {
 			if err == io.EOF {
 				return
 			}
-			fmt.Printf("read error: %v\n", err)
+			log.Printf("read error: %v\n", err)
 			return
 		}
 
@@ -142,7 +143,7 @@ func (s *Server) handleConnection(conn net.Conn) {
 		}
 
 		if err := s.writePacket(conn, resp); err != nil {
-			fmt.Printf("write error: %v\n", err)
+			log.Printf("write error: %v\n", err)
 			return
 		}
 	}
@@ -298,4 +299,3 @@ func (s *Server) GetQuote(market int32, code string) *qotcommon.BasicQot {
 	key := fmt.Sprintf("%d.%s", market, code)
 	return s.Quotes[key]
 }
-

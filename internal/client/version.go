@@ -11,13 +11,12 @@ const (
 
 // Build information (set via ldflags during release builds)
 var (
-	BuildTime    = "unknown"
-	BuildCommit  = "unknown"
-	BuildGoVer   = "unknown"
+	BuildTime   = "unknown"
+	BuildCommit = "unknown"
+	BuildGoVer  = "unknown"
 )
 
 // VersionInfo returns detailed version and build information.
 func VersionInfo() string {
 	return Version
 }
-

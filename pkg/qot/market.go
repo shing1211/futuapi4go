@@ -274,4 +274,3 @@ func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
 		RemainQuota:     s2c.GetRemainQuota(),
 	}, nil
 }
-

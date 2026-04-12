@@ -15,11 +15,11 @@ import (
 
 // HSI Main Index constants
 const (
-	HSIMarket       = int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	HSICode         = "800100"
-	HSIName         = "HANG SENG INDEX"
-	HSICodeMain     = "HSI"
-	HSISecurityKey  = "1.800100" // market.code format
+	HSIMarket      = int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	HSICode        = "800100"
+	HSIName        = "HANG SENG INDEX"
+	HSICodeMain    = "HSI"
+	HSISecurityKey = "1.800100" // market.code format
 )
 
 // HSI Futures constants
@@ -61,18 +61,18 @@ func HSIQuote() *qotcommon.BasicQot {
 			Market: &market,
 			Code:   &code,
 		},
-		Name:         ptrStr(HSIName),
-		IsSuspended:  ptrBool(false),
-		UpdateTime:   ptrStr(updateTime),
-		HighPrice:    ptrFloat64(highPrice),
-		OpenPrice:    ptrFloat64(openPrice),
-		LowPrice:     ptrFloat64(lowPrice),
-		CurPrice:     ptrFloat64(curPrice),
+		Name:           ptrStr(HSIName),
+		IsSuspended:    ptrBool(false),
+		UpdateTime:     ptrStr(updateTime),
+		HighPrice:      ptrFloat64(highPrice),
+		OpenPrice:      ptrFloat64(openPrice),
+		LowPrice:       ptrFloat64(lowPrice),
+		CurPrice:       ptrFloat64(curPrice),
 		LastClosePrice: ptrFloat64(lastClose),
-		Volume:       ptrInt64(int64(volume)),
-		Turnover:     ptrFloat64(turnover),
-		TurnoverRate: ptrFloat64(turnoverRate),
-		Amplitude:    ptrFloat64(amplitude),
+		Volume:         ptrInt64(int64(volume)),
+		Turnover:       ptrFloat64(turnover),
+		TurnoverRate:   ptrFloat64(turnoverRate),
+		Amplitude:      ptrFloat64(amplitude),
 	}
 }
 
@@ -177,7 +177,7 @@ func HSIKLineData(count int, klType int32) []*qotcommon.KLine {
 // HSIRTDData returns realistic HSI intraday time-share data
 func HSIRTDData(count int) []*qotcommon.TimeShare {
 	rtd := make([]*qotcommon.TimeShare, 0, count)
-	baseTime := time.Now().Truncate(24 * time.Hour).Add(9 * time.Hour + 30*time.Minute) // HK market open
+	baseTime := time.Now().Truncate(24 * time.Hour).Add(9*time.Hour + 30*time.Minute) // HK market open
 	basePrice := 18480.00
 
 	for i := 0; i < count; i++ {

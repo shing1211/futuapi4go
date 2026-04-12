@@ -68,7 +68,7 @@ func (s *Server) handleGetFunds(pkt *Packet) (*Packet, error) {
 			Power:       &power,
 		},
 	}
-	
+
 	resp := &trdgetfunds.Response{
 		RetType: &retType,
 		S2C:     s2c,
@@ -142,16 +142,16 @@ func (s *Server) handleModifyOrder(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetOrderList(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	
+
 	orderList := make([]*trdcommon.Order, 0)
-	
+
 	// Return stored orders if any
 	if s.Orders != nil {
 		for _, order := range s.Orders {
 			orderList = append(orderList, order)
 		}
 	}
-	
+
 	// If no orders, return a sample HSI order
 	if len(orderList) == 0 {
 		orderID := uint64(1001)
@@ -164,7 +164,7 @@ func (s *Server) handleGetOrderList(pkt *Packet) (*Packet, error) {
 		qty := 1.0
 		fillQty := 0.0
 		createTime := time.Now().Format("2006-01-02 15:04:05")
-		
+
 		orderList = append(orderList, &trdcommon.Order{
 			OrderID:     &orderID,
 			Code:        &code,
@@ -178,7 +178,7 @@ func (s *Server) handleGetOrderList(pkt *Packet) (*Packet, error) {
 			CreateTime:  &createTime,
 		})
 	}
-	
+
 	resp := &trdgetorderlist.Response{
 		RetType: &retType,
 		S2C: &trdgetorderlist.S2C{
@@ -208,16 +208,16 @@ func (s *Server) handleGetHistoryOrderFillList(pkt *Packet) (*Packet, error) {
 
 func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 	retType := int32(common.RetType_RetType_Succeed)
-	
+
 	positionList := make([]*trdcommon.Position, 0)
-	
+
 	// Return stored positions if any
 	if s.Positions != nil {
 		for _, pos := range s.Positions {
 			positionList = append(positionList, pos)
 		}
 	}
-	
+
 	// If no positions, return a sample HSI futures position
 	if len(positionList) == 0 {
 		code := "HSImain"
@@ -228,7 +228,7 @@ func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 		costPrice := 18480.00
 		plVal := 86.90 // (18523.45 - 18480.00) * 2
 		plRatio := 0.235
-		
+
 		positionList = append(positionList, &trdcommon.Position{
 			Code:       &code,
 			Name:       &name,
@@ -240,7 +240,7 @@ func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 			PlRatio:    &plRatio,
 		})
 	}
-	
+
 	resp := &trdgetpositionlist.Response{
 		RetType: &retType,
 		S2C: &trdgetpositionlist.S2C{
@@ -249,4 +249,3 @@ func (s *Server) handleGetPositionList(pkt *Packet) (*Packet, error) {
 	}
 	return s.successResponse(pkt, resp)
 }
-

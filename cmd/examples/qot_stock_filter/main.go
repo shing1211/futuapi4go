@@ -106,4 +106,3 @@ func main() {
 
 func ptrFloat64(v float64) *float64 { return &v }
 func ptrBool(v bool) *bool          { return &v }
-

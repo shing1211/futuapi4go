@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/shing1211/futuapi4go/cmd/simulator"
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/qot"
-	"github.com/shing1211/futuapi4go/cmd/simulator"
 )
 
 func main() {
@@ -54,4 +54,3 @@ func main() {
 
 	fmt.Println("\n=== Success! SDK works with Simulator ===")
 }
-

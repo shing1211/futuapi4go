@@ -727,4 +727,3 @@ func TestParseTrdNotifyValidData(t *testing.T) {
 		t.Error("Header should not be nil")
 	}
 }
-

@@ -71,4 +71,3 @@ func TestVerificationRequestFields(t *testing.T) {
 		t.Errorf("expected Code 123456, got %s", req.Code)
 	}
 }
-

@@ -63,4 +63,3 @@ func GenerateRSAKeys(bits int) (privateKeyPEM, publicKeyPEM string, err error) {
 
 	return privateKeyPEM, publicKeyPEM, nil
 }
-

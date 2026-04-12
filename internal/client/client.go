@@ -17,10 +17,13 @@ import (
 )
 
 var (
-	logger *log.Logger
+	loggerMu sync.RWMutex
+	logger   *log.Logger
 )
 
 func SetLogger(l *log.Logger) {
+	loggerMu.Lock()
+	defer loggerMu.Unlock()
 	logger = l
 }
 
@@ -28,11 +31,23 @@ func defaultLogger() *log.Logger {
 	return log.Default()
 }
 
+var initLoggerOnce sync.Once
+
 func logf(format string, v ...interface{}) {
-	if logger == nil {
-		logger = defaultLogger()
+	loggerMu.RLock()
+	l := logger
+	loggerMu.RUnlock()
+	if l == nil {
+		initLoggerOnce.Do(func() {
+			loggerMu.Lock()
+			if logger == nil {
+				logger = defaultLogger()
+			}
+			l = logger
+			loggerMu.Unlock()
+		})
 	}
-	logger.Printf(format, v...)
+	l.Printf(format, v...)
 }
 
 // logInfo logs at info level if log level allows.

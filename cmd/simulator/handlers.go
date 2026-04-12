@@ -21,13 +21,12 @@ func (s *Server) RegisterDefaultHandlers() {
 }
 
 func (s *Server) handleInitConnect(pkt *Packet) (*Packet, error) {
-	fmt.Printf("DEBUG InitConnect: body len=%d, body hex=%x\n", len(pkt.Body), pkt.Body)
 	var req initconnect.Request
 	if err := proto.Unmarshal(pkt.Body, &req); err != nil {
 		return s.errorResponse(pkt, fmt.Errorf("unmarshal request: %w", err))
 	}
 	c2s := req.GetC2S()
-	fmt.Printf("DEBUG InitConnect: clientVer=%d, clientID=%s\n", c2s.GetClientVer(), c2s.GetClientID())
+	_ = c2s
 
 	connID := uint64(1234567890)
 	connAESKey := "mock_aes_key_12345"
@@ -119,4 +118,3 @@ func (s *Server) handleGetUserInfo(pkt *Packet) (*Packet, error) {
 
 	return s.successResponse(pkt, resp)
 }
-

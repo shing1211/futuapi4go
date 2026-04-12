@@ -29,8 +29,8 @@ type MockServer struct {
 	mu       sync.RWMutex
 
 	// Connection tracking
-	conns    map[net.Conn]bool
-	connsMu  sync.Mutex
+	conns   map[net.Conn]bool
+	connsMu sync.Mutex
 
 	// Request log for assertions
 	requests   []MockRequest
@@ -189,8 +189,8 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 		// Parse header fields
 		protoID := readUint32LE(header[2:])
 		serialNo := readUint32LE(header[8:])
-		bodyLen := readUint32LE(header[12:])  // Fixed: was header[16:]
-		
+		bodyLen := readUint32LE(header[12:]) // Fixed: was header[16:]
+
 		fmt.Printf("[MockServer] Parsed header: ProtoID=%d, SerialNo=%d, BodyLen=%d\n", protoID, serialNo, bodyLen)
 
 		// Read body
@@ -254,7 +254,7 @@ func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body
 	writeUint32LE(header[8:], serialNo)
 
 	// BodyLen
-	writeUint32LE(header[12:], uint32(len(body)))  // Fixed: was header[16:]
+	writeUint32LE(header[12:], uint32(len(body))) // Fixed: was header[16:]
 
 	// SHA1 (zeros for mock)
 	// Reserved (zeros)
@@ -292,7 +292,7 @@ func (s *MockServer) handleInitConnect(req []byte) ([]byte, error) {
 	keepAliveInterval := int32(30)
 	connID := uint64(1234567890)
 	connAESKey := "mock_aes_key_12345"
-	retType := int32(0)  // Success
+	retType := int32(0) // Success
 
 	resp := &initconnect.Response{
 		RetType: &retType,

@@ -5,8 +5,8 @@ import (
 	"log"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
-	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
 func main() {
@@ -55,4 +55,3 @@ func main() {
 
 	fmt.Println("\nDone!")
 }
-

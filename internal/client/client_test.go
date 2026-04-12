@@ -189,4 +189,3 @@ func TestSerialNoIncrement(t *testing.T) {
 		t.Errorf("serial numbers not incrementing: %d, %d", second, third)
 	}
 }
-

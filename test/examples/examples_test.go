@@ -118,4 +118,3 @@ func TestSimulatorCompiles(t *testing.T) {
 		t.Errorf("simulator failed to compile:\n%s\n%v", string(output), err)
 	}
 }
-

@@ -552,12 +552,12 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 		s2c := &qotgetcapitalflow.S2C{
 			FlowItemList: []*qotgetcapitalflow.CapitalFlowItem{
 				{
-					InFlow:      &inFlow,
-					Time:        &timeStr,
-					MainInFlow:  &mainInFlow,
-					BigInFlow:   &bigInFlow,
-					MidInFlow:   &midInFlow,
-					SmlInFlow:   &smlInFlow,
+					InFlow:     &inFlow,
+					Time:       &timeStr,
+					MainInFlow: &mainInFlow,
+					BigInFlow:  &bigInFlow,
+					MidInFlow:  &midInFlow,
+					SmlInFlow:  &smlInFlow,
 				},
 			},
 		}

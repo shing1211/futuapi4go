@@ -23,7 +23,7 @@ type WSConn struct {
 	dispMu sync.RWMutex
 
 	pushHandler futuapi.PacketHandler
-	pushMu     sync.RWMutex
+	pushMu      sync.RWMutex
 
 	apiTimeout time.Duration
 	closed     bool

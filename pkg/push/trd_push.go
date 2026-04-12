@@ -96,4 +96,3 @@ func ParseTrdNotify(body []byte) (*TrdNotify, error) {
 		Type:   rsp.GetType(),
 	}, nil
 }
-

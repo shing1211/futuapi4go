@@ -32,12 +32,12 @@ func (t PoolType) String() string {
 
 // PoolConfig holds configuration for the ClientPool.
 type PoolConfig struct {
-	MaxSize         int           // Maximum number of connections per pool type
-	MinIdle         int           // Minimum idle connections to maintain
-	MaxIdleTime     time.Duration // Maximum time a connection can stay idle
+	MaxSize             int           // Maximum number of connections per pool type
+	MinIdle             int           // Minimum idle connections to maintain
+	MaxIdleTime         time.Duration // Maximum time a connection can stay idle
 	HealthCheckInterval time.Duration // Interval between health checks
-	Addr            string        // Futu OpenD address
-	Options         []Option      // Client options to apply to all connections
+	Addr                string        // Futu OpenD address
+	Options             []Option      // Client options to apply to all connections
 }
 
 // DefaultPoolConfig returns a PoolConfig with sensible defaults.
@@ -63,13 +63,13 @@ type PoolConn struct {
 
 // ClientPool manages a pool of FutuAPI clients for different purposes.
 type ClientPool struct {
-	mu       sync.RWMutex
-	config   *PoolConfig
-	clients  map[PoolType][]*PoolConn
-	ctx      context.Context
-	cancel   context.CancelFunc
-	wg       sync.WaitGroup
-	closed   bool
+	mu      sync.RWMutex
+	config  *PoolConfig
+	clients map[PoolType][]*PoolConn
+	ctx     context.Context
+	cancel  context.CancelFunc
+	wg      sync.WaitGroup
+	closed  bool
 }
 
 // NewClientPool creates a new client pool with the given configuration.
@@ -285,4 +285,3 @@ func (p *ClientPool) newClient() (*Client, error) {
 func (p *ClientPool) newClientLocked() (*Client, error) {
 	return p.newClient()
 }
-

@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fmt.Println("=== Simple InitConnect Test ===")
-	
+
 	// Connect
 	conn, err := net.DialTimeout("tcp", "127.0.0.1:11111", 5*time.Second)
 	if err != nil {
@@ -23,7 +23,7 @@ func main() {
 	}
 	defer conn.Close()
 	fmt.Println("✅ TCP connected")
-	
+
 	// Build InitConnect request
 	c2s := &initconnect.C2S{
 		ClientVer:     proto.Int32(10100),
@@ -31,11 +31,11 @@ func main() {
 		RecvNotify:    proto.Bool(false),
 		PacketEncAlgo: proto.Int32(-1), // No encryption
 	}
-	
+
 	req := &initconnect.Request{
 		C2S: c2s,
 	}
-	
+
 	body, err := proto.Marshal(req)
 	if err != nil {
 		fmt.Printf("❌ Marshal failed: %v\n", err)
@@ -47,12 +47,12 @@ func main() {
 	header := make([]byte, 44)
 	header[0] = 'F'
 	header[1] = 'T'
-	binary.LittleEndian.PutUint32(header[2:], 1001) // ProtoID
-	header[6] = 0                                    // ProtoFmt (0=Protobuf)
-	header[7] = 0                                    // ProtoVer (0)
-	binary.LittleEndian.PutUint32(header[8:], 1)    // SerialNo
+	binary.LittleEndian.PutUint32(header[2:], 1001)               // ProtoID
+	header[6] = 0                                                 // ProtoFmt (0=Protobuf)
+	header[7] = 0                                                 // ProtoVer (0)
+	binary.LittleEndian.PutUint32(header[8:], 1)                  // SerialNo
 	binary.LittleEndian.PutUint32(header[12:], uint32(len(body))) // BodyLen
-	
+
 	// Send
 	fmt.Println("📤 Sending request...")
 	n, err := conn.Write(header)
@@ -61,18 +61,18 @@ func main() {
 		return
 	}
 	fmt.Printf("✅ Header sent (%d bytes)\n", n)
-	
+
 	n, err = conn.Write(body)
 	if err != nil {
 		fmt.Printf("❌ Write body failed: %v\n", err)
 		return
 	}
 	fmt.Printf("✅ Body sent (%d bytes)\n", n)
-	
+
 	// Receive response
 	fmt.Println("📥 Waiting for response (10s)...")
 	conn.SetReadDeadline(time.Now().Add(10 * time.Second))
-	
+
 	// Read header (44 bytes)
 	respHeader := make([]byte, 44)
 	n, err = conn.Read(respHeader)
@@ -91,11 +91,11 @@ func main() {
 	magic := string(respHeader[0:2])
 	protoID := binary.LittleEndian.Uint32(respHeader[2:6])
 	bodyLen := binary.LittleEndian.Uint32(respHeader[12:16])
-	
+
 	fmt.Printf("   Magic: %s\n", magic)
 	fmt.Printf("   ProtoID: %d\n", protoID)
 	fmt.Printf("   BodyLen: %d\n", bodyLen)
-	
+
 	if bodyLen > 0 && bodyLen < 1000000 {
 		respBody := make([]byte, bodyLen)
 		n, err = conn.Read(respBody)
@@ -104,7 +104,7 @@ func main() {
 			return
 		}
 		fmt.Printf("✅ Response body received (%d bytes)\n", n)
-		
+
 		// Try to parse as InitConnect response
 		var resp initconnect.Response
 		if err := proto.Unmarshal(respBody[:n], &resp); err != nil {
@@ -121,7 +121,7 @@ func main() {
 			}
 		}
 	}
-	
+
 	fmt.Println("\n=== Test Complete ===")
 }
 
@@ -131,4 +131,3 @@ func min(a, b int) int {
 	}
 	return b
 }
-

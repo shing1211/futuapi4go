@@ -110,4 +110,3 @@ func readResponse(conn net.Conn) (*Header, error) {
 	binary.Read(bytes.NewReader(header), binary.LittleEndian, &h)
 	return &h, nil
 }
-

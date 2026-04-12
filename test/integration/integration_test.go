@@ -258,4 +258,3 @@ func TestIntegrationContextCancellation(t *testing.T) {
 		t.Error("WithContext did not set context correctly")
 	}
 }
-

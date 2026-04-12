@@ -237,4 +237,3 @@ func TestMarketProtoIDConstants(t *testing.T) {
 		})
 	}
 }
-
