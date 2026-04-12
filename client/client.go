@@ -328,6 +328,45 @@ func GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) 
 	return result, nil
 }
 
+// MarginRatioInfo represents margin ratio for a security.
+type MarginRatioInfo struct {
+	Security      *qotcommon.Security
+	IsLongPermit  bool
+	IsShortPermit bool
+	ShortFeeRate  float64
+	ImLongRatio   float64
+	ImShortRatio  float64
+}
+
+// GetMarginRatio retrieves margin ratio for securities.
+func GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
+	resp, err := trd.GetMarginRatio(c.inner, &trd.GetMarginRatioRequest{
+		AccID:        accID,
+		TrdMarket:    market,
+		TrdEnv:       1,
+		SecurityList: securities,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*MarginRatioInfo, 0, len(resp.MarginRatioInfoList))
+	for _, m := range resp.MarginRatioInfoList {
+		if m == nil {
+			continue
+		}
+		result = append(result, &MarginRatioInfo{
+			Security:      m.Security,
+			IsLongPermit:  m.IsLongPermit,
+			IsShortPermit: m.IsShortPermit,
+			ShortFeeRate:  m.ShortFeeRate,
+			ImLongRatio:   m.ImLongRatio,
+			ImShortRatio:  m.ImShortRatio,
+		})
+	}
+	return result, nil
+}
+
 // GetOrderList retrieves active orders.
 func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	resp, err := trd.GetOrderList(c.inner, &trd.GetOrderListRequest{
