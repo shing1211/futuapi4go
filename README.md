@@ -37,7 +37,7 @@
 | **💼 Full Trading** | Place orders, modify/cancel, position management, account funds |
 | **🔔 Push Notifications** | Real-time market data and order updates via WebSocket-like callbacks |
 | **🎯 100% Go** | Pure Go implementation, no CGO dependencies, cross-platform compatible |
-| **📦 MIT Licensed** | Open source, free for commercial use |
+| **📦 Apache 2.0 Licensed** | Open source, free for commercial use, with patent protection |
 
 ---
 
@@ -431,7 +431,7 @@ Use at your own risk. Trading involves financial risk. The authors assume no lia
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
 ---
 

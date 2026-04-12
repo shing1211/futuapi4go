@@ -552,7 +552,7 @@ A:
 
 ## 📜 License
 
-By contributing to futuapi4go, you agree that your contributions will be licensed under the MIT License. See [LICENSE](LICENSE) for details.
+By contributing to futuapi4go, you agree that your contributions will be licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ---
 
