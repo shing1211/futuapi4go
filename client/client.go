@@ -1549,6 +1549,49 @@ func SetPriceReminder(c *Client, market int32, code string, op, reminderType, fr
 	return resp.Key, nil
 }
 
+// HoldingChangeInfo represents a holding change entry.
+type HoldingChangeInfo struct {
+	HolderName   string
+	HoldingQty   float64
+	HoldingRatio float64
+	ChangeQty    float64
+	ChangeRatio  float64
+	Time         string
+	Timestamp    float64
+}
+
+// GetHoldingChangeList retrieves holding change list.
+func GetHoldingChangeList(c *Client, market int32, code string, holderCategory int32, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	resp, err := qot.GetHoldingChangeList(c.inner, &qot.GetHoldingChangeListRequest{
+		Security:       sec,
+		HolderCategory: holderCategory,
+		BeginTime:      beginTime,
+		EndTime:        endTime,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*HoldingChangeInfo, 0, len(resp.HoldingChangeList))
+	for _, h := range resp.HoldingChangeList {
+		if h == nil {
+			continue
+		}
+		result = append(result, &HoldingChangeInfo{
+			HolderName:   getStr(h.HolderName),
+			HoldingQty:   getFloat64(h.HoldingQty),
+			HoldingRatio: getFloat64(h.HoldingRatio),
+			ChangeQty:    getFloat64(h.ChangeQty),
+			ChangeRatio:  getFloat64(h.ChangeRatio),
+			Time:         getStr(h.Time),
+			Timestamp:    getFloat64(h.Timestamp),
+		})
+	}
+	return result, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
