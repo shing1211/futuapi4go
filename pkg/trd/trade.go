@@ -229,6 +229,7 @@ type Position struct {
 	Val        float64
 	PlVal      float64
 	PlRatio    float64
+	TrdMarket  int32
 }
 
 // GetPositionListRequest is the request to retrieve position list.
@@ -310,6 +311,7 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 			Val:        p.GetVal(),
 			PlVal:      p.GetPlVal(),
 			PlRatio:    p.GetPlRatio(),
+			TrdMarket:  p.GetTrdMarket(),
 		})
 	}
 

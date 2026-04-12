@@ -304,7 +304,7 @@ func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 	for i, p := range resp.PositionList {
 		positions[i] = Position{
 			Symbol:    p.Code,
-			Market:    0,
+			Market:    p.TrdMarket,
 			Quantity:  p.Qty,
 			CostPrice: p.CostPrice,
 			CurPrice:  p.Price,
@@ -714,10 +714,9 @@ func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
 			secCode = *f.Security.Code
 		}
 		infos[i] = FutureInfo{
-			Code:     secCode,
-			Name:     f.Name,
-			Expire:   f.LastTradeTime,
-			InstType: 0,
+			Code:   secCode,
+			Name:   f.Name,
+			Expire: f.LastTradeTime,
 		}
 	}
 	return infos, nil
@@ -1097,15 +1096,28 @@ func GetSubInfo(c *Client) (*SubInfo, error) {
 	}
 
 	quota := int32(0)
+	subTypes := make(map[int32]bool)
 	for _, si := range resp.ConnSubInfoList {
-		if si != nil && si.UsedQuota != nil {
-			quota += *si.UsedQuota
+		if si != nil {
+			if si.UsedQuota != nil {
+				quota += *si.UsedQuota
+			}
+			for _, sub := range si.SubInfoList {
+				if sub != nil && sub.SubType != nil {
+					subTypes[*sub.SubType] = true
+				}
+			}
 		}
+	}
+
+	types := make([]int32, 0, len(subTypes))
+	for t := range subTypes {
+		types = append(types, t)
 	}
 
 	return &SubInfo{
 		IsSub:    len(resp.ConnSubInfoList) > 0,
-		SubTypes: []int32{},
+		SubTypes: types,
 		Security: fmt.Sprintf("Used: %d, Remain: %d", quota, resp.RemainQuota),
 	}, nil
 }
@@ -1955,10 +1967,9 @@ type StaticInfo struct {
 
 // FutureInfo represents futures info.
 type FutureInfo struct {
-	Code     string
-	Name     string
-	Expire   string
-	InstType int32
+	Code   string
+	Name   string
+	Expire string
 }
 
 // Plate represents a market plate (板块).
