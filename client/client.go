@@ -98,14 +98,19 @@ func GetQuote(c *Client, market int32, code string) (*Quote, error) {
 
 	q := quotes[0]
 	return &Quote{
-		Symbol:    code,
-		Market:    market,
-		Price:     q.CurPrice,
-		Open:      q.OpenPrice,
-		High:      q.HighPrice,
-		Low:       q.LowPrice,
-		Volume:    q.Volume,
-		Timestamp: q.UpdateTime,
+		Symbol:       code,
+		Market:       market,
+		Price:        q.CurPrice,
+		Open:         q.OpenPrice,
+		High:         q.HighPrice,
+		Low:          q.LowPrice,
+		Volume:       q.Volume,
+		Timestamp:    q.UpdateTime,
+		Name:         q.Name,
+		LastClose:    q.LastClosePrice,
+		Turnover:     q.Turnover,
+		TurnoverRate: q.TurnoverRate,
+		Amplitude:    q.Amplitude,
 	}, nil
 }
 
@@ -127,12 +132,16 @@ func GetKLines(c *Client, market int32, code string, klType int32, num int) ([]K
 	klines := make([]KLine, len(resp.KLList))
 	for i, kl := range resp.KLList {
 		klines[i] = KLine{
-			Time:   kl.Time,
-			Open:   kl.OpenPrice,
-			High:   kl.HighPrice,
-			Low:    kl.LowPrice,
-			Close:  kl.ClosePrice,
-			Volume: kl.Volume,
+			Time:       kl.Time,
+			Open:       kl.OpenPrice,
+			High:       kl.HighPrice,
+			Low:        kl.LowPrice,
+			Close:      kl.ClosePrice,
+			Volume:     kl.Volume,
+			LastClose:  kl.LastClosePrice,
+			Turnover:   kl.Turnover,
+			ChangeRate: kl.ChangeRate,
+			Timestamp:  kl.Timestamp,
 		}
 	}
 	return klines, nil
@@ -217,11 +226,17 @@ func GetAccountList(c *Client) ([]Account, error) {
 	accounts := make([]Account, len(resp.AccList))
 	for i, acc := range resp.AccList {
 		accounts[i] = Account{
-			AccID:     acc.AccID,
-			AccType:   acc.AccType,
-			TrdEnv:    acc.TrdEnv,
-			CardNum:   acc.CardNum,
-			AccStatus: acc.AccStatus,
+			AccID:             acc.AccID,
+			AccType:           acc.AccType,
+			TrdEnv:            acc.TrdEnv,
+			CardNum:           acc.CardNum,
+			AccStatus:         acc.AccStatus,
+			TrdMarketAuthList: acc.TrdMarketAuthList,
+			SecurityFirm:      acc.SecurityFirm,
+			SimAccType:        acc.SimAccType,
+			UniCardNum:        acc.UniCardNum,
+			AccRole:           acc.AccRole,
+			JpAccType:         acc.JpAccType,
 		}
 	}
 	return accounts, nil
@@ -303,13 +318,29 @@ func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 	positions := make([]Position, len(resp.PositionList))
 	for i, p := range resp.PositionList {
 		positions[i] = Position{
-			Symbol:    p.Code,
-			Market:    p.TrdMarket,
-			Quantity:  p.Qty,
-			CostPrice: p.CostPrice,
-			CurPrice:  p.Price,
-			PnL:       p.PlVal,
-			PnLRate:   p.PlRatio,
+			PositionID:       p.PositionID,
+			Code:             p.Code,
+			Name:             p.Name,
+			Market:           p.TrdMarket,
+			Quantity:         p.Qty,
+			CanSellQty:       p.CanSellQty,
+			CostPrice:        p.CostPrice,
+			CurPrice:         p.Price,
+			MarketVal:        p.Val,
+			PnL:              p.PlVal,
+			PnLRate:          p.PlRatio,
+			TodayBuyQty:      p.TdBuyQty,
+			TodayBuyVal:      p.TdBuyVal,
+			TodaySellQty:     p.TdSellQty,
+			TodaySellVal:     p.TdSellVal,
+			TodayPnL:         p.TdPlVal,
+			UnrealizedPL:     p.UnrealizedPL,
+			RealizedPL:       p.RealizedPL,
+			Currency:         p.Currency,
+			TrdMarket:        p.TrdMarket,
+			DilutedCostPrice: p.DilutedCostPrice,
+			AverageCostPrice: p.AverageCostPrice,
+			AveragePnLRate:   p.AveragePlRatio,
 		}
 	}
 	return positions, nil
@@ -323,10 +354,27 @@ func GetFunds(c *Client, accID uint64) (*Funds, error) {
 	}
 	f := resp.Funds
 	return &Funds{
-		Cash:        f.Cash,
-		BuyingPower: f.AvailableFunds,
-		MarketValue: f.MarketVal,
-		TotalAsset:  f.TotalAssets,
+		Power:             f.Power,
+		TotalAssets:       f.TotalAssets,
+		Cash:              f.Cash,
+		MarketVal:         f.MarketVal,
+		FrozenCash:        f.FrozenCash,
+		DebtCash:          f.DebtCash,
+		AvlWithdrawalCash: f.AvlWithdrawalCash,
+		Currency:          f.Currency,
+		AvailableFunds:    f.AvailableFunds,
+		UnrealizedPL:      f.UnrealizedPL,
+		RealizedPL:        f.RealizedPL,
+		RiskLevel:         f.RiskLevel,
+		InitialMargin:     f.InitialMargin,
+		MaintenanceMargin: f.MaintenanceMargin,
+		MaxPowerShort:     f.MaxPowerShort,
+		NetCashPower:      f.NetCashPower,
+		LongMv:            f.LongMv,
+		ShortMv:           f.ShortMv,
+		PendingAsset:      f.PendingAsset,
+		MaxWithdrawal:     f.MaxWithdrawal,
+		RiskStatus:        f.RiskStatus,
 	}, nil
 }
 
@@ -366,6 +414,12 @@ func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType
 type OrderFeeInfo struct {
 	OrderIDEx string
 	FeeAmount float64
+	FeeList   []OrderFeeItemInfo
+}
+
+type OrderFeeItemInfo struct {
+	Title string
+	Value float64
 }
 
 // GetOrderFee retrieves order fee information.
@@ -385,9 +439,14 @@ func GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) 
 		if f == nil {
 			continue
 		}
+		feeList := make([]OrderFeeItemInfo, 0, len(f.FeeList))
+		for _, item := range f.FeeList {
+			feeList = append(feeList, OrderFeeItemInfo{Title: item.Title, Value: item.Value})
+		}
 		result = append(result, &OrderFeeInfo{
 			OrderIDEx: f.OrderIDEx,
 			FeeAmount: f.FeeAmount,
+			FeeList:   feeList,
 		})
 	}
 	return result, nil
@@ -446,14 +505,33 @@ func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	orders := make([]Order, len(resp.OrderList))
 	for i, o := range resp.OrderList {
 		orders[i] = Order{
-			OrderID:    o.OrderID,
-			Code:       o.Code,
-			Name:       o.Name,
-			TrdSide:    o.TrdSide,
-			OrderType:  o.OrderType,
-			Price:      o.Price,
-			Qty:        o.Qty,
-			OrderState: o.OrderStatus,
+			OrderID:         o.OrderID,
+			OrderIDEx:       o.OrderIDEx,
+			Code:            o.Code,
+			Name:            o.Name,
+			TrdSide:         o.TrdSide,
+			OrderType:       o.OrderType,
+			OrderStatus:     o.OrderStatus,
+			Price:           o.Price,
+			Qty:             o.Qty,
+			FillQty:         o.FillQty,
+			FillAvgPrice:    o.FillAvgPrice,
+			CreateTime:      o.CreateTime,
+			UpdateTime:      o.UpdateTime,
+			LastErrMsg:      o.LastErrMsg,
+			SecMarket:       o.SecMarket,
+			CreateTimestamp: o.CreateTimestamp,
+			UpdateTimestamp: o.UpdateTimestamp,
+			Remark:          o.Remark,
+			TimeInForce:     o.TimeInForce,
+			FillOutsideRTH:  o.FillOutsideRTH,
+			AuxPrice:        o.AuxPrice,
+			TrailType:       o.TrailType,
+			TrailValue:      o.TrailValue,
+			TrailSpread:     o.TrailSpread,
+			Currency:        o.Currency,
+			TrdMarket:       o.TrdMarket,
+			Session:         o.Session,
 		}
 	}
 	return orders, nil
@@ -476,14 +554,33 @@ func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDa
 			continue
 		}
 		orders = append(orders, Order{
-			OrderID:    getUint64(o.OrderID),
-			Code:       getStr(o.Code),
-			Name:       getStr(o.Name),
-			TrdSide:    getInt32(o.TrdSide),
-			OrderType:  getInt32(o.OrderType),
-			Price:      getFloat64(o.Price),
-			Qty:        getFloat64(o.Qty),
-			OrderState: getInt32(o.OrderStatus),
+			OrderID:         getUint64(o.OrderID),
+			OrderIDEx:       getStr(o.OrderIDEx),
+			Code:            getStr(o.Code),
+			Name:            getStr(o.Name),
+			TrdSide:         getInt32(o.TrdSide),
+			OrderType:       getInt32(o.OrderType),
+			OrderStatus:     getInt32(o.OrderStatus),
+			Price:           getFloat64(o.Price),
+			Qty:             getFloat64(o.Qty),
+			FillQty:         getFloat64(o.FillQty),
+			FillAvgPrice:    getFloat64(o.FillAvgPrice),
+			CreateTime:      getStr(o.CreateTime),
+			UpdateTime:      getStr(o.UpdateTime),
+			LastErrMsg:      getStr(o.LastErrMsg),
+			SecMarket:       getInt32(o.SecMarket),
+			CreateTimestamp: getFloat64(o.CreateTimestamp),
+			UpdateTimestamp: getFloat64(o.UpdateTimestamp),
+			Remark:          getStr(o.Remark),
+			TimeInForce:     getInt32(o.TimeInForce),
+			FillOutsideRTH:  getBool(o.FillOutsideRTH),
+			AuxPrice:        getFloat64(o.AuxPrice),
+			TrailType:       getInt32(o.TrailType),
+			TrailValue:      getFloat64(o.TrailValue),
+			TrailSpread:     getFloat64(o.TrailSpread),
+			Currency:        getInt32(o.Currency),
+			TrdMarket:       getInt32(o.TrdMarket),
+			Session:         getInt32(o.Session),
 		})
 	}
 	return orders, nil
@@ -503,12 +600,24 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	fills := make([]OrderFill, len(resp.OrderFillList))
 	for i, f := range resp.OrderFillList {
 		fills[i] = OrderFill{
-			OrderID: f.OrderID,
-			Code:    f.Code,
-			Name:    f.Name,
-			TrdSide: f.TrdSide,
-			Price:   f.Price,
-			Qty:     f.Qty,
+			FillID:            f.FillID,
+			FillIDEx:          f.FillIDEx,
+			OrderID:           f.OrderID,
+			OrderIDEx:         f.OrderIDEx,
+			Code:              f.Code,
+			Name:              f.Name,
+			TrdSide:           f.TrdSide,
+			Price:             f.Price,
+			Qty:               f.Qty,
+			CreateTime:        f.CreateTime,
+			CounterBrokerID:   f.CounterBrokerID,
+			CounterBrokerName: f.CounterBrokerName,
+			SecMarket:         f.SecMarket,
+			CreateTimestamp:   f.CreateTimestamp,
+			UpdateTimestamp:   f.UpdateTimestamp,
+			Status:            f.Status,
+			TrdMarket:         f.TrdMarket,
+			JpAccType:         f.JpAccType,
 		}
 	}
 	return fills, nil
@@ -531,12 +640,24 @@ func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill
 			continue
 		}
 		fills = append(fills, OrderFill{
-			OrderID: f.OrderID,
-			Code:    f.Code,
-			Name:    f.Name,
-			TrdSide: f.TrdSide,
-			Price:   f.Price,
-			Qty:     f.Qty,
+			FillID:            f.FillID,
+			FillIDEx:          f.FillIDEx,
+			OrderID:           f.OrderID,
+			OrderIDEx:         f.OrderIDEx,
+			Code:              f.Code,
+			Name:              f.Name,
+			TrdSide:           f.TrdSide,
+			Price:             f.Price,
+			Qty:               f.Qty,
+			CreateTime:        f.CreateTime,
+			CounterBrokerID:   f.CounterBrokerID,
+			CounterBrokerName: f.CounterBrokerName,
+			SecMarket:         f.SecMarket,
+			CreateTimestamp:   f.CreateTimestamp,
+			UpdateTimestamp:   f.UpdateTimestamp,
+			Status:            f.Status,
+			TrdMarket:         f.TrdMarket,
+			JpAccType:         f.JpAccType,
 		})
 	}
 	return fills, nil
@@ -556,14 +677,26 @@ func GetOrderBook(c *Client, market int32, code string, num int) (*OrderBook, er
 	}
 
 	book := &OrderBook{
-		Bids: make([]OrderBookItem, len(resp.OrderBookBidList)),
-		Asks: make([]OrderBookItem, len(resp.OrderBookAskList)),
+		Bids:                    make([]OrderBookItem, len(resp.OrderBookBidList)),
+		Asks:                    make([]OrderBookItem, len(resp.OrderBookAskList)),
+		SvrRecvTimeBid:          resp.SvrRecvTimeBid,
+		SvrRecvTimeBidTimestamp: resp.SvrRecvTimeBidTimestamp,
+		SvrRecvTimeAsk:          resp.SvrRecvTimeAsk,
+		SvrRecvTimeAskTimestamp: resp.SvrRecvTimeAskTimestamp,
 	}
 	for i, b := range resp.OrderBookBidList {
-		book.Bids[i] = OrderBookItem{Price: b.Price, Volume: b.Volume}
+		details := make([]OrderBookDetail, 0, len(b.DetailList))
+		for _, d := range b.DetailList {
+			details = append(details, OrderBookDetail{OrderID: d.OrderID, Volume: d.Volume})
+		}
+		book.Bids[i] = OrderBookItem{Price: b.Price, Volume: b.Volume, OrderCount: b.OrderCount, DetailList: details}
 	}
 	for i, a := range resp.OrderBookAskList {
-		book.Asks[i] = OrderBookItem{Price: a.Price, Volume: a.Volume}
+		details := make([]OrderBookDetail, 0, len(a.DetailList))
+		for _, d := range a.DetailList {
+			details = append(details, OrderBookDetail{OrderID: d.OrderID, Volume: d.Volume})
+		}
+		book.Asks[i] = OrderBookItem{Price: a.Price, Volume: a.Volume, OrderCount: a.OrderCount, DetailList: details}
 	}
 	return book, nil
 }
@@ -592,9 +725,15 @@ func GetTicker(c *Client, market int32, code string, num int) ([]Ticker, error) 
 		}
 		tickers[i] = Ticker{
 			Time:      t.Time,
+			Sequence:  t.Sequence,
 			Price:     t.Price,
 			Volume:    t.Volume,
 			Direction: dir,
+			Turnover:  t.Turnover,
+			RecvTime:  t.RecvTime,
+			Type:      t.Type,
+			TypeSign:  t.TypeSign,
+			Timestamp: t.Timestamp,
 		}
 	}
 	return tickers, nil
@@ -613,9 +752,12 @@ func GetRT(c *Client, market int32, code string) ([]RT, error) {
 	rtData := make([]RT, len(resp.RTList))
 	for i, r := range resp.RTList {
 		rtData[i] = RT{
-			Time:   r.Time,
-			Price:  r.Price,
-			Volume: r.Volume,
+			Time:      r.Time,
+			Price:     r.Price,
+			Volume:    r.Volume,
+			LastClose: r.LastClosePrice,
+			AvgPrice:  r.AvgPrice,
+			Turnover:  r.Turnover,
 		}
 	}
 	return rtData, nil
@@ -636,11 +778,11 @@ func GetBroker(c *Client, market int32, code string, num int) ([]Broker, []Broke
 
 	bidBrokers := make([]Broker, len(resp.BidBrokerList))
 	for i, b := range resp.BidBrokerList {
-		bidBrokers[i] = Broker{ID: b.ID, Name: b.Name}
+		bidBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume}
 	}
 	askBrokers := make([]Broker, len(resp.AskBrokerList))
 	for i, a := range resp.AskBrokerList {
-		askBrokers[i] = Broker{ID: a.ID, Name: a.Name}
+		askBrokers[i] = Broker{ID: a.ID, Name: a.Name, Pos: a.Pos, Volume: a.Volume}
 	}
 	return bidBrokers, askBrokers, nil
 }
@@ -662,6 +804,8 @@ func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
 	for i, s := range resp.StaticInfoList {
 		var name string
 		var secType int32
+		var listTime string
+		var lotSize int32
 		if s.Basic != nil {
 			if s.Basic.Name != nil {
 				name = *s.Basic.Name
@@ -669,8 +813,14 @@ func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
 			if s.Basic.SecType != nil {
 				secType = *s.Basic.SecType
 			}
+			if s.Basic.ListTime != nil {
+				listTime = *s.Basic.ListTime
+			}
+			if s.Basic.LotSize != nil {
+				lotSize = *s.Basic.LotSize
+			}
 		}
-		infos[i] = StaticInfo{Code: code, Name: name, Type: secType}
+		infos[i] = StaticInfo{Code: code, Name: name, Type: secType, ListTime: listTime, LotSize: lotSize}
 	}
 	return infos, nil
 }
@@ -713,10 +863,27 @@ func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
 		if f.Security != nil && f.Security.Code != nil {
 			secCode = *f.Security.Code
 		}
+		ownerCode := ""
+		if f.Owner != nil && f.Owner.Code != nil {
+			ownerCode = *f.Owner.Code
+		}
 		infos[i] = FutureInfo{
-			Code:   secCode,
-			Name:   f.Name,
-			Expire: f.LastTradeTime,
+			Code:               secCode,
+			Name:               f.Name,
+			Expire:             f.LastTradeTime,
+			LastTradeTimestamp: f.LastTradeTimestamp,
+			Owner:              ownerCode,
+			OwnerOther:         f.OwnerOther,
+			Exchange:           f.Exchange,
+			ContractType:       f.ContractType,
+			ContractSize:       f.ContractSize,
+			ContractSizeUnit:   f.ContractSizeUnit,
+			QuoteCurrency:      f.QuoteCurrency,
+			MinVar:             f.MinVar,
+			MinVarUnit:         f.MinVarUnit,
+			QuoteUnit:          f.QuoteUnit,
+			TimeZone:           f.TimeZone,
+			ExchangeFormatUrl:  f.ExchangeFormatUrl,
 		}
 	}
 	return infos, nil
@@ -757,9 +924,10 @@ func GetIpoList(c *Client, market int32) ([]IpoData, error) {
 			code = *ip.Basic.Security.Code
 		}
 		ipos = append(ipos, IpoData{
-			Code:     code,
-			Name:     ip.Basic.Name,
-			ListDate: ip.Basic.ListTime,
+			Code:          code,
+			Name:          ip.Basic.Name,
+			ListDate:      ip.Basic.ListTime,
+			ListTimestamp: ip.Basic.ListTimestamp,
 		})
 	}
 	return ipos, nil
@@ -774,7 +942,7 @@ func GetUserSecurityGroup(c *Client) ([]UserSecurityGroup, error) {
 
 	groups := make([]UserSecurityGroup, 0)
 	for _, g := range resp.GroupList {
-		groups = append(groups, UserSecurityGroup{Name: g.GroupName})
+		groups = append(groups, UserSecurityGroup{Name: g.GroupName, GroupType: g.GroupType})
 	}
 	return groups, nil
 }
@@ -840,6 +1008,7 @@ type CapitalFlow struct {
 	BigInFlow   float64
 	MidInFlow   float64
 	SmlInFlow   float64
+	Timestamp   float64
 }
 
 // GetCapitalFlow retrieves capital flow data.
@@ -864,6 +1033,7 @@ func GetCapitalFlow(c *Client, market int32, code string) ([]CapitalFlow, error)
 			BigInFlow:   f.BigInFlow,
 			MidInFlow:   f.MidInFlow,
 			SmlInFlow:   f.SmlInFlow,
+			Timestamp:   f.Timestamp,
 		})
 	}
 	return flows, nil
@@ -885,14 +1055,16 @@ func GetCapitalDistribution(c *Client, market int32, code string) (*CapitalDistr
 
 	cd := resp.CapitalDistribution
 	return &CapitalDistribution{
-		MainInflow:   cd.CapitalInSuper,
-		BigInflow:    cd.CapitalInBig,
-		MidInflow:    cd.CapitalInMid,
-		SmallInflow:  cd.CapitalInSmall,
-		MainOutflow:  cd.CapitalOutSuper,
-		BigOutflow:   cd.CapitalOutBig,
-		MidOutflow:   cd.CapitalOutMid,
-		SmallOutflow: cd.CapitalOutSmall,
+		MainInflow:      cd.CapitalInSuper,
+		BigInflow:       cd.CapitalInBig,
+		MidInflow:       cd.CapitalInMid,
+		SmallInflow:     cd.CapitalInSmall,
+		MainOutflow:     cd.CapitalOutSuper,
+		BigOutflow:      cd.CapitalOutBig,
+		MidOutflow:      cd.CapitalOutMid,
+		SmallOutflow:    cd.CapitalOutSmall,
+		UpdateTime:      cd.UpdateTime,
+		UpdateTimestamp: cd.UpdateTimestamp,
 	}, nil
 }
 
@@ -1381,19 +1553,46 @@ func GetWarrant(c *Client, market int32, code string, begin, num int32, sortFiel
 
 // Snapshot represents security snapshot data.
 type Snapshot struct {
-	Security  *qotcommon.Security
-	Name      string
-	Type      int32
-	IsSuspend bool
-	LotSize   int32
-	CurPrice  float64
-	ChangeVal float64
-	HighPrice float64
-	LowPrice  float64
-	OpenPrice float64
-	LastClose float64
-	Volume    int64
-	Turnover  float64
+	Security                *qotcommon.Security
+	Name                    string
+	Type                    int32
+	IsSuspend               bool
+	LotSize                 int32
+	CurPrice                float64
+	ChangeVal               float64
+	HighPrice               float64
+	LowPrice                float64
+	OpenPrice               float64
+	LastClose               float64
+	Volume                  int64
+	Turnover                float64
+	ListTime                string
+	PriceSpread             float64
+	UpdateTime              string
+	TurnoverRate            float64
+	ListTimestamp           float64
+	UpdateTimestamp         float64
+	AskPrice                float64
+	BidPrice                float64
+	AskVol                  int64
+	BidVol                  int64
+	EnableMargin            bool
+	MortgageRatio           float64
+	LongMarginInitialRatio  float64
+	EnableShortSell         bool
+	ShortSellRate           float64
+	ShortAvailableVolume    int64
+	ShortMarginInitialRatio float64
+	Amplitude               float64
+	AvgPrice                float64
+	BidAskRatio             float64
+	VolumeRatio             float64
+	Highest52WeeksPrice     float64
+	Lowest52WeeksPrice      float64
+	HighestHistoryPrice     float64
+	LowestHistoryPrice      float64
+	SecStatus               int32
+	ClosePrice5Minute       float64
 }
 
 // GetSecuritySnapshot returns snapshot data for the given securities.
@@ -1412,19 +1611,46 @@ func GetSecuritySnapshot(c *Client, securities []*qotcommon.Security) ([]*Snapsh
 		}
 		basic := s.Basic
 		result = append(result, &Snapshot{
-			Security:  basic.Security,
-			Name:      getStr(basic.Name),
-			Type:      getInt32(basic.Type),
-			IsSuspend: getBool(basic.IsSuspend),
-			LotSize:   getInt32(basic.LotSize),
-			CurPrice:  getFloat64(basic.CurPrice),
-			ChangeVal: getFloat64(basic.CurPrice) - getFloat64(basic.LastClosePrice),
-			HighPrice: getFloat64(basic.HighPrice),
-			LowPrice:  getFloat64(basic.LowPrice),
-			OpenPrice: getFloat64(basic.OpenPrice),
-			LastClose: getFloat64(basic.LastClosePrice),
-			Volume:    getInt64(basic.Volume),
-			Turnover:  getFloat64(basic.Turnover),
+			Security:                basic.Security,
+			Name:                    getStr(basic.Name),
+			Type:                    getInt32(basic.Type),
+			IsSuspend:               getBool(basic.IsSuspend),
+			LotSize:                 getInt32(basic.LotSize),
+			CurPrice:                getFloat64(basic.CurPrice),
+			ChangeVal:               getFloat64(basic.CurPrice) - getFloat64(basic.LastClosePrice),
+			HighPrice:               getFloat64(basic.HighPrice),
+			LowPrice:                getFloat64(basic.LowPrice),
+			OpenPrice:               getFloat64(basic.OpenPrice),
+			LastClose:               getFloat64(basic.LastClosePrice),
+			Volume:                  getInt64(basic.Volume),
+			Turnover:                getFloat64(basic.Turnover),
+			ListTime:                getStr(basic.ListTime),
+			PriceSpread:             getFloat64(basic.PriceSpread),
+			UpdateTime:              getStr(basic.UpdateTime),
+			TurnoverRate:            getFloat64(basic.TurnoverRate),
+			ListTimestamp:           getFloat64(basic.ListTimestamp),
+			UpdateTimestamp:         getFloat64(basic.UpdateTimestamp),
+			AskPrice:                getFloat64(basic.AskPrice),
+			BidPrice:                getFloat64(basic.BidPrice),
+			AskVol:                  getInt64(basic.AskVol),
+			BidVol:                  getInt64(basic.BidVol),
+			EnableMargin:            getBool(basic.EnableMargin),
+			MortgageRatio:           getFloat64(basic.MortgageRatio),
+			LongMarginInitialRatio:  getFloat64(basic.LongMarginInitialRatio),
+			EnableShortSell:         getBool(basic.EnableShortSell),
+			ShortSellRate:           getFloat64(basic.ShortSellRate),
+			ShortAvailableVolume:    getInt64(basic.ShortAvailableVolume),
+			ShortMarginInitialRatio: getFloat64(basic.ShortMarginInitialRatio),
+			Amplitude:               getFloat64(basic.Amplitude),
+			AvgPrice:                getFloat64(basic.AvgPrice),
+			BidAskRatio:             getFloat64(basic.BidAskRatio),
+			VolumeRatio:             getFloat64(basic.VolumeRatio),
+			Highest52WeeksPrice:     getFloat64(basic.Highest52WeeksPrice),
+			Lowest52WeeksPrice:      getFloat64(basic.Lowest52WeeksPrice),
+			HighestHistoryPrice:     getFloat64(basic.HighestHistoryPrice),
+			LowestHistoryPrice:      getFloat64(basic.LowestHistoryPrice),
+			SecStatus:               getInt32(basic.SecStatus),
+			ClosePrice5Minute:       getFloat64(basic.ClosePrice5Minute),
 		})
 	}
 	return result, nil
@@ -1557,9 +1783,10 @@ func GetUserInfo(c *Client) (*UserInfo, error) {
 	}
 
 	return &UserInfo{
-		UserID:   resp.UserID,
-		NickName: resp.NickName,
-		ApiLevel: resp.ApiLevel,
+		UserID:    resp.UserID,
+		NickName:  resp.NickName,
+		AvatarUrl: resp.AvatarUrl,
+		ApiLevel:  resp.ApiLevel,
 	}, nil
 }
 
@@ -1850,33 +2077,48 @@ func RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error) {
 
 // Quote represents a real-time quote.
 type Quote struct {
-	Symbol    string
-	Market    int32
-	Price     float64
-	Open      float64
-	High      float64
-	Low       float64
-	Volume    int64
-	Timestamp string
+	Symbol       string
+	Market       int32
+	Price        float64
+	Open         float64
+	High         float64
+	Low          float64
+	Volume       int64
+	Timestamp    string
+	Name         string
+	LastClose    float64
+	Turnover     float64
+	TurnoverRate float64
+	Amplitude    float64
 }
 
 // KLine represents a K-line (candlestick) data point.
 type KLine struct {
-	Time   string
-	Open   float64
-	High   float64
-	Low    float64
-	Close  float64
-	Volume int64
+	Time       string
+	Open       float64
+	High       float64
+	Low        float64
+	Close      float64
+	Volume     int64
+	LastClose  float64
+	Turnover   float64
+	ChangeRate float64
+	Timestamp  float64
 }
 
 // Account represents a trading account.
 type Account struct {
-	AccID     uint64
-	AccType   int32
-	TrdEnv    int32
-	CardNum   string
-	AccStatus int32
+	AccID             uint64
+	AccType           int32
+	TrdEnv            int32
+	CardNum           string
+	AccStatus         int32
+	TrdMarketAuthList []int32
+	SecurityFirm      int32
+	SimAccType        int32
+	UniCardNum        string
+	AccRole           int32
+	JpAccType         []int32
 }
 
 // PlaceOrderResult represents a place order result.
@@ -1886,90 +2128,192 @@ type PlaceOrderResult struct {
 
 // Position represents a position.
 type Position struct {
-	Symbol    string
-	Market    int32
-	Quantity  float64
-	CostPrice float64
-	CurPrice  float64
-	PnL       float64
-	PnLRate   float64
+	PositionID       uint64
+	Code             string
+	Name             string
+	Market           int32
+	Quantity         float64
+	CanSellQty       float64
+	CostPrice        float64
+	CurPrice         float64
+	MarketVal        float64
+	PnL              float64
+	PnLRate          float64
+	TodayBuyQty      float64
+	TodayBuyVal      float64
+	TodaySellQty     float64
+	TodaySellVal     float64
+	TodayPnL         float64
+	UnrealizedPL     float64
+	RealizedPL       float64
+	Currency         int32
+	TrdMarket        int32
+	DilutedCostPrice float64
+	AverageCostPrice float64
+	AveragePnLRate   float64
 }
 
 // Funds represents account funds.
 type Funds struct {
-	Cash        float64
-	BuyingPower float64
-	MarketValue float64
-	TotalAsset  float64
+	Power             float64
+	TotalAssets       float64
+	Cash              float64
+	MarketVal         float64
+	FrozenCash        float64
+	DebtCash          float64
+	AvlWithdrawalCash float64
+	Currency          int32
+	AvailableFunds    float64
+	UnrealizedPL      float64
+	RealizedPL        float64
+	RiskLevel         int32
+	InitialMargin     float64
+	MaintenanceMargin float64
+	MaxPowerShort     float64
+	NetCashPower      float64
+	LongMv            float64
+	ShortMv           float64
+	PendingAsset      float64
+	MaxWithdrawal     float64
+	RiskStatus        int32
 }
 
 // Order represents an order.
 type Order struct {
-	OrderID    uint64
-	Code       string
-	Name       string
-	TrdSide    int32
-	OrderType  int32
-	Price      float64
-	Qty        float64
-	OrderState int32
+	OrderID         uint64
+	OrderIDEx       string
+	Code            string
+	Name            string
+	TrdSide         int32
+	OrderType       int32
+	OrderStatus     int32
+	Price           float64
+	Qty             float64
+	FillQty         float64
+	FillAvgPrice    float64
+	CreateTime      string
+	UpdateTime      string
+	LastErrMsg      string
+	SecMarket       int32
+	CreateTimestamp float64
+	UpdateTimestamp float64
+	Remark          string
+	TimeInForce     int32
+	FillOutsideRTH  bool
+	AuxPrice        float64
+	TrailType       int32
+	TrailValue      float64
+	TrailSpread     float64
+	Currency        int32
+	TrdMarket       int32
+	Session         int32
 }
 
 // OrderFill represents an order fill.
 type OrderFill struct {
-	OrderID uint64
-	Code    string
-	Name    string
-	TrdSide int32
-	Price   float64
-	Qty     float64
+	FillID            uint64
+	FillIDEx          string
+	OrderID           uint64
+	OrderIDEx         string
+	Code              string
+	Name              string
+	TrdSide           int32
+	Price             float64
+	Qty               float64
+	CreateTime        string
+	CounterBrokerID   int32
+	CounterBrokerName string
+	SecMarket         int32
+	CreateTimestamp   float64
+	UpdateTimestamp   float64
+	Status            int32
+	TrdMarket         int32
+	JpAccType         int32
 }
 
 // OrderBook represents order book data.
 type OrderBook struct {
-	Bids []OrderBookItem
-	Asks []OrderBookItem
+	Bids                    []OrderBookItem
+	Asks                    []OrderBookItem
+	SvrRecvTimeBid          string
+	SvrRecvTimeBidTimestamp float64
+	SvrRecvTimeAsk          string
+	SvrRecvTimeAskTimestamp float64
 }
 
 // OrderBookItem represents a single order book entry.
 type OrderBookItem struct {
-	Price  float64
-	Volume int64
+	Price      float64
+	Volume     int64
+	OrderCount int32
+	DetailList []OrderBookDetail
+}
+
+// OrderBookDetail represents a detail entry in an order book item.
+type OrderBookDetail struct {
+	OrderID int64
+	Volume  int64
 }
 
 // Ticker represents ticker data.
 type Ticker struct {
 	Time      string
+	Sequence  int64
 	Price     float64
 	Volume    int64
 	Direction string
+	Turnover  float64
+	RecvTime  float64
+	Type      int32
+	TypeSign  int32
+	Timestamp float64
 }
 
 // RT represents real-time data.
 type RT struct {
-	Time   string
-	Price  float64
-	Volume int64
+	Time      string
+	Price     float64
+	Volume    int64
+	LastClose float64
+	AvgPrice  float64
+	Turnover  float64
 }
 
 // Broker represents broker data.
 type Broker struct {
-	ID   int64
-	Name string
+	ID     int64
+	Name   string
+	Pos    int32
+	Volume int64
 }
 
 // StaticInfo represents static security info.
 type StaticInfo struct {
-	Code string
-	Name string
-	Type int32
+	Code     string
+	Name     string
+	Type     int32
+	ListTime string
+	LotSize  int32
 }
 
 // FutureInfo represents futures info.
 type FutureInfo struct {
-	Code   string
-	Name   string
-	Expire string
+	Code               string
+	Name               string
+	Expire             string
+	LastTradeTimestamp float64
+	Owner              string
+	OwnerOther         string
+	Exchange           string
+	ContractType       string
+	ContractSize       float64
+	ContractSizeUnit   string
+	QuoteCurrency      string
+	MinVar             float64
+	MinVarUnit         string
+	QuoteUnit          string
+	TimeZone           string
+	ExchangeFormatUrl  string
 }
 
 // Plate represents a market plate (板块).
@@ -1980,14 +2324,16 @@ type Plate struct {
 
 // IpoData represents IPO data.
 type IpoData struct {
-	Code     string
-	Name     string
-	ListDate string
+	Code          string
+	Name          string
+	ListDate      string
+	ListTimestamp float64
 }
 
 // UserSecurityGroup represents user security group.
 type UserSecurityGroup struct {
-	Name string
+	Name      string
+	GroupType int32
 }
 
 // SubInfo represents subscription info.
@@ -1999,14 +2345,16 @@ type SubInfo struct {
 
 // CapitalDistribution represents capital distribution.
 type CapitalDistribution struct {
-	MainInflow   float64
-	MainOutflow  float64
-	MidInflow    float64
-	MidOutflow   float64
-	SmallInflow  float64
-	SmallOutflow float64
-	BigInflow    float64
-	BigOutflow   float64
+	MainInflow      float64
+	MainOutflow     float64
+	MidInflow       float64
+	MidOutflow      float64
+	SmallInflow     float64
+	SmallOutflow    float64
+	BigInflow       float64
+	BigOutflow      float64
+	UpdateTime      string
+	UpdateTimestamp float64
 }
 
 // OptionExpiration represents option expiration date.

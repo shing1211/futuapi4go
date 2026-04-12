@@ -52,11 +52,17 @@ const (
 
 // Acc represents a trading account with its environment, ID, type, and status.
 type Acc struct {
-	TrdEnv    int32
-	AccID     uint64
-	AccType   int32
-	CardNum   string
-	AccStatus int32
+	TrdEnv            int32
+	AccID             uint64
+	AccType           int32
+	CardNum           string
+	AccStatus         int32
+	TrdMarketAuthList []int32
+	SecurityFirm      int32
+	SimAccType        int32
+	UniCardNum        string
+	AccRole           int32
+	JpAccType         []int32
 }
 
 // GetAccListResponse is the response containing a list of trading accounts.
@@ -116,11 +122,17 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 
 	for _, acc := range s2c.GetAccList() {
 		result.AccList = append(result.AccList, &Acc{
-			TrdEnv:    acc.GetTrdEnv(),
-			AccID:     acc.GetAccID(),
-			AccType:   acc.GetAccType(),
-			CardNum:   acc.GetCardNum(),
-			AccStatus: acc.GetAccStatus(),
+			TrdEnv:            acc.GetTrdEnv(),
+			AccID:             acc.GetAccID(),
+			AccType:           acc.GetAccType(),
+			CardNum:           acc.GetCardNum(),
+			AccStatus:         acc.GetAccStatus(),
+			TrdMarketAuthList: acc.GetTrdMarketAuthList(),
+			SecurityFirm:      acc.GetSecurityFirm(),
+			SimAccType:        acc.GetSimAccType(),
+			UniCardNum:        acc.GetUniCardNum(),
+			AccRole:           acc.GetAccRole(),
+			JpAccType:         acc.GetJpAccType(),
 		})
 	}
 
@@ -129,14 +141,34 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 
 // Funds represents the capital and asset information of a trading account.
 type Funds struct {
-	Power          float64
-	TotalAssets    float64
-	Cash           float64
-	MarketVal      float64
-	FrozenCash     float64
-	DebtCash       float64
-	Currency       int32
-	AvailableFunds float64
+	Power             float64
+	TotalAssets       float64
+	Cash              float64
+	MarketVal         float64
+	FrozenCash        float64
+	DebtCash          float64
+	AvlWithdrawalCash float64
+	Currency          int32
+	AvailableFunds    float64
+	UnrealizedPL      float64
+	RealizedPL        float64
+	RiskLevel         int32
+	InitialMargin     float64
+	MaintenanceMargin float64
+	MaxPowerShort     float64
+	NetCashPower      float64
+	LongMv            float64
+	ShortMv           float64
+	PendingAsset      float64
+	MaxWithdrawal     float64
+	RiskStatus        int32
+	MarginCallMargin  float64
+	IsPDT             bool
+	PDTSeq            string
+	BeginningDTBP     float64
+	RemainingDTBP     float64
+	DtCallAmount      float64
+	DtStatus          int32
 }
 
 // GetFundsRequest is the request to retrieve account funds.
@@ -205,31 +237,64 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 	f := s2c.GetFunds()
 	return &GetFundsResponse{
 		Funds: &Funds{
-			Power:          f.GetPower(),
-			TotalAssets:    f.GetTotalAssets(),
-			Cash:           f.GetCash(),
-			MarketVal:      f.GetMarketVal(),
-			FrozenCash:     f.GetFrozenCash(),
-			DebtCash:       f.GetDebtCash(),
-			Currency:       f.GetCurrency(),
-			AvailableFunds: f.GetAvailableFunds(),
+			Power:             f.GetPower(),
+			TotalAssets:       f.GetTotalAssets(),
+			Cash:              f.GetCash(),
+			MarketVal:         f.GetMarketVal(),
+			FrozenCash:        f.GetFrozenCash(),
+			DebtCash:          f.GetDebtCash(),
+			AvlWithdrawalCash: f.GetAvlWithdrawalCash(),
+			Currency:          f.GetCurrency(),
+			AvailableFunds:    f.GetAvailableFunds(),
+			UnrealizedPL:      f.GetUnrealizedPL(),
+			RealizedPL:        f.GetRealizedPL(),
+			RiskLevel:         f.GetRiskLevel(),
+			InitialMargin:     f.GetInitialMargin(),
+			MaintenanceMargin: f.GetMaintenanceMargin(),
+			MaxPowerShort:     f.GetMaxPowerShort(),
+			NetCashPower:      f.GetNetCashPower(),
+			LongMv:            f.GetLongMv(),
+			ShortMv:           f.GetShortMv(),
+			PendingAsset:      f.GetPendingAsset(),
+			MaxWithdrawal:     f.GetMaxWithdrawal(),
+			RiskStatus:        f.GetRiskStatus(),
+			MarginCallMargin:  f.GetMarginCallMargin(),
+			IsPDT:             f.GetIsPdt(),
+			PDTSeq:            f.GetPdtSeq(),
+			BeginningDTBP:     f.GetBeginningDTBP(),
+			RemainingDTBP:     f.GetRemainingDTBP(),
+			DtCallAmount:      f.GetDtCallAmount(),
+			DtStatus:          f.GetDtStatus(),
 		},
 	}, nil
 }
 
 // Position represents a stock position with quantity, price, cost, and profit/loss information.
 type Position struct {
-	PositionID uint64
-	Code       string
-	Name       string
-	Qty        float64
-	CanSellQty float64
-	Price      float64
-	CostPrice  float64
-	Val        float64
-	PlVal      float64
-	PlRatio    float64
-	TrdMarket  int32
+	PositionID       uint64
+	Code             string
+	Name             string
+	Qty              float64
+	CanSellQty       float64
+	Price            float64
+	CostPrice        float64
+	Val              float64
+	PlVal            float64
+	PlRatio          float64
+	SecMarket        int32
+	TdPlVal          float64
+	TdTrdVal         float64
+	TdBuyVal         float64
+	TdBuyQty         float64
+	TdSellVal        float64
+	TdSellQty        float64
+	UnrealizedPL     float64
+	RealizedPL       float64
+	Currency         int32
+	TrdMarket        int32
+	DilutedCostPrice float64
+	AverageCostPrice float64
+	AveragePlRatio   float64
 }
 
 // GetPositionListRequest is the request to retrieve position list.
@@ -301,17 +366,30 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 
 	for _, p := range s2c.GetPositionList() {
 		result.PositionList = append(result.PositionList, &Position{
-			PositionID: p.GetPositionID(),
-			Code:       p.GetCode(),
-			Name:       p.GetName(),
-			Qty:        p.GetQty(),
-			CanSellQty: p.GetCanSellQty(),
-			Price:      p.GetPrice(),
-			CostPrice:  p.GetCostPrice(),
-			Val:        p.GetVal(),
-			PlVal:      p.GetPlVal(),
-			PlRatio:    p.GetPlRatio(),
-			TrdMarket:  p.GetTrdMarket(),
+			PositionID:       p.GetPositionID(),
+			Code:             p.GetCode(),
+			Name:             p.GetName(),
+			Qty:              p.GetQty(),
+			CanSellQty:       p.GetCanSellQty(),
+			Price:            p.GetPrice(),
+			CostPrice:        p.GetCostPrice(),
+			Val:              p.GetVal(),
+			PlVal:            p.GetPlVal(),
+			PlRatio:          p.GetPlRatio(),
+			SecMarket:        p.GetSecMarket(),
+			TdPlVal:          p.GetTdPlVal(),
+			TdTrdVal:         p.GetTdTrdVal(),
+			TdBuyVal:         p.GetTdBuyVal(),
+			TdBuyQty:         p.GetTdBuyQty(),
+			TdSellVal:        p.GetTdSellVal(),
+			TdSellQty:        p.GetTdSellQty(),
+			UnrealizedPL:     p.GetUnrealizedPL(),
+			RealizedPL:       p.GetRealizedPL(),
+			Currency:         p.GetCurrency(),
+			TrdMarket:        p.GetTrdMarket(),
+			DilutedCostPrice: p.GetDilutedCostPrice(),
+			AverageCostPrice: p.GetAverageCostPrice(),
+			AveragePlRatio:   p.GetAveragePlRatio(),
 		})
 	}
 
@@ -347,6 +425,7 @@ type Order struct {
 	Currency        int32
 	TrdMarket       int32
 	Session         int32
+	JpAccType       int32
 }
 
 // GetOrderListRequest is the request to retrieve order list.
@@ -445,6 +524,7 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 			Currency:        o.GetCurrency(),
 			TrdMarket:       o.GetTrdMarket(),
 			Session:         o.GetSession(),
+			JpAccType:       o.GetJpAccType(),
 		})
 	}
 
@@ -470,6 +550,7 @@ type OrderFill struct {
 	UpdateTimestamp   float64
 	Status            int32
 	TrdMarket         int32
+	JpAccType         int32
 }
 
 // GetOrderFillListRequest is the request to retrieve order fill list.
@@ -558,6 +639,7 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 			UpdateTimestamp:   f.GetUpdateTimestamp(),
 			Status:            f.GetStatus(),
 			TrdMarket:         f.GetTrdMarket(),
+			JpAccType:         f.GetJpAccType(),
 		})
 	}
 
@@ -1233,6 +1315,7 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 			UpdateTimestamp:   f.GetUpdateTimestamp(),
 			Status:            f.GetStatus(),
 			TrdMarket:         f.GetTrdMarket(),
+			JpAccType:         f.GetJpAccType(),
 		})
 	}
 

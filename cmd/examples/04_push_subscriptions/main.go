@@ -81,7 +81,7 @@ func setupPushHandler(cli *futuapi.Client) {
 			}
 			if data != nil {
 				stats.basicQot.Add(1)
-				fmt.Printf("[BasicQot] %s %s: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
+				fmt.Printf("[BasicQot] %d %s: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
 					data.Security.GetMarket(), data.Security.GetCode(), data.CurPrice,
 					data.OpenPrice, data.HighPrice, data.LowPrice, data.Volume)
 			}
@@ -96,9 +96,9 @@ func setupPushHandler(cli *futuapi.Client) {
 			if data != nil {
 				stats.kl.Add(1)
 				for _, kl := range data.KLList {
-					fmt.Printf("[KL]       %s %s: open=%.2f high=%.2f low=%.2f close=%.2f vol=%d\n",
+					fmt.Printf("[KL]       %d %s: open=%.2f high=%.2f low=%.2f close=%.2f vol=%d\n",
 						data.Security.GetMarket(), data.Security.GetCode(),
-						kl.OpenPrice, kl.HighPrice, kl.LowPrice, kl.ClosePrice, kl.Volume)
+						kl.GetOpenPrice(), kl.GetHighPrice(), kl.GetLowPrice(), kl.GetClosePrice(), kl.GetVolume())
 				}
 			}
 			handled = true
@@ -111,7 +111,7 @@ func setupPushHandler(cli *futuapi.Client) {
 			}
 			if data != nil {
 				stats.orderBook.Add(1)
-				fmt.Printf("[OrderBook] %s %s: ask_count=%d bid_count=%d\n",
+				fmt.Printf("[OrderBook] %d %s: ask_count=%d bid_count=%d\n",
 					data.Security.GetMarket(), data.Security.GetCode(),
 					len(data.OrderBookAskList), len(data.OrderBookBidList))
 				for i, ask := range data.OrderBookAskList {
@@ -119,14 +119,14 @@ func setupPushHandler(cli *futuapi.Client) {
 						fmt.Printf("           ... +%d more asks\n", len(data.OrderBookAskList)-3)
 						break
 					}
-					fmt.Printf("           Ask[%d] price=%.2f vol=%d\n", i, ask.Price, ask.Volume)
+					fmt.Printf("           Ask[%d] price=%.2f vol=%d\n", i, ask.GetPrice(), ask.GetVolume())
 				}
 				for i, bid := range data.OrderBookBidList {
 					if i >= 3 {
 						fmt.Printf("           ... +%d more bids\n", len(data.OrderBookBidList)-3)
 						break
 					}
-					fmt.Printf("           Bid[%d] price=%.2f vol=%d\n", i, bid.Price, bid.Volume)
+					fmt.Printf("           Bid[%d] price=%.2f vol=%d\n", i, bid.GetPrice(), bid.GetVolume())
 				}
 			}
 			handled = true
@@ -140,9 +140,9 @@ func setupPushHandler(cli *futuapi.Client) {
 			if data != nil {
 				stats.ticker.Add(1)
 				for _, t := range data.TickerList {
-					fmt.Printf("[Ticker]   %s %s: price=%.2f vol=%d turnover=%.2f dir=%s time=%s\n",
+					fmt.Printf("[Ticker]   %d %s: price=%.2f vol=%d turnover=%.2f dir=%s time=%s\n",
 						data.Security.GetMarket(), data.Security.GetCode(),
-						t.Price, t.Volume, t.Turnover, direction(t.GetDir()), t.Time)
+						t.GetPrice(), t.GetVolume(), t.GetTurnover(), direction(t.GetDir()), t.GetTime())
 				}
 			}
 			handled = true
@@ -156,9 +156,9 @@ func setupPushHandler(cli *futuapi.Client) {
 			if data != nil {
 				stats.rt.Add(1)
 				for _, rt := range data.RTList {
-					fmt.Printf("[RT]       %s %s: price=%.2f vol=%d avg_price=%.2f time=%s\n",
+					fmt.Printf("[RT]       %d %s: price=%.2f vol=%d avg_price=%.2f time=%s\n",
 						data.Security.GetMarket(), data.Security.GetCode(),
-						rt.Price, rt.Volume, rt.AvgPrice, rt.Time)
+						rt.GetPrice(), rt.GetVolume(), rt.GetAvgPrice(), rt.GetTime())
 				}
 			}
 			handled = true
@@ -171,7 +171,7 @@ func setupPushHandler(cli *futuapi.Client) {
 			}
 			if data != nil {
 				stats.broker.Add(1)
-				fmt.Printf("[Broker]   %s %s: asks=%d bids=%d\n",
+				fmt.Printf("[Broker]   %d %s: asks=%d bids=%d\n",
 					data.Security.GetMarket(), data.Security.GetCode(),
 					len(data.AskBrokerList), len(data.BidBrokerList))
 			}
