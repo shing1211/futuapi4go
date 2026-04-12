@@ -297,6 +297,37 @@ func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType
 	}, nil
 }
 
+// OrderFeeInfo represents fee information for an order.
+type OrderFeeInfo struct {
+	OrderIDEx string
+	FeeAmount float64
+}
+
+// GetOrderFee retrieves order fee information.
+func GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) ([]*OrderFeeInfo, error) {
+	resp, err := trd.GetOrderFee(c.inner, &trd.GetOrderFeeRequest{
+		AccID:         accID,
+		TrdMarket:     market,
+		TrdEnv:        1,
+		OrderIDExList: orderIDExList,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*OrderFeeInfo, 0, len(resp.OrderFeeList))
+	for _, f := range resp.OrderFeeList {
+		if f == nil {
+			continue
+		}
+		result = append(result, &OrderFeeInfo{
+			OrderIDEx: f.OrderIDEx,
+			FeeAmount: f.FeeAmount,
+		})
+	}
+	return result, nil
+}
+
 // GetOrderList retrieves active orders.
 func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	resp, err := trd.GetOrderList(c.inner, &trd.GetOrderListRequest{
@@ -375,6 +406,34 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 			Price:   f.Price,
 			Qty:     f.Qty,
 		}
+	}
+	return fills, nil
+}
+
+// GetHistoryOrderFillList retrieves historical order fills.
+func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill, error) {
+	resp, err := trd.GetHistoryOrderFillList(c.inner, &trd.GetHistoryOrderFillListRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    1,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	fills := make([]OrderFill, 0, len(resp.OrderFillList))
+	for _, f := range resp.OrderFillList {
+		if f == nil {
+			continue
+		}
+		fills = append(fills, OrderFill{
+			OrderID: f.OrderID,
+			Code:    f.Code,
+			Name:    f.Name,
+			TrdSide: f.TrdSide,
+			Price:   f.Price,
+			Qty:     f.Qty,
+		})
 	}
 	return fills, nil
 }
