@@ -1,3 +1,16 @@
+// Package qot provides market data APIs for the Futu OpenD SDK.
+//
+// This package covers real-time quotes, K-lines, order book, tick data,
+// broker queue, capital flow, stock screening, options, warrants, and
+// historical data requests. All functions require a connected client.
+//
+// Usage:
+//
+//	import "github.com/shing1211/futuapi4go/pkg/qot"
+//
+//	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+//	securities := []*qotcommon.Security{{Market: &hkMarket, Code: ptrStr("00700")}}
+//	quotes, err := qot.GetBasicQot(cli, securities)
 package qot
 
 import (

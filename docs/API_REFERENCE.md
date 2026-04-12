@@ -1121,23 +1121,23 @@ cli.RegisterHandler(push.ProtoID_Qot_UpdateOrderBook, func(header *push.Header, 
 
 ### Qot Push Handlers
 
-| ProtoID | Parse Function | Description |
-|---------|---------------|-------------|
-| 3101 | `ParseUpdateBasicQot` | Real-time price updates |
-| 3102 | `ParseUpdateKL` | K-line updates |
-| 3103 | `ParseUpdateOrderBook` | Order book updates |
-| 3104 | `ParseUpdateTicker` | Tick-by-tick trades |
-| 3105 | `ParseUpdateRT` | Intraday time-share updates |
-| 3106 | `ParseUpdateBroker` | Broker queue updates |
-| 3107 | `ParseUpdatePriceReminder` | Price alert triggers |
+| Constant | ProtoID | Parse Function | Description |
+|----------|---------|---------------|-------------|
+| `ProtoID_Qot_UpdateBasicQot` | 3005 | `ParseUpdateBasicQot` | Real-time price updates |
+| `ProtoID_Qot_UpdateKL` | 3007 | `ParseUpdateKL` | K-line updates |
+| `ProtoID_Qot_UpdateOrderBook` | 3013 | `ParseUpdateOrderBook` | Order book updates |
+| `ProtoID_Qot_UpdateTicker` | 3011 | `ParseUpdateTicker` | Tick-by-tick trades |
+| `ProtoID_Qot_UpdateRT` | 3009 | `ParseUpdateRT` | Intraday time-share updates |
+| `ProtoID_Qot_UpdateBroker` | 3015 | `ParseUpdateBroker` | Broker queue updates |
+| `ProtoID_Qot_PushPriceReminder` | 3107 | `ParseUpdatePriceReminder` | Price alert triggers |
 
 ### Trd Push Handlers
 
-| ProtoID | Parse Function | Description |
-|---------|---------------|-------------|
-| 7001 | `ParseUpdateOrder` | Order status updates |
-| 7002 | `ParseUpdateOrderFill` | Order fill (成交) notifications |
-| 7003 | `ParseTrdNotify` | Trading system notifications |
+| Constant | ProtoID | Parse Function | Description |
+|----------|---------|---------------|-------------|
+| `ProtoID_Trd_UpdateOrder` | 2208 | `ParseUpdateOrder` | Order status updates |
+| `ProtoID_Trd_UpdateOrderFill` | 2218 | `ParseUpdateOrderFill` | Order fill (成交) notifications |
+| `ProtoID_Trd_Notify` | 2207 | `ParseTrdNotify` | Trading system notifications |
 
 ---
 

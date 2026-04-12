@@ -1,3 +1,13 @@
+// Package sys provides system-level APIs for the Futu OpenD SDK.
+//
+// This package covers connection state, user information, delay statistics,
+// and verification. These functions work without an active trading account.
+//
+// Usage:
+//
+//	import "github.com/shing1211/futuapi4go/pkg/sys"
+//
+//	state, err := sys.GetGlobalState(cli)
 package sys
 
 import (

@@ -17,8 +17,6 @@ const (
 	ProtoID_Trd_UpdateOrder     = 2208
 	ProtoID_Trd_UpdateOrderFill = 2218
 	ProtoID_Trd_Notify          = 2207
-	ProtoID_Trd_ReconfirmOrder  = 2209
-	ProtoID_Trd_SubAccPush      = 2008
 )
 
 type SystemNotify struct {

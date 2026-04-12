@@ -1,3 +1,21 @@
+// Package trd provides trading APIs for the Futu OpenD SDK.
+//
+// This package covers account management, order placement and modification,
+// position and funds queries, order history, and trading flow analysis.
+// All trading functions require an unlocked trading account.
+//
+// Usage:
+//
+//	import "github.com/shing1211/futuapi4go/pkg/trd"
+//
+//	accs, err := trd.GetAccList(cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+//	req := &trd.PlaceOrderRequest{
+//	    AccID: accs[0].AccID, TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
+//	    Code: "00700", TrdSide: int32(trdcommon.TrdSide_TrdSide_Buy),
+//	    OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+//	    Price: 350.00, Qty: 100.0,
+//	}
+//	resp, err := trd.PlaceOrder(cli, req)
 package trd
 
 import (

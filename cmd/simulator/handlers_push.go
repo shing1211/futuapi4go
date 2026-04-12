@@ -17,19 +17,20 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdnotify"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
+	qotpush "github.com/shing1211/futuapi4go/pkg/push"
 )
 
 func (s *Server) RegisterPushHandlers() {
-	s.RegisterHandler(3005, s.handlePushBasicQot)      // UpdateBasicQot
-	s.RegisterHandler(3007, s.handlePushKL)            // UpdateKL
-	s.RegisterHandler(3013, s.handlePushOrderBook)     // UpdateOrderBook
-	s.RegisterHandler(3011, s.handlePushTicker)        // UpdateTicker
-	s.RegisterHandler(3009, s.handlePushRT)            // UpdateRT
-	s.RegisterHandler(3015, s.handlePushBroker)        // UpdateBroker
-	s.RegisterHandler(3107, s.handlePushPriceReminder) // UpdatePriceReminder (unchanged)
-	s.RegisterHandler(2208, s.handlePushOrder)         // UpdateOrder
-	s.RegisterHandler(2218, s.handlePushOrderFill)     // UpdateOrderFill
-	s.RegisterHandler(2207, s.handlePushTrdNotify)     // TrdNotify
+	s.RegisterHandler(3005, s.handlePushBasicQot)  // UpdateBasicQot
+	s.RegisterHandler(3007, s.handlePushKL)        // UpdateKL
+	s.RegisterHandler(3013, s.handlePushOrderBook) // UpdateOrderBook
+	s.RegisterHandler(3011, s.handlePushTicker)    // UpdateTicker
+	s.RegisterHandler(3009, s.handlePushRT)        // UpdateRT
+	s.RegisterHandler(3015, s.handlePushBroker)    // UpdateBroker
+	s.RegisterHandler(qotpush.ProtoID_Qot_PushPriceReminder, s.handlePushPriceReminder)
+	s.RegisterHandler(2208, s.handlePushOrder)     // UpdateOrder
+	s.RegisterHandler(2218, s.handlePushOrderFill) // UpdateOrderFill
+	s.RegisterHandler(2207, s.handlePushTrdNotify) // TrdNotify
 	s.RegisterHandler(1003, s.handlePushNotify)
 }
 

@@ -1,0 +1,15 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force Go files to use LF (Go is cross-platform)
+*.go text eol=lf
+
+# Protocol buffer files — treat as Go for language stats
+*.proto linguist-language=Go
+
+# Binary files
+*.pb.go binary
+*.a binary
+
+# Exclude proto source files from repo stats (generated .pb.go are what's used)
+api/proto/ linguist-vendor

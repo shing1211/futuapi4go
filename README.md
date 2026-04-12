@@ -142,6 +142,18 @@ go get github.com/shing1211/futuapi4go@v0.6.0
 - **Go**: 1.21 or higher
 - **Futu OpenD**: Running on your machine (download from [moomoo](https://www.moomoo.com))
 
+### Supported Platforms
+
+The SDK is pure Go with no CGO dependencies.
+
+| Platform | Architecture | Status |
+|----------|-------------|--------|
+| Linux | amd64, arm64 | Supported |
+| macOS | amd64, arm64 (Apple Silicon) | Supported |
+| Windows | amd64 | Supported |
+
+> Note: Futu OpenD desktop client (required to run the gateway) is currently available for Windows and macOS only. The SDK itself runs on any Go-supported platform.
+
 ---
 
 ## 🏗️ Project Structure

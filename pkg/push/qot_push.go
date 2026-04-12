@@ -1,3 +1,19 @@
+// Package push provides handlers for parsing push notification payloads
+// from Futu OpenD. Use RegisterHandler on the client to receive real-time
+// market data and order updates.
+//
+// Usage:
+//
+//	import "github.com/shing1211/futuapi4go/pkg/push"
+//
+//	cli.RegisterHandler(push.ProtoID_Qot_UpdateBasicQot, func(protoID uint32, body []byte) {
+//	    data, err := push.ParseUpdateBasicQot(body)
+//	    // ...
+//	})
+//
+// Note: push constants use the same ProtoID values as the corresponding
+// request APIs (e.g., ProtoID_Qot_UpdateBasicQot = 3005). The push
+// notification arrives on the same connection after subscribing.
 package push
 
 import (
@@ -14,13 +30,13 @@ import (
 )
 
 const (
-	ProtoID_Qot_UpdateBasicQot      = 3005
-	ProtoID_Qot_UpdateKL            = 3007
-	ProtoID_Qot_UpdateOrderBook     = 3013
-	ProtoID_Qot_UpdateTicker        = 3011
-	ProtoID_Qot_UpdateRT            = 3009
-	ProtoID_Qot_UpdateBroker        = 3015
-	ProtoID_Qot_UpdatePriceReminder = 3019
+	ProtoID_Qot_UpdateBasicQot    = 3005
+	ProtoID_Qot_UpdateKL          = 3007
+	ProtoID_Qot_UpdateOrderBook   = 3013
+	ProtoID_Qot_UpdateTicker      = 3011
+	ProtoID_Qot_UpdateRT          = 3009
+	ProtoID_Qot_UpdateBroker      = 3015
+	ProtoID_Qot_PushPriceReminder = 3107
 )
 
 type UpdateBasicQot struct {
