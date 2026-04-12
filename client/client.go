@@ -1489,6 +1489,41 @@ func GetDelayStatistics(c *Client) (*DelayStatistics, error) {
 	return &DelayStatistics{Count: 0}, nil
 }
 
+// SuspendInfo represents suspension time for a security.
+type SuspendInfo struct {
+	Time      string
+	Timestamp float64
+}
+
+// GetSuspend retrieves suspension information for securities.
+func GetSuspend(c *Client, securities []*qotcommon.Security, beginTime, endTime string) ([]*SuspendInfo, error) {
+	resp, err := qot.GetSuspend(c.inner, &qot.GetSuspendRequest{
+		SecurityList: securities,
+		BeginTime:    beginTime,
+		EndTime:      endTime,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*SuspendInfo, 0)
+	for _, s := range resp.SecuritySuspendList {
+		if s == nil {
+			continue
+		}
+		for _, su := range s.SuspendList {
+			if su == nil {
+				continue
+			}
+			result = append(result, &SuspendInfo{
+				Time:      su.Time,
+				Timestamp: su.Timestamp,
+			})
+		}
+	}
+	return result, nil
+}
+
 // ============================================================================
 // Types
 // ============================================================================
