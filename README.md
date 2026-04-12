@@ -68,7 +68,7 @@ func main() {
     fmt.Printf("Connected! ConnID: %d\n", cli.GetConnID())
 
     // Subscribe to real-time data
-    if err := client.Subscribe(cli, client.Market_HK_Future, "HSImain", 
+    if err := client.Subscribe(cli, client.Market_HK_Future, "HSImain",
         []int32{client.SubType_Basic, client.SubType_KL_1Min}); err != nil {
         log.Printf("Subscribe warning: %v", err)
     }

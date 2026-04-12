@@ -24,7 +24,320 @@ A complete reference for the `futuapi4go` SDK. All functions accept a `*futuapi.
 
 ---
 
-## Client
+## High-Level Client Wrappers
+
+Import: `"github.com/shing1211/futuapi4go/client"`
+
+The `client` package provides high-level wrapper functions that simplify common workflows. They accept a `*client.Client` and return user-friendly types.
+
+### Market Data Wrappers
+
+#### `client.GetQuote(c *Client, market int32, code string) (*Quote, error)`
+
+Retrieves real-time quote for a single security. Returns a `Quote` struct with all price/volume data.
+
+```go
+quote, err := client.GetQuote(c, client.Market_HK_Security, "00700")
+```
+
+**Response:** `Quote` struct with `Market`, `Code`, `Name`, `CurPrice`, `OpenPrice`, `HighPrice`, `LowPrice`, `LastClose`, `Volume`, `Turnover`, `TurnoverRate`, `Amplitude`, `UpdateTime`, `IsSuspend`.
+
+#### `client.GetKLines(c *Client, market int32, code string, klType int32, num int) ([]KLine, error)`
+
+Retrieves K-line (candlestick) data.
+
+```go
+klines, err := client.GetKLines(c, client.Market_HK_Security, "00700", client.KLType_Day, 100)
+```
+
+**Response:** `[]KLine` with `Time`, `Open`, `High`, `Low`, `Close`, `Volume`, `Turnover`, `LastClose`, `ChangeRate`, `Timestamp`.
+
+#### `client.GetOrderBook(c *Client, market int32, code string, num int) (*OrderBook, error)`
+
+Retrieves order book (买卖盘). Returns `OrderBook` with `BidList` and `AskList` slices.
+
+#### `client.GetTicker(c *Client, market int32, code string, num int) ([]Ticker, error)`
+
+Retrieves tick-by-tick trade data.
+
+#### `client.GetRT(c *Client, market int32, code string) ([]RT, error)`
+
+Retrieves 分时 (time-share / intraday) price data.
+
+#### `client.GetBroker(c *Client, market int32, code string, num int) ([]Broker, []Broker, error)`
+
+Returns `(askBrokers, bidBrokers, error)` — top brokers on each side of the order book.
+
+#### `client.GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error)`
+
+Retrieves static security info (listing date, lot size).
+
+#### `client.GetTradeDate(c *Client, market int32, startDate, endDate string) ([]string, error)`
+
+Retrieves trading dates in `YYYY-MM-DD` format.
+
+#### `client.GetFutureInfo(c *Client, code string) ([]FutureInfo, error)`
+
+Retrieves futures contract info.
+
+#### `client.GetPlateSet(c *Client, market int32) ([]Plate, error)`
+
+Retrieves available plate (板块) sets.
+
+#### `client.GetIpoList(c *Client, market int32) ([]IpoData, error)`
+
+Retrieves IPO calendar.
+
+#### `client.GetMarketState(c *Client, market int32, code string) (int32, error)`
+
+Returns market state (open/closed/pre-market).
+
+#### `client.GetCapitalFlow(c *Client, market int32, code string) ([]CapitalFlow, error)`
+
+Retrieves capital flow data.
+
+#### `client.GetCapitalDistribution(c *Client, market int32, code string) (*CapitalDistribution, error)`
+
+Retrieves capital distribution by order size.
+
+#### `client.GetOwnerPlate(c *Client, market int32, code string) ([]string, error)`
+
+Returns all plates that a security belongs to.
+
+#### `client.GetReference(c *Client, market int32, code string, refType int32) ([]StaticInfo, error)`
+
+Retrieves related securities (warrants, convertibles, etc.).
+
+#### `client.GetPlateSecurity(c *Client, market int32, plateCode string) ([]StaticInfo, error)`
+
+Retrieves all securities in a specific plate.
+
+#### `client.GetOptionExpirationDate(c *Client, market int32, code string) ([]OptionExpiration, error)`
+
+Returns available expiration dates for options.
+
+#### `client.GetOptionChain(c *Client, market int32, code string, ...) ([]*OptChain, error)`
+
+Retrieves full option chain data.
+
+#### `client.GetWarrant(c *Client, market int32, code string, ...) ([]*WarrantData, error)`
+
+Retrieves warrant (窝轮) data.
+
+#### `client.GetSecuritySnapshot(c *Client, securities []*qotcommon.Security) ([]*Snapshot, error)`
+
+Retrieves snapshot data for multiple securities in one call.
+
+#### `client.GetCodeChange(c *Client, securities []*qotcommon.Security) ([]*CodeChangeInfo, error)`
+
+Retrieves securities with code changes (name, delisting, etc.).
+
+#### `client.GetSuspend(c *Client, securities []*qotcommon.Security, beginTime, endTime string) ([]*SuspendInfo, error)`
+
+Retrieves suspended securities.
+
+### Subscription Wrappers
+
+#### `client.Subscribe(c *Client, market int32, code string, subTypes []int32) error`
+
+Subscribes to real-time data. `subTypes` values: `client.SubType_Basic`, `client.SubType_KL`, `client.SubType_Ticker`, `client.SubType_OrderBook`, `client.SubType_Broker`, `client.SubType_RT`.
+
+```go
+err := client.Subscribe(c, client.Market_HK_Security, "00700", []int32{client.SubType_Basic, client.SubType_KL})
+```
+
+#### `client.Unsubscribe(c *Client, market int32, code string, subTypes []int32) error`
+
+Unsubscribes from real-time data.
+
+#### `client.UnsubscribeAll(c *Client) error`
+
+Unsubscribes from all real-time data.
+
+#### `client.QuerySubscription(c *Client) (*qot.GetSubInfoResponse, error)`
+
+Returns current subscription quota usage and subscribed securities.
+
+#### `client.RegQotPush(c *Client, market int32, code string, ...) error`
+
+Registers for push notifications on specific data types.
+
+### Trading Wrappers
+
+#### `client.GetAccountList(c *Client) ([]Account, error)`
+
+Lists all trading accounts. Returns `[]Account` with `AccID`, `AccType`, `TrdEnv`, etc.
+
+```go
+accs, err := client.GetAccountList(c)
+accID := accs[0].AccID
+```
+
+#### `client.UnlockTrading(c *Client, pwdMD5 string) error`
+
+Unlocks trading with MD5-hashed password.
+
+```go
+err := client.UnlockTrading(c, "md5hash")
+```
+
+#### `client.PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64) (*PlaceOrderResult, error)`
+
+Places a buy or sell order. Returns `*PlaceOrderResult` with `OrderID` and `OrderIDEx`.
+
+```go
+result, err := client.PlaceOrder(c, accID, client.Market_HK_Security, "00700",
+    client.Side_Buy, client.OrderType_Normal, 350.00, 100)
+```
+
+#### `client.ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error)`
+
+Modifies or cancels an existing order. Returns `*trd.ModifyOrderResponse` with `Header`, `OrderID`, `OrderIDEx`.
+
+```go
+resp, err := client.ModifyOrder(c, accID, client.Market_HK_Security, orderID,
+    client.ModifyOp_Normal, 360.00, 0)
+// Use resp.OrderID, resp.OrderIDEx on success
+```
+
+#### `client.CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error`
+
+Cancels all pending orders for the account.
+
+#### `client.GetPositionList(c *Client, accID uint64) ([]Position, error)`
+
+Retrieves current positions.
+
+#### `client.GetFunds(c *Client, accID uint64) (*Funds, error)`
+
+Retrieves account funds.
+
+#### `client.GetOrderList(c *Client, accID uint64) ([]Order, error)`
+
+Retrieves today's orders.
+
+#### `client.GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDate string) ([]Order, error)`
+
+Retrieves historical orders within a date range.
+
+#### `client.GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error)`
+
+Retrieves today's order fills.
+
+#### `client.GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill, error)`
+
+Retrieves historical order fills.
+
+#### `client.GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*MaxTrdQtysInfo, error)`
+
+Calculates maximum tradable quantities.
+
+#### `client.GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) ([]*OrderFeeInfo, error)`
+
+Retrieves fee information for orders.
+
+#### `client.GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcommon.Security) ([]*MarginRatioInfo, error)`
+
+Retrieves margin ratio information.
+
+#### `client.SubAccPush(c *Client, accIDList []uint64) error`
+
+Subscribes to account push notifications.
+
+#### `client.ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reason int32) (*ReconfirmOrderResult, error)`
+
+Requests order re-confirmation for risky operations.
+
+### User Security Wrappers
+
+#### `client.GetUserSecurityGroup(c *Client) ([]UserSecurityGroup, error)`
+
+Returns all user security groups.
+
+#### `client.GetUserSecurity(c *Client, groupName string) ([]StaticInfo, error)`
+
+Returns securities in a specific group.
+
+#### `client.ModifyUserSecurity(c *Client, groupName string, op int32, market int32, codes []string) error`
+
+Adds or removes securities from a group.
+
+### Price Alerts
+
+#### `client.SetPriceReminder(c *Client, market int32, code string, op, reminderType, freq int32, value float64, note string) (int64, error)`
+
+Creates, modifies, or deletes a price reminder. Returns the reminder key.
+
+#### `client.GetPriceReminder(c *Client, market int32, code string) ([]*PriceReminderInfo, error)`
+
+Returns all price reminders for a security.
+
+### Historical Data Wrappers
+
+#### `client.RequestHistoryKL(c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error)`
+
+Requests historical K-line data.
+
+#### `client.RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error)`
+
+Returns historical K-line quota usage.
+
+#### `client.RequestTradeDate(c *Client, market int32, startDate, endDate string, code string) ([]string, error)`
+
+Requests trading dates.
+
+#### `client.RequestRehab(c *Client, market int32, code string) ([]*RehabInfo, error)`
+
+Requests pre-split adjusted price data.
+
+### Analysis Wrappers
+
+#### `client.StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResult, error)`
+
+Screens securities based on criteria.
+
+### System Wrappers
+
+#### `client.GetGlobalState(c *Client) (*GlobalState, error)`
+
+Returns OpenD connection state and market statuses.
+
+#### `client.GetUserInfo(c *Client) (*UserInfo, error)`
+
+Returns user account information.
+
+#### `client.GetDelayStatistics(c *Client) (*DelayStatistics, error)`
+
+Returns connection delay statistics.
+
+#### `client.GetSubInfo(c *Client) (*SubInfo, error)`
+
+Returns subscription info (simplified wrapper around QuerySubscription).
+
+### Portfolio Wrappers
+
+#### `client.GetHoldingChangeList(c *Client, market int32, code string, holderCategory int32, beginTime, endTime string) ([]*HoldingChangeInfo, error)`
+
+Retrieves shareholder holding changes.
+
+### Constants
+
+All constants are package-level variables on `client`:
+
+| Category | Constants |
+|----------|-----------|
+| Markets | `Market_HK_Security`, `Market_US_Security`, `Market_CNSH_Security`, `Market_CNSZ_Security`, `Market_HK_Future`, `Market_CN_Future`, `Market_SG_Future`, `Market_JP_Future` |
+| Sides | `Side_Buy`, `Side_Sell` |
+| Order Types | `OrderType_Normal`, `OrderType_Market`, `OrderType_Stop`, `OrderType_Auction`, `OrderType_AuctionLimit`, `OrderType_SpecialLimit` |
+| K-Line Types | `KLType_1Min` through `KLType_Month` |
+| Subscription Types | `SubType_Basic`, `SubType_KL`, `SubType_Ticker`, `SubType_OrderBook`, `SubType_Broker`, `SubType_RT` |
+| Modify Order Ops | `ModifyOp_Normal`, `ModifyOp_Cancel` |
+
+---
+
+## Internal Client
+
+The following functions and types are in the `internal/client` package (`futuapi`).
 
 ### `futuapi.New(opts ...Option) *Client`
 
@@ -601,7 +914,7 @@ fmt.Printf("OrderID: %d\n", resp.OrderID)
 
 **Response fields:** `OrderID`, `OrderIDEx`
 
-#### `ModifyOrder(c *Client, req *ModifyOrderRequest) error`
+#### `ModifyOrder(c *Client, req *ModifyOrderRequest) (*ModifyOrderResponse, error)`
 
 Modifies or cancels an existing order.
 
@@ -614,14 +927,19 @@ req := &trd.ModifyOrderRequest{
     Price:         360.00, // new price (0 to keep unchanged)
     Qty:           50.0,   // new quantity (0 to keep unchanged)
 }
-if err := trd.ModifyOrder(cli, req); err != nil {
+resp, err := trd.ModifyOrder(cli, req)
+if err != nil {
     log.Printf("Modify failed: %v", err)
+} else {
+    fmt.Printf("Order modified: %d / %s\n", resp.OrderID, resp.OrderIDEx)
 }
 
 // ModifyOrderOp: ModifyOrderOp_Normal (修改), ModifyOrderOp_Cancel (撤销)
 ```
 
 **Request fields:** `AccID`, `TrdMarket`, `OrderID`, `ModifyOrderOp`, `Price`, `Qty`
+
+**Response fields:** `Header`, `OrderID`, `OrderIDEx`
 
 #### `GetOrderList(c *Client, req *GetOrderListRequest) (*GetOrderListResponse, error)`
 

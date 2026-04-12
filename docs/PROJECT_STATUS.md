@@ -2,7 +2,7 @@
 
 ## Current Release: v0.6.0
 
-**Status**: Production Ready ✅
+**Status**: Production Ready
 
 ---
 
@@ -17,9 +17,10 @@
 | **Wrapper Functions** | 59 |
 | **Low-Level APIs** | 74 |
 | **Protobuf Messages** | 100+ |
-| **Test Coverage** | 226+ tests |
-| **Examples** | 29 |
+| **Test Suites** | 6 suites |
+| **Examples** | 29+ |
 | **Go Version** | 1.21+ |
+| **License** | Apache 2.0 |
 
 ---
 
@@ -29,98 +30,138 @@
 
 | Category | Functions | Status |
 |----------|-----------|--------|
-| Real-Time Quotes | GetQuote, GetKLines | ✅ |
-| Order Book | GetOrderBook | ✅ |
-| Tick Data | GetTicker, GetRT | ✅ |
-| Broker | GetBroker | ✅ |
-| Historical | RequestHistoryKL, RequestHistoryKLQuota | ✅ |
-| Static Info | GetStaticInfo, GetTradeDate | ✅ |
-| Market State | GetMarketState, GetFutureInfo | ✅ |
-| Capital Flow | GetCapitalFlow, GetCapitalDistribution | ✅ |
-| Options | GetOptionChain, GetOptionExpirationDate | ✅ |
-| Warrants | GetWarrant | ✅ |
-| Screening | StockFilter, GetSecuritySnapshot | ✅ |
-| User Security | GetUserSecurity, GetUserSecurityGroup | ✅ |
-| Reference | GetReference, GetPlateSecurity, GetOwnerPlate | ✅ |
-| Price Alerts | SetPriceReminder, GetPriceReminder | ✅ |
-| Subscription | Subscribe, Unsubscribe, QuerySubscription | ✅ |
-| Holdings | GetHoldingChangeList, RequestRehab | ✅ |
+| Real-Time Quotes | GetQuote, GetKLines | Done |
+| Order Book | GetOrderBook | Done |
+| Tick Data | GetTicker, GetRT | Done |
+| Broker | GetBroker | Done |
+| Historical | RequestHistoryKL, RequestHistoryKLQuota | Done |
+| Static Info | GetStaticInfo, GetTradeDate | Done |
+| Market State | GetMarketState, GetFutureInfo | Done |
+| Capital Flow | GetCapitalFlow, GetCapitalDistribution | Done |
+| Options | GetOptionChain, GetOptionExpirationDate | Done |
+| Warrants | GetWarrant | Done |
+| Screening | StockFilter, GetSecuritySnapshot | Done |
+| User Security | GetUserSecurity, ModifyUserSecurity, GetUserSecurityGroup | Done |
+| Reference | GetReference, GetPlateSecurity, GetOwnerPlate | Done |
+| Price Alerts | SetPriceReminder, GetPriceReminder | Done |
+| Subscription | Subscribe, Unsubscribe, UnsubscribeAll, QuerySubscription, RegQotPush | Done |
+| Holdings | GetHoldingChangeList, RequestRehab, GetSuspend | Done |
+| Trading Dates | RequestTradeDate | Done |
 
 ### Trading APIs (17 functions)
 
 | Category | Functions | Status |
 |----------|-----------|--------|
-| Account | GetAccountList, UnlockTrading | ✅ |
-| Orders | PlaceOrder, ModifyOrder, CancelAllOrder | ✅ |
-| Positions | GetPositionList, GetFunds | ✅ |
-| Orders Query | GetOrderList, GetHistoryOrderList | ✅ |
-| Fills | GetOrderFillList, GetHistoryOrderFillList | ✅ |
-| Risk | GetMaxTrdQtys, GetOrderFee, GetMarginRatio | ✅ |
-| Push | SubAccPush, ReconfirmOrder | ✅ |
-| Flow | GetFlowSummary | ✅ |
+| Account | GetAccountList, UnlockTrading | Done |
+| Orders | PlaceOrder, ModifyOrder, CancelAllOrder | Done |
+| Positions | GetPositionList, GetFunds | Done |
+| Orders Query | GetOrderList, GetHistoryOrderList | Done |
+| Fills | GetOrderFillList, GetHistoryOrderFillList | Done |
+| Risk | GetMaxTrdQtys, GetOrderFee, GetMarginRatio | Done |
+| Push | SubAccPush, ReconfirmOrder | Done |
+| Flow | GetFlowSummary | Done |
 
 ### System APIs (3 functions)
 
 | Function | Status |
 |----------|--------|
-| GetGlobalState | ✅ |
-| GetUserInfo | ✅ |
-| GetDelayStatistics | ✅ |
+| GetGlobalState | Done |
+| GetUserInfo | Done |
+| GetDelayStatistics | Done |
 
 ---
 
 ## Test Results
 
 ### Unit Tests
-- **Total**: 226+ tests
-- **Status**: All passing ✅
+
+| Suite | Status |
+|-------|--------|
+| Market Data (pkg/qot) | Pass |
+| Trading (pkg/trd) | Pass |
+| System (pkg/sys) | Pass |
+| Push Handlers (pkg/push) | Pass |
+| Internal Client (internal/client) | Pass |
+| Public Client (client) | Pass |
 
 ### Integration Tests
 
 | Test Suite | Result |
 |------------|--------|
-| Market Data (HSI) | ✅ Pass |
-| Trading Operations | ✅ Pass |
-| Push Notifications | ✅ Pass |
-| Historical Data | ✅ Pass |
+| Market Data (HSI) | Pass |
+| Trading Operations | Pass |
+| Push Notifications | Pass |
+| Historical Data | Pass |
 
-### Performance
+### Performance Benchmarks
 
 | Metric | Value |
 |--------|-------|
-| Average API Latency | 21.87ms |
-| Fastest API (GetQuote) | 0.42ms |
+| Average API Latency | ~22ms |
+| Fastest API (GetQuote) | ~0.4ms |
 | Connection Time | <100ms |
 
 ---
 
 ## Release History
 
-### v0.4.1 (Current)
-- ✅ 59 wrapper functions implemented
-- ✅ CancelAllOrder support
-- ✅ RegQotPush support
-- ✅ Comprehensive test suites
+### v0.6.0 (Current)
+- 100% proto field coverage for all 59 wrapper functions
+- Full proto field mapping audit completed
+- All response structs fully populated with no hardcoded zeros
+- Thread-safe global logger implementation
+- Open-source readiness fixes
+
+### v0.5.0
+- Complete trading API coverage
+- Order management and position tracking
+- Historical order and fill queries
 
 ### v0.4.0
-- ✅ Trading APIs complete
-- ✅ Order management
-- ✅ Position tracking
+- CancelAllOrder support
+- RegQotPush support
+- Comprehensive test suites
 
 ### v0.3.0
-- ✅ Market data APIs
-- ✅ Subscription system
-- ✅ Push notifications
+- Market data APIs
+- Subscription system
+- Push notifications
+
+---
+
+## Architecture
+
+The SDK uses a 3-layer architecture:
+
+1. **Public Client** (`client/`) — High-level wrappers with user-friendly types
+2. **API Packages** (`pkg/qot/`, `pkg/trd/`, `pkg/sys/`) — Mid-level typed functions
+3. **Core Client** (`internal/client/`) — TCP connection, keep-alive, reconnection
+
+### Protobuf Layer (`pkg/pb/`)
+
+74 auto-generated protobuf packages covering:
+- System (init, keep-alive, global state, user info)
+- Qot (60+ market data APIs)
+- Trd (15+ trading APIs)
 
 ---
 
 ## Roadmap
 
-### Planned Features
-- [ ] WebSocket-based push for higher performance
-- [ ] Async/await pattern support
-- [ ] Rate limiting utilities
-- [ ] More strategy examples
+### In Progress
+- WebSocket transport integration (internal/ws/ exists)
+- OpenTelemetry metrics integration
+
+### Planned
+- Rate limiting utilities
+- More strategy examples
+- GraphQL interface alternative
+
+### Completed
+- 100% proto field coverage
+- Comprehensive test suites
+- CI/CD pipeline
+- Production-ready status
 
 ---
 
@@ -128,4 +169,4 @@
 
 - **Issues**: https://github.com/shing1211/futuapi4go/issues
 - **Discussions**: https://github.com/shing1211/futuapi4go/discussions
-- **License**: MIT
+- **License**: Apache 2.0

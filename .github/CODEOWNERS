@@ -1,0 +1,20 @@
+# CODEOWNERS — automatically assigns code reviewers
+
+# Default owner for all files
+*       @shing1211
+
+# Core library
+/client/          @shing1211
+/internal/        @shing1211
+/pkg/             @shing1211
+
+# Examples and tools
+/cmd/             @shing1211
+
+# Tests
+/test/            @shing1211
+
+# Documentation
+/docs/            @shing1211
+README.md         @shing1211
+SECURITY.md       @shing1211

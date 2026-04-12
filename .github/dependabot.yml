@@ -1,0 +1,42 @@
+# dependabot.yml — automatically keeps dependencies up to date
+version: 2
+
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Hong_Kong"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "automated"
+    reviewers:
+      - "shing1211"
+    groups:
+      protobuf:
+        patterns:
+          - "google.golang.org/protobuf"
+      websocket:
+        patterns:
+          - "github.com/gorilla/websocket"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Hong_Kong"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "ci"
+      - "automated"
+    reviewers:
+      - "shing1211"

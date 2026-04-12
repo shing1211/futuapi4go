@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"sync"
 	"time"
@@ -58,6 +59,48 @@ func ConnectWS(ctx context.Context, addr string, apiTimeout time.Duration) (*WSC
 	go conn.readLoop()
 
 	return conn, nil
+}
+
+// Dial connects to Futu OpenD via WebSocket (implements the ConnInterface for client integration).
+func Dial(ctx context.Context, addr string, apiTimeout time.Duration) (*WSConn, error) {
+	return ConnectWS(ctx, addr, apiTimeout)
+}
+
+// APITimeout returns the configured API timeout.
+func (w *WSConn) APITimeout() time.Duration {
+	return w.apiTimeout
+}
+
+// LocalAddr returns the local network address.
+func (w *WSConn) LocalAddr() net.Addr {
+	if w.conn == nil {
+		return nil
+	}
+	return w.conn.LocalAddr()
+}
+
+// RemoteAddr returns the remote network address.
+func (w *WSConn) RemoteAddr() net.Addr {
+	if w.conn == nil {
+		return nil
+	}
+	return w.conn.RemoteAddr()
+}
+
+// SetReadDeadline sets the read deadline.
+func (w *WSConn) SetReadDeadline(t time.Time) error {
+	if w.conn == nil {
+		return fmt.Errorf("set read deadline: %w", futuapi.ErrNotConnected)
+	}
+	return w.conn.SetReadDeadline(t)
+}
+
+// SetWriteDeadline sets the write deadline.
+func (w *WSConn) SetWriteDeadline(t time.Time) error {
+	if w.conn == nil {
+		return fmt.Errorf("set write deadline: %w", futuapi.ErrNotConnected)
+	}
+	return w.conn.SetWriteDeadline(t)
 }
 
 // ConnectWSS connects to Futu OpenD via secure WebSocket (wss://)
