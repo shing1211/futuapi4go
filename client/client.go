@@ -9,6 +9,7 @@ import (
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
@@ -1177,14 +1178,26 @@ func StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResul
 		if d == nil {
 			continue
 		}
-		result = append(result, &StockFilterResult{
-			Security:   d.Security,
-			Name:       d.Name,
-			CurPrice:   0,
-			ChangeRate: 0,
-			Volume:     0,
-			Turnover:   0,
-		})
+		r := &StockFilterResult{
+			Security: d.Security,
+			Name:     d.Name,
+		}
+		for _, base := range d.BaseDataList {
+			if base == nil {
+				continue
+			}
+			fieldName := base.GetFieldName()
+			value := base.GetValue()
+			switch qotstockfilter.StockField(fieldName) {
+			case qotstockfilter.StockField_StockField_CurPrice:
+				r.CurPrice = value
+			case qotstockfilter.StockField_StockField_ChangeRate5min:
+				r.ChangeRate = value
+			case qotstockfilter.StockField_StockField_VolumeRatio:
+				r.Volume = int64(value)
+			}
+		}
+		result = append(result, r)
 	}
 	return result, nil
 }
@@ -1538,19 +1551,52 @@ func GetUserInfo(c *Client) (*UserInfo, error) {
 	}, nil
 }
 
-// DelayStatistics represents delay statistics.
+// DelayStatistics represents delay statistics for Qot push.
 type DelayStatistics struct {
-	Count int32
+	QotPushType int32
+	DelayAvg    float64
+	Count       int32
+	ItemList    []DelayStatisticsItem
+}
+
+// DelayStatisticsItem represents a single delay statistics item.
+type DelayStatisticsItem struct {
+	Begin           int32
+	End             int32
+	Count           int32
+	Proportion      float64
+	CumulativeRatio float64
 }
 
 // GetDelayStatistics retrieves delay statistics.
 func GetDelayStatistics(c *Client) (*DelayStatistics, error) {
-	_, err := sys.GetDelayStatistics(c.inner)
+	resp, err := sys.GetDelayStatistics(c.inner)
 	if err != nil {
 		return nil, err
 	}
 
-	return &DelayStatistics{Count: 0}, nil
+	if len(resp.QotPushStatisticsList) == 0 {
+		return &DelayStatistics{}, nil
+	}
+
+	stats := resp.QotPushStatisticsList[0]
+	items := make([]DelayStatisticsItem, 0, len(stats.ItemList))
+	for _, item := range stats.ItemList {
+		items = append(items, DelayStatisticsItem{
+			Begin:           item.GetBegin(),
+			End:             item.GetEnd(),
+			Count:           item.GetCount(),
+			Proportion:      float64(item.GetProportion()),
+			CumulativeRatio: float64(item.GetCumulativeRatio()),
+		})
+	}
+
+	return &DelayStatistics{
+		QotPushType: stats.GetQotPushType(),
+		DelayAvg:    float64(stats.GetDelayAvg()),
+		Count:       stats.GetCount(),
+		ItemList:    items,
+	}, nil
 }
 
 // SuspendInfo represents suspension time for a security.
