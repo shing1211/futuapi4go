@@ -1549,6 +1549,54 @@ func SetPriceReminder(c *Client, market int32, code string, op, reminderType, fr
 	return resp.Key, nil
 }
 
+// PriceReminderInfo represents a price reminder.
+type PriceReminderInfo struct {
+	Security *qotcommon.Security
+	Name     string
+	ItemList []*PriceReminderItemInfo
+}
+
+// PriceReminderItemInfo represents a single price reminder item.
+type PriceReminderItemInfo struct {
+	Key   int64
+	Type  int32
+	Freq  int32
+	Value float64
+	Note  string
+}
+
+// GetPriceReminder retrieves price reminders for a security.
+func GetPriceReminder(c *Client, market int32, code string) ([]*qot.PriceReminderInfo, error) {
+	marketPtr := market
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	resp, err := qot.GetPriceReminder(c.inner, sec, market)
+	if err != nil {
+		return nil, err
+	}
+	return resp.PriceReminderList, nil
+}
+
+// SubAccPush subscribes to account push notifications.
+func SubAccPush(c *Client, accIDList []uint64) error {
+	return trd.SubAccPush(c.inner, &trd.SubAccPushRequest{
+		AccIDList: accIDList,
+	})
+}
+
+// ReconfirmOrder reconfirms an order requiring additional verification.
+func ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reason int32) error {
+	header := &trdcommon.TrdHeader{
+		AccID:     &accID,
+		TrdMarket: &market,
+	}
+	_, err := trd.ReconfirmOrder(c.inner, &trd.ReconfirmOrderRequest{
+		Header:          header,
+		OrderID:         orderID,
+		ReconfirmReason: reason,
+	})
+	return err
+}
+
 // HoldingChangeInfo represents a holding change entry.
 type HoldingChangeInfo struct {
 	HolderName   string
