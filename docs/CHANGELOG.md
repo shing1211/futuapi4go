@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2026-04-12
+
+### Added
+
+#### 100% Proto Field Coverage
+Complete proto field audit across all 59 wrapper functions — zero data loss, no partial mappings.
+
+- `GlobalState`: Added `MarketHKFuture`, `MarketUSFuture`, `MarketSGFuture`, `MarketJPFuture`, `ProgramStatus` fields
+- `PlaceOrderResult`: Added `OrderIDEx` field
+- `ModifyOrder`: Now returns `*ModifyOrderResponse` with `Header`, `OrderID`, `OrderIDEx` (previously returned `error` only)
+- `ReconfirmOrder`: Now returns `*ReconfirmOrderResult` with `AccID`, `TrdEnv`, `TrdMarket`, `OrderID`
+- `GetDelayStatistics`: Added `ReqReplyList` and `PlaceOrderList` (was only mapping QotPushStatisticsList)
+- `GetPriceReminder`: Added `ReminderSessionList` to `PriceReminderItemInfo`, switched to own struct types instead of raw proto
+- `RequestHistoryKLQuota`: Added `DetailList` with `HistoryKLQuotaDetail` struct
+- `RequestHistoryKL`: Fixed all 11 KLine fields mapped (`Time`, `Open`, `High`, `Low`, `Close`, `Volume`, `LastClose`, `Turnover`, `ChangeRate`, `Timestamp`); fixed manual pointer unwrapping
+- `DelayStatistics`: Fixed hardcoded zeros — now returns actual statistics
+- `StockFilter`: Fixed hardcoded zeros — now parses BaseDataList (`CurPrice`, `ChangeRate`, `Volume`)
+- `FutureInfo`: Removed non-existent `InstType` field
+- `GetSubInfo`: Fixed SubTypes extraction from ConnSubInfo list
+
+#### All Structs Now Fully Mapped (59/59)
+- `Quote`: Added `Name`, `LastClose`, `Turnover`, `TurnoverRate`, `Amplitude`
+- `KLine`: Added `LastClose`, `Turnover`, `ChangeRate`, `Timestamp`
+- `Ticker`: Added `Sequence`, `Turnover`, `RecvTime`, `Type`, `TypeSign`, `Timestamp`
+- `RT`: Added `LastClose`, `AvgPrice`, `Turnover`
+- `OrderBook`: Added `SvrRecvTimeBid/Ask` timestamps
+- `OrderBookItem`: Added `OrderCount`, `DetailList`, `OrderBookDetail` struct
+- `Broker`: Added `Pos`, `Volume`
+- `FutureInfo`: Added 12 fields (`Owner`, `Exchange`, `ContractType`, `ContractSize`, `MinVar`, `QuoteUnit`, etc.)
+- `Account`: Added `TrdMarketAuthList`, `SecurityFirm`, `SimAccType`, `UniCardNum`, `AccRole`, `JpAccType`
+- `CapitalFlow`: Added `Timestamp`
+- `CapitalDistribution`: Added `UpdateTime`, `UpdateTimestamp`
+- `StaticInfo`: Added `ListTime`, `LotSize`
+- `IpoData`: Added `ListTimestamp`
+- `UserSecurityGroup`: Added `GroupType`
+- `UserInfo`: Added `AvatarUrl` mapping
+- `Snapshot`: Added 25 fields (`ListTime`, `UpdateTime`, `TurnoverRate`, `AskPrice`, `BidPrice`, `EnableMargin`, `ShortSellRate`, `Amplitude`, `52W High/Low`, etc.)
+- `Position`: Added 15 fields (`SecMarket`, `TdPlVal`, `TdTrdVal`, `TdBuyVal`, `TdBuyQty`, `TdSellVal`, `TdSellQty`, `UnrealizedPL`, `RealizedPL`, `Currency`, `TrdMarket`, `DilutedCostPrice`, `AverageCostPrice`, `AveragePnLRate`)
+- `Funds`: Added 16 fields (`FrozenCash`, `DebtCash`, `AvlWithdrawalCash`, `RiskLevel`, `InitialMargin`, `MaintenanceMargin`, `MaxPowerShort`, `NetCashPower`, `LongMv`, `ShortMv`, `PendingAsset`, `MaxWithdrawal`, `RiskStatus`, `MarginCallMargin`, `IsPDT`, `PDTSeq`)
+- `Order`: Added 15 fields (`OrderIDEx`, `FillQty`, `FillAvgPrice`, `CreateTime`, `UpdateTime`, `LastErrMsg`, `SecMarket`, `CreateTimestamp`, `UpdateTimestamp`, `Remark`, `TimeInForce`, `FillOutsideRTH`, `AuxPrice`, `TrailType`, `TrailValue`, `TrailSpread`, `Currency`, `TrdMarket`, `Session`)
+- `OrderFill`: Added all 11 missing fields (`FillIDEx`, `OrderIDEx`, `CreateTime`, `CounterBrokerID`, `CounterBrokerName`, `SecMarket`, `CreateTimestamp`, `UpdateTimestamp`, `Status`, `TrdMarket`, `JpAccType`)
+- `OrderFeeInfo`: Added `FeeList` with `OrderFeeItemInfo`
+- `WarrantData`: All 32 proto fields now fully mapped
+
+#### Internal Package Updates
+- `pkg/sys/system.go`: `GetGlobalStateResponse` — added market future fields + `ProgramStatus`
+- `pkg/qot/quote.go`: `RequestHistoryKLResponse` — use internal `KLine` type, map all fields; `PriceReminderItemInfo` — add `ReminderSessionList`
+- `pkg/trd/trade.go`: `PlaceOrderResponse` — add `OrderIDEx`; `ModifyOrder` — add `ModifyOrderResponse` struct; `GetAccList` — add all 6 missing fields; `GetHistoryOrderFillList` — add `JpAccType`
+
+#### Example Fixes
+- `04_push_subscriptions`: Fixed `fmt` format specifiers for proto type changes
+- `03_trading_operations`: Updated `ModifyOrder` call for new return signature
+- `trd_modify_order`: Updated `ModifyOrder` call for new return signature
+
+### Documentation
+- `PROTO_VERIFICATION.md`: Comprehensive field-by-field report, 59/59 wrappers verified
+
 ## [0.4.1] - 2026-04-08
 
 ### Fixed

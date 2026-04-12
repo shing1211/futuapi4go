@@ -1,6 +1,6 @@
 # futuapi4go Project Status
 
-## Current Release: v0.4.1
+## Current Release: v0.6.0
 
 **Status**: Production Ready ✅
 
