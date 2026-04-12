@@ -11,6 +11,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/push"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 	"github.com/shing1211/futuapi4go/pkg/trd"
@@ -2584,7 +2585,168 @@ const (
 	SubType_Broker    = int32(qot.SubType_Broker)
 )
 
-// Option configures the client (alias for backward compatibility).
+// ============================================================================
+// Push Notification Handlers
+// ============================================================================
+
+// PushQuote represents a parsed real-time quote push notification.
+type PushQuote struct {
+	Market    int32
+	Code      string
+	Name      string
+	CurPrice  float64
+	OpenPrice float64
+	HighPrice float64
+	LowPrice  float64
+	Volume    int64
+	Turnover  float64
+}
+
+// PushKLine represents a parsed K-line push notification.
+type PushKLine struct {
+	Market int32
+	Code   string
+	Name   string
+	KLType int32
+	KLine
+}
+
+// PushOrderBook represents a parsed order book push notification.
+type PushOrderBook struct {
+	Market int32
+	Code   string
+	Name   string
+	Bids   []OBItem
+	Asks   []OBItem
+}
+
+// OBItem represents a single price level in the order book push data.
+type OBItem struct {
+	Price      float64
+	Volume     int64
+	OrderCount int64
+}
+
+// PushTicker represents a parsed tick-by-tick push notification.
+type PushTicker struct {
+	Market   int32
+	Code     string
+	Name     string
+	Price    float64
+	Volume   int64
+	Turnover float64
+}
+
+// SetPushHandler registers a handler that receives push notifications for
+// specific protoIDs. The handler receives (protoID, rawBody) and should use
+// the ParsePush* functions below to decode the body.
+func (c *Client) SetPushHandler(protoID uint32, h func(protoID uint32, body []byte)) {
+	c.inner.RegisterHandler(protoID, h)
+}
+
+// ParsePushQuote parses a raw push body (ProtoID 3005) into a PushQuote.
+func ParsePushQuote(body []byte) (*PushQuote, error) {
+	data, err := push.ParseUpdateBasicQot(body)
+	if err != nil || data == nil {
+		return nil, err
+	}
+	return &PushQuote{
+		Market:    data.Security.GetMarket(),
+		Code:      data.Security.GetCode(),
+		Name:      data.Name,
+		CurPrice:  data.CurPrice,
+		OpenPrice: data.OpenPrice,
+		HighPrice: data.HighPrice,
+		LowPrice:  data.LowPrice,
+		Volume:    data.Volume,
+		Turnover:  data.Turnover,
+	}, nil
+}
+
+// ParsePushKLine parses a raw push body (ProtoID 3007) into a PushKLine.
+func ParsePushKLine(body []byte) (*PushKLine, error) {
+	data, err := push.ParseUpdateKL(body)
+	if err != nil || data == nil || len(data.KLList) == 0 {
+		return nil, err
+	}
+	kl := data.KLList[0]
+	return &PushKLine{
+		Market: data.Security.GetMarket(),
+		Code:   data.Security.GetCode(),
+		Name:   data.Name,
+		KLType: data.KlType,
+		KLine: KLine{
+			Time:       kl.GetTime(),
+			Open:       kl.GetOpenPrice(),
+			High:       kl.GetHighPrice(),
+			Low:        kl.GetLowPrice(),
+			Close:      kl.GetClosePrice(),
+			Volume:     kl.GetVolume(),
+			LastClose:  kl.GetLastClosePrice(),
+			Turnover:   kl.GetTurnover(),
+			ChangeRate: kl.GetChangeRate(),
+			Timestamp:  kl.GetTimestamp(),
+		},
+	}, nil
+}
+
+// ParsePushOrderBook parses a raw push body (ProtoID 3013) into a PushOrderBook.
+func ParsePushOrderBook(body []byte) (*PushOrderBook, error) {
+	data, err := push.ParseUpdateOrderBook(body)
+	if err != nil || data == nil {
+		return nil, err
+	}
+	ob := &PushOrderBook{
+		Market: data.Security.GetMarket(),
+		Code:   data.Security.GetCode(),
+		Name:   data.Name,
+	}
+	for _, b := range data.OrderBookBidList {
+		ob.Bids = append(ob.Bids, OBItem{
+			Price:      b.GetPrice(),
+			Volume:     b.GetVolume(),
+			OrderCount: int64(b.GetOrderCount()),
+		})
+	}
+	for _, a := range data.OrderBookAskList {
+		ob.Asks = append(ob.Asks, OBItem{
+			Price:      a.GetPrice(),
+			Volume:     a.GetVolume(),
+			OrderCount: int64(a.GetOrderCount()),
+		})
+	}
+	return ob, nil
+}
+
+// ParsePushTicker parses a raw push body (ProtoID 3011) into a PushTicker.
+func ParsePushTicker(body []byte) (*PushTicker, error) {
+	data, err := push.ParseUpdateTicker(body)
+	if err != nil || data == nil || len(data.TickerList) == 0 {
+		return nil, err
+	}
+	tk := data.TickerList[len(data.TickerList)-1]
+	return &PushTicker{
+		Market:   data.Security.GetMarket(),
+		Code:     data.Security.GetCode(),
+		Name:     data.Name,
+		Price:    tk.GetPrice(),
+		Volume:   tk.GetVolume(),
+		Turnover: tk.GetTurnover(),
+	}, nil
+}
+
+// Push ProtoID constants (re-exported from pkg/push for convenience).
+const (
+	ProtoID_Qot_UpdateBasicQot  = 3005
+	ProtoID_Qot_UpdateKL        = 3007
+	ProtoID_Qot_UpdateOrderBook = 3013
+	ProtoID_Qot_UpdateTicker    = 3011
+	ProtoID_Qot_UpdateRT        = 3009
+	ProtoID_Qot_UpdateBroker    = 3015
+)
+
+// ============================================================================
+// Options (aliases for internal client options)
 type Option = futuapi.Option
 
 // WithDialTimeout sets the connection dial timeout.
