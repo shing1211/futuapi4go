@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -9,6 +8,7 @@ import (
 	"net"
 	"sync"
 	"time"
+	"crypto/sha1"
 
 	"google.golang.org/protobuf/proto"
 
@@ -19,17 +19,17 @@ import (
 )
 
 const (
-	HeaderLen     = 48
+	HeaderLen     = 44
 	MagicBytes    = "FT"
-	ProtoVersion  = 1
+	ProtoVersion  = 0
 	MaxPacketSize = 10 * 1024 * 1024
 )
 
 type Header struct {
 	Magic    [2]byte
 	ProtoID  uint32
-	ProtoFmt common.ProtoFmt
-	ProtoVer uint16
+	ProtoFmt byte
+	ProtoVer byte
 	SerialNo uint32
 	BodyLen  uint32
 	BodySHA1 [20]byte
@@ -151,18 +151,20 @@ func (s *Server) handleConnection(conn net.Conn) {
 
 func (s *Server) readPacket(conn net.Conn) (*Packet, error) {
 	header := make([]byte, HeaderLen)
-	n, err := conn.Read(header)
+	n, err := io.ReadFull(conn, header)
 	if err != nil {
 		return nil, fmt.Errorf("read header (n=%d): %w", n, err)
 	}
-	if n < HeaderLen {
-		return nil, fmt.Errorf("short header: got %d, want %d", n, HeaderLen)
-	}
 
 	var h Header
-	if err := binary.Read(bytes.NewReader(header), binary.LittleEndian, &h); err != nil {
-		return nil, fmt.Errorf("decode header: %w", err)
-	}
+	copy(h.Magic[:], header[0:2])
+	h.ProtoID = binary.LittleEndian.Uint32(header[2:6])
+	h.ProtoFmt = header[6]
+	h.ProtoVer = header[7]
+	h.SerialNo = binary.LittleEndian.Uint32(header[8:12])
+	h.BodyLen = binary.LittleEndian.Uint32(header[12:16])
+	copy(h.BodySHA1[:], header[16:36])
+	copy(h.Reserved[:], header[36:44])
 
 	if string(h.Magic[:]) != MagicBytes {
 		return nil, fmt.Errorf("invalid magic bytes")
@@ -183,14 +185,16 @@ func (s *Server) readPacket(conn net.Conn) (*Packet, error) {
 }
 
 func (s *Server) writePacket(conn net.Conn, pkt *Packet) error {
-	pkt.Header.Magic = [2]byte{'F', 'T'}
-	pkt.Header.ProtoFmt = common.ProtoFmt_ProtoFmt_Protobuf
-	pkt.Header.ProtoVer = ProtoVersion
-
 	header := make([]byte, HeaderLen)
-	if err := binary.Write(bytes.NewBuffer(header[:0]), binary.LittleEndian, &pkt.Header); err != nil {
-		return fmt.Errorf("encode header: %w", err)
-	}
+	header[0] = 'F'
+	header[1] = 'T'
+	binary.LittleEndian.PutUint32(header[2:], pkt.Header.ProtoID)
+	header[6] = 0 // ProtoFmt = Protobuf
+	header[7] = ProtoVersion
+	binary.LittleEndian.PutUint32(header[8:], pkt.Header.SerialNo)
+	binary.LittleEndian.PutUint32(header[12:], pkt.Header.BodyLen)
+	sha1Hash := sha1.Sum(pkt.Body)
+	copy(header[16:36], sha1Hash[:])
 
 	if _, err := conn.Write(header); err != nil {
 		return fmt.Errorf("write header: %w", err)
@@ -222,7 +226,7 @@ func (s *Server) errorResponse(req *Packet, err error) (*Packet, error) {
 		Header: Header{
 			Magic:    [2]byte{'F', 'T'},
 			ProtoID:  req.Header.ProtoID,
-			ProtoFmt: common.ProtoFmt_ProtoFmt_Protobuf,
+			ProtoFmt: 0, // Protobuf
 			ProtoVer: ProtoVersion,
 			SerialNo: req.Header.SerialNo,
 			BodyLen:  uint32(len(body)),
@@ -241,7 +245,7 @@ func (s *Server) successResponse(req *Packet, ret proto.Message) (*Packet, error
 		Header: Header{
 			Magic:    [2]byte{'F', 'T'},
 			ProtoID:  req.Header.ProtoID,
-			ProtoFmt: common.ProtoFmt_ProtoFmt_Protobuf,
+			ProtoFmt: 0, // Protobuf
 			ProtoVer: ProtoVersion,
 			SerialNo: req.Header.SerialNo,
 			BodyLen:  uint32(len(body)),

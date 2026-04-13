@@ -114,36 +114,13 @@ type BasicQot struct {
 
 // GetBasicQot returns basic quote data for the given securities.
 func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
 	c2s := &qotgetbasicqot.C2S{
 		SecurityList: securityList,
 	}
-
-	pkt := &qotgetbasicqot.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetBasicQot, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
+	req := &qotgetbasicqot.Request{C2S: c2s}
 	var rsp qotgetbasicqot.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.Request(ProtoID_GetBasicQot, req, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -210,39 +187,16 @@ type GetKLResponse struct {
 
 // GetKL returns K-line (candlestick) data for the given security.
 func GetKL(c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
 	c2s := &qotgetkl.C2S{
 		Security:  req.Security,
 		RehabType: &req.RehabType,
 		KlType:    &req.KLType,
 		ReqNum:    &req.ReqNum,
 	}
-
 	pkt := &qotgetkl.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetKL, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetkl.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.Request(ProtoID_GetKL, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -314,37 +268,14 @@ type GetOrderBookResponse struct {
 
 // GetOrderBook returns the order book (买卖盘) for the given security.
 func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
 	c2s := &qotgetorderbook.C2S{
 		Security: req.Security,
 		Num:      &req.Num,
 	}
-
 	pkt := &qotgetorderbook.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetOrderBook, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetorderbook.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.Request(ProtoID_GetOrderBook, pkt, &rsp); err != nil {
 		return nil, err
 	}
 

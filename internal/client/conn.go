@@ -170,6 +170,12 @@ func (c *Conn) readOne() (*Packet, error) {
 		}
 	}
 
+	// Verify SHA1 checksum
+	actualSHA1 := sha1.Sum(body)
+	if actualSHA1 != h.BodySHA1 {
+		return nil, fmt.Errorf("body integrity check: %w", ErrChecksumMismatch)
+	}
+
 	return &Packet{Header: h, Body: body}, nil
 }
 

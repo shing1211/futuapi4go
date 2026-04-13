@@ -675,6 +675,34 @@ func (c *Client) NextSerialNo() uint32 {
 	return c.nextSerialNo()
 }
 
+// APITimeout returns the configured API timeout duration.
+func (c *Client) APITimeout() time.Duration {
+	return c.opts.APITimeout
+}
+
+// request sends a protobuf request and returns the unmarshaled response.
+func (c *Client) request(protoID uint32, req proto.Message, resp proto.Message) error {
+	if err := c.EnsureConnected(); err != nil {
+		return err
+	}
+	body, err := proto.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("marshal request: %w", err)
+	}
+	serialNo := c.NextSerialNo()
+	if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
+		return fmt.Errorf("write packet: %w", err)
+	}
+	pktResp, err := c.conn.ReadResponse(serialNo, c.APITimeout())
+	if err != nil {
+		return fmt.Errorf("read response: %w", err)
+	}
+	if err := proto.Unmarshal(pktResp.Body, resp); err != nil {
+		return fmt.Errorf("unmarshal response: %w", err)
+	}
+	return nil
+}
+
 func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) error {
 	start := time.Now()
 	err := c.requestInternal(protoID, req, rsp)

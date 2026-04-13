@@ -20,7 +20,9 @@ import (
 // Client is the main client type for connecting to Futu OpenD.
 // It wraps the internal client to provide a public API.
 type Client struct {
-	inner *futuapi.Client
+	inner   *futuapi.Client
+	trdEnv  int32 // trading environment: 0=real, 1=simulate (default)
+	trdMkt  int32 // default trading market (0 = auto-detect per request)
 }
 
 // New creates a new client with optional configuration.
@@ -30,8 +32,31 @@ func New(opts ...Option) *Client {
 		futuOpts[i] = o
 	}
 	return &Client{
-		inner: futuapi.New(futuOpts...),
+		inner:  futuapi.New(futuOpts...),
+		trdEnv: 1, // default to simulate for safety
 	}
+}
+
+// GetTradeEnv returns the current trading environment (0=real, 1=simulate).
+func (c *Client) GetTradeEnv() int32 {
+	return c.trdEnv
+}
+
+// WithTradeEnv returns a Client that uses the given trading environment.
+// trdEnv: 0 = real trading, 1 = simulate trading.
+// This is a client-scoped setting so all trading calls inherit it.
+func (c *Client) WithTradeEnv(trdEnv int32) *Client {
+	clone := *c
+	clone.trdEnv = trdEnv
+	return &clone
+}
+
+// WithTradeMarket returns a Client that uses the given default trading market.
+// When 0, the market is auto-detected per request (current behavior).
+func (c *Client) WithTradeMarket(trdMkt int32) *Client {
+	clone := *c
+	clone.trdMkt = trdMkt
+	return &clone
 }
 
 // Connect connects to the Futu OpenD server at the given address.
@@ -256,7 +281,7 @@ func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderT
 	resp, err := trd.PlaceOrder(c.inner, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 		Code:      code,
 		TrdSide:   side,
 		OrderType: orderType,
@@ -274,7 +299,7 @@ func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp
 	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        1,
+		TrdEnv:        c.trdEnv,
 		OrderID:       orderID,
 		ModifyOrderOp: modifyOp,
 		Price:         price,
@@ -303,7 +328,7 @@ func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 	resp, err := trd.GetPositionList(c.inner, &trd.GetPositionListRequest{
 		AccID:     accID,
 		TrdMarket: 0,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -386,7 +411,7 @@ func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType
 	resp, err := trd.GetMaxTrdQtys(c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 		Code:      code,
 		OrderType: orderType,
 		Price:     price,
@@ -421,7 +446,7 @@ func GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) 
 	resp, err := trd.GetOrderFee(c.inner, &trd.GetOrderFeeRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        1,
+		TrdEnv:        c.trdEnv,
 		OrderIDExList: orderIDExList,
 	})
 	if err != nil {
@@ -461,7 +486,7 @@ func GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcomm
 	resp, err := trd.GetMarginRatio(c.inner, &trd.GetMarginRatioRequest{
 		AccID:        accID,
 		TrdMarket:    market,
-		TrdEnv:       1,
+		TrdEnv:       c.trdEnv,
 		SecurityList: securities,
 	})
 	if err != nil {
@@ -490,7 +515,7 @@ func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 	resp, err := trd.GetOrderList(c.inner, &trd.GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: 0,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -536,7 +561,7 @@ func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDa
 	resp, err := trd.GetHistoryOrderList(c.inner, &trd.GetHistoryOrderListRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -585,7 +610,7 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	resp, err := trd.GetOrderFillList(c.inner, &trd.GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: 0,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -622,7 +647,7 @@ func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill
 	resp, err := trd.GetHistoryOrderFillList(c.inner, &trd.GetHistoryOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    1,
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -1085,19 +1110,27 @@ func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
 	return plates, nil
 }
 
+// History KL pagination constants.
+const (
+	DefaultHistoryKLPageSize = 1000                 // max K-lines per API page (protocol limit)
+	DefaultHistoryKLDelay    = 200 * time.Millisecond // delay between pagination pages
+)
+
+// HistoryKLPaginationDelay controls the wait time between pages when
+// fetching historical K-lines. Adjust this to respect your OpenD rate limits.
+var HistoryKLPaginationDelay = DefaultHistoryKLDelay
+
 // RequestHistoryKL requests historical K-line data with automatic pagination.
 // It fetches all available K-lines between startDate and endDate (inclusive),
 // automatically handling page boundaries via NextReqKey.
-// Each page requests up to 1000 K-lines (API maximum).
-// A 200ms delay is added between pages to respect rate limits.
 func RequestHistoryKL(c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
-	return RequestHistoryKLWithLimit(c, market, code, klType, startDate, endDate, 1000)
+	return RequestHistoryKLWithLimit(c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
 }
 
 // RequestHistoryKLWithLimit requests historical K-line data with a configurable
 // page size. It automatically paginates until all data is retrieved.
 // maxPerPage controls how many K-lines are requested per API call (max 1000).
-// A 200ms delay is added between pages to respect rate limits.
+// Uses HistoryKLPaginationDelay between pages.
 func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int32, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
@@ -1139,8 +1172,8 @@ func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int3
 		}
 		nextReqKey = resp.NextReqKey
 
-		// Rate limit: 200ms between pages
-		time.Sleep(200 * time.Millisecond)
+		// Rate limit: configurable delay between pages
+		time.Sleep(HistoryKLPaginationDelay)
 	}
 
 	return allKLines, nil
@@ -2774,11 +2807,17 @@ func WithLogLevel(level int) Option {
 	return futuapi.WithLogLevel(level)
 }
 
-// Default timeouts.
+// Default timeouts and connection limits.
 const (
 	DefaultDialTimeout      = 10 * time.Second
 	DefaultAPITimeout       = 30 * time.Second
 	DefaultKeepAlive        = 30 * time.Second
 	DefaultMaxRetries       = 3
 	DefaultReconnectBackoff = 1.5
+)
+
+// Trading environment constants.
+const (
+	TrdEnv_Real      = int32(0) // Real trading
+	TrdEnv_Simulate  = int32(1) // Simulate/paper trading (default)
 )
