@@ -95,7 +95,8 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 		return nil, err
 	}
 	c2s := &trdgetacclist.C2S{
-		TrdCategory:           &trdCategory,
+		UserID:              proto.Uint64(0), // Deprecated but required by protocol, set to 0
+		TrdCategory:         &trdCategory,
 		NeedGeneralSecAccount: &needGeneralSecAccount,
 	}
 

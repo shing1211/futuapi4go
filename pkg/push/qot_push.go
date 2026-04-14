@@ -51,14 +51,15 @@ type UpdateBasicQot struct {
 }
 
 func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
-	var rsp qotupdatebasicqot.S2C
+	var rsp qotupdatebasicqot.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
-	if len(rsp.GetBasicQotList()) == 0 {
+	s2c := rsp.GetS2C()
+	if s2c == nil || len(s2c.GetBasicQotList()) == 0 {
 		return nil, nil
 	}
-	bq := rsp.GetBasicQotList()[0]
+	bq := s2c.GetBasicQotList()[0]
 	return &UpdateBasicQot{
 		Security:  bq.GetSecurity(),
 		Name:      bq.GetName(),
@@ -80,16 +81,20 @@ type UpdateKL struct {
 }
 
 func ParseUpdateKL(body []byte) (*UpdateKL, error) {
-	var rsp qotupdatekl.S2C
+	var rsp qotupdatekl.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateKL{
-		RehabType: rsp.GetRehabType(),
-		KlType:    rsp.GetKlType(),
-		Security:  rsp.GetSecurity(),
-		Name:      rsp.GetName(),
-		KLList:    rsp.GetKlList(),
+		RehabType: s2c.GetRehabType(),
+		KlType:    s2c.GetKlType(),
+		Security:  s2c.GetSecurity(),
+		Name:      s2c.GetName(),
+		KLList:    s2c.GetKlList(),
 	}, nil
 }
 
