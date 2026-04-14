@@ -519,6 +519,7 @@ See [DEVELOPER.md](DEVELOPER.md) for detailed architecture.
 - **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/shing1211/futuapi4go/discussions)
 - **Email**: shing1211@users.noreply.github.com
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)**: Migration guide from py-futu-api
 
 ### FAQs
 
