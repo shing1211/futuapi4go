@@ -110,19 +110,23 @@ type UpdateOrderBook struct {
 }
 
 func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
-	var rsp qotupdateorderbook.S2C
+	var rsp qotupdateorderbook.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateOrderBook{
-		Security:                rsp.GetSecurity(),
-		Name:                    rsp.GetName(),
-		OrderBookAskList:        rsp.GetOrderBookAskList(),
-		OrderBookBidList:        rsp.GetOrderBookBidList(),
-		SvrRecvTimeBid:          rsp.GetSvrRecvTimeBid(),
-		SvrRecvTimeBidTimestamp: rsp.GetSvrRecvTimeBidTimestamp(),
-		SvrRecvTimeAsk:          rsp.GetSvrRecvTimeAsk(),
-		SvrRecvTimeAskTimestamp: rsp.GetSvrRecvTimeAskTimestamp(),
+		Security:                s2c.GetSecurity(),
+		Name:                    s2c.GetName(),
+		OrderBookAskList:        s2c.GetOrderBookAskList(),
+		OrderBookBidList:        s2c.GetOrderBookBidList(),
+		SvrRecvTimeBid:          s2c.GetSvrRecvTimeBid(),
+		SvrRecvTimeBidTimestamp: s2c.GetSvrRecvTimeBidTimestamp(),
+		SvrRecvTimeAsk:          s2c.GetSvrRecvTimeAsk(),
+		SvrRecvTimeAskTimestamp: s2c.GetSvrRecvTimeAskTimestamp(),
 	}, nil
 }
 
@@ -133,14 +137,18 @@ type UpdateTicker struct {
 }
 
 func ParseUpdateTicker(body []byte) (*UpdateTicker, error) {
-	var rsp qotupdateticker.S2C
+	var rsp qotupdateticker.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateTicker{
-		Security:   rsp.GetSecurity(),
-		Name:       rsp.GetName(),
-		TickerList: rsp.GetTickerList(),
+		Security:   s2c.GetSecurity(),
+		Name:       s2c.GetName(),
+		TickerList: s2c.GetTickerList(),
 	}, nil
 }
 
@@ -151,14 +159,18 @@ type UpdateRT struct {
 }
 
 func ParseUpdateRT(body []byte) (*UpdateRT, error) {
-	var rsp qotupdatert.S2C
+	var rsp qotupdatert.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateRT{
-		Security: rsp.GetSecurity(),
-		Name:     rsp.GetName(),
-		RTList:   rsp.GetRtList(),
+		Security: s2c.GetSecurity(),
+		Name:     s2c.GetName(),
+		RTList:   s2c.GetRtList(),
 	}, nil
 }
 
@@ -170,15 +182,19 @@ type UpdateBroker struct {
 }
 
 func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
-	var rsp qotupdatebroker.S2C
+	var rsp qotupdatebroker.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateBroker{
-		Security:      rsp.GetSecurity(),
-		Name:          rsp.GetName(),
-		AskBrokerList: rsp.GetBrokerAskList(),
-		BidBrokerList: rsp.GetBrokerBidList(),
+		Security:      s2c.GetSecurity(),
+		Name:          s2c.GetName(),
+		AskBrokerList: s2c.GetBrokerAskList(),
+		BidBrokerList: s2c.GetBrokerBidList(),
 	}, nil
 }
 
