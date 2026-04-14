@@ -327,6 +327,7 @@ go test -v ./client/... -run TestAllWrapperFunctionsExist
 | [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | User guide with tutorials |
 | [docs/DEVELOPER.md](docs/DEVELOPER.md) | Developer guide |
 | [docs/TESTING.md](docs/TESTING.md) | Testing guide |
+| [docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md) | Migration guide from py-futu-api |
 
 ---
 
