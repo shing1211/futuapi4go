@@ -2757,15 +2757,87 @@ func ParsePushTicker(body []byte) (*PushTicker, error) {
 	if err != nil || data == nil || len(data.TickerList) == 0 {
 		return nil, err
 	}
-	tk := data.TickerList[len(data.TickerList)-1]
+	t := data.TickerList[0]
 	return &PushTicker{
 		Market:   data.Security.GetMarket(),
 		Code:     data.Security.GetCode(),
 		Name:     data.Name,
-		Price:    tk.GetPrice(),
-		Volume:   tk.GetVolume(),
-		Turnover: tk.GetTurnover(),
+		Price:    t.GetPrice(),
+		Volume:   t.GetVolume(),
+		Turnover: t.GetTurnover(),
 	}, nil
+}
+
+// PushRT represents a parsed real-time minute data push notification.
+type PushRT struct {
+	Market   int32
+	Code     string
+	Name     string
+	Time     string
+	Price    float64
+	Volume   int64
+	AvgPrice float64
+	Turnover float64
+}
+
+// ParsePushRT parses a raw push body (ProtoID 3009) into PushRT data.
+func ParsePushRT(body []byte) (*PushRT, error) {
+	data, err := push.ParseUpdateRT(body)
+	if err != nil || data == nil || len(data.RTList) == 0 {
+		return nil, err
+	}
+	rt := data.RTList[0]
+	return &PushRT{
+		Market:   data.Security.GetMarket(),
+		Code:     data.Security.GetCode(),
+		Name:     data.Name,
+		Time:     rt.GetTime(),
+		Price:    rt.GetPrice(),
+		Volume:   rt.GetVolume(),
+		AvgPrice: rt.GetAvgPrice(),
+	}, nil
+}
+
+// PushBroker represents a parsed broker queue push notification.
+type PushBroker struct {
+	Market int32
+	Code   string
+	Name   string
+	Asks   []BrokerItem
+	Bids   []BrokerItem
+}
+
+// BrokerItem represents a single broker queue entry.
+type BrokerItem struct {
+	Price    float64
+	Volume   int64
+	BrokerID int32
+}
+
+// ParsePushBroker parses a raw push body (ProtoID 3015) into PushBroker data.
+func ParsePushBroker(body []byte) (*PushBroker, error) {
+	data, err := push.ParseUpdateBroker(body)
+	if err != nil || data == nil {
+		return nil, err
+	}
+	ob := &PushBroker{
+		Market: data.Security.GetMarket(),
+		Code:   data.Security.GetCode(),
+		Name:   data.Name,
+	}
+	for _, a := range data.AskBrokerList {
+		ob.Asks = append(ob.Asks, BrokerItem{
+			Volume:   a.GetVolume(),
+			BrokerID: int32(a.GetId()),
+		})
+	}
+	for _, b := range data.BidBrokerList {
+		ob.Bids = append(ob.Bids, BrokerItem{
+			Volume:   b.GetVolume(),
+			BrokerID: int32(b.GetId()),
+		})
+	}
+	return ob, nil
 }
 
 // Push ProtoID constants (re-exported from pkg/push for convenience).
