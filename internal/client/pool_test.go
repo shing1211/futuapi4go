@@ -93,3 +93,103 @@ func TestPoolAvailableInitialState(t *testing.T) {
 		t.Errorf("expected Available 0, got %d", pool.Available(PoolTypeMarketData))
 	}
 }
+
+func TestPoolConnReuse(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 2
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	client1, err := pool.Get(PoolTypeGeneral)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+	if client1 == nil {
+		t.Fatal("Get returned nil client")
+	}
+
+	pool.Put(client1)
+
+	client2, err := pool.Get(PoolTypeGeneral)
+	if err != nil {
+		t.Fatalf("Failed to get second client: %v", err)
+	}
+	pool.Put(client2)
+
+	if pool.Size(PoolTypeGeneral) != 1 {
+		t.Errorf("expected pool size 1, got %d", pool.Size(PoolTypeGeneral))
+	}
+	if pool.Available(PoolTypeGeneral) != 1 {
+		t.Errorf("expected 1 available, got %d", pool.Available(PoolTypeGeneral))
+	}
+}
+
+func TestPoolConnReuseWithDifferentTypes(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 2
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	clientMD, err := pool.Get(PoolTypeMarketData)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+	pool.Put(clientMD)
+
+	clientTrd, err := pool.Get(PoolTypeTrading)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+	pool.Put(clientTrd)
+
+	if pool.Size(PoolTypeMarketData) != 1 {
+		t.Errorf("expected market data pool size 1, got %d", pool.Size(PoolTypeMarketData))
+	}
+	if pool.Size(PoolTypeTrading) != 1 {
+		t.Errorf("expected trading pool size 1, got %d", pool.Size(PoolTypeTrading))
+	}
+}
+
+func TestPoolMaxSizeLimit(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 2
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	_, err := pool.Get(PoolTypeGeneral)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+	_, err = pool.Get(PoolTypeGeneral)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+
+	_, err = pool.Get(PoolTypeGeneral)
+	if err == nil {
+		t.Error("Expected error when pool exhausted, got nil")
+	}
+}
+
+func TestPoolRemove(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 2
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	client, err := pool.Get(PoolTypeGeneral)
+	if err != nil {
+		t.Skip("Cannot connect to server:", err)
+	}
+
+	initialSize := pool.Size(PoolTypeGeneral)
+	pool.Remove(client)
+
+	if pool.Size(PoolTypeGeneral) >= initialSize {
+		t.Errorf("expected size to decrease after Remove, was %d now %d", initialSize, pool.Size(PoolTypeGeneral))
+	}
+}
