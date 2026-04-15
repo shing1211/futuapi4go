@@ -274,6 +274,8 @@ See [futugo4bot/docs/ENHANCEMENT_PLAN.md](https://github.com/shing1211/futugo4bo
 - [ROADMAP.md](../ROADMAP.md) — Project roadmap (update this with the phased plan above)
 - [futugo4bot](https://github.com/shing1211/futugo4bot) — Trading bot powered by this SDK
 - [futuopend](https://github.com/shing1211/futuopend) — Docker gateway that this SDK connects to
+- [futugo4bot](https://github.com/shing1211/futugo4bot) — Go algorithmic trading bot powered by this SDK
+- [futujava4bot](https://github.com/shing1211/futujava4bot) — Java algorithmic trading bot (uses official Futu Java SDK, not this SDK)
 
 ## Project Group
 
@@ -282,9 +284,12 @@ futuopend (Docker gateway — github.com/shing1211/futuopend)
     │  TCP :11111 / WebSocket :11112
     ▼
 futuapi4go (Go SDK — github.com/shing1211/futuapi4go)  ← YOU ARE HERE
+    │                                          ↑
+futuapi-java (Official Futu Java SDK) ─────────┘
     │
-    ▼
-futugo4bot (Trading bot — github.com/shing1211/futugo4bot)
+    ├── futugo4bot (Go trading bot — github.com/shing1211/futugo4bot)
+    │
+    └── futujava4bot (Java trading bot — github.com/shing1211/futujava4bot)
 ```
 
 ### futuapi4go improvements that directly benefit the group
