@@ -1,20 +1,22 @@
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Example: VWAP Execution Strategy / 成交量加權平均價格執行策略
 //
 // This example demonstrates an intelligent order execution algorithm that
 // uses Volume-Weighted Average Price (VWAP) to minimize market impact
 // when executing large orders.
-//
-// Strategy:
-// - Calculate VWAP from historical data
-// - Split large order into smaller child orders
-// - Execute when price is below VWAP (for buys) or above VWAP (for sells)
-// - Track execution quality vs VWAP benchmark
-//
-// Usage:
-//   go run main.go [account_id] [total_shares]
-//
-// Note: DRY RUN by default for safety.
-
 package main
 
 import (

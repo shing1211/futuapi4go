@@ -1,3 +1,17 @@
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Advanced Market Data Examples
 //
 // This example demonstrates advanced market data APIs:
@@ -8,13 +22,10 @@
 // - StockFilter: Screen stocks by criteria
 // - GetOptionChain: Options chain data
 // - GetWarrant: Warrant information
-// - GetTradeDate: Trading calendar
-// - GetFutureInfo: Futures data
-// - GetIpoList: IPO listings
-//
-// Usage:
-//   go run main.go
-
+// - GetFutureInfo: Futures information
+// - GetIpoList: IPO calendar
+// - GetHoldingChangeList: Institutional holding changes
+// - GetCodeChange: Stock code changes
 package main
 
 import (

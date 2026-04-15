@@ -1,19 +1,21 @@
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Example: Grid Trading Strategy / 網格交易策略
 //
 // This example demonstrates a grid trading algorithm that places
 // buy and sell orders at predetermined price levels.
-//
-// Strategy:
-// - Divide price range into N grids
-// - Place buy orders below current price
-// - Place sell orders above current price
-// - Profit from price oscillations
-//
-// Usage:
-//   go run main.go [account_id]
-//
-// Note: DRY RUN by default. Set dryRun=false for live trading.
-
 package main
 
 import (

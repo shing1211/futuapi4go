@@ -1,18 +1,22 @@
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Example: Simple Moving Average Crossover Strategy
 // 示例：簡單移動平均線交叉策略
 //
 // This example demonstrates a basic algorithmic trading strategy using
 // the Simple Moving Average (SMA) crossover technique.
-//
-// Strategy:
-// - When short-term SMA crosses above long-term SMA → BUY signal
-// - When short-term SMA crosses below long-term SMA → SELL signal
-//
-// Usage:
-//   go run main.go [account_id]
-//
-// Note: This is a DRY RUN by default. Set dryRun=false to execute real trades.
-
 package main
 
 import (

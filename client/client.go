@@ -1,3 +1,17 @@
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Package client provides a public Client type for the Futu OpenD SDK.
 // This allows external projects to use the SDK.
 package client
@@ -20,9 +34,9 @@ import (
 // Client is the main client type for connecting to Futu OpenD.
 // It wraps the internal client to provide a public API.
 type Client struct {
-	inner   *futuapi.Client
-	trdEnv  int32 // trading environment: 0=real, 1=simulate (default)
-	trdMkt  int32 // default trading market (0 = auto-detect per request)
+	inner  *futuapi.Client
+	trdEnv int32 // trading environment: 0=real, 1=simulate (default)
+	trdMkt int32 // default trading market (0 = auto-detect per request)
 }
 
 // New creates a new client with optional configuration.
@@ -1112,7 +1126,7 @@ func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
 
 // History KL pagination constants.
 const (
-	DefaultHistoryKLPageSize = 1000                 // max K-lines per API page (protocol limit)
+	DefaultHistoryKLPageSize = 1000                   // max K-lines per API page (protocol limit)
 	DefaultHistoryKLDelay    = 200 * time.Millisecond // delay between pagination pages
 )
 
@@ -1140,12 +1154,12 @@ func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int3
 
 	for {
 		resp, err := qot.RequestHistoryKL(c.inner, &qot.RequestHistoryKLRequest{
-			Security:     sec,
-			KlType:       klType,
-			BeginTime:    startDate,
-			EndTime:      endDate,
-			MaxAckKLNum:  maxPerPage,
-			NextReqKey:   nextReqKey,
+			Security:    sec,
+			KlType:      klType,
+			BeginTime:   startDate,
+			EndTime:     endDate,
+			MaxAckKLNum: maxPerPage,
+			NextReqKey:  nextReqKey,
 		})
 		if err != nil {
 			return allKLines, err
@@ -2890,6 +2904,6 @@ const (
 
 // Trading environment constants.
 const (
-	TrdEnv_Real      = int32(0) // Real trading
-	TrdEnv_Simulate  = int32(1) // Simulate/paper trading (default)
+	TrdEnv_Real     = int32(0) // Real trading
+	TrdEnv_Simulate = int32(1) // Simulate/paper trading (default)
 )

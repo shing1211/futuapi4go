@@ -8,14 +8,22 @@
 //
 //	import "github.com/shing1211/futuapi4go/pkg/trd"
 //
-//	accs, err := trd.GetAccList(cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
-//	req := &trd.PlaceOrderRequest{
-//	    AccID: accs[0].AccID, TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
-//	    Code: "00700", TrdSide: int32(trdcommon.TrdSide_TrdSide_Buy),
-//	    OrderType: int32(trdcommon.OrderType_OrderType_Normal),
-//	    Price: 350.00, Qty: 100.0,
-//	}
-//	resp, err := trd.PlaceOrder(cli, req)
+// Copyright 2026 shing1211
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// accs, err := trd.GetAccList(cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+// req := &trd.PlaceOrderRequest{
 package trd
 
 import (
@@ -95,8 +103,8 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 		return nil, err
 	}
 	c2s := &trdgetacclist.C2S{
-		UserID:              proto.Uint64(0), // Deprecated but required by protocol, set to 0
-		TrdCategory:         &trdCategory,
+		UserID:                proto.Uint64(0), // Deprecated but required by protocol, set to 0
+		TrdCategory:           &trdCategory,
 		NeedGeneralSecAccount: &needGeneralSecAccount,
 	}
 
