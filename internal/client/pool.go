@@ -2,7 +2,6 @@ package futuapi
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -90,7 +89,7 @@ func (p *ClientPool) Get(poolType PoolType) (*Client, error) {
 	defer p.mu.Unlock()
 
 	if p.closed {
-		return nil, errors.New("pool is closed")
+		return nil, NewError(CodePoolClosed, "pool is closed")
 	}
 
 	// Try to find an idle connection
@@ -129,7 +128,7 @@ func (p *ClientPool) Get(poolType PoolType) (*Client, error) {
 		}
 	}
 
-	return nil, errors.New("pool exhausted: all connections in use")
+	return nil, NewError(CodePoolExhausted, "pool exhausted: all connections in use")
 }
 
 // Put returns a client to the pool after use.

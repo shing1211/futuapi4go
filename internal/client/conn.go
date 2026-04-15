@@ -3,7 +3,6 @@ package futuapi
 import (
 	"crypto/sha1"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -16,13 +15,6 @@ const (
 	MagicBytes    = "FT"
 	ProtoVersion  = 0
 	MaxPacketSize = 10 * 1024 * 1024
-)
-
-var (
-	ErrInvalidHeader  = errors.New("invalid packet header")
-	ErrInvalidMagic   = errors.New("invalid magic bytes")
-	ErrPacketTooBig   = errors.New("packet too large")
-	ErrInvalidBodyLen = errors.New("invalid body length")
 )
 
 type Header struct {
@@ -90,14 +82,14 @@ func (c *Conn) Close() error {
 
 func (c *Conn) SetReadDeadline(t time.Time) error {
 	if c.conn == nil {
-		return fmt.Errorf("set read deadline: %w", ErrNotConnected)
+		return NewErrorWithWrap(CodeNotConnected, "set read deadline", ErrNotConnected)
 	}
 	return c.conn.SetReadDeadline(t)
 }
 
 func (c *Conn) SetWriteDeadline(t time.Time) error {
 	if c.conn == nil {
-		return fmt.Errorf("set write deadline: %w", ErrNotConnected)
+		return NewErrorWithWrap(CodeNotConnected, "set write deadline", ErrNotConnected)
 	}
 	return c.conn.SetWriteDeadline(t)
 }
@@ -135,7 +127,7 @@ func (c *Conn) Dispatch(pkt *Packet) {
 
 func (c *Conn) readOne() (*Packet, error) {
 	if c.conn == nil {
-		return nil, fmt.Errorf("read packet: %w", ErrNotConnected)
+		return nil, NewErrorWithWrap(CodeNotConnected, "read packet", ErrNotConnected)
 	}
 
 	header := make([]byte, HeaderLen)
@@ -155,11 +147,11 @@ func (c *Conn) readOne() (*Packet, error) {
 	copy(h.Reserved[:], header[36:44])
 
 	if string(h.Magic[:]) != "FT" {
-		return nil, fmt.Errorf("invalid magic: % x (expected 'FT')", h.Magic)
+		return nil, NewError(CodeInvalidMagic, fmt.Sprintf("invalid magic: % x (expected 'FT')", h.Magic))
 	}
 
 	if h.BodyLen > MaxPacketSize {
-		return nil, fmt.Errorf("body too large: %d bytes", h.BodyLen)
+		return nil, NewError(CodePacketTooBig, fmt.Sprintf("body too large: %d bytes", h.BodyLen))
 	}
 
 	body := make([]byte, h.BodyLen)
@@ -173,7 +165,7 @@ func (c *Conn) readOne() (*Packet, error) {
 	// Verify SHA1 checksum
 	actualSHA1 := sha1.Sum(body)
 	if actualSHA1 != h.BodySHA1 {
-		return nil, fmt.Errorf("body integrity check: %w", ErrChecksumMismatch)
+		return nil, NewError(CodeChecksumMismatch, "body integrity check failed")
 	}
 
 	return &Packet{Header: h, Body: body}, nil
