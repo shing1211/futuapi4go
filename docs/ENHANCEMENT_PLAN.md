@@ -273,3 +273,27 @@ See [futugo4bot/docs/ENHANCEMENT_PLAN.md](https://github.com/shing1211/futugo4bo
 - [docs/API_REFERENCE.md](API_REFERENCE.md) — API reference
 - [ROADMAP.md](../ROADMAP.md) — Project roadmap (update this with the phased plan above)
 - [futugo4bot](https://github.com/shing1211/futugo4bot) — Trading bot powered by this SDK
+- [futuopend](https://github.com/shing1211/futuopend) — Docker gateway that this SDK connects to
+
+## Project Group
+
+```
+futuopend (Docker gateway — github.com/shing1211/futuopend)
+    │  TCP :11111 / WebSocket :11112
+    ▼
+futuapi4go (Go SDK — github.com/shing1211/futuapi4go)  ← YOU ARE HERE
+    │
+    ▼
+futugo4bot (Trading bot — github.com/shing1211/futugo4bot)
+```
+
+### futuapi4go improvements that directly benefit the group
+
+| futuapi4go Item | Benefits futuopend | Benefits futugo4bot |
+|----------------|-------------------|-------------------|
+| Connection health check (ping/pong) | Health monitoring docs | Graceful degradation in bot |
+| TLS support | Secure remote OpenD connections | Secure cross-host connections |
+| WebSocket transport | Lower latency gateway option | Faster quote streams for bot |
+| Prometheus metrics endpoint | Observability from gateway | Grafana dashboard completeness |
+| Context propagation on all APIs | Timeout control for SDK users | Order timeout in bot engine |
+| Multiple OpenD connection support | Load balancing across instances | Failover/redundancy in bot |
