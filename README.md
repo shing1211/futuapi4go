@@ -64,4 +64,21 @@ For detailed function signatures and type definitions, please consult:
 *   [docs/API_REFERENCE.md](docs/API_REFERENCE.md) (Full Function Signatures)
 *   [docs/DEVELOPER.md](docs/DEVELOPER.md) (In-depth guide to the new architecture and internal structure).
 
+---
+
+## ⚠️ Disclaimer
+
+**futuapi4go** is a software library only. Trading financial instruments carries significant risk
+of financial loss. Past performance does not guarantee future results. This software is provided
+"as is" without warranty. Users are solely responsible for any trading decisions and their
+outcomes. This library does not constitute financial advice.
+
+## ™ Trademark Notice
+
+**"Futu"**, **"moomoo"**, **"牛牛"**, and **"富途"** are trademarks of **Futu Holdings Limited**.
+This project is an independent open-source project and is not affiliated with, endorsed by,
+or connected to Futu Holdings Limited. Use of these trademarks in this project is purely
+descriptive (the project implements a client for the Futu OpenD protocol) and does not imply
+any official relationship or endorsement.
+
 ***
