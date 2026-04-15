@@ -2,7 +2,7 @@
 
 > **Purpose**: Comprehensive production-grade enhancement checklist to make futuapi4go a robust, institutional-quality SDK for Futu OpenD trading.
 >
-> **Status**: Core functionality complete. Gap to production-ready SDK: well-defined.
+> **Status**: Core functionality complete. OSS legal audit completed (2026-04-16). All CRITICAL legal issues resolved.
 >
 > **Dependency**: This SDK powers [futugo4bot](https://github.com/shing1211/futugo4bot). Many items below directly improve the trading bot's reliability.
 >
@@ -305,3 +305,34 @@ futuapi-java (Official Futu Python + Java SDKs) ─────────┘
 | Prometheus metrics endpoint | Observability from gateway | Grafana dashboard completeness |
 | Context propagation on all APIs | Timeout control for SDK users | Order timeout in bot engine |
 | Multiple OpenD connection support | Load balancing across instances | Failover/redundancy in bot |
+
+---
+
+## OSS Legal Audit Status (2026-04-16)
+
+The following issues were identified and resolved during the open source readiness audit.
+
+### ✅ Resolved — All CRITICAL
+
+| Issue | Severity | Resolution | Commit |
+|-------|----------|-----------|--------|
+| No copyright headers in source files | CRITICAL | Added Apache 2.0 headers to all 80 non-generated `.go` files (49 auto-generated protobuf files skipped) | `d785886` |
+| 13,301-line Futu derivative doc (`Futu-API-Doc-hk-Proto.md`) | CRITICAL | Deleted; replaced with `docs/FUTU_API_DOCS.md` pointer to official docs | `9face89` |
+| Trading/financial disclaimer absent | CRITICAL | Added "⚠️ Disclaimer" and "™ Trademark Notice" sections to README | `07fbb6d` |
+| No copyright notices in source files | CRITICAL | Apache 2.0 headers added (see above) | `d785886` |
+| Futu trademark without acknowledgment | WARNING | Trademark notice added to README and NOTICE | `07fbb6d`, `9face89` |
+| No explicit license section in README | WARNING | Added license and disclaimer sections to README | `07fbb6d` |
+| No NOTICE file | WARNING | Created `NOTICE` with protobuf attribution and trademark notice | (created during audit) |
+
+### ✅ Complete — Required OSS Files
+
+| File | Status | Location |
+|------|--------|----------|
+| LICENSE | ✅ Present | `LICENSE` (Apache 2.0, full text) |
+| README with disclaimer | ✅ Present | "⚠️ Disclaimer" + "™ Trademark Notice" |
+| CONTRIBUTING.md | ✅ Present | `CONTRIBUTING.md` (root) |
+| CODE_OF_CONDUCT.md | ✅ Present | `CODE_OF_CONDUCT.md` |
+| SECURITY.md | ✅ Present | `SECURITY.md` |
+| NOTICE | ✅ Present | `NOTICE` |
+| Copyright headers | ✅ Added | All 80 non-generated `.go` source files |
+| Derivative doc removed | ✅ Done | `Futu-API-Doc-hk-Proto.md` deleted, replaced with pointer doc |
