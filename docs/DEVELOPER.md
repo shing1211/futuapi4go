@@ -320,6 +320,7 @@ func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error {
 - Update API status in `README.md`
 - Add usage example for new API in `USER_GUIDE.md`
 - Update `DEVELOPER.md` for major architecture changes
+- Add to `MIGRATION_GUIDE.md` if new API differs from py-futu-api
 
 ### 3. Commit Standards
 
