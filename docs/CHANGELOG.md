@@ -261,7 +261,7 @@ Complete proto field audit across all 59 wrapper functions — zero data loss, n
 - Notify (1003) - System notification push
 
 ### Updated
-- Protobuf definitions updated to v10.2.6208 (74 proto files)
+- Protobuf definitions at v10.2.6208 (74 proto files) — compatible with FutuOpenD 10.3.6308 (forward-compatible: no protocol changes required)
 - README.md added detailed API implementation status table
 
 ## [0.1.0] - 2026-04-07

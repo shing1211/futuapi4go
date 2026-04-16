@@ -1,0 +1,25 @@
+# AGENTS.md — futuapi4go
+
+## Build
+```bash
+go build ./...
+go test ./...
+```
+
+## Key Files
+- `client/client.go` — main client
+- `internal/client/` — connection handling
+- `api/proto/` — 74 protobuf definitions
+
+## Current Protobuf Version
+- v10.2.6208 — **forward-compatible with FutuOpenD 10.3.6308**
+
+## Entry Points
+- `client.New()` — create client
+- `cli.ConnectWithRSA()` — connect with trading auth
+- `cli.GetGlobalState()` — verify connection
+
+## Gotchas
+- Uses Protobuf (not JSON) by default with OpenD
+- Connection pool in `internal/client/pool.go`
+- `APIConnector` interface enables mocking for tests
