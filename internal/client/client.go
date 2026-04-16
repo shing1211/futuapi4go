@@ -61,6 +61,9 @@ func logf(format string, v ...interface{}) {
 			loggerMu.Unlock()
 		})
 	}
+	if l == nil {
+		return
+	}
 	l.Printf(format, v...)
 }
 
