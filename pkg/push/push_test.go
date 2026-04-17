@@ -19,6 +19,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/notify"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
@@ -100,9 +101,12 @@ func TestParseUpdateBrokerInvalidData(t *testing.T) {
 }
 
 func TestParseUpdatePriceReminderInvalidData(t *testing.T) {
-	_, err := ParseUpdatePriceReminder([]byte{})
-	if err == nil {
-		t.Error("ParseUpdatePriceReminder should fail with empty data")
+	result, err := ParseUpdatePriceReminder([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdatePriceReminder should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdatePriceReminder should return nil for empty data")
 	}
 }
 
@@ -151,30 +155,34 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 	lastClosePrice := 349.00
 	turnoverRate := 0.5
 	amplitude := 1.43
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &qotupdatebasicqot.S2C{
-		BasicQotList: []*qotcommon.BasicQot{
-			{
-				Security:       &qotcommon.Security{Market: &hkMarket, Code: &code},
-				Name:           &name,
-				IsSuspended:    &isSuspended,
-				ListTime:       &listTime,
-				PriceSpread:    &priceSpread,
-				UpdateTime:     &updateTime,
-				CurPrice:       &curPrice,
-				OpenPrice:      &openPrice,
-				HighPrice:      &highPrice,
-				LowPrice:       &lowPrice,
-				LastClosePrice: &lastClosePrice,
-				Volume:         &volume,
-				Turnover:       &turnover,
-				TurnoverRate:   &turnoverRate,
-				Amplitude:      &amplitude,
+	resp := &qotupdatebasicqot.Response{
+		RetType: &retType,
+		S2C: &qotupdatebasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{
+				{
+					Security:       &qotcommon.Security{Market: &hkMarket, Code: &code},
+					Name:           &name,
+					IsSuspended:    &isSuspended,
+					ListTime:       &listTime,
+					PriceSpread:    &priceSpread,
+					UpdateTime:     &updateTime,
+					CurPrice:       &curPrice,
+					OpenPrice:      &openPrice,
+					HighPrice:      &highPrice,
+					LowPrice:       &lowPrice,
+					LastClosePrice: &lastClosePrice,
+					Volume:         &volume,
+					Turnover:       &turnover,
+					TurnoverRate:   &turnoverRate,
+					Amplitude:      &amplitude,
+				},
 			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -213,11 +221,15 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 }
 
 func TestParseUpdateBasicQotZeroLengthList(t *testing.T) {
-	s2c := &qotupdatebasicqot.S2C{
-		BasicQotList: []*qotcommon.BasicQot{},
+	retType := int32(common.RetType_RetType_Succeed)
+	resp := &qotupdatebasicqot.Response{
+		RetType: &retType,
+		S2C: &qotupdatebasicqot.S2C{
+			BasicQotList: []*qotcommon.BasicQot{},
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -248,30 +260,34 @@ func TestParseUpdateKLValidData(t *testing.T) {
 	changeRate := 0.43
 	timestamp := 1775635200.0
 	isBlank := false
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &qotupdatekl.S2C{
-		RehabType: &rehabType,
-		KlType:    &klType,
-		Security:  &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:      &name,
-		KlList: []*qotcommon.KLine{
-			{
-				Time:           &timeStr,
-				IsBlank:        &isBlank,
-				ClosePrice:     &closePrice,
-				OpenPrice:      &openPrice,
-				HighPrice:      &highPrice,
-				LowPrice:       &lowPrice,
-				LastClosePrice: &lastClosePrice,
-				Volume:         &volume,
-				Turnover:       &turnover,
-				ChangeRate:     &changeRate,
-				Timestamp:      &timestamp,
+	resp := &qotupdatekl.Response{
+		RetType: &retType,
+		S2C: &qotupdatekl.S2C{
+			RehabType: &rehabType,
+			KlType:    &klType,
+			Security:  &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:      &name,
+			KlList: []*qotcommon.KLine{
+				{
+					Time:           &timeStr,
+					IsBlank:        &isBlank,
+					ClosePrice:     &closePrice,
+					OpenPrice:      &openPrice,
+					HighPrice:      &highPrice,
+					LowPrice:       &lowPrice,
+					LastClosePrice: &lastClosePrice,
+					Volume:         &volume,
+					Turnover:       &turnover,
+					ChangeRate:     &changeRate,
+					Timestamp:      &timestamp,
+				},
 			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -308,6 +324,7 @@ func TestParseUpdateOrderBookValidData(t *testing.T) {
 	svrRecvTimeBidTs := 1775635200.0
 	svrRecvTimeAsk := "10:00:00"
 	svrRecvTimeAskTs := 1775635200.0
+	retType := int32(common.RetType_RetType_Succeed)
 
 	askPrice := 351.00
 	askVolume := int64(5000)
@@ -316,22 +333,25 @@ func TestParseUpdateOrderBookValidData(t *testing.T) {
 	bidVolume := int64(5000)
 	bidOrederCount := int32(3)
 
-	s2c := &qotupdateorderbook.S2C{
-		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:     &name,
-		OrderBookAskList: []*qotcommon.OrderBook{
-			{Price: &askPrice, Volume: &askVolume, OrederCount: &askOrederCount},
+	resp := &qotupdateorderbook.Response{
+		RetType: &retType,
+		S2C: &qotupdateorderbook.S2C{
+			Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:     &name,
+			OrderBookAskList: []*qotcommon.OrderBook{
+				{Price: &askPrice, Volume: &askVolume, OrederCount: &askOrederCount},
+			},
+			OrderBookBidList: []*qotcommon.OrderBook{
+				{Price: &bidPrice, Volume: &bidVolume, OrederCount: &bidOrederCount},
+			},
+			SvrRecvTimeBid:          &svrRecvTimeBid,
+			SvrRecvTimeBidTimestamp: &svrRecvTimeBidTs,
+			SvrRecvTimeAsk:          &svrRecvTimeAsk,
+			SvrRecvTimeAskTimestamp: &svrRecvTimeAskTs,
 		},
-		OrderBookBidList: []*qotcommon.OrderBook{
-			{Price: &bidPrice, Volume: &bidVolume, OrederCount: &bidOrederCount},
-		},
-		SvrRecvTimeBid:          &svrRecvTimeBid,
-		SvrRecvTimeBidTimestamp: &svrRecvTimeBidTs,
-		SvrRecvTimeAsk:          &svrRecvTimeAsk,
-		SvrRecvTimeAskTimestamp: &svrRecvTimeAskTs,
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -375,27 +395,31 @@ func TestParseUpdateTickerValidData(t *testing.T) {
 	typ := int32(0)
 	typeSign := int32(1)
 	timestamp := 1775635200.0
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &qotupdateticker.S2C{
-		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:     &name,
-		TickerList: []*qotcommon.Ticker{
-			{
-				Time:      &timeStr,
-				Sequence:  &sequence,
-				Dir:       &dir,
-				Price:     &price,
-				Volume:    &volume,
-				Turnover:  &turnover,
-				RecvTime:  &recvTime,
-				Type:      &typ,
-				TypeSign:  &typeSign,
-				Timestamp: &timestamp,
+	resp := &qotupdateticker.Response{
+		RetType: &retType,
+		S2C: &qotupdateticker.S2C{
+			Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:     &name,
+			TickerList: []*qotcommon.Ticker{
+				{
+					Time:      &timeStr,
+					Sequence:  &sequence,
+					Dir:       &dir,
+					Price:     &price,
+					Volume:    &volume,
+					Turnover:  &turnover,
+					RecvTime:  &recvTime,
+					Type:      &typ,
+					TypeSign:  &typeSign,
+					Timestamp: &timestamp,
+				},
 			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -431,25 +455,29 @@ func TestParseUpdateRTValidData(t *testing.T) {
 	avgPrice := 349.80
 	volume := int64(12345678)
 	turnover := 4321098765.00
+	retType := int32(common.RetType_RetType_Succeed)
 
-	s2c := &qotupdatert.S2C{
-		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:     &name,
-		RtList: []*qotcommon.TimeShare{
-			{
-				Time:           &timeStr,
-				Minute:         &minute,
-				IsBlank:        &isBlank,
-				Price:          &price,
-				LastClosePrice: &lastClosePrice,
-				AvgPrice:       &avgPrice,
-				Volume:         &volume,
-				Turnover:       &turnover,
+	resp := &qotupdatert.Response{
+		RetType: &retType,
+		S2C: &qotupdatert.S2C{
+			Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:     &name,
+			RtList: []*qotcommon.TimeShare{
+				{
+					Time:           &timeStr,
+					Minute:         &minute,
+					IsBlank:        &isBlank,
+					Price:          &price,
+					LastClosePrice: &lastClosePrice,
+					AvgPrice:       &avgPrice,
+					Volume:         &volume,
+					Turnover:       &turnover,
+				},
 			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -486,18 +514,22 @@ func TestParseUpdateBrokerValidData(t *testing.T) {
 	bidPos := int32(1)
 	bidVolume := int64(6000)
 
-	s2c := &qotupdatebroker.S2C{
-		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:     &name,
-		BrokerAskList: []*qotcommon.Broker{
-			{Id: &askID, Name: &askName, Pos: &askPos, Volume: &askVolume},
-		},
-		BrokerBidList: []*qotcommon.Broker{
-			{Id: &bidID, Name: &bidName, Pos: &bidPos, Volume: &bidVolume},
+	retType := int32(common.RetType_RetType_Succeed)
+	resp := &qotupdatebroker.Response{
+		RetType: &retType,
+		S2C: &qotupdatebroker.S2C{
+			Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:     &name,
+			BrokerAskList: []*qotcommon.Broker{
+				{Id: &askID, Name: &askName, Pos: &askPos, Volume: &askVolume},
+			},
+			BrokerBidList: []*qotcommon.Broker{
+				{Id: &bidID, Name: &bidName, Pos: &bidPos, Volume: &bidVolume},
+			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -537,21 +569,25 @@ func TestParseUpdatePriceReminderValidData(t *testing.T) {
 	setValue := 350.0
 	curValue := 350.50
 
-	s2c := &qotupdatepricereminder.S2C{
-		Security:     &qotcommon.Security{Market: &hkMarket, Code: &code},
-		Name:         &name,
-		Price:        &price,
-		ChangeRate:   &changeRate,
-		MarketStatus: &marketStatus,
-		Content:      &content,
-		Note:         &note,
-		Key:          &key,
-		Type:         &typ,
-		SetValue:     &setValue,
-		CurValue:     &curValue,
+	retType := int32(common.RetType_RetType_Succeed)
+	resp := &qotupdatepricereminder.Response{
+		RetType: &retType,
+		S2C: &qotupdatepricereminder.S2C{
+			Security:     &qotcommon.Security{Market: &hkMarket, Code: &code},
+			Name:         &name,
+			Price:        &price,
+			ChangeRate:   &changeRate,
+			MarketStatus: &marketStatus,
+			Content:      &content,
+			Note:         &note,
+			Key:          &key,
+			Type:         &typ,
+			SetValue:     &setValue,
+			CurValue:     &curValue,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}

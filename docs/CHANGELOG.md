@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2] - 2026-04-18
+
+### Fixed
+
+#### Push Notification Parse Functions — Response Wrapper Corrected
+- `pkg/push/qot_push.go`: `ParseUpdateBasicQot`, `ParseUpdateKL`, `ParseUpdateOrderBook`, `ParseUpdateTicker`, `ParseUpdateRT`, `ParseUpdateBroker`, `ParseUpdatePriceReminder` now correctly unmarshal into `Response` protobuf type then extract `S2C`. Confirmed via test simulator that OpenD sends push bodies as `Response { retType, s2c: S2C {...} }`. Previous v0.6.1 fix incorrectly unmarshaled directly into `S2C`, which silently succeeded (proto3 has no required-field enforcement at unmarshal time) but left all `S2C` fields as nil, causing `proto: required field ... not set` errors downstream.
+- `pkg/push/qot_push.go`: Removed duplicate/orphaned code blocks in `ParseUpdateTicker` and `ParseUpdateRT` (leftover from previous partial edit).
+- `pkg/push/push_test.go`: 8 push valid-data tests updated to marshal `Response` wrapper (not bare `S2C`). `TestParseUpdatePriceReminderInvalidData` updated to expect `nil, nil` on empty data.
+- Test results: 22/22 tests pass (`go test ./pkg/push/... -v`).
+
 ## [0.6.1] - 2026-04-18
 
 ### Fixed

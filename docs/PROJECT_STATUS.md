@@ -1,6 +1,6 @@
 # futuapi4go Project Status
 
-## Current Release: v0.6.1
+## Current Release: v0.6.2
 
 **Status**: Stable — All APIs implemented and tested
 
@@ -62,7 +62,7 @@ Core unit tests pass. Some integration tests require real Futu OpenD connectivit
 |---------|-------|--------|-------|
 | `client/` | 6 | ✅ Pass | Push parse tests fixed in v0.6.1 |
 | `internal/client/` | 30+ | ✅ Pass | Non-pool tests pass; `TestPoolConnReuse` needs real OpenD |
-| `pkg/push/` | 9 | ✅ Pass | All push parse tests pass (v0.6.1 fix) |
+| `pkg/push/` | 22 | ✅ Pass | All push parse tests pass (v0.6.2 fix) |
 | `pkg/qot/` | 12 | ✅ Pass | |
 | `pkg/trd/` | 11 | ✅ Pass | |
 | `pkg/sys/` | 5 | ✅ Pass | |
@@ -78,7 +78,10 @@ Core unit tests pass. Some integration tests require real Futu OpenD connectivit
 
 ## Release History
 
-### v0.6.1 (Current)
+### v0.6.2 (Current)
+- **Push parse fix**: Corrected to unmarshal `Response` then extract `S2C` (OpenD sends `Response { retType, s2c: {...} }`). Removed duplicate code in `ParseUpdateTicker` and `ParseUpdateRT`. Added `ParseUpdatePriceReminder` fix. 22 push parse tests pass.
+
+### v0.6.1
 - **P0 bug fixes**: push parse functions now unmarshal `S2C` directly (matching OpenD format), nil logger panic fixed (eager `log.Default()`), connection state race fixed (`connected int32` atomic)
 - 9 push parse tests pass
 
@@ -140,7 +143,7 @@ The SDK uses a 3-layer architecture:
 ### Completed
 - 100% proto field coverage
 - Push notification handler API (v0.6.0)
-- Push parse function bug fixes (v0.6.1) — 9 tests pass
+- Push parse function bug fixes — 22 tests pass (v0.6.2)
 - Core client stability fixes — nil logger panic, connection race (v0.6.1)
 - CI/CD pipeline
 
