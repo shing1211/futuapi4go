@@ -296,19 +296,19 @@ func TestParseUpdateOrderBookValidData(t *testing.T) {
 
 	askPrice := 351.00
 	askVolume := int64(5000)
-	askOrderCount := int32(3)
+	askOrederCount := int32(3)
 	bidPrice := 350.00
 	bidVolume := int64(5000)
-	bidOrderCount := int32(3)
+	bidOrederCount := int32(3)
 
 	s2c := &qotupdateorderbook.S2C{
 		Security: &qotcommon.Security{Market: &hkMarket, Code: &code},
 		Name:     &name,
 		OrderBookAskList: []*qotcommon.OrderBook{
-			{Price: &askPrice, Volume: &askVolume, OrderCount: &askOrderCount},
+			{Price: &askPrice, Volume: &askVolume, OrederCount: &askOrederCount},
 		},
 		OrderBookBidList: []*qotcommon.OrderBook{
-			{Price: &bidPrice, Volume: &bidVolume, OrderCount: &bidOrderCount},
+			{Price: &bidPrice, Volume: &bidVolume, OrederCount: &bidOrederCount},
 		},
 		SvrRecvTimeBid:          &svrRecvTimeBid,
 		SvrRecvTimeBidTimestamp: &svrRecvTimeBidTs,

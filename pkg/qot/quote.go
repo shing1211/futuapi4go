@@ -322,7 +322,7 @@ func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookRes
 		result.OrderBookAskList = append(result.OrderBookAskList, &OrderBook{
 			Price:      ob.GetPrice(),
 			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrderCount(),
+			OrderCount: ob.GetOrederCount(),
 			DetailList: details,
 		})
 	}
@@ -338,7 +338,7 @@ func GetOrderBook(c *futuapi.Client, req *GetOrderBookRequest) (*GetOrderBookRes
 		result.OrderBookBidList = append(result.OrderBookBidList, &OrderBook{
 			Price:      ob.GetPrice(),
 			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrderCount(),
+			OrderCount: ob.GetOrederCount(),
 			DetailList: details,
 		})
 	}

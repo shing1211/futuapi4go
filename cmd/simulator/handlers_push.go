@@ -138,14 +138,14 @@ func (s *Server) handlePushOrderBook(pkt *Packet) (*Packet, error) {
 		orderCount := int32(100 - i*5)
 
 		askList = append(askList, &qotcommon.OrderBook{
-			Price:      &askPrice,
-			Volume:     &askVol,
-			OrderCount: &orderCount,
+			Price:       &askPrice,
+			Volume:      &askVol,
+			OrederCount: &orderCount,
 		})
 		bidList = append(bidList, &qotcommon.OrderBook{
-			Price:      &bidPrice,
-			Volume:     &bidVol,
-			OrderCount: &orderCount,
+			Price:       &bidPrice,
+			Volume:      &bidVol,
+			OrederCount: &orderCount,
 		})
 	}
 

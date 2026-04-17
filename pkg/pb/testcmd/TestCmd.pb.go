@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v5.29.2
-// source: UsedQuota.proto
+// source: TestCmd.proto
 
-package usedquota
+package testcmd
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -21,15 +21,18 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 内部使用
 type C2S struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cmd           *string                `protobuf:"bytes,1,req,name=cmd" json:"cmd,omitempty"`
+	Params        *string                `protobuf:"bytes,2,opt,name=params" json:"params,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *C2S) Reset() {
 	*x = C2S{}
-	mi := &file_UsedQuota_proto_msgTypes[0]
+	mi := &file_TestCmd_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +44,7 @@ func (x *C2S) String() string {
 func (*C2S) ProtoMessage() {}
 
 func (x *C2S) ProtoReflect() protoreflect.Message {
-	mi := &file_UsedQuota_proto_msgTypes[0]
+	mi := &file_TestCmd_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,20 +57,34 @@ func (x *C2S) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use C2S.ProtoReflect.Descriptor instead.
 func (*C2S) Descriptor() ([]byte, []int) {
-	return file_UsedQuota_proto_rawDescGZIP(), []int{0}
+	return file_TestCmd_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *C2S) GetCmd() string {
+	if x != nil && x.Cmd != nil {
+		return *x.Cmd
+	}
+	return ""
+}
+
+func (x *C2S) GetParams() string {
+	if x != nil && x.Params != nil {
+		return *x.Params
+	}
+	return ""
 }
 
 type S2C struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UsedSubQuota   *int32                 `protobuf:"varint,1,opt,name=used_sub_quota,json=usedSubQuota" json:"used_sub_quota,omitempty"`       // 已使用订阅额度
-	UsedKlineQuota *int32                 `protobuf:"varint,2,opt,name=used_kline_quota,json=usedKlineQuota" json:"used_kline_quota,omitempty"` // 已使用历史K线额度
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cmd           *string                `protobuf:"bytes,1,req,name=cmd" json:"cmd,omitempty"`
+	Result        *string                `protobuf:"bytes,2,req,name=result" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *S2C) Reset() {
 	*x = S2C{}
-	mi := &file_UsedQuota_proto_msgTypes[1]
+	mi := &file_TestCmd_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -79,7 +96,7 @@ func (x *S2C) String() string {
 func (*S2C) ProtoMessage() {}
 
 func (x *S2C) ProtoReflect() protoreflect.Message {
-	mi := &file_UsedQuota_proto_msgTypes[1]
+	mi := &file_TestCmd_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -92,21 +109,21 @@ func (x *S2C) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use S2C.ProtoReflect.Descriptor instead.
 func (*S2C) Descriptor() ([]byte, []int) {
-	return file_UsedQuota_proto_rawDescGZIP(), []int{1}
+	return file_TestCmd_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *S2C) GetUsedSubQuota() int32 {
-	if x != nil && x.UsedSubQuota != nil {
-		return *x.UsedSubQuota
+func (x *S2C) GetCmd() string {
+	if x != nil && x.Cmd != nil {
+		return *x.Cmd
 	}
-	return 0
+	return ""
 }
 
-func (x *S2C) GetUsedKlineQuota() int32 {
-	if x != nil && x.UsedKlineQuota != nil {
-		return *x.UsedKlineQuota
+func (x *S2C) GetResult() string {
+	if x != nil && x.Result != nil {
+		return *x.Result
 	}
-	return 0
+	return ""
 }
 
 type Request struct {
@@ -118,7 +135,7 @@ type Request struct {
 
 func (x *Request) Reset() {
 	*x = Request{}
-	mi := &file_UsedQuota_proto_msgTypes[2]
+	mi := &file_TestCmd_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +147,7 @@ func (x *Request) String() string {
 func (*Request) ProtoMessage() {}
 
 func (x *Request) ProtoReflect() protoreflect.Message {
-	mi := &file_UsedQuota_proto_msgTypes[2]
+	mi := &file_TestCmd_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +160,7 @@ func (x *Request) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Request.ProtoReflect.Descriptor instead.
 func (*Request) Descriptor() ([]byte, []int) {
-	return file_UsedQuota_proto_rawDescGZIP(), []int{2}
+	return file_TestCmd_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Request) GetC2S() *C2S {
@@ -155,9 +172,9 @@ func (x *Request) GetC2S() *C2S {
 
 type Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RetType       *int32                 `protobuf:"varint,1,req,name=retType,def=-400" json:"retType,omitempty"` //RetType,返回结果
-	RetMsg        *string                `protobuf:"bytes,2,opt,name=retMsg" json:"retMsg,omitempty"`
-	ErrCode       *int32                 `protobuf:"varint,3,opt,name=errCode" json:"errCode,omitempty"`
+	RetType       *int32                 `protobuf:"varint,1,req,name=retType,def=-400" json:"retType,omitempty"` //返回结果，参见Common.RetType的枚举定义
+	RetMsg        *string                `protobuf:"bytes,2,opt,name=retMsg" json:"retMsg,omitempty"`             //返回结果描述
+	ErrCode       *int32                 `protobuf:"varint,3,opt,name=errCode" json:"errCode,omitempty"`          //错误码，客户端一般通过retType和retMsg来判断结果和详情，errCode只做日志记录，仅在个别协议失败时对账用
 	S2C           *S2C                   `protobuf:"bytes,4,opt,name=s2c" json:"s2c,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -170,7 +187,7 @@ const (
 
 func (x *Response) Reset() {
 	*x = Response{}
-	mi := &file_UsedQuota_proto_msgTypes[3]
+	mi := &file_TestCmd_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -182,7 +199,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_UsedQuota_proto_msgTypes[3]
+	mi := &file_TestCmd_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -195,7 +212,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_UsedQuota_proto_rawDescGZIP(), []int{3}
+	return file_TestCmd_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Response) GetRetType() int32 {
@@ -226,46 +243,48 @@ func (x *Response) GetS2C() *S2C {
 	return nil
 }
 
-var File_UsedQuota_proto protoreflect.FileDescriptor
+var File_TestCmd_proto protoreflect.FileDescriptor
 
-const file_UsedQuota_proto_rawDesc = "" +
+const file_TestCmd_proto_rawDesc = "" +
 	"\n" +
-	"\x0fUsedQuota.proto\x12\tUsedQuota\"\x05\n" +
-	"\x03C2S\"U\n" +
-	"\x03S2C\x12$\n" +
-	"\x0eused_sub_quota\x18\x01 \x01(\x05R\fusedSubQuota\x12(\n" +
-	"\x10used_kline_quota\x18\x02 \x01(\x05R\x0eusedKlineQuota\"+\n" +
-	"\aRequest\x12 \n" +
-	"\x03c2s\x18\x01 \x02(\v2\x0e.UsedQuota.C2SR\x03c2s\"~\n" +
+	"\rTestCmd.proto\x12\aTestCmd\"/\n" +
+	"\x03C2S\x12\x10\n" +
+	"\x03cmd\x18\x01 \x02(\tR\x03cmd\x12\x16\n" +
+	"\x06params\x18\x02 \x01(\tR\x06params\"/\n" +
+	"\x03S2C\x12\x10\n" +
+	"\x03cmd\x18\x01 \x02(\tR\x03cmd\x12\x16\n" +
+	"\x06result\x18\x02 \x02(\tR\x06result\")\n" +
+	"\aRequest\x12\x1e\n" +
+	"\x03c2s\x18\x01 \x02(\v2\f.TestCmd.C2SR\x03c2s\"|\n" +
 	"\bResponse\x12\x1e\n" +
 	"\aretType\x18\x01 \x02(\x05:\x04-400R\aretType\x12\x16\n" +
 	"\x06retMsg\x18\x02 \x01(\tR\x06retMsg\x12\x18\n" +
-	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12 \n" +
-	"\x03s2c\x18\x04 \x01(\v2\x0e.UsedQuota.S2CR\x03s2cBG\n" +
-	"\x13com.futu.openapi.pbZ0github.com/shing1211/futuapi4go/pkg/pb/usedquota"
+	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12\x1e\n" +
+	"\x03s2c\x18\x04 \x01(\v2\f.TestCmd.S2CR\x03s2cBE\n" +
+	"\x13com.futu.openapi.pbZ.github.com/shing1211/futuapi4go/pkg/pb/testcmd"
 
 var (
-	file_UsedQuota_proto_rawDescOnce sync.Once
-	file_UsedQuota_proto_rawDescData []byte
+	file_TestCmd_proto_rawDescOnce sync.Once
+	file_TestCmd_proto_rawDescData []byte
 )
 
-func file_UsedQuota_proto_rawDescGZIP() []byte {
-	file_UsedQuota_proto_rawDescOnce.Do(func() {
-		file_UsedQuota_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_UsedQuota_proto_rawDesc), len(file_UsedQuota_proto_rawDesc)))
+func file_TestCmd_proto_rawDescGZIP() []byte {
+	file_TestCmd_proto_rawDescOnce.Do(func() {
+		file_TestCmd_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_TestCmd_proto_rawDesc), len(file_TestCmd_proto_rawDesc)))
 	})
-	return file_UsedQuota_proto_rawDescData
+	return file_TestCmd_proto_rawDescData
 }
 
-var file_UsedQuota_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_UsedQuota_proto_goTypes = []any{
-	(*C2S)(nil),      // 0: UsedQuota.C2S
-	(*S2C)(nil),      // 1: UsedQuota.S2C
-	(*Request)(nil),  // 2: UsedQuota.Request
-	(*Response)(nil), // 3: UsedQuota.Response
+var file_TestCmd_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_TestCmd_proto_goTypes = []any{
+	(*C2S)(nil),      // 0: TestCmd.C2S
+	(*S2C)(nil),      // 1: TestCmd.S2C
+	(*Request)(nil),  // 2: TestCmd.Request
+	(*Response)(nil), // 3: TestCmd.Response
 }
-var file_UsedQuota_proto_depIdxs = []int32{
-	0, // 0: UsedQuota.Request.c2s:type_name -> UsedQuota.C2S
-	1, // 1: UsedQuota.Response.s2c:type_name -> UsedQuota.S2C
+var file_TestCmd_proto_depIdxs = []int32{
+	0, // 0: TestCmd.Request.c2s:type_name -> TestCmd.C2S
+	1, // 1: TestCmd.Response.s2c:type_name -> TestCmd.S2C
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -273,26 +292,26 @@ var file_UsedQuota_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_UsedQuota_proto_init() }
-func file_UsedQuota_proto_init() {
-	if File_UsedQuota_proto != nil {
+func init() { file_TestCmd_proto_init() }
+func file_TestCmd_proto_init() {
+	if File_TestCmd_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_UsedQuota_proto_rawDesc), len(file_UsedQuota_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_TestCmd_proto_rawDesc), len(file_TestCmd_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_UsedQuota_proto_goTypes,
-		DependencyIndexes: file_UsedQuota_proto_depIdxs,
-		MessageInfos:      file_UsedQuota_proto_msgTypes,
+		GoTypes:           file_TestCmd_proto_goTypes,
+		DependencyIndexes: file_TestCmd_proto_depIdxs,
+		MessageInfos:      file_TestCmd_proto_msgTypes,
 	}.Build()
-	File_UsedQuota_proto = out.File
-	file_UsedQuota_proto_goTypes = nil
-	file_UsedQuota_proto_depIdxs = nil
+	File_TestCmd_proto = out.File
+	file_TestCmd_proto_goTypes = nil
+	file_TestCmd_proto_depIdxs = nil
 }

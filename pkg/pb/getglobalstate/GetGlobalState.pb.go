@@ -69,19 +69,19 @@ func (x *C2S) GetUserID() uint64 {
 
 type S2C struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	MarketHK       *int32                 `protobuf:"varint,1,opt,name=marketHK" json:"marketHK,omitempty"`              //Qot_Common.QotMarketState,港股主板市场状态
-	MarketUS       *int32                 `protobuf:"varint,2,opt,name=marketUS" json:"marketUS,omitempty"`              //Qot_Common.QotMarketState,美股Nasdaq市场状态
-	MarketSH       *int32                 `protobuf:"varint,3,opt,name=marketSH" json:"marketSH,omitempty"`              //Qot_Common.QotMarketState,沪市状态
-	MarketSZ       *int32                 `protobuf:"varint,4,opt,name=marketSZ" json:"marketSZ,omitempty"`              //Qot_Common.QotMarketState,深市状态
-	MarketHKFuture *int32                 `protobuf:"varint,5,opt,name=marketHKFuture" json:"marketHKFuture,omitempty"`  //Qot_Common.QotMarketState,港股期货市场状态
+	MarketHK       *int32                 `protobuf:"varint,1,req,name=marketHK" json:"marketHK,omitempty"`              //Qot_Common.QotMarketState,港股主板市场状态
+	MarketUS       *int32                 `protobuf:"varint,2,req,name=marketUS" json:"marketUS,omitempty"`              //Qot_Common.QotMarketState,美股Nasdaq市场状态
+	MarketSH       *int32                 `protobuf:"varint,3,req,name=marketSH" json:"marketSH,omitempty"`              //Qot_Common.QotMarketState,沪市状态
+	MarketSZ       *int32                 `protobuf:"varint,4,req,name=marketSZ" json:"marketSZ,omitempty"`              //Qot_Common.QotMarketState,深市状态
+	MarketHKFuture *int32                 `protobuf:"varint,5,req,name=marketHKFuture" json:"marketHKFuture,omitempty"`  //Qot_Common.QotMarketState,港股期货市场状态
 	MarketUSFuture *int32                 `protobuf:"varint,15,opt,name=marketUSFuture" json:"marketUSFuture,omitempty"` //Qot_Common.QotMarketState,美国期货市场状态
 	MarketSGFuture *int32                 `protobuf:"varint,17,opt,name=marketSGFuture" json:"marketSGFuture,omitempty"` //Qot_Common.QotMarketState,新加坡期货市场状态
 	MarketJPFuture *int32                 `protobuf:"varint,18,opt,name=marketJPFuture" json:"marketJPFuture,omitempty"` //Qot_Common.QotMarketState,日本期货市场状态
-	QotLogined     *bool                  `protobuf:"varint,6,opt,name=qotLogined" json:"qotLogined,omitempty"`          //是否登陆行情服务器
-	TrdLogined     *bool                  `protobuf:"varint,7,opt,name=trdLogined" json:"trdLogined,omitempty"`          //是否登陆交易服务器
-	ServerVer      *int32                 `protobuf:"varint,8,opt,name=serverVer" json:"serverVer,omitempty"`            //版本号
-	ServerBuildNo  *int32                 `protobuf:"varint,9,opt,name=serverBuildNo" json:"serverBuildNo,omitempty"`    //buildNo
-	Time           *int64                 `protobuf:"varint,10,opt,name=time" json:"time,omitempty"`                     //当前服务器时间
+	QotLogined     *bool                  `protobuf:"varint,6,req,name=qotLogined" json:"qotLogined,omitempty"`          //是否登陆行情服务器
+	TrdLogined     *bool                  `protobuf:"varint,7,req,name=trdLogined" json:"trdLogined,omitempty"`          //是否登陆交易服务器
+	ServerVer      *int32                 `protobuf:"varint,8,req,name=serverVer" json:"serverVer,omitempty"`            //版本号
+	ServerBuildNo  *int32                 `protobuf:"varint,9,req,name=serverBuildNo" json:"serverBuildNo,omitempty"`    //buildNo
+	Time           *int64                 `protobuf:"varint,10,req,name=time" json:"time,omitempty"`                     //当前服务器时间
 	LocalTime      *float64               `protobuf:"fixed64,11,opt,name=localTime" json:"localTime,omitempty"`          //当前本地时间
 	ProgramStatus  *common.ProgramStatus  `protobuf:"bytes,12,opt,name=programStatus" json:"programStatus,omitempty"`    //当前程序状态
 	QotSvrIpAddr   *string                `protobuf:"bytes,13,opt,name=qotSvrIpAddr" json:"qotSvrIpAddr,omitempty"`
@@ -372,24 +372,24 @@ const file_GetGlobalState_proto_rawDesc = "" +
 	"\x03C2S\x12\x16\n" +
 	"\x06userID\x18\x01 \x02(\x04R\x06userID\"\xe8\x04\n" +
 	"\x03S2C\x12\x1a\n" +
-	"\bmarketHK\x18\x01 \x01(\x05R\bmarketHK\x12\x1a\n" +
-	"\bmarketUS\x18\x02 \x01(\x05R\bmarketUS\x12\x1a\n" +
-	"\bmarketSH\x18\x03 \x01(\x05R\bmarketSH\x12\x1a\n" +
-	"\bmarketSZ\x18\x04 \x01(\x05R\bmarketSZ\x12&\n" +
-	"\x0emarketHKFuture\x18\x05 \x01(\x05R\x0emarketHKFuture\x12&\n" +
+	"\bmarketHK\x18\x01 \x02(\x05R\bmarketHK\x12\x1a\n" +
+	"\bmarketUS\x18\x02 \x02(\x05R\bmarketUS\x12\x1a\n" +
+	"\bmarketSH\x18\x03 \x02(\x05R\bmarketSH\x12\x1a\n" +
+	"\bmarketSZ\x18\x04 \x02(\x05R\bmarketSZ\x12&\n" +
+	"\x0emarketHKFuture\x18\x05 \x02(\x05R\x0emarketHKFuture\x12&\n" +
 	"\x0emarketUSFuture\x18\x0f \x01(\x05R\x0emarketUSFuture\x12&\n" +
 	"\x0emarketSGFuture\x18\x11 \x01(\x05R\x0emarketSGFuture\x12&\n" +
 	"\x0emarketJPFuture\x18\x12 \x01(\x05R\x0emarketJPFuture\x12\x1e\n" +
 	"\n" +
-	"qotLogined\x18\x06 \x01(\bR\n" +
+	"qotLogined\x18\x06 \x02(\bR\n" +
 	"qotLogined\x12\x1e\n" +
 	"\n" +
-	"trdLogined\x18\a \x01(\bR\n" +
+	"trdLogined\x18\a \x02(\bR\n" +
 	"trdLogined\x12\x1c\n" +
-	"\tserverVer\x18\b \x01(\x05R\tserverVer\x12$\n" +
-	"\rserverBuildNo\x18\t \x01(\x05R\rserverBuildNo\x12\x12\n" +
+	"\tserverVer\x18\b \x02(\x05R\tserverVer\x12$\n" +
+	"\rserverBuildNo\x18\t \x02(\x05R\rserverBuildNo\x12\x12\n" +
 	"\x04time\x18\n" +
-	" \x01(\x03R\x04time\x12\x1c\n" +
+	" \x02(\x03R\x04time\x12\x1c\n" +
 	"\tlocalTime\x18\v \x01(\x01R\tlocalTime\x12;\n" +
 	"\rprogramStatus\x18\f \x01(\v2\x15.Common.ProgramStatusR\rprogramStatus\x12\"\n" +
 	"\fqotSvrIpAddr\x18\r \x01(\tR\fqotSvrIpAddr\x12\"\n" +

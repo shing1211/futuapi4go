@@ -1068,7 +1068,7 @@ const (
 	SubType_SubType_KL_Week    SubType = 12 //周K
 	SubType_SubType_KL_Month   SubType = 13 //月K
 	SubType_SubType_Broker     SubType = 14 //经纪队列
-	SubType_SubType_KL_Quarter SubType = 15 //季K
+	SubType_SubType_KL_Qurater SubType = 15 //季K
 	SubType_SubType_KL_Year    SubType = 16 //年K
 	SubType_SubType_KL_3Min    SubType = 17 //3分K
 )
@@ -1090,7 +1090,7 @@ var (
 		12: "SubType_KL_Week",
 		13: "SubType_KL_Month",
 		14: "SubType_Broker",
-		15: "SubType_KL_Quarter",
+		15: "SubType_KL_Qurater",
 		16: "SubType_KL_Year",
 		17: "SubType_KL_3Min",
 	}
@@ -1109,7 +1109,7 @@ var (
 		"SubType_KL_Week":    12,
 		"SubType_KL_Month":   13,
 		"SubType_Broker":     14,
-		"SubType_KL_Quarter": 15,
+		"SubType_KL_Qurater": 15,
 		"SubType_KL_Year":    16,
 		"SubType_KL_3Min":    17,
 	}
@@ -1427,9 +1427,9 @@ const (
 	SecurityStatus_SecurityStatus_Listing                     SecurityStatus = 2  //待上市
 	SecurityStatus_SecurityStatus_Purchasing                  SecurityStatus = 3  //申购中
 	SecurityStatus_SecurityStatus_Subscribing                 SecurityStatus = 4  //认购中
-	SecurityStatus_SecurityStatus_BeforeDarkTradeOpening      SecurityStatus = 5  //暗盘开盘前
-	SecurityStatus_SecurityStatus_DarkTrading                 SecurityStatus = 6  //暗盘交易中
-	SecurityStatus_SecurityStatus_DarkTradeEnd                SecurityStatus = 7  //暗盘已收盘
+	SecurityStatus_SecurityStatus_BeforeDrakTradeOpening      SecurityStatus = 5  //暗盘开盘前
+	SecurityStatus_SecurityStatus_DrakTrading                 SecurityStatus = 6  //暗盘交易中
+	SecurityStatus_SecurityStatus_DrakTradeEnd                SecurityStatus = 7  //暗盘已收盘
 	SecurityStatus_SecurityStatus_ToBeOpen                    SecurityStatus = 8  //待开盘
 	SecurityStatus_SecurityStatus_Suspended                   SecurityStatus = 9  //停牌
 	SecurityStatus_SecurityStatus_Called                      SecurityStatus = 10 //已收回
@@ -1454,9 +1454,9 @@ var (
 		2:  "SecurityStatus_Listing",
 		3:  "SecurityStatus_Purchasing",
 		4:  "SecurityStatus_Subscribing",
-		5:  "SecurityStatus_BeforeDarkTradeOpening",
-		6:  "SecurityStatus_DarkTrading",
-		7:  "SecurityStatus_DarkTradeEnd",
+		5:  "SecurityStatus_BeforeDrakTradeOpening",
+		6:  "SecurityStatus_DrakTrading",
+		7:  "SecurityStatus_DrakTradeEnd",
 		8:  "SecurityStatus_ToBeOpen",
 		9:  "SecurityStatus_Suspended",
 		10: "SecurityStatus_Called",
@@ -1478,9 +1478,9 @@ var (
 		"SecurityStatus_Listing":                     2,
 		"SecurityStatus_Purchasing":                  3,
 		"SecurityStatus_Subscribing":                 4,
-		"SecurityStatus_BeforeDarkTradeOpening":      5,
-		"SecurityStatus_DarkTrading":                 6,
-		"SecurityStatus_DarkTradeEnd":                7,
+		"SecurityStatus_BeforeDrakTradeOpening":      5,
+		"SecurityStatus_DrakTrading":                 6,
+		"SecurityStatus_DrakTradeEnd":                7,
 		"SecurityStatus_ToBeOpen":                    8,
 		"SecurityStatus_Suspended":                   9,
 		"SecurityStatus_Called":                      10,
@@ -2290,6 +2290,7 @@ const (
 	QotRight_QotRight_Level2 QotRight = 3 //Level2
 	QotRight_QotRight_SF     QotRight = 4 //SF高级行情
 	QotRight_QotRight_No     QotRight = 5 //无权限
+	QotRight_QotRight_Level3 QotRight = 6 //Level3
 )
 
 // Enum value maps for QotRight.
@@ -2301,6 +2302,7 @@ var (
 		3: "QotRight_Level2",
 		4: "QotRight_SF",
 		5: "QotRight_No",
+		6: "QotRight_Level3",
 	}
 	QotRight_value = map[string]int32{
 		"QotRight_Unknow": 0,
@@ -2309,6 +2311,7 @@ var (
 		"QotRight_Level2": 3,
 		"QotRight_SF":     4,
 		"QotRight_No":     5,
+		"QotRight_Level3": 6,
 	}
 )
 
@@ -4637,10 +4640,10 @@ func (x *OrderBookDetail) GetVolume() int64 {
 
 type OrderBook struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Price         *float64               `protobuf:"fixed64,1,req,name=price" json:"price,omitempty"`          //委托价格
-	Volume        *int64                 `protobuf:"varint,2,req,name=volume" json:"volume,omitempty"`         //委托数量
-	OrderCount    *int32                 `protobuf:"varint,3,req,name=orderCount" json:"orderCount,omitempty"` //委托订单个数
-	DetailList    []*OrderBookDetail     `protobuf:"bytes,4,rep,name=detailList" json:"detailList,omitempty"`  //订单信息，SF行情特有
+	Price         *float64               `protobuf:"fixed64,1,req,name=price" json:"price,omitempty"`            //委托价格
+	Volume        *int64                 `protobuf:"varint,2,req,name=volume" json:"volume,omitempty"`           //委托数量
+	OrederCount   *int32                 `protobuf:"varint,3,req,name=orederCount" json:"orederCount,omitempty"` //委托订单个数
+	DetailList    []*OrderBookDetail     `protobuf:"bytes,4,rep,name=detailList" json:"detailList,omitempty"`    //订单信息，SF行情特有
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4689,9 +4692,9 @@ func (x *OrderBook) GetVolume() int64 {
 	return 0
 }
 
-func (x *OrderBook) GetOrderCount() int32 {
-	if x != nil && x.OrderCount != nil {
-		return *x.OrderCount
+func (x *OrderBook) GetOrederCount() int32 {
+	if x != nil && x.OrederCount != nil {
+		return *x.OrederCount
 	}
 	return 0
 }
@@ -5371,13 +5374,11 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\ttimestamp\x18\v \x01(\x01R\ttimestamp\"C\n" +
 	"\x0fOrderBookDetail\x12\x18\n" +
 	"\aorderID\x18\x01 \x02(\x03R\aorderID\x12\x16\n" +
-	"\x06volume\x18\x02 \x02(\x03R\x06volume\"\x96\x01\n" +
+	"\x06volume\x18\x02 \x02(\x03R\x06volume\"\x98\x01\n" +
 	"\tOrderBook\x12\x14\n" +
 	"\x05price\x18\x01 \x02(\x01R\x05price\x12\x16\n" +
-	"\x06volume\x18\x02 \x02(\x03R\x06volume\x12\x1e\n" +
-	"\n" +
-	"orderCount\x18\x03 \x02(\x05R\n" +
-	"orderCount\x12;\n" +
+	"\x06volume\x18\x02 \x02(\x03R\x06volume\x12 \n" +
+	"\vorederCount\x18\x03 \x02(\x05R\vorederCount\x12;\n" +
 	"\n" +
 	"detailList\x18\x04 \x03(\v2\x1b.Qot_Common.OrderBookDetailR\n" +
 	"detailList\"\xea\x01\n" +
@@ -5604,7 +5605,7 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x0fSubType_KL_Week\x10\f\x12\x14\n" +
 	"\x10SubType_KL_Month\x10\r\x12\x12\n" +
 	"\x0eSubType_Broker\x10\x0e\x12\x16\n" +
-	"\x12SubType_KL_Quarter\x10\x0f\x12\x13\n" +
+	"\x12SubType_KL_Qurater\x10\x0f\x12\x13\n" +
 	"\x0fSubType_KL_Year\x10\x10\x12\x13\n" +
 	"\x0fSubType_KL_3Min\x10\x11*}\n" +
 	"\x0fTickerDirection\x12\x1b\n" +
@@ -5658,9 +5659,9 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x16SecurityStatus_Listing\x10\x02\x12\x1d\n" +
 	"\x19SecurityStatus_Purchasing\x10\x03\x12\x1e\n" +
 	"\x1aSecurityStatus_Subscribing\x10\x04\x12)\n" +
-	"%SecurityStatus_BeforeDarkTradeOpening\x10\x05\x12\x1e\n" +
-	"\x1aSecurityStatus_DarkTrading\x10\x06\x12\x1f\n" +
-	"\x1bSecurityStatus_DarkTradeEnd\x10\a\x12\x1b\n" +
+	"%SecurityStatus_BeforeDrakTradeOpening\x10\x05\x12\x1e\n" +
+	"\x1aSecurityStatus_DrakTrading\x10\x06\x12\x1f\n" +
+	"\x1bSecurityStatus_DrakTradeEnd\x10\a\x12\x1b\n" +
 	"\x17SecurityStatus_ToBeOpen\x10\b\x12\x1c\n" +
 	"\x18SecurityStatus_Suspended\x10\t\x12\x19\n" +
 	"\x15SecurityStatus_Called\x10\n" +
@@ -5799,14 +5800,15 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x0eCompanyAct_Add\x10 \x12\x17\n" +
 	"\x13CompanyAct_Dividend\x10@\x12\x1a\n" +
 	"\x15CompanyAct_SPDividend\x10\x80\x01\x12\x17\n" +
-	"\x12CompanyAct_SpinOff\x10\x80\x02*}\n" +
+	"\x12CompanyAct_SpinOff\x10\x80\x02*\x92\x01\n" +
 	"\bQotRight\x12\x13\n" +
 	"\x0fQotRight_Unknow\x10\x00\x12\x10\n" +
 	"\fQotRight_Bmp\x10\x01\x12\x13\n" +
 	"\x0fQotRight_Level1\x10\x02\x12\x13\n" +
 	"\x0fQotRight_Level2\x10\x03\x12\x0f\n" +
 	"\vQotRight_SF\x10\x04\x12\x0f\n" +
-	"\vQotRight_No\x10\x05*\xce\x04\n" +
+	"\vQotRight_No\x10\x05\x12\x13\n" +
+	"\x0fQotRight_Level3\x10\x06*\xce\x04\n" +
 	"\x11PriceReminderType\x12\x1d\n" +
 	"\x19PriceReminderType_Unknown\x10\x00\x12\x1d\n" +
 	"\x19PriceReminderType_PriceUp\x10\x01\x12\x1f\n" +

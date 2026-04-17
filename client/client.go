@@ -2752,14 +2752,14 @@ func ParsePushOrderBook(body []byte) (*PushOrderBook, error) {
 		ob.Bids = append(ob.Bids, OBItem{
 			Price:      b.GetPrice(),
 			Volume:     b.GetVolume(),
-			OrderCount: int64(b.GetOrderCount()),
+			OrderCount: int64(b.GetOrederCount()),
 		})
 	}
 	for _, a := range data.OrderBookAskList {
 		ob.Asks = append(ob.Asks, OBItem{
 			Price:      a.GetPrice(),
 			Volume:     a.GetVolume(),
-			OrderCount: int64(a.GetOrderCount()),
+			OrderCount: int64(a.GetOrederCount()),
 		})
 	}
 	return ob, nil

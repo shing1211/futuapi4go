@@ -101,16 +101,16 @@ func HSIOrderBookLevels(numLevels int) (asks, bids []*qotcommon.OrderBook) {
 		orderCount := int32(5 + i*2)
 
 		asks = append(asks, &qotcommon.OrderBook{
-			Price:      ptrFloat64(price),
-			Volume:     ptrInt64(vol),
-			OrderCount: ptrInt32(orderCount),
+			Price:       ptrFloat64(price),
+			Volume:      ptrInt64(vol),
+			OrederCount: ptrInt32(orderCount),
 		})
 
 		bidPrice := basePrice - float64(i+1)*spread
 		bids = append(bids, &qotcommon.OrderBook{
-			Price:      ptrFloat64(bidPrice),
-			Volume:     ptrInt64(vol + 50),
-			OrderCount: ptrInt32(orderCount + 3),
+			Price:       ptrFloat64(bidPrice),
+			Volume:      ptrInt64(vol + 50),
+			OrederCount: ptrInt32(orderCount + 3),
 		})
 	}
 	return asks, bids
