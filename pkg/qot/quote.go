@@ -41,6 +41,8 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcodechange"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistorykl"
+	qotgethistoryklpoints "github.com/shing1211/futuapi4go/pkg/pb/qotgethistoryklpoints"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
@@ -50,6 +52,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplatesecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetpricereminder"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
@@ -97,6 +100,9 @@ const (
 	ProtoID_GetCapitalDistribution  = 3212
 	ProtoID_StockFilter             = 3215
 	ProtoID_GetOptionChain          = 3209
+	ProtoID_GetHistoryKL            = 3225
+	ProtoID_GetHistoryKLPoints      = 3226
+	ProtoID_GetRehab                = 3208
 	ProtoID_GetOptionExpirationDate = 3224
 	ProtoID_GetWarrant              = 3210
 	ProtoID_GetUserSecurity         = 3213
@@ -2961,5 +2967,222 @@ func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest)
 		UsedQuota:   s2c.GetUsedQuota(),
 		RemainQuota: s2c.GetRemainQuota(),
 		DetailList:  s2c.GetDetailList(),
+	}, nil
+}
+
+// GetHistoryKLRequest defines parameters for GetHistoryKL.
+type GetHistoryKLRequest struct {
+	RehabType        int32
+	KLType           int32
+	Security         *qotcommon.Security
+	BeginTime        string
+	EndTime          string
+	MaxAckKLNum      int32
+	NeedKLFieldsFlag int64
+}
+
+// GetHistoryKLResponse is the response type for GetHistoryKL.
+type GetHistoryKLResponse struct {
+	Security        *qotcommon.Security
+	KLList          []*qotcommon.KLine
+	NextKLTime      string
+	NextKLTimestamp float64
+}
+
+// GetHistoryKL returns historical K-line data for the given security within a time range.
+func GetHistoryKL(c *futuapi.Client, req *GetHistoryKLRequest) (*GetHistoryKLResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
+	c2s := &qotgethistorykl.C2S{
+		RehabType: &req.RehabType,
+		KlType:    &req.KLType,
+		Security:  req.Security,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+	}
+	if req.MaxAckKLNum != 0 {
+		c2s.MaxAckKLNum = &req.MaxAckKLNum
+	}
+	if req.NeedKLFieldsFlag != 0 {
+		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
+	}
+
+	pkt := &qotgethistorykl.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetHistoryKL, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgethistorykl.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetHistoryKL failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHistoryKL: s2c is nil")
+	}
+
+	return &GetHistoryKLResponse{
+		Security:        s2c.GetSecurity(),
+		KLList:          s2c.GetKlList(),
+		NextKLTime:      s2c.GetNextKLTime(),
+		NextKLTimestamp: s2c.GetNextKLTimestamp(),
+	}, nil
+}
+
+// GetHistoryKLPointsRequest defines parameters for GetHistoryKLPoints.
+type GetHistoryKLPointsRequest struct {
+	RehabType         int32
+	KLType            int32
+	NoDataMode        int32
+	SecurityList      []*qotcommon.Security
+	TimeList          []string
+	MaxReqSecurityNum int32
+	NeedKLFieldsFlag  int64
+}
+
+// GetHistoryKLPointsResponse is the response type for GetHistoryKLPoints.
+type GetHistoryKLPointsResponse struct {
+	KLPointList []*qotgethistoryklpoints.SecurityHistoryKLPoints
+	HasNext     bool
+}
+
+// GetHistoryKLPoints returns historical K-line data at specific time points for multiple securities.
+func GetHistoryKLPoints(c *futuapi.Client, req *GetHistoryKLPointsRequest) (*GetHistoryKLPointsResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
+	c2s := &qotgethistoryklpoints.C2S{
+		RehabType:    &req.RehabType,
+		KlType:       &req.KLType,
+		NoDataMode:   &req.NoDataMode,
+		SecurityList: req.SecurityList,
+		TimeList:     req.TimeList,
+	}
+	if req.MaxReqSecurityNum != 0 {
+		c2s.MaxReqSecurityNum = &req.MaxReqSecurityNum
+	}
+	if req.NeedKLFieldsFlag != 0 {
+		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
+	}
+
+	pkt := &qotgethistoryklpoints.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetHistoryKLPoints, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgethistoryklpoints.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetHistoryKLPoints failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHistoryKLPoints: s2c is nil")
+	}
+
+	return &GetHistoryKLPointsResponse{
+		KLPointList: s2c.GetKlPointList(),
+		HasNext:     s2c.GetHasNext(),
+	}, nil
+}
+
+// GetRehabRequest defines parameters for GetRehab.
+type GetRehabRequest struct {
+	SecurityList []*qotcommon.Security
+}
+
+// GetRehabResponse is the response type for GetRehab.
+type GetRehabResponse struct {
+	SecurityRehabList []*qotgetrehab.SecurityRehab
+}
+
+// GetRehab returns rehabilitation (复权) data for the given securities.
+func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, err
+	}
+	c2s := &qotgetrehab.C2S{
+		SecurityList: req.SecurityList,
+	}
+
+	pkt := &qotgetrehab.Request{C2S: c2s}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		return nil, err
+	}
+
+	serialNo := c.NextSerialNo()
+	if err := c.Conn().WritePacket(ProtoID_GetRehab, serialNo, body); err != nil {
+		return nil, err
+	}
+
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	var rsp qotgetrehab.Response
+	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, fmt.Errorf("GetRehab failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetRehab: s2c is nil")
+	}
+
+	return &GetRehabResponse{
+		SecurityRehabList: s2c.GetSecurityRehabList(),
 	}, nil
 }
