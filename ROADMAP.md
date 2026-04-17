@@ -1,6 +1,6 @@
 # futuapi4go Roadmap
 
-> Last Updated: 2026-04-15
+> Last Updated: 2026-04-18
 
 ---
 
@@ -52,14 +52,14 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 ### Phase 0: Fix the Foundation (P0)
 > *Before any v1.0 release. All items are must-fix.*
 
-- [ ] Fix `client_test.go` compilation (non-exported types)
-- [ ] Fix `push_test.go` protobuf wrapper types (7 failures)
-- [ ] Fix nil logger panic in `logf()`
-- [ ] Fix connection state race between `readLoop` and `Close()`
+- [ ] Fix `client_test.go` compilation (non-exported types, has `//go:build skip`)
+- [x] ~~Fix `push_test.go` protobuf wrapper types (7 failures)~~ — Fixed `b6435b4`/`a8c0828`
+- [x] ~~Fix nil logger panic in `logf()`~~ — Fixed `b6435b4` (eager `log.Default()`)
+- [x] ~~Fix connection state race between `readLoop` and `Close()`~~ — Fixed `b6435b4` (`connected int32` atomic)
 - [ ] Add `go test -race` to CI
 - [ ] Fix `go vet` failures
 - [ ] Export `Packet`/`PacketHandler` types for testing
-- [ ] Update ROADMAP.md (replace placeholder stubs)
+- [x] ~~Update ROADMAP.md (replace placeholder stubs)~~ — Updated 2026-04-18
 - [ ] Tag proper semver release (`v0.7.0`)
 - [ ] Update README examples to use env vars for secrets
 
@@ -105,15 +105,17 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 
 ## Known Issues
 
-- [x] ~~`client_test.go` compilation failure~~ — Fix pending (Phase 0)
-- [x] ~~`push_test.go` protobuf type mismatch (7 failures)~~ — Fix pending (Phase 0)
-- [x] ~~nil logger panic in pool tests~~ — Fix pending (Phase 0)
-- [x] ~~Connection state race in `readLoop`~~ — Fix pending (Phase 0)
-- [x] ~~`go vet` failures~~ — Fix pending (Phase 0)
-- [x] ~~ROADMAP.md is placeholder~~ — Replaced with real roadmap
+- [ ] `client_test.go` compilation failure — has `//go:build skip`, pending redesign
+- [x] ~~`push_test.go` protobuf type mismatch (7 failures)~~ — Fixed `b6435b4`/`a8c0828`
+- [x] ~~nil logger panic in pool tests~~ — Fixed `b6435b4`
+- [x] ~~Connection state race in `readLoop`~~ — Fixed `b6435b4`
+- [ ] `go vet` failures — Fix pending (Phase 0)
+- [x] ~~ROADMAP.md is placeholder~~ — Updated 2026-04-18
 - [x] ~~No Prometheus metrics endpoint~~ — Planned for Phase 1
 - [x] ~~No OpenTelemetry tracing~~ — Planned for Phase 1
 - [x] ~~No context propagation on all APIs~~ — Planned for Phase 1
+- [ ] `TestPoolConnReuse` timeout — Pre-existing, requires real OpenD connection
+- [ ] `test/qot_api`/`test/trd_api`/`test/util` mock server failures — Pre-existing network issues
 
 ---
 

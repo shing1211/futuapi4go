@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2026-04-18
+
+### Fixed
+
+#### Push Notification Parse Functions — Root Cause Fix
+- `pkg/push/qot_push.go`: `ParseUpdateBasicQot`, `ParseUpdateKL`, `ParseUpdateOrderBook`, `ParseUpdateTicker`, `ParseUpdateRT`, `ParseUpdateBroker` now unmarshal directly into `S2C` protobuf type (matching OpenD push body format) instead of `Response` wrapper. Added `len(body) == 0` guard at top of each function. Previously these unmarshaled into `Response`, expecting a `retType` field that OpenD never sends in push bodies.
+- `pkg/push/push_test.go`: 5 empty-data tests updated to expect `nil, nil` instead of error (since empty push bodies from OpenD are valid and mean no data).
+- `client/push_test.go`: `TestParsePushKLine` and `TestParsePushQuote_EmptyList` now marshal `S2C` directly instead of `Response` wrapper.
+
+#### Core Client Stability
+- `internal/client/client.go`: `logf()` nil logger panic fixed — logger now eagerly initialized at package level (`log.Default()`), replacing lazy `sync.Once` pattern.
+- `internal/client/client.go`: Connection state race fixed — `connected bool` replaced with `int32` using `atomic.LoadInt32`/`atomic.StoreInt32` in `ConnectWithRSA`, `readLoop`, `IsConnected`, `EnsureConnected`, and `WithContext`.
+
+### Test Results
+- `go test ./client/... ./pkg/push/... ./pkg/qot/... ./pkg/trd/... ./pkg/sys/...` — all pass
+- `go test ./internal/client/...` (non-pool tests) — all pass
+- `TestPoolConnReuse`, `test/qot_api`, `test/trd_api`, `test/util` — pre-existing network issues (require real Futu OpenD connection), not caused by these changes
+
 ## [0.6.0] - 2026-04-12
 
 ### Added

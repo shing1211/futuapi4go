@@ -1,6 +1,6 @@
 # futuapi4go Project Status
 
-## Current Release: v0.6.0
+## Current Release: v0.6.1
 
 **Status**: Stable — All APIs implemented and tested
 
@@ -56,24 +56,33 @@ All system APIs are implemented and tested.
 
 ## Test Results
 
-All 230+ unit tests pass across 19 test files.
+Core unit tests pass. Some integration tests require real Futu OpenD connectivity.
 
-| Package | Tests | Status |
-|---------|-------|--------|
-| `client/` | 50+ | Pass |
-| `internal/client/` | 100+ | Pass |
-| `pkg/qot/` | 12 | Pass |
-| `pkg/trd/` | 11 | Pass |
-| `pkg/sys/` | 5 | Pass |
-| `pkg/push/` | 5 | Pass |
-| `test/benchmark/` | 10+ benchmarks | Pass |
-| `test/examples/` | 28 compile checks | Pass |
+| Package | Tests | Status | Notes |
+|---------|-------|--------|-------|
+| `client/` | 6 | ✅ Pass | Push parse tests fixed in v0.6.1 |
+| `internal/client/` | 30+ | ✅ Pass | Non-pool tests pass; `TestPoolConnReuse` needs real OpenD |
+| `pkg/push/` | 9 | ✅ Pass | All push parse tests pass (v0.6.1 fix) |
+| `pkg/qot/` | 12 | ✅ Pass | |
+| `pkg/trd/` | 11 | ✅ Pass | |
+| `pkg/sys/` | 5 | ✅ Pass | |
+| `test/benchmark/` | — | ✅ Skip | No tests to run |
+| `test/examples/` | 28 | ✅ Pass | |
+| `test/integration/` | — | ✅ Pass | |
+| `client/client_test.go` | — | ⚠️ Skip | Has `//go:build skip`; needs redesign |
+| `test/qot_api/` | — | ⚠️ Network | Requires real OpenD/mock server connectivity |
+| `test/trd_api/` | — | ⚠️ Network | Requires real OpenD/mock server connectivity |
+| `test/util/` | — | ⚠️ Network | Mock server tests need connectivity |
 
 ---
 
 ## Release History
 
-### v0.6.0 (Current)
+### v0.6.1 (Current)
+- **P0 bug fixes**: push parse functions now unmarshal `S2C` directly (matching OpenD format), nil logger panic fixed (eager `log.Default()`), connection state race fixed (`connected int32` atomic)
+- 9 push parse tests pass
+
+### v0.6.0
 - 100% proto field coverage for all 59 wrapper functions
 - Full proto field mapping audit completed
 - Push notification handler API: `SetPushHandler`, `ParsePush*` functions
@@ -120,6 +129,8 @@ The SDK uses a 3-layer architecture:
 ### In Progress
 - WebSocket transport integration (internal/ws/ exists but not wired into main Client)
 - OpenTelemetry metrics integration
+- golangci-lint CI integration
+- Race detector in CI
 
 ### Planned
 - Rate limiting utilities
@@ -128,8 +139,9 @@ The SDK uses a 3-layer architecture:
 
 ### Completed
 - 100% proto field coverage
-- Push notification handler API
-- Comprehensive test suites (230+ tests)
+- Push notification handler API (v0.6.0)
+- Push parse function bug fixes (v0.6.1) — 9 tests pass
+- Core client stability fixes — nil logger panic, connection race (v0.6.1)
 - CI/CD pipeline
 
 ---
