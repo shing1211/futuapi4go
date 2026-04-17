@@ -32,7 +32,7 @@ import (
 
 var (
 	loggerMu sync.RWMutex
-	logger   *log.Logger
+	logger   = log.Default()
 )
 
 func SetLogger(l *log.Logger) {
@@ -45,22 +45,10 @@ func defaultLogger() *log.Logger {
 	return log.Default()
 }
 
-var initLoggerOnce sync.Once
-
 func logf(format string, v ...interface{}) {
 	loggerMu.RLock()
 	l := logger
 	loggerMu.RUnlock()
-	if l == nil {
-		initLoggerOnce.Do(func() {
-			loggerMu.Lock()
-			if logger == nil {
-				logger = defaultLogger()
-			}
-			l = logger
-			loggerMu.Unlock()
-		})
-	}
 	if l == nil {
 		return
 	}
@@ -218,7 +206,7 @@ type Client struct {
 	ctx               context.Context
 	cancel            context.CancelFunc
 	wg                sync.WaitGroup
-	connected         bool
+	connected         int32 // atomic: 0 = disconnected, 1 = connected
 	connActive        int32 // atomic flag: 0 = loops should exit, 1 = loops running
 
 	addr         string
@@ -418,7 +406,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.aesKey = s2c.GetConnAESKey()
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
-	c.connected = true
+	atomic.StoreInt32(&c.connected, 1)
 	atomic.StoreInt32(&c.connActive, 1)
 	c.metricsMu.Lock()
 	c.metrics.ConnectedSince = time.Now()
@@ -528,8 +516,8 @@ func (c *Client) readLoop() {
 		pkt, err := c.conn.readOne()
 		if err != nil {
 			c.mu.Lock()
-			if c.connected {
-				c.connected = false
+			if atomic.LoadInt32(&c.connected) == 1 {
+				atomic.StoreInt32(&c.connected, 0)
 				c.logWarn("connection lost: %v\n", err)
 				c.mu.Unlock()
 				go c.reconnect()
@@ -634,9 +622,7 @@ func (c *Client) GetServerVer() int32 {
 }
 
 func (c *Client) IsConnected() bool {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	return c.connected
+	return atomic.LoadInt32(&c.connected) == 1
 }
 
 // EnsureConnected returns an error if the client is not connected.
@@ -644,7 +630,7 @@ func (c *Client) IsConnected() bool {
 func (c *Client) EnsureConnected() error {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	if !c.connected {
+	if atomic.LoadInt32(&c.connected) == 0 {
 		return ErrNotConnected
 	}
 	if c.conn == nil {
@@ -679,7 +665,7 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 	newClient.aesKey = c.aesKey
 	newClient.serverVer = c.serverVer
 	newClient.keepAliveInterval = c.keepAliveInterval
-	newClient.connected = c.connected
+	newClient.connected = atomic.LoadInt32(&c.connected)
 	newClient.mu.RUnlock()
 	return newClient
 }

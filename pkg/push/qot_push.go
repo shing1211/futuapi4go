@@ -65,12 +65,14 @@ type UpdateBasicQot struct {
 }
 
 func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
-	var rsp qotupdatebasicqot.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var s2c qotupdatebasicqot.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
-	if s2c == nil || len(s2c.GetBasicQotList()) == 0 {
+	if len(s2c.GetBasicQotList()) == 0 {
 		return nil, nil
 	}
 	bq := s2c.GetBasicQotList()[0]
@@ -95,12 +97,14 @@ type UpdateKL struct {
 }
 
 func ParseUpdateKL(body []byte) (*UpdateKL, error) {
-	var rsp qotupdatekl.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var s2c qotupdatekl.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
-	if s2c == nil {
+	if s2c.KlList == nil {
 		return nil, nil
 	}
 	return &UpdateKL{
@@ -124,13 +128,12 @@ type UpdateOrderBook struct {
 }
 
 func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
-	var rsp qotupdateorderbook.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
-		return nil, err
-	}
-	s2c := rsp.GetS2C()
-	if s2c == nil {
+	if len(body) == 0 {
 		return nil, nil
+	}
+	var s2c qotupdateorderbook.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
+		return nil, err
 	}
 	return &UpdateOrderBook{
 		Security:                s2c.GetSecurity(),
@@ -151,12 +154,14 @@ type UpdateTicker struct {
 }
 
 func ParseUpdateTicker(body []byte) (*UpdateTicker, error) {
-	var rsp qotupdateticker.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var s2c qotupdateticker.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
-	if s2c == nil {
+	if len(s2c.GetTickerList()) == 0 {
 		return nil, nil
 	}
 	return &UpdateTicker{
@@ -173,12 +178,14 @@ type UpdateRT struct {
 }
 
 func ParseUpdateRT(body []byte) (*UpdateRT, error) {
-	var rsp qotupdatert.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var s2c qotupdatert.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
-	if s2c == nil {
+	if len(s2c.GetRtList()) == 0 {
 		return nil, nil
 	}
 	return &UpdateRT{
@@ -196,13 +203,12 @@ type UpdateBroker struct {
 }
 
 func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
-	var rsp qotupdatebroker.Response
-	if err := proto.Unmarshal(body, &rsp); err != nil {
-		return nil, err
-	}
-	s2c := rsp.GetS2C()
-	if s2c == nil {
+	if len(body) == 0 {
 		return nil, nil
+	}
+	var s2c qotupdatebroker.S2C
+	if err := proto.Unmarshal(body, &s2c); err != nil {
+		return nil, err
 	}
 	return &UpdateBroker{
 		Security:      s2c.GetSecurity(),

@@ -50,37 +50,52 @@ func TestParseUpdateBasicQotInvalidData(t *testing.T) {
 }
 
 func TestParseUpdateKLInvalidData(t *testing.T) {
-	_, err := ParseUpdateKL([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateKL should fail with empty data")
+	result, err := ParseUpdateKL([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateKL should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateKL should return nil for empty data")
 	}
 }
 
 func TestParseUpdateOrderBookInvalidData(t *testing.T) {
-	_, err := ParseUpdateOrderBook([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateOrderBook should fail with empty data")
+	result, err := ParseUpdateOrderBook([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateOrderBook should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateOrderBook should return nil for empty data")
 	}
 }
 
 func TestParseUpdateTickerInvalidData(t *testing.T) {
-	_, err := ParseUpdateTicker([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateTicker should fail with empty data")
+	result, err := ParseUpdateTicker([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateTicker should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateTicker should return nil for empty data")
 	}
 }
 
 func TestParseUpdateRTInvalidData(t *testing.T) {
-	_, err := ParseUpdateRT([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateRT should fail with empty data")
+	result, err := ParseUpdateRT([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateRT should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateRT should return nil for empty data")
 	}
 }
 
 func TestParseUpdateBrokerInvalidData(t *testing.T) {
-	_, err := ParseUpdateBroker([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateBroker should fail with empty data")
+	result, err := ParseUpdateBroker([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateBroker should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateBroker should return nil for empty data")
 	}
 }
 
