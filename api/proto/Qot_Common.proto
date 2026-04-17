@@ -207,7 +207,7 @@ enum SubType
 	SubType_KL_Week = 12; //周K
 	SubType_KL_Month = 13; //月K
 	SubType_Broker = 14; //经纪队列
-	SubType_KL_Quarter = 15; //季K
+	SubType_KL_Qurater = 15; //季K
 	SubType_KL_Year = 16; //年K
 	SubType_KL_3Min = 17; //3分K
 }
@@ -270,9 +270,9 @@ enum SecurityStatus
 	SecurityStatus_Listing = 2; //待上市
 	SecurityStatus_Purchasing = 3; //申购中
 	SecurityStatus_Subscribing = 4; //认购中
-	SecurityStatus_BeforeDarkTradeOpening = 5; //暗盘开盘前
-	SecurityStatus_DarkTrading = 6; //暗盘交易中
-	SecurityStatus_DarkTradeEnd = 7; //暗盘已收盘
+	SecurityStatus_BeforeDrakTradeOpening = 5; //暗盘开盘前
+	SecurityStatus_DrakTrading = 6; //暗盘交易中
+	SecurityStatus_DrakTradeEnd = 7; //暗盘已收盘
 	SecurityStatus_ToBeOpen = 8; //待开盘
 	SecurityStatus_Suspended = 9; //停牌
 	SecurityStatus_Called = 10; //已收回
@@ -454,6 +454,7 @@ enum QotRight
 	QotRight_Level2 = 3; //Level2
 	QotRight_SF = 4; //SF高级行情
 	QotRight_No = 5; //无权限
+	QotRight_Level3 = 6; //Level3
 }
 
 // 提醒类型
@@ -774,7 +775,7 @@ message OrderBook
 {
 	required double price = 1; //委托价格
 	required int64 volume = 2; //委托数量
-	required int32 orderCount = 3; //委托订单个数
+	required int32 orederCount = 3; //委托订单个数
 	repeated OrderBookDetail detailList = 4; //订单信息，SF行情特有
 }
 

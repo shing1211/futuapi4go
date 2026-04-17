@@ -10,8 +10,8 @@ message C2S
 
 message S2C
 {
-	optional int32 usedSubQuota = 1; // 已使用订阅额度
-	optional int32 usedKLineQuota = 2; // 已使用历史K线额度
+	optional int32 used_sub_quota = 1; // 已使用订阅额度
+	optional int32 used_kline_quota = 2; // 已使用历史K线额度
 }
 
 message Request

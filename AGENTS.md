@@ -12,7 +12,7 @@ go test ./...
 - `api/proto/` — 74 protobuf definitions
 
 ## Current Protobuf Version
-- v10.2.6208 — **forward-compatible with FutuOpenD 10.3.6308**
+- v10.3.6308 — **forward-compatible with FutuOpenD 10.3.6308**
 
 ## Entry Points
 - `client.New()` — create client

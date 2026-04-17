@@ -43,9 +43,9 @@ enum UserAttribution
 {
 	UserAttribution_Unknown = 0; //
 	UserAttribution_NN = 1; //大陆
-	UserAttribution_MM = 2; //MooMoo
+	UserAttribution_MM = 2; //美国
 	UserAttribution_SG = 3; //新加坡
-	UserAttribution_AU = 4; //澳洲
+	UserAttribution_AU = 4; //澳洲 
 	UserAttribution_JP = 5; //日本
 	UserAttribution_HK = 6; //香港
 }

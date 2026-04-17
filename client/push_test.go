@@ -27,7 +27,11 @@ import (
 
 func TestParsePushQuote_EmptyList(t *testing.T) {
 	s2c := &qotupdatebasicqot.S2C{BasicQotList: []*qotpb.BasicQot{}}
-	body, _ := proto.Marshal(s2c)
+	rsp := &qotupdatebasicqot.Response{
+		RetType: proto.Int32(0),
+		S2C:     s2c,
+	}
+	body, _ := proto.Marshal(rsp)
 
 	data, err := ParsePushQuote(body)
 	if err != nil {
@@ -70,7 +74,11 @@ func TestParsePushKLine(t *testing.T) {
 		RehabType: proto.Int32(0),
 		KlList:    []*qotpb.KLine{kl},
 	}
-	body, _ := proto.Marshal(s2c)
+	rsp := &qotupdatekl.Response{
+		RetType: proto.Int32(0),
+		S2C:     s2c,
+	}
+	body, _ := proto.Marshal(rsp)
 
 	data, err := ParsePushKLine(body)
 	if err != nil {
