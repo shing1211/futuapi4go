@@ -2885,6 +2885,11 @@ func WithKeepAliveInterval(d time.Duration) Option {
 	return futuapi.WithKeepAliveInterval(d)
 }
 
+// WithReconnectInterval sets the base reconnect interval when the connection drops.
+func WithReconnectInterval(d time.Duration) Option {
+	return futuapi.WithReconnectInterval(d)
+}
+
 // WithMaxRetries sets the maximum retry attempts.
 func WithMaxRetries(n int) Option {
 	return futuapi.WithMaxRetries(n)
