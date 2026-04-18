@@ -2682,6 +2682,7 @@ type PushTicker struct {
 	Price    float64
 	Volume   int64
 	Turnover float64
+	Side     int32 // TickerDirection: 1=Buy, 2=Sell, 0=Unknown
 }
 
 // SetPushHandler registers a handler that receives push notifications for
@@ -2779,6 +2780,7 @@ func ParsePushTicker(body []byte) (*PushTicker, error) {
 		Price:    t.GetPrice(),
 		Volume:   t.GetVolume(),
 		Turnover: t.GetTurnover(),
+		Side:     t.GetDir(),
 	}, nil
 }
 
