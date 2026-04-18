@@ -492,7 +492,7 @@ funds := fixtures.HSIFunds()
 
 - **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues)
 - **Development**: See [DEVELOPER.md](DEVELOPER.md)
-- **Project Status**: See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)
+- **Project Status**: See [README.md](README.md)
 
 ---
 

@@ -22,7 +22,7 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 - [ ] Race detector in CI
 - [ ] Proper semver tagging
 
-### v0.6.0 (Current)
+### v0.6.1 (Current)
 - [x] 100% proto field coverage for all 59 wrapper functions
 - [x] Full proto field mapping audit
 - [x] Push notification handler API
@@ -73,7 +73,7 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 - [ ] Ping/pong connection health verification
 - [ ] Connection chaos tests (mock server failure modes)
 - [ ] TLS support
-- [ ] Update PROJECT_STATUS.md (actual test state)
+- [ ] Update test state (PROJECT_STATUS.md merged into README)
 - [ ] Example programs audit + index
 - [ ] golangci-lint configuration
 

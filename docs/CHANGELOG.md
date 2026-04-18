@@ -132,7 +132,7 @@ Complete field-by-field audit confirmed no hardcoded zeros or data loss across a
 - `trd_modify_order`: Updated `ModifyOrder` call for new return signature
 
 ### Documentation
-- `PROTO_VERIFICATION.md`: Comprehensive field-by-field report, 59/59 wrappers verified
+- `PROTO_VERIFICATION.md` (merged into CHANGELOG): Comprehensive field-by-field report, 59/59 wrappers verified
 
 ## [0.4.1] - 2026-04-08
 
@@ -238,7 +238,7 @@ Complete field-by-field audit confirmed no hardcoded zeros or data loss across a
 
 ### Documentation
 - Updated IMPLEMENTATION.md with simulator stats
-- Updated SIMULATOR.md with complete implementation status
+- Updated documentation with simulator implementation status
 - Updated README.md with project status
 
 ## [0.2.0] - 2026-04-07

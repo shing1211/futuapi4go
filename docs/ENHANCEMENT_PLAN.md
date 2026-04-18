@@ -67,7 +67,7 @@
 | **P1** | Medium | **Connection pool performance** | Current pool implementation has O(n) lookup in `Put()` and `Get()`. Use `sync.Map` or separate `map[PoolType][]*PoolConn` with proper locking for O(1) amortized lookups. |
 | **P1** | Medium | **Zero-allocation request path** | The request/response path allocates slices and maps on every call. Use `sync.Pool` for reused `[]byte` buffers and pre-allocated response structs for hot paths. |
 | **P1** | Low | **Batch request optimization** | Some APIs (e.g., `GetBasicQot`, `GetStaticInfo`) accept multiple securities. Ensure the internal serialization is efficient. Benchmark and optimize protobuf marshal/unmarshal for batch payloads. |
-| **P2** | High | **WebSocket transport** | `PROJECT_STATUS.md` mentions `internal/ws/` exists but not wired in. Implement WebSocket as an alternative transport for push-heavy workloads (reduces TCP overhead for high-frequency quote streams). |
+| **P2** | High | **WebSocket transport** | README.md mentions `internal/ws/` exists but not wired in. Implement WebSocket as an alternative transport for push-heavy workloads (reduces TCP overhead for high-frequency quote streams). |
 | **P2** | Medium | **Pre-computed protobuf pools** | Use `proto.Unmarshal` with pre-allocated message structs pooled via `sync.Pool` to reduce GC pressure during high-frequency push handling. |
 | **P2** | Low | **Read buffer sizing** | The connection read buffer size should be configurable. Large push payloads (order book, tick streams) need appropriately sized buffers to avoid partial reads. |
 
@@ -133,7 +133,7 @@
 | **P0** | Low | **Fix ROADMAP.md** | Current `ROADMAP.md` is all placeholder TODOs. Replace with real roadmap based on this enhancement plan. |
 | **P1** | Medium | **API changelog** | Add `docs/CHANGELOG.md` with auto-generated entries (use `git-cliff` or similar). Every API change must update the changelog. |
 | **P1** | Medium | **Architecture decision records (ADRs)** | Document key decisions: (a) why `APIConnector` interface pattern, (b) why protobuf over JSON, (c) connection pool design choices, (d) push notification architecture. Store in `docs/adr/`. |
-| **P1** | Low | **Update PROJECT_STATUS.md** | Current status claims all 230+ tests pass. Update to reflect actual test state after fixing broken tests. |
+| **P1** | Low | **Update test state** | PROJECT_STATUS.md merged into README. Current test state reflects ~100+ core tests pass. |
 | **P1** | Medium | **Migrate README examples to working code** | `README.md:50` has a TODO note: "Full Environment Variable integration is planned for the next release." Either implement it or remove the misleading comment. |
 | **P2** | Medium | **Performance profiling guide** | Add `docs/PERFORMANCE.md`: how to profile the SDK with `pprof`, interpret benchmark results, common bottlenecks and solutions. |
 | **P2** | Low | **Stability report** | Add `docs/STABILITY.md`: known limitations, edge cases, OpenD version compatibility matrix. |
@@ -163,7 +163,7 @@
 | **P2** | High | **Streaming API** | For high-frequency quote streams, offer a `Client.SubscribeStream(ctx, securities, callback)` that handles reconnection and backpressure automatically. |
 | **P2** | Medium | **Account portfolio snapshot** | Add `GetPortfolioSnapshot(client *Client, accID uint64) (*PortfolioSnapshot, error)`: returns all positions + funds + open orders in a single API call (reduces round-trips on startup). |
 | **P2** | Medium | **Webhook support** | Futu supports webhooks for push notifications. Add `WithWebhook(url, secret)` option that forwards push data to an HTTP endpoint. Useful for bridging to other systems. |
-| **P3** | High | **GraphQL interface** | `PROJECT_STATUS.md` mentions this. Consider `gqlgen`-based GraphQL layer over the REST-like API for flexible querying. Lower priority — protobuf is already well-structured. |
+| **P3** | High | **GraphQL interface** | README.md mentions this. Consider `gqlgen`-based GraphQL layer over the REST-like API for flexible querying. Lower priority — protobuf is already well-structured. |
 
 ---
 
@@ -197,7 +197,7 @@
 | 5 | Connection health check (ping/pong) | Quality |
 | 6 | Chaos connection tests (mock server failure modes) | Testing |
 | 7 | TLS support | Security |
-| 8 | Update PROJECT_STATUS.md (actual test state) | Docs |
+| 8 | Update test state | Docs |
 | 9 | Example programs audit + index | DX |
 | 10 | golangci-lint config | DX |
 

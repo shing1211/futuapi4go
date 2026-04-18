@@ -305,10 +305,10 @@ These are necessary because protobuf fields require pointer types.
 
 ## Additional Resources
 
-- [USER_GUIDE.md](../docs/USER_GUIDE.md) - Complete user documentation
-- [API_REFERENCE.md](../docs/API_REFERENCE.md) - API reference
-- [CHANGELOG.md](../docs/CHANGELOG.md) - Version history
-- [DEVELOPER.md](../docs/DEVELOPER.md) - Developer guide
+- [docs/DEVELOPER.md](../docs/DEVELOPER.md) - SDK developer guide
+- [docs/API_REFERENCE.md](../docs/API_REFERENCE.md) - API reference
+- [docs/CHANGELOG.md](../docs/CHANGELOG.md) - Version history
+- [ROADMAP.md](../ROADMAP.md) - Project roadmap
 
 ---
 

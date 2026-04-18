@@ -234,7 +234,7 @@ Execution Summary:
 
 ## Additional Resources
 
-- [docs/USER_GUIDE.md](../../docs/USER_GUIDE.md) - Complete user guide
+- [docs/DEVELOPER.md](../../docs/DEVELOPER.md) - SDK developer guide
 - [docs/DEVELOPER.md](../../docs/DEVELOPER.md) - Developer guide
 - [docs/API_REFERENCE.md](../../docs/API_REFERENCE.md) - API reference
 
