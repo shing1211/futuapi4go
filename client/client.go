@@ -2858,13 +2858,80 @@ func ParsePushBroker(body []byte) (*PushBroker, error) {
 
 // Push ProtoID constants (re-exported from pkg/push for convenience).
 const (
-	ProtoID_Qot_UpdateBasicQot  = 3005
-	ProtoID_Qot_UpdateKL        = 3007
-	ProtoID_Qot_UpdateOrderBook = 3013
+	ProtoID_Qot_UpdateBasicQot   = 3005
+	ProtoID_Qot_UpdateKL         = 3007
+	ProtoID_Qot_UpdateOrderBook  = 3013
 	ProtoID_Qot_UpdateTicker    = 3011
-	ProtoID_Qot_UpdateRT        = 3009
-	ProtoID_Qot_UpdateBroker    = 3015
+	ProtoID_Qot_UpdateRT         = 3009
+	ProtoID_Qot_UpdateBroker     = 3015
+	ProtoID_Trd_UpdateOrder      = 2208
+	ProtoID_Trd_UpdateOrderFill  = 2218
+	ProtoID_Trd_Notify          = 2207
 )
+
+// PushOrderUpdate represents an order status update push.
+type PushOrderUpdate struct {
+	OrderID     uint64
+	OrderIDEx   string
+	Code        string
+	SecMarket   int32
+	TrdSide    int32
+	Qty        float64
+	Price      float64
+	OrderStatus int32
+}
+
+// PushOrderFill represents an order fill push.
+type PushOrderFill struct {
+	OrderID         uint64
+	OrderIDEx       string
+	Code            string
+	SecMarket       int32
+	TrdSide        int32
+	Qty            float64
+	Price          float64
+	FillID         uint64
+	FillIDEx       string
+	FillCreateTime string
+}
+
+// ParsePushOrderUpdate parses a raw push body (ProtoID 2208) into PushOrderUpdate.
+func ParsePushOrderUpdate(body []byte) (*PushOrderUpdate, error) {
+	data, err := push.ParseUpdateOrder(body)
+	if err != nil || data == nil || data.Order == nil {
+		return nil, err
+	}
+	return &PushOrderUpdate{
+		OrderID:     data.Order.GetOrderID(),
+		OrderIDEx:   data.Order.GetOrderIDEx(),
+		Code:        data.Order.GetCode(),
+		SecMarket:   data.Order.GetSecMarket(),
+		TrdSide:     data.Order.GetTrdSide(),
+		Qty:         data.Order.GetQty(),
+		Price:       data.Order.GetPrice(),
+		OrderStatus: data.Order.GetOrderStatus(),
+	}, nil
+}
+
+// ParsePushOrderFill parses a raw push body (ProtoID 2218) into PushOrderFill.
+func ParsePushOrderFill(body []byte) (*PushOrderFill, error) {
+	data, err := push.ParseUpdateOrderFill(body)
+	if err != nil || data == nil || data.OrderFill == nil {
+		return nil, err
+	}
+	return &PushOrderFill{
+		OrderID:         data.OrderFill.GetOrderID(),
+		OrderIDEx:       data.OrderFill.GetOrderIDEx(),
+		Code:            data.OrderFill.GetCode(),
+		SecMarket:       data.OrderFill.GetSecMarket(),
+		TrdSide:        data.OrderFill.GetTrdSide(),
+		Qty:            data.OrderFill.GetQty(),
+		Price:          data.OrderFill.GetPrice(),
+		FillID:         data.OrderFill.GetFillID(),
+		FillIDEx:       data.OrderFill.GetFillIDEx(),
+		FillCreateTime:  data.OrderFill.GetCreateTime(),
+	}, nil
+}
 
 // ============================================================================
 // Options (aliases for internal client options)
