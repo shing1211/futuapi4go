@@ -63,6 +63,28 @@ For detailed function signatures and type definitions, please consult:
 
 ---
 
+## 📊 Project Status
+
+| Metric | Value |
+|--------|-------|
+| **SDK Version** | v0.6.1 |
+| **Wrapper Functions** | 59 (+ push handler API) |
+| **Protobuf Packages** | 74 |
+| **Examples** | 28 |
+| **Go Version** | 1.21+ |
+
+### Architecture
+
+```
+client/Client → pkg/qot/pkg/trd/pkg/sys → internal/client/Conn → Futu OpenD
+```
+
+### Test Status
+
+Core unit tests pass (`client/`, `pkg/`, `internal/client/`). Some integration tests require real Futu OpenD. See [docs/TESTING.md](docs/TESTING.md) for details.
+
+---
+
 ## ⚠️ Disclaimer
 
 **futuapi4go** is a software library only. Trading financial instruments carries significant risk

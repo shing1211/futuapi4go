@@ -246,7 +246,6 @@
 
 ## Related Documentation
 
-- [docs/PROJECT_STATUS.md](PROJECT_STATUS.md) — Current SDK status
 - [docs/TESTING.md](TESTING.md) — Testing guide
 - [docs/DEVELOPER.md](DEVELOPER.md) — Architecture deep-dive
 - [docs/API_REFERENCE.md](API_REFERENCE.md) — API reference
