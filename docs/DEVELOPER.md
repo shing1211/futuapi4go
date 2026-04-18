@@ -318,9 +318,8 @@ func (c *Conn) WritePacket(protoID int32, serialNo int32, body []byte) error {
 ### 2. Update Documentation
 
 - Update API status in `README.md`
-- Add usage example for new API in `USER_GUIDE.md`
 - Update `DEVELOPER.md` for major architecture changes
-- Add to `MIGRATION_GUIDE.md` if new API differs from py-futu-api
+- Add to `docs/CHANGELOG.md` and `MIGRATION_GUIDE.md` if needed
 
 ### 3. Commit Standards
 
@@ -339,6 +338,8 @@ Add support for querying warrant data with comprehensive
 filter options including maturity, price, premium, etc.
 ```
 
+For more detail, see [Conventional Commits](https://www.conventionalcommits.org/).
+
 ---
 
 ## Module Maintenance
@@ -350,7 +351,7 @@ filter options including maturity, price, premium, etc.
 ```go
 // go.mod
 require (
-    github.com/shing1211/futuapi4go v0.4.1
+    github.com/shing1211/futuapi4go v0.6.1
     github.com/shing1211/futuapi4go/pkg/pb v0.0.0
 )
 

@@ -90,6 +90,42 @@ Complete proto field audit across all 59 wrapper functions — zero data loss, n
 - `pkg/qot/quote.go`: `RequestHistoryKLResponse` — use internal `KLine` type, map all fields; `PriceReminderItemInfo` — add `ReminderSessionList`
 - `pkg/trd/trade.go`: `PlaceOrderResponse` — add `OrderIDEx`; `ModifyOrder` — add `ModifyOrderResponse` struct; `GetAccList` — add all 6 missing fields; `GetHistoryOrderFillList` — add `JpAccType`
 
+#### Proto Field Coverage — 100% (59/59 wrappers verified)
+Complete field-by-field audit confirmed no hardcoded zeros or data loss across all API wrappers:
+
+- **Quote**: Added `Name`, `LastClose`, `Turnover`, `TurnoverRate`, `Amplitude`
+- **KLine**: Added `LastClose`, `Turnover`, `ChangeRate`, `Timestamp`
+- **Ticker**: Added `Sequence`, `Turnover`, `RecvTime`, `Type`, `TypeSign`, `Timestamp`
+- **RT**: Added `LastClose`, `AvgPrice`, `Turnover`
+- **OrderBook**: Added `SvrRecvTimeBid/Ask` timestamps, `OrderBookDetail`
+- **OrderBookItem**: Added `OrderCount`, `DetailList`
+- **Broker**: Added `Pos`, `Volume`
+- **FutureInfo**: Added 12 new fields (`Owner`, `Exchange`, `ContractType`, etc.)
+- **Account**: Added `TrdMarketAuthList`, `SecurityFirm`, `SimAccType`, `UniCardNum`, `AccRole`, `JpAccType`
+- **CapitalFlow**: Added `Timestamp`
+- **CapitalDistribution**: Added `UpdateTime`, `UpdateTimestamp`
+- **StaticInfo**: Added `ListTime`, `LotSize`
+- **IpoData**: Added `ListTimestamp`
+- **UserSecurityGroup**: Added `GroupType`
+- **UserInfo**: Added `AvatarUrl` mapping
+- **Snapshot**: Added 25 new fields (`ListTime`, `UpdateTime`, `TurnoverRate`, `AskPrice`, `BidPrice`, etc.)
+- **Position**: Added 15 new fields (`SecMarket`, `TdPlVal`, `TdTrdVal`, `UnrealizedPL`, `RealizedPL`, etc.)
+- **Funds**: Added 16 new fields (`FrozenCash`, `DebtCash`, `RiskLevel`, `MaintenanceMargin`, etc.)
+- **Order**: Added 15 new fields (`OrderIDEx`, `FillQty`, `FillAvgPrice`, `CreateTime`, etc.)
+- **OrderFill**: Added all 11 missing fields (`FillIDEx`, `OrderIDEx`, `CounterBrokerID`, etc.)
+- **OrderFeeInfo**: Added `FeeList` with `OrderFeeItemInfo`
+- **WarrantData**: All 32 proto fields now fully mapped
+- **DelayStatistics**: Fixed hardcoded zeros — now returns actual statistics
+- **StockFilter**: Fixed hardcoded zeros — now parses `BaseDataList`
+- **GlobalState**: Added `MarketHKFuture`, `MarketUSFuture`, `MarketSGFuture`, `MarketJPFuture`, `ProgramStatus`
+- **PlaceOrderResult**: Added `OrderIDEx` field
+- **ModifyOrder**: Now returns `*ModifyOrderResponse` with `Header`, `OrderID`, `OrderIDEx`
+- **ReconfirmOrder**: Now returns `ReconfirmOrderResult` with `AccID`, `TrdEnv`, `TrdMarket`, `OrderID`
+- **GetDelayStatistics**: Added `ReqReplyStatisticsList` and `PlaceOrderStatisticsList`
+- **GetPriceReminder**: Added `ReminderSessionList`, uses own struct types
+- **RequestHistoryKLQuota**: Added `DetailList` with `HistoryKLQuotaDetail` struct
+- **RequestHistoryKL**: Fixed all 11 KLine fields mapped; added automatic pagination via `NextReqKey`
+
 #### Example Fixes
 - `04_push_subscriptions`: Fixed `fmt` format specifiers for proto type changes
 - `03_trading_operations`: Updated `ModifyOrder` call for new return signature

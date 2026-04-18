@@ -8,10 +8,11 @@ The futuapi4go test suite provides comprehensive coverage for all SDK functional
 
 | Category | Test Files | Functions | Description | OpenD Required |
 |----------|-----------|-----------|-------------|----------------|
-| **Unit Tests** | 19 | 230 | Core client, push handlers, wrappers, errors, pool | ❌ No |
+| **Unit Tests** | 12 | ~90 | Core client, push handlers, wrappers, errors, pool | ❌ No |
+| **Integration** | 1 | 2 | Mock server setup, connection flow | ❌ No |
 | **Benchmarks** | 1 | 10+ | Performance measurements | ❌ No |
 | **Examples** | 28 dirs | — | Compile validation | ❌ No |
-| **Total** | **19 files** | **230+ functions** | All passing | — |
+| **Total** | **~14 files** | **~100+ functions** | Core unit tests pass | — |
 
 ---
 
@@ -19,18 +20,17 @@ The futuapi4go test suite provides comprehensive coverage for all SDK functional
 
 ```
 test/
-├── fixtures/
-│   └── hsi_fixtures.go          # Realistic HSI test data
 ├── util/
-│   └── mock_server.go           # Mock OpenD server
+│   ├── mock_server.go           # Mock OpenD server
+│   └── mock_server_initconnect_test.go  # Mock server unit tests
 ├── qot_api/
-│   └── qot_test.go              # 12 market data tests
+│   └── qot_test.go              # 12 market data tests (require mock server)
 ├── trd_api/
-│   └── trd_test.go              # 11 trading tests
+│   └── trd_test.go              # 11 trading tests (require mock server)
 ├── integration/
-│   └── integration_hsi_test.go  # 13 integration tests
+│   └── integration_hsi_test.go  # 2 integration tests
 └── benchmark/
-    └── benchmark_test.go        # 10 performance tests
+    └── pool_benchmark_test.go   # 10+ performance benchmarks
 ```
 
 ---
@@ -332,29 +332,32 @@ for _, req := range requests {
 
 ### API Coverage
 
-| Package | APIs Implemented | APIs Tested | Coverage |
-|---------|-----------------|-------------|----------|
-| **pkg/qot** | 37 | 12 | 32% (core APIs) |
-| **pkg/trd** | 16 | 11 | 69% (critical paths) |
-| **pkg/sys** | 5 | Via integration | 100% |
-| **pkg/push** | 11 handlers | Via integration | 100% |
+| Package | APIs Implemented | Tested | Notes |
+|---------|-----------------|--------|-------|
+| **pkg/qot** | 37 | ✅ Unit | Via pkg/qot package tests |
+| **pkg/trd** | 16 | ✅ Unit | Via pkg/trd package tests |
+| **pkg/sys** | 5 | ✅ Unit | Via pkg/sys package tests |
+| **pkg/push** | 11 handlers | ✅ Unit | Via pkg/push package tests |
+| **client** | wrappers | ✅ Unit | Via client package tests |
+| **internal/client** | core | ✅ Unit | Non-pool tests pass |
 
 ### What's Tested
 
-✅ All critical trading workflows  
-✅ All market data APIs  
-✅ Push notification handling  
-✅ Connection management  
-✅ Error paths  
-✅ Context cancellation  
-✅ Concurrent access  
+✅ Core client functionality  
+✅ Push notification parse functions  
+✅ Error types and constants  
+✅ Connection pool (basic)  
+✅ Market data wrappers (qot package)  
+✅ Trading wrappers (trd package)  
+✅ System API wrappers  
 
-### What's Not Yet Tested
+### Known Gaps
 
-⏳ Historical order queries  
-⏳ Edge cases (network failures)  
-⏳ Race condition detection  
-⏳ Fuzz testing for protobuf  
+⏳ `client/client_test.go` — has `//go:build skip`, needs redesign  
+⏳ `TestPoolConnReuse` — requires real OpenD  
+⏳ Mock server integration tests (`test/qot_api`, `test/trd_api`) — require network connectivity  
+⏳ Race condition detection (`go test -race`)  
+⏳ Fuzz testing for protobuf parsing
 
 ---
 
@@ -417,17 +420,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
-      
+          go-version: '1.23'
+
       - name: Unit Tests
-        run: go test -v ./test/qot_api ./test/trd_api
-      
-      - name: Benchmarks
-        run: go test -bench=. ./test/benchmark
-      
+        run: go test ./client/... ./pkg/... ./internal/client/
+
       - name: Build Examples
         run: |
           cd cmd/examples
@@ -491,9 +491,9 @@ funds := fixtures.HSIFunds()
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/shing1211/futuapi4go/issues)
-- **Questions**: See [USER_GUIDE.md](USER_GUIDE.md)
 - **Development**: See [DEVELOPER.md](DEVELOPER.md)
+- **Project Status**: See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)
 
 ---
 
-**Status**: ✅ All 230+ unit tests passing, 10+ benchmarks passing
+**Status**: ✅ Core unit tests passing. Integration tests require real Futu OpenD connection.

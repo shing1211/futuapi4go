@@ -244,95 +244,19 @@
 
 ---
 
-## Relationship to futugo4bot
-
-This SDK is a direct dependency of [futugo4bot](https://github.com/shing1211/futugo4bot). The following SDK enhancements directly improve the trading bot:
-
-| futuapi4go Item | Improves futugo4bot |
-|----------------|-------------------|
-| Structured error types | Better error handling in engine |
-| Context propagation | Timeout control on all API calls |
-| Prometheus metrics | Grafana dashboard completeness |
-| Historical data downloader in SDK | Data pipeline reliability |
-| Market hours utility | HK futures session filter accuracy |
-| Connection health check | Feed monitoring reliability |
-| Option chain utilities | Options strategy support |
-| TLS support | Secure remote OpenD connections |
-| WebSocket transport | Lower latency for high-frequency quotes |
-| OpenTelemetry tracing | Distributed tracing in bot |
-
-See [futugo4bot/docs/ENHANCEMENT_PLAN.md](https://github.com/shing1211/futugo4bot/blob/main/docs/ENHANCEMENT_PLAN.md) for the trading bot's enhancement roadmap.
-
----
-
 ## Related Documentation
 
 - [docs/PROJECT_STATUS.md](PROJECT_STATUS.md) — Current SDK status
 - [docs/TESTING.md](TESTING.md) — Testing guide
 - [docs/DEVELOPER.md](DEVELOPER.md) — Architecture deep-dive
 - [docs/API_REFERENCE.md](API_REFERENCE.md) — API reference
-- [ROADMAP.md](../ROADMAP.md) — Project roadmap (update this with the phased plan above)
-- [futugo4bot](https://github.com/shing1211/futugo4bot) — Trading bot powered by this SDK
-- [futuopend](https://github.com/shing1211/futuopend) — Docker gateway that this SDK connects to
-- [futugo4bot](https://github.com/shing1211/futugo4bot) — Go algorithmic trading bot powered by this SDK
-- [futujava4bot](https://github.com/shing1211/futujava4bot) — Java algorithmic trading bot (uses official Futu Java SDK, not this SDK)
-- [futupython4bot](https://github.com/shing1211/futupython4bot) — Python quant research platform (uses official Futu Python SDK)
+- [ROADMAP.md](../ROADMAP.md) — Project roadmap
+- [docs/CHANGELOG.md](../docs/CHANGELOG.md) — Release history
 
-## Project Group
+## Related Projects
 
 ```
-futuopend (Docker gateway — github.com/shing1211/futuopend)
-    │  TCP :11111 / WebSocket :11112
-    ▼
-futuapi4go (Go SDK — github.com/shing1211/futuapi4go)  ← YOU ARE HERE
-    │                                          ↑
-futuapi-java (Official Futu Python + Java SDKs) ─────────┘
-    │
-    ├── futugo4bot (Go bot — github.com/shing1211/futugo4bot)
-    │
-    ├── futujava4bot (Java bot — github.com/shing1211/futujava4bot)
-    │
-    └── futupython4bot (Python bot — github.com/shing1211/futupython4bot)
+futuopend (Docker gateway) → futuapi4go (Go SDK) → futugo4bot (Trading bot)
 ```
-
-### futuapi4go improvements that directly benefit the group
-
-| futuapi4go Item | Benefits futuopend | Benefits futugo4bot |
-|----------------|-------------------|-------------------|
-| Connection health check (ping/pong) | Health monitoring docs | Graceful degradation in bot |
-| TLS support | Secure remote OpenD connections | Secure cross-host connections |
-| WebSocket transport | Lower latency gateway option | Faster quote streams for bot |
-| Prometheus metrics endpoint | Observability from gateway | Grafana dashboard completeness |
-| Context propagation on all APIs | Timeout control for SDK users | Order timeout in bot engine |
-| Multiple OpenD connection support | Load balancing across instances | Failover/redundancy in bot |
-
----
-
-## OSS Legal Audit Status (2026-04-16)
-
-The following issues were identified and resolved during the open source readiness audit.
-
-### ✅ Resolved — All CRITICAL
-
-| Issue | Severity | Resolution | Commit |
-|-------|----------|-----------|--------|
-| No copyright headers in source files | CRITICAL | Added Apache 2.0 headers to all 80 non-generated `.go` files (49 auto-generated protobuf files skipped) | `d785886` |
-| 13,301-line Futu derivative doc (`Futu-API-Doc-hk-Proto.md`) | CRITICAL | Deleted; replaced with `docs/FUTU_API_DOCS.md` pointer to official docs | `9face89` |
-| Trading/financial disclaimer absent | CRITICAL | Added "⚠️ Disclaimer" and "™ Trademark Notice" sections to README | `07fbb6d` |
-| No copyright notices in source files | CRITICAL | Apache 2.0 headers added (see above) | `d785886` |
-| Futu trademark without acknowledgment | WARNING | Trademark notice added to README and NOTICE | `07fbb6d`, `9face89` |
-| No explicit license section in README | WARNING | Added license and disclaimer sections to README | `07fbb6d` |
-| No NOTICE file | WARNING | Created `NOTICE` with protobuf attribution and trademark notice | (created during audit) |
-
-### ✅ Complete — Required OSS Files
-
-| File | Status | Location |
-|------|--------|----------|
-| LICENSE | ✅ Present | `LICENSE` (Apache 2.0, full text) |
-| README with disclaimer | ✅ Present | "⚠️ Disclaimer" + "™ Trademark Notice" |
-| CONTRIBUTING.md | ✅ Present | `CONTRIBUTING.md` (root) |
-| CODE_OF_CONDUCT.md | ✅ Present | `CODE_OF_CONDUCT.md` |
-| SECURITY.md | ✅ Present | `SECURITY.md` |
-| NOTICE | ✅ Present | `NOTICE` |
-| Copyright headers | ✅ Added | All 80 non-generated `.go` source files |
-| Derivative doc removed | ✅ Done | `Futu-API-Doc-hk-Proto.md` deleted, replaced with pointer doc |
+- [futugo4bot](https://github.com/shing1211/futugo4bot) — Production algorithmic trading bot for HK futures
+- [futuopend](https://github.com/shing1211/futuopend) — Docker gateway for Futu OpenD
