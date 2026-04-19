@@ -103,6 +103,11 @@ func (c *Client) EnsureConnected() error {
 	return c.inner.EnsureConnected()
 }
 
+// Inner returns the underlying internal client (for advanced use).
+func (c *Client) Inner() *futuapi.Client {
+	return c.inner
+}
+
 // WithContext returns a client with the given context.
 func (c *Client) WithContext(ctx context.Context) *Client {
 	return &Client{inner: c.inner.WithContext(ctx)}
@@ -2858,14 +2863,14 @@ func ParsePushBroker(body []byte) (*PushBroker, error) {
 
 // Push ProtoID constants (re-exported from pkg/push for convenience).
 const (
-	ProtoID_Qot_UpdateBasicQot   = 3005
-	ProtoID_Qot_UpdateKL         = 3007
-	ProtoID_Qot_UpdateOrderBook  = 3013
+	ProtoID_Qot_UpdateBasicQot  = 3005
+	ProtoID_Qot_UpdateKL        = 3007
+	ProtoID_Qot_UpdateOrderBook = 3013
 	ProtoID_Qot_UpdateTicker    = 3011
-	ProtoID_Qot_UpdateRT         = 3009
-	ProtoID_Qot_UpdateBroker     = 3015
-	ProtoID_Trd_UpdateOrder      = 2208
-	ProtoID_Trd_UpdateOrderFill  = 2218
+	ProtoID_Qot_UpdateRT        = 3009
+	ProtoID_Qot_UpdateBroker    = 3015
+	ProtoID_Trd_UpdateOrder     = 2208
+	ProtoID_Trd_UpdateOrderFill = 2218
 	ProtoID_Trd_Notify          = 2207
 )
 
@@ -2875,18 +2880,18 @@ type PushOrderUpdate struct {
 	OrderIDEx   string
 	Code        string
 	SecMarket   int32
-	TrdSide    int32
-	Qty        float64
-	Price      float64
+	TrdSide     int32
+	Qty         float64
+	Price       float64
 	OrderStatus int32
 }
 
 // PushOrderFill represents an order fill push.
 type PushOrderFill struct {
-	OrderID         uint64
-	OrderIDEx       string
-	Code            string
-	SecMarket       int32
+	OrderID        uint64
+	OrderIDEx      string
+	Code           string
+	SecMarket      int32
 	TrdSide        int32
 	Qty            float64
 	Price          float64
@@ -2920,16 +2925,16 @@ func ParsePushOrderFill(body []byte) (*PushOrderFill, error) {
 		return nil, err
 	}
 	return &PushOrderFill{
-		OrderID:         data.OrderFill.GetOrderID(),
-		OrderIDEx:       data.OrderFill.GetOrderIDEx(),
-		Code:            data.OrderFill.GetCode(),
-		SecMarket:       data.OrderFill.GetSecMarket(),
+		OrderID:        data.OrderFill.GetOrderID(),
+		OrderIDEx:      data.OrderFill.GetOrderIDEx(),
+		Code:           data.OrderFill.GetCode(),
+		SecMarket:      data.OrderFill.GetSecMarket(),
 		TrdSide:        data.OrderFill.GetTrdSide(),
 		Qty:            data.OrderFill.GetQty(),
 		Price:          data.OrderFill.GetPrice(),
 		FillID:         data.OrderFill.GetFillID(),
 		FillIDEx:       data.OrderFill.GetFillIDEx(),
-		FillCreateTime:  data.OrderFill.GetCreateTime(),
+		FillCreateTime: data.OrderFill.GetCreateTime(),
 	}, nil
 }
 
