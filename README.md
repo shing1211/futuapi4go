@@ -2,8 +2,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Language">
-  <img src="https://img.shields.io/badge/License-MIT%20Licensed-green?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/Status-UnderDevelopment-orange?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Version-0.8.0-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" alt="Status">
 </p>
 
 ---
