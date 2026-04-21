@@ -51,13 +51,13 @@ func TestParsePushQuote_InvalidBody(t *testing.T) {
 func TestParsePushKLine(t *testing.T) {
 	sec := &qotpb.Security{Market: proto.Int32(2), Code: proto.String("HSImain")}
 	kl := &qotpb.KLine{
-		Time:           proto.String("2026-04-12 00:00:00"),
-		OpenPrice:      proto.Float64(24800.0),
-		HighPrice:      proto.Float64(25200.0),
-		LowPrice:       proto.Float64(24700.0),
-		ClosePrice:     proto.Float64(25000.0),
-		Volume:         proto.Int64(100000),
-		Turnover:       proto.Float64(2.5e9),
+		Time:          proto.String("2025-04-12 10:00:00"),
+		OpenPrice:     proto.Float64(24800.0),
+		HighPrice:     proto.Float64(25100.0),
+		LowPrice:      proto.Float64(24750.0),
+		ClosePrice:    proto.Float64(25000.0),
+		Volume:        proto.Int64(15000),
+		Turnover:      proto.Float64(2.5e9),
 		LastClosePrice: proto.Float64(24800.0),
 		ChangeRate:     proto.Float64(0.8),
 		Timestamp:      proto.Float64(1744502400),
@@ -70,7 +70,12 @@ func TestParsePushKLine(t *testing.T) {
 		RehabType: proto.Int32(0),
 		KlList:    []*qotpb.KLine{kl},
 	}
-	body, _ := proto.Marshal(s2c)
+	// Wrap S2C in Response (matching OpenD push body format)
+	resp := &qotupdatekl.Response{
+		RetType: proto.Int32(0),
+		S2C:     s2c,
+	}
+	body, _ := proto.Marshal(resp)
 
 	data, err := ParsePushKLine(body)
 	if err != nil {
