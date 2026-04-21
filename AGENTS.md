@@ -31,3 +31,7 @@ go test ./...   # Runs unit tests across the entire codebase (critical verificat
 - **Connection Pool:** `internal/client/pool.go` — Resource management logic.
 - **Low-Level I/O:** `internal/client/conn.go` — Raw packet handling, serialization, and reading from the socket.
 - **Examples:** `cmd/examples/*` - Provides concrete usage patterns for trading, market data, and push subscriptions.
+
+## 📚 Official Documentation
+
+- **Futu API Proto Documentation:** https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
