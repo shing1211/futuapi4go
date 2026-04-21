@@ -15,6 +15,7 @@
 package benchmark_test
 
 import (
+	"context"
 	"testing"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
@@ -33,7 +34,7 @@ func BenchmarkClientPoolGet_Pooled(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		client, err := pool.Get(futuapi.PoolTypeMarketData)
+		client, err := pool.Get(context.Background(), futuapi.PoolTypeMarketData)
 		if err != nil {
 			b.Fatalf("Pool Get failed: %v", err)
 		}
@@ -55,7 +56,7 @@ func BenchmarkClientPoolGet_Concurrent(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			client, err := pool.Get(futuapi.PoolTypeMarketData)
+			client, err := pool.Get(context.Background(), futuapi.PoolTypeMarketData)
 			if err != nil {
 				b.Fatalf("Pool Get failed: %v", err)
 			}
@@ -71,7 +72,7 @@ func BenchmarkClientPoolReuse(b *testing.B) {
 	pool := futuapi.NewClientPool(config)
 	defer pool.Close()
 
-	client, err := pool.Get(futuapi.PoolTypeMarketData)
+	client, err := pool.Get(context.Background(), futuapi.PoolTypeMarketData)
 	if err != nil {
 		b.Fatalf("Initial Get failed: %v", err)
 	}
@@ -81,7 +82,7 @@ func BenchmarkClientPoolReuse(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		c, err := pool.Get(futuapi.PoolTypeMarketData)
+		c, err := pool.Get(context.Background(), futuapi.PoolTypeMarketData)
 		if err != nil {
 			b.Fatalf("Pool Get failed: %v", err)
 		}

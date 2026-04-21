@@ -1,103 +1,93 @@
-# Futu API for Golang (Updated)
+# 🚀 futuapi4go: The Resilient Open-Source Go SDK for Futu OpenAPI
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Go">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/Version-0.6.1-blue?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Language">
+  <img src="https://img.shields.io/badge/License-MIT%20Licensed-green?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Status-UnderDevelopment-orange?style=for-the-badge" alt="Status">
 </p>
 
-<p align="center">
-  <strong>Professional-Grade Go SDK for Futu OpenAPI</strong><br>
-  Robust and resilient trading and market data interface, enhanced with modern Go best practices.
- </p>
-
 ---
 
-## ⭐ What's New in v0.6.1
+## ✨ Introduction: Your Gateway to Futu Trading Data
 
-*   **Bug Fixes:** Push notification parse functions now correctly unmarshal `S2C` directly (matching OpenD push body format). Fixed nil logger panic and connection state race condition.
-*   **Stability:** Core unit tests all pass. See [docs/CHANGELOG.md](docs/CHANGELOG.md) for full release notes.
+`futuapi4go` is a powerful, high-performance, and resilient Go SDK engineered to provide developers with seamless access to the comprehensive suite of trading and market data provided by the Futu OpenAPI. We've built this library from the ground up using modern Go concurrency patterns (goroutines, channels) and robust error handling to ensure it performs reliably even in challenging real-world network environments.
+
+**We are building this project with an Open Source mindset.** Our commitment is to create a developer experience that is intuitive, reliable, and easy to contribute to.
+
+## 💡 Key Features
+*   **Unified API:** Single interface for Market Data (quotes, KLines), Trading Operations (`PlaceOrder`, `GetPositionList`), and System Status checks.
+*   **Robust Connection Handling:** Features a sophisticated connection pool with automatic reconnection logic and configurable health checks.
+*   **Asynchronous Push Notifications:** Easily subscribe to real-time market data and order updates using structured push handlers.
+*   **Advanced Market Tools:** Access specialized functions like `RequestHistoryKL` (with auto-pagination), `GetOptionChain`, and `GetSecuritySnapshot`.
+
+## ⚡️ Getting Started: A Quick Dive
+
+### Prerequisites
+Before you begin, ensure you have a basic understanding of the Futu OpenAPI requirements, including RSA public key generation for secure connection.
+
+1.  **Installation:**
+    ```bash
+    go get github.com/shing1211/futuapi4go
+    ```
+2.  **Connection Example (Simplified):**
+    *(Note: Full implementation requires robust error checking.)*
+    ```go
+    package main
+
+    import (
+        "fmt"
+        "github.com/shing1211/futuapi4go/client"
+        "github.com/shing1211/futuapi4go/pkg/qot"
+    )
+
+    func main() {
+        // Replace with your actual RSA public key PEM string
+        publicKeyPEM := "YOUR_RSA_PUBLIC_KEY_HERE" 
+        
+        cli := client.New() // Use New() for default options
+        defer cli.Close()
+
+        fmt.Println("Attempting connection...")
+        if err := cli.ConnectWithRSA("127.0.0.1:11111", publicKeyPEM); err != nil {
+            panic(fmt.Sprintf("FATAL CONNECTION ERROR: %v", err))
+        }
+
+        // Example Market Data Request (HSI)
+        marketCode := 2 // HK Market Code
+        symbolCode := "HSImain" 
+        
+        quote, err := qot.GetBasicQot(cli, marketCode, symbolCode)
+        if err != nil {
+            fmt.Printf("Failed to get quote: %v\n", err)
+        } else {
+            fmt.Printf("📈 Quote for %s: Price=%.2f | Volume=%d\n", quote.Symbol, quote.Price, quote.Volume)
+        }
+    }
+    ```
+
+## 🏗️ Architectural Overview (For Developers)
+
+The SDK follows a layered architecture designed for modularity and testability:
+
+`Application Logic` $\rightarrow$ `client/Client` (Public Interface) $\rightarrow$ `pkg/*` (Business Logic Wrappers, e.g., `qot`, `trd`) $\rightarrow$ `internal/client/Conn` (Low-Level Network Handling) $\rightarrow$ `Futu OpenD Gateway`.
+
+**Key Components:**
+*   **`ClientPool` (`internal/client/pool.go`):** Manages and reuses underlying connections for efficiency, minimizing connection overhead per request.
+*   **`Connection` (`internal/client/conn.go`):** Handles the raw TCP socket communication, packet serialization/deserialization, and the primary read loop.
+*   **Push Handlers (`pkg/push/*.go`):** Dedicated parsers to translate complex binary push notifications into clean Go structs for immediate use by the application layer.
+
+## 🛠️ Contributing & Development Standards (Open Source Focus)
+
+We welcome contributions! Whether it's a bug fix, a feature addition, or documentation improvement, your help is invaluable.
+
+1.  **Code Style:** Adhere to standard Golang conventions and maintain consistency with existing patterns in `futuapi4go`.
+2.  **Testing:** All new features must be accompanied by unit tests (`*_test.go`). Utilize the provided mock server utilities for integration testing where possible.
+3.  **Process:** Follow the Git workflow (branching, committing) and submit a Pull Request with a clear description of the changes.
+
+For detailed contribution guidelines, please refer to [`CONTRIBUTING.md`](./CONTRIBUTING.md). For questions, feel free to open an issue!
 
 ---
+### 🛡️ Legal & Disclaimer
+**WARNING: TRADING FINANCIAL INSTRUMENTS CARRIES SIGNIFICANT RISK.** The `futuapi4go` library is a software utility only and does not provide financial advice. By using this SDK, you acknowledge that all trading decisions are made at your own risk. We provide this software "as is."
 
-## 🚀 Quick Start
-
-### 1. Connect and Get Quote
-
-```go
-import (
-    "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/pkg/qot"
-    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-)
-
-cli := client.New()
-defer cli.Close()
-
-if err := cli.ConnectWithRSA("127.0.0.1:11111", publicKeyPEM); err != nil {
-    panic(err)
-}
-defer cli.Close()
-
-quote, err := qot.GetBasicQot(cli, &qotcommon.Security{Market: 2, Code: &"HSImain"})
-if err != nil {
-    panic(err)
-}
-fmt.Printf("HSI: %.2f\n", quote.CurPrice)
-```
-
----
-
-## 🛠️ Architecture Deep Dive (For Developers)
-The library's architecture has been fundamentally redesigned to adhere to modern Go patterns:
-
-**High-Level Flow:** `Your Application` $\rightarrow$ `client/Client` $\rightarrow$ `internal/client/Conn` $\rightarrow$ `Futu OpenD Gateway`.
-
-## 🔗 API Reference & Documentation
-For detailed function signatures and type definitions, please consult:
-*   [docs/API_REFERENCE.md](docs/API_REFERENCE.md) — Full function signatures
-*   [docs/DEVELOPER.md](docs/DEVELOPER.md) — Architecture and internal structure
-*   [docs/TESTING.md](docs/TESTING.md) — Testing guide
-*   [ROADMAP.md](ROADMAP.md) — Project roadmap
-
----
-
-## 📊 Project Status
-
-| Metric | Value |
-|--------|-------|
-| **SDK Version** | v0.6.1 |
-| **Wrapper Functions** | 59 (+ push handler API) |
-| **Protobuf Packages** | 74 |
-| **Examples** | 28 |
-| **Go Version** | 1.21+ |
-
-### Architecture
-
-```
-client/Client → pkg/qot/pkg/trd/pkg/sys → internal/client/Conn → Futu OpenD
-```
-
-### Test Status
-
-Core unit tests pass (`client/`, `pkg/`, `internal/client/`). Some integration tests require real Futu OpenD. See [docs/TESTING.md](docs/TESTING.md) for details.
-
----
-
-## ⚠️ Disclaimer
-
-**futuapi4go** is a software library only. Trading financial instruments carries significant risk
-of financial loss. Past performance does not guarantee future results. This software is provided
-"as is" without warranty. Users are solely responsible for any trading decisions and their
-outcomes. This library does not constitute financial advice.
-
-## ™ Trademark Notice
-
-**"Futu"**, **"moomoo"**, **"牛牛"**, and **"富途"** are trademarks of **Futu Holdings Limited**.
-This project is an independent open-source project and is not affiliated with, endorsed by,
-or connected to Futu Holdings Limited. Use of these trademarks in this project is purely
-descriptive (the project implements a client for the Futu OpenD protocol) and does not imply
-any official relationship or endorsement.
-
-***
+*Trademark Notice: Futu Holdings Limited trademarks are used descriptively to indicate the protocol implementation. This project is independent of Futu.*

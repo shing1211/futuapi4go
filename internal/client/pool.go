@@ -97,8 +97,9 @@ func NewClientPool(config *PoolConfig) *ClientPool {
 }
 
 // Get retrieves a client of the specified type from the pool.
-// If no idle client is available and pool size permits, creates a new one.
-func (p *ClientPool) Get(poolType PoolType) (*Client, error) {
+// If no idle client is available, it waits until a connection becomes available or context times out.
+// The context controls the maximum wait time.
+func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -106,43 +107,49 @@ func (p *ClientPool) Get(poolType PoolType) (*Client, error) {
 		return nil, NewError(CodePoolClosed, "pool is closed")
 	}
 
-	// Try to find an idle connection
-	conns := p.clients[poolType]
-	for _, pc := range conns {
-		if !pc.InUse && time.Since(pc.LastUsed) < p.config.MaxIdleTime {
-			pc.InUse = true
-			pc.LastUsed = time.Now()
-			return pc.Client, nil
+	// Wait loop: retry until we get a connection or context expires
+	for {
+		// Check for context cancellation
+		select {
+		case <-ctx.Done():
+			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
+		default:
 		}
-	}
 
-	// Create new connection if pool size permits
-	if len(conns) < p.config.MaxSize {
-		client, err := p.newClient()
-		if err != nil {
-			return nil, fmt.Errorf("create new client: %w", err)
-		}
-		pc := &PoolConn{
-			Client:    client,
-			PoolType:  poolType,
-			CreatedAt: time.Now(),
-			LastUsed:  time.Now(),
-			InUse:     true,
-		}
-		p.clients[poolType] = append(conns, pc)
-		return client, nil
-	}
+		conns := p.clients[poolType]
 
-	// Wait for a connection to become available
-	for _, pc := range conns {
-		if !pc.InUse {
-			pc.InUse = true
-			pc.LastUsed = time.Now()
-			return pc.Client, nil
+		// Try to find an idle connection
+		for _, pc := range conns {
+			if !pc.InUse && time.Since(pc.LastUsed) < p.config.MaxIdleTime {
+				pc.InUse = true
+				pc.LastUsed = time.Now()
+				return pc.Client, nil
+			}
 		}
-	}
 
-	return nil, NewError(CodePoolExhausted, "pool exhausted: all connections in use")
+		// Create new connection if pool size permits
+		if len(conns) < p.config.MaxSize {
+			client, err := p.newClientLocked()
+			if err != nil {
+				return nil, fmt.Errorf("create new client: %w", err)
+			}
+			pc := &PoolConn{
+				Client:    client,
+				PoolType:  poolType,
+				CreatedAt: time.Now(),
+				LastUsed:  time.Now(),
+				InUse:     true,
+			}
+			p.clients[poolType] = append(conns, pc)
+			return client, nil
+		}
+
+		// Pool is full, wait for a connection to be released
+		// Release lock briefly to allow other goroutines to Put() back
+		p.mu.Unlock()
+		time.Sleep(50 * time.Millisecond)
+		p.mu.Lock()
+	}
 }
 
 // Put returns a client to the pool after use.

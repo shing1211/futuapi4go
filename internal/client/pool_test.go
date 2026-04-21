@@ -15,6 +15,7 @@
 package futuapi
 
 import (
+	"context"
 	"testing"
 	"time"
 )
@@ -72,7 +73,7 @@ func TestPoolGetReturnsErrorWhenClosed(t *testing.T) {
 	pool := NewClientPool(config)
 	pool.Close()
 
-	_, err := pool.Get(PoolTypeMarketData)
+	_, err := pool.Get(context.Background(), PoolTypeMarketData)
 	if err == nil {
 		t.Error("Get should return error when pool is closed")
 	}
@@ -115,7 +116,7 @@ func TestPoolConnReuse(t *testing.T) {
 	pool := NewClientPool(config)
 	defer pool.Close()
 
-	client1, err := pool.Get(PoolTypeGeneral)
+	client1, err := pool.Get(context.Background(), PoolTypeGeneral)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
@@ -125,7 +126,7 @@ func TestPoolConnReuse(t *testing.T) {
 
 	pool.Put(client1)
 
-	client2, err := pool.Get(PoolTypeGeneral)
+	client2, err := pool.Get(context.Background(), PoolTypeGeneral)
 	if err != nil {
 		t.Fatalf("Failed to get second client: %v", err)
 	}
@@ -146,13 +147,13 @@ func TestPoolConnReuseWithDifferentTypes(t *testing.T) {
 	pool := NewClientPool(config)
 	defer pool.Close()
 
-	clientMD, err := pool.Get(PoolTypeMarketData)
+	clientMD, err := pool.Get(context.Background(), PoolTypeMarketData)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
 	pool.Put(clientMD)
 
-	clientTrd, err := pool.Get(PoolTypeTrading)
+	clientTrd, err := pool.Get(context.Background(), PoolTypeTrading)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
@@ -173,16 +174,16 @@ func TestPoolMaxSizeLimit(t *testing.T) {
 	pool := NewClientPool(config)
 	defer pool.Close()
 
-	_, err := pool.Get(PoolTypeGeneral)
+	_, err := pool.Get(context.Background(), PoolTypeGeneral)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
-	_, err = pool.Get(PoolTypeGeneral)
+	_, err = pool.Get(context.Background(), PoolTypeGeneral)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
 
-	_, err = pool.Get(PoolTypeGeneral)
+	_, err = pool.Get(context.Background(), PoolTypeGeneral)
 	if err == nil {
 		t.Error("Expected error when pool exhausted, got nil")
 	}
@@ -195,7 +196,7 @@ func TestPoolRemove(t *testing.T) {
 	pool := NewClientPool(config)
 	defer pool.Close()
 
-	client, err := pool.Get(PoolTypeGeneral)
+	client, err := pool.Get(context.Background(), PoolTypeGeneral)
 	if err != nil {
 		t.Skip("Cannot connect to server:", err)
 	}
