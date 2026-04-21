@@ -15,6 +15,7 @@
 package futuapi
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"fmt"
@@ -205,6 +206,34 @@ func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, erro
 	select {
 	case pkt := <-ch:
 		return pkt, nil
+	case <-timer.C:
+		return nil, fmt.Errorf("read response: i/o timeout")
+	}
+}
+
+// ReadResponseContext reads a response with context cancellation support.
+func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout time.Duration) (*Packet, error) {
+	ch := make(chan *Packet, 1)
+
+	c.dispMu.Lock()
+	c.disp[serial] = ch
+	c.dispSize++
+	c.dispMu.Unlock()
+
+	defer func() {
+		c.dispMu.Lock()
+		delete(c.disp, serial)
+		c.dispMu.Unlock()
+	}()
+
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
+
+	select {
+	case pkt := <-ch:
+		return pkt, nil
+	case <-ctx.Done():
+		return nil, fmt.Errorf("read response: %w", ctx.Err())
 	case <-timer.C:
 		return nil, fmt.Errorf("read response: i/o timeout")
 	}

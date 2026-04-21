@@ -19,6 +19,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -105,7 +106,7 @@ func testMarketData(cli *futuapi.Client) {
 	}
 
 	fmt.Printf("📊 Getting quotes for: %s...\n", "HSImain")
-	quotes, err := qot.GetBasicQot(cli, securities)
+	quotes, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		fmt.Printf("❌ GetBasicQot failed: %v\n", err)
 		return

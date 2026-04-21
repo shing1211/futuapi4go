@@ -713,6 +713,14 @@ func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) e
 	return err
 }
 
+// RequestContext sends a request with context cancellation support.
+func (c *Client) RequestContext(ctx context.Context, protoID uint32, req proto.Message, rsp proto.Message) error {
+	start := time.Now()
+	err := c.requestContextInternal(ctx, protoID, req, rsp)
+	c.recordRequest(protoID, time.Since(start), err)
+	return err
+}
+
 func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Message) error {
 	if c.conn == nil {
 		return ErrNotConnected
@@ -733,6 +741,46 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		apiTimeout = DefaultTimeout
 	}
 	pkt, err := c.conn.ReadResponse(serialNo, apiTimeout)
+	if err != nil {
+		return fmt.Errorf("read response: %w", err)
+	}
+
+	if err := proto.Unmarshal(pkt.Body, rsp); err != nil {
+		return fmt.Errorf("unmarshal: %w", err)
+	}
+
+	return nil
+}
+
+func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req proto.Message, rsp proto.Message) error {
+	if c.conn == nil {
+		return ErrNotConnected
+	}
+
+	body, err := proto.Marshal(req)
+	if err != nil {
+		return err
+	}
+
+	serialNo := c.nextSerialNo()
+	if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
+		return err
+	}
+
+	apiTimeout := c.opts.APITimeout
+	if apiTimeout == 0 {
+		apiTimeout = DefaultTimeout
+	}
+
+	// Merge context timeout with API timeout
+	deadline, hasDeadline := ctx.Deadline()
+	if hasDeadline {
+		if timeout := time.Until(deadline); timeout < apiTimeout {
+			apiTimeout = timeout
+		}
+	}
+
+	pkt, err := c.conn.ReadResponseContext(ctx, serialNo, apiTimeout)
 	if err != nil {
 		return fmt.Errorf("read response: %w", err)
 	}

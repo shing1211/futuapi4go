@@ -15,14 +15,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
 
-	"github.com/shing1211/futuapi4go/cmd/simulator"
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/qot"
+
+	"github.com/shing1211/futuapi4go/cmd/simulator"
 )
 
 func main() {
@@ -56,7 +58,7 @@ func main() {
 	}
 
 	fmt.Println("=== Calling GetBasicQot ===")
-	result, err := qot.GetBasicQot(cli, securities)
+	result, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		log.Fatalf("GetBasicQot failed: %v", err)
 	}

@@ -29,6 +29,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -60,7 +61,7 @@ func main() {
 
 	// 1. Get Real-time Quotes
 	fmt.Println("=== 1. Real-time Quotes (GetBasicQot) ===")
-	quotes, err := qot.GetBasicQot(cli, securities)
+	quotes, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		log.Printf("GetBasicQot failed: %v", err)
 	} else {

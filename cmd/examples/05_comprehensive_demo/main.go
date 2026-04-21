@@ -25,6 +25,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -111,7 +112,7 @@ func runMarketDataDemo(cli *futuapi.Client) {
 
 	// 1.1 Real-time Quotes
 	fmt.Println("📊 Real-time Quotes:")
-	quotes, err := qot.GetBasicQot(cli, securities)
+	quotes, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		fmt.Printf("   ❌ GetBasicQot failed: %v\n", err)
 	} else {

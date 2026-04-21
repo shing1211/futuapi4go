@@ -15,6 +15,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -48,7 +49,7 @@ func main() {
 		{Market: &market3, Code: &code3},
 	}
 
-	result, err := qot.GetBasicQot(cli, securities)
+	result, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		log.Fatalf("GetBasicQot failed: %v", err)
 	}

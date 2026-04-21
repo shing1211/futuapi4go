@@ -15,6 +15,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
@@ -125,7 +126,7 @@ func main() {
 	bodyBytes, _ := proto.Marshal(req)
 	fmt.Printf("  Request: %d bytes\n", len(bodyBytes))
 
-	quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{sec})
+	quotes, err := qot.GetBasicQot(context.Background(),cli, []*qotcommon.Security{sec})
 	if err != nil {
 		fmt.Printf("  ❌ Error: %v\n", err)
 	} else {

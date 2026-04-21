@@ -129,11 +129,11 @@ func (c *Client) GetConn() *futuapi.Conn {
 }
 
 // GetQuote retrieves the current quote for a security.
-func GetQuote(c *Client, market int32, code string) (*Quote, error) {
+func GetQuote(ctx context.Context, c *Client, market int32, code string) (*Quote, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	quotes, err := qot.GetBasicQot(c.inner, []*qotcommon.Security{sec})
+	quotes, err := qot.GetBasicQot(ctx, c.inner, []*qotcommon.Security{sec})
 	if err != nil {
 		return nil, err
 	}

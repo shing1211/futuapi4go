@@ -19,6 +19,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -57,7 +58,7 @@ func main() {
 	fmt.Printf("Querying quotes for %d securities...\n", len(securities))
 
 	// Call GetBasicQot / 調用 GetBasicQot
-	quotes, err := qot.GetBasicQot(cli, securities)
+	quotes, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		log.Printf("GetBasicQot failed: %v", err)
 		return

@@ -20,6 +20,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math"
@@ -204,7 +205,7 @@ func calculateVWAP(data []KLData) float64 {
 
 // getCurrentPrice retrieves current market price / 獲取當前市場價格
 func getCurrentPrice(cli *futuapi.Client, security *qotcommon.Security) float64 {
-	quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{security})
+	quotes, err := qot.GetBasicQot(context.Background(),cli, []*qotcommon.Security{security})
 	if err != nil {
 		log.Printf("GetBasicQot failed: %v", err)
 		return 0

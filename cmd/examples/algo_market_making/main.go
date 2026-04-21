@@ -20,6 +20,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -136,7 +137,7 @@ func main() {
 // getMarketData retrieves current market prices / 獲取當前市場價格
 func getMarketData(cli *futuapi.Client, security *qotcommon.Security) (mid, bid, ask float64) {
 	// Get basic quote / 獲取基本報價
-	quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{security})
+	quotes, err := qot.GetBasicQot(context.Background(),cli, []*qotcommon.Security{security})
 	if err != nil {
 		log.Printf("GetBasicQot failed: %v", err)
 		return 0, 0, 0

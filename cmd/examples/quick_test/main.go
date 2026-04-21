@@ -16,6 +16,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -54,7 +55,7 @@ func main() {
 		{Market: &hkFutureMarket, Code: ptrStr("HSImain")},
 	}
 
-	quotes, err := qot.GetBasicQot(cli, securities)
+	quotes, err := qot.GetBasicQot(context.Background(),cli, securities)
 	if err != nil {
 		fmt.Printf("❌ GetBasicQot failed: %v\n", err)
 	} else {

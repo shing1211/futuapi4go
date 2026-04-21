@@ -28,6 +28,7 @@
 package qot
 
 import (
+	"context"
 	"fmt"
 
 	"google.golang.org/protobuf/proto"
@@ -133,14 +134,14 @@ type BasicQot struct {
 }
 
 // GetBasicQot returns basic quote data for the given securities.
-func GetBasicQot(c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
+func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
 	c2s := &qotgetbasicqot.C2S{
 		SecurityList: securityList,
 	}
 	req := &qotgetbasicqot.Request{C2S: c2s}
 	var rsp qotgetbasicqot.Response
 
-	if err := c.Request(ProtoID_GetBasicQot, req, &rsp); err != nil {
+	if err := c.RequestContext(ctx, ProtoID_GetBasicQot, req, &rsp); err != nil {
 		return nil, err
 	}
 

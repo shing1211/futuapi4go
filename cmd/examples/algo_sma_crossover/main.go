@@ -20,6 +20,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -237,7 +238,7 @@ func executeTrade(cli *futuapi.Client, accID uint64, security *qotcommon.Securit
 		fmt.Println("   Status: DRY RUN - No order placed / 狀態：模擬運行 - 未下單")
 	} else {
 		// Get current price for limit order / 獲取當前價格以設置限價單
-		quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{security})
+		quotes, err := qot.GetBasicQot(context.Background(),cli, []*qotcommon.Security{security})
 		if err != nil {
 			fmt.Printf("   ❌ Failed to get quote: %v\n", err)
 			return
