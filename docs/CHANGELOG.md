@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - 2026-04-21
+
+### Added
+
+#### Context-Aware Request Cancellation
+- `internal/client/client.go`: Added `RequestContext()` method for context-aware API requests with automatic timeout merging
+- `internal/client/conn.go`: Added `ReadResponseContext()` for connection-level context cancellation support
+- `pkg/qot/quote.go`: Updated `GetBasicQot()` to accept `context.Context`
+- `client/client.go`: Updated `GetQuote()` to accept `context.Context`
+
+#### Waitable Connection Pool
+- `internal/client/pool.go`: `ClientPool.Get()` now accepts `context.Context` and waits gracefully for available connections
+- Pool waits until context expires or a connection becomes available
+- Added `CodeTryAgain` error for internal retry logic
+
+#### Examples Updated
+- All examples updated to use `context.Background()` for API calls
+- Examples: `01_market_data_basic`, `05_comprehensive_demo`, `algo_*`, `qot_get_basic_qot`, etc.
+
+### Documentation
+
+- `AGENTS.md`: Updated with architectural constraints, production gotchas, and entry points
+- `ROADMAP.md`: Updated to reflect completed Phase 1 and Phase 2 work
+- `README.md`: Enhanced with vivid writing style and improved structure
+
+### Breaking Changes
+
+- All API functions now accept `context.Context` as first parameter
+- `ClientPool.Get()` now requires `context.Context` argument
+
 ## [0.6.2] - 2026-04-18
 
 ### Fixed

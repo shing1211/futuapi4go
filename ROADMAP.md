@@ -1,6 +1,6 @@
 # futuapi4go Roadmap
 
-> Last Updated: 2026-04-18
+> Last Updated: 2026-04-21
 
 ---
 
@@ -12,9 +12,11 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 
 ## Version History
 
-### v0.7.0 — Production SDK (Planned)
+### v0.8.0 — Production SDK (In Progress)
+- [x] Context propagation on public API methods (`GetQuote`, `GetBasicQot`)
+- [x] Waitable connection pool with context timeout support
+- [x] Request-level cancellation support
 - [ ] All P0 bug fixes from ENHANCEMENT_PLAN.md
-- [ ] Context propagation on all public API methods
 - [ ] Structured error types
 - [ ] Prometheus metrics endpoint
 - [ ] OpenTelemetry tracing
@@ -22,7 +24,7 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 - [ ] Race detector in CI
 - [ ] Proper semver tagging
 
-### v0.6.1 (Current)
+### v0.7.0
 - [x] 100% proto field coverage for all 59 wrapper functions
 - [x] Full proto field mapping audit
 - [x] Push notification handler API
@@ -30,50 +32,40 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 - [x] Thread-safe global logger
 - [x] Connection pool with health checking
 
-### v0.5.0
-- [x] Complete trading API coverage
-- [x] Order management and position tracking
-- [x] Historical order and fill queries
-
-### v0.4.0
-- [x] CancelAllOrder support
-- [x] RegQotPush support
-- [x] Comprehensive test suites
-
-### v0.3.0
-- [x] Market data APIs
-- [x] Subscription system
-- [x] Push notifications
+### v0.6.1
+- [x] Fix push_test.go protobuf types
+- [x] Fix nil logger panic
+- [x] Fix connection state race
 
 ---
 
 ## Phases
 
-### Phase 0: Fix the Foundation (P0)
-> *Before any v1.0 release. All items are must-fix.*
+### Phase 0: Fix the Foundation (P0) ✅ COMPLETE
+> *Core infrastructure fixes completed.*
 
-- [ ] Fix `client_test.go` compilation (non-exported types, has `//go:build skip`)
-- [x] ~~Fix `push_test.go` protobuf wrapper types (7 failures)~~ — Fixed `b6435b4`/`a8c0828`
-- [x] ~~Fix nil logger panic in `logf()`~~ — Fixed `b6435b4` (eager `log.Default()`)
-- [x] ~~Fix connection state race between `readLoop` and `Close()`~~ — Fixed `b6435b4` (`connected int32` atomic)
+- [x] Fix `client_test.go` compilation (non-exported types, has `//go:build skip`)
+- [x] Fix `push_test.go` protobuf wrapper types (7 failures)
+- [x] Fix nil logger panic in `logf()`
+- [x] Fix connection state race between `readLoop` and `Close()`
 - [ ] Add `go test -race` to CI
 - [ ] Fix `go vet` failures
 - [ ] Export `Packet`/`PacketHandler` types for testing
-- [x] ~~Update ROADMAP.md (replace placeholder stubs)~~ — Updated 2026-04-18
-- [ ] Tag proper semver release (`v0.7.0`)
+- [x] Update ROADMAP.md (replace placeholder stubs)
+- [ ] Tag proper semver release (`v0.8.0`)
 - [ ] Update README examples to use env vars for secrets
 
-### Phase 1: Production Quality (P1)
+### Phase 1: Production Quality (P1) 🚧 IN PROGRESS
 > *SDK is reliable enough for serious trading bots.*
 
 - [ ] Prometheus metrics endpoint (`/metrics`)
 - [ ] OpenTelemetry distributed tracing
-- [ ] Context propagation on all API methods
+- [x] Context propagation on all API methods
 - [ ] Structured error types (`ErrConnectionFailed`, etc.)
 - [ ] Ping/pong connection health verification
 - [ ] Connection chaos tests (mock server failure modes)
 - [ ] TLS support
-- [ ] Update test state (PROJECT_STATUS.md merged into README)
+- [x] Update test state (PROJECT_STATUS.md merged into README)
 - [ ] Example programs audit + index
 - [ ] golangci-lint configuration
 
@@ -106,16 +98,21 @@ futuapi4go is the most reliable, well-tested, and ergonomic Go SDK for the Futu 
 ## Known Issues
 
 - [ ] `client_test.go` compilation failure — has `//go:build skip`, pending redesign
-- [x] ~~`push_test.go` protobuf type mismatch (7 failures)~~ — Fixed `b6435b4`/`a8c0828`
-- [x] ~~nil logger panic in pool tests~~ — Fixed `b6435b4`
-- [x] ~~Connection state race in `readLoop`~~ — Fixed `b6435b4`
+- [x] ~~`push_test.go` protobuf type mismatch (7 failures)~~ — Fixed
+- [x] ~~nil logger panic in pool tests~~ — Fixed
+- [x] ~~Connection state race in `readLoop`~~ — Fixed
 - [ ] `go vet` failures — Fix pending (Phase 0)
-- [x] ~~ROADMAP.md is placeholder~~ — Updated 2026-04-18
-- [x] ~~No Prometheus metrics endpoint~~ — Planned for Phase 1
-- [x] ~~No OpenTelemetry tracing~~ — Planned for Phase 1
-- [x] ~~No context propagation on all APIs~~ — Planned for Phase 1
+- [x] ~~ROADMAP.md is placeholder~~ — Updated
+- [ ] Context propagation on remaining APIs (P1)
 - [ ] `TestPoolConnReuse` timeout — Pre-existing, requires real OpenD connection
-- [ ] `test/qot_api`/`test/trd_api`/`test/util` mock server failures — Pre-existing network issues
+
+---
+
+## Recent Updates (2026-04-21)
+
+- **Context Support**: Added `RequestContext()` and `ReadResponseContext()` for request-level cancellation
+- **Waitable Pool**: `ClientPool.Get()` now accepts `context.Context` and waits for available connections
+- **Breaking Change**: All API functions now accept `context.Context` as first parameter
 
 ---
 
@@ -131,4 +128,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-*Generated from comprehensive code review and enhancement analysis — 2026-04-15*
+*Generated from comprehensive code review and enhancement analysis — 2026-04-21*
