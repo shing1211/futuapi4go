@@ -121,6 +121,10 @@ func (s *Server) handleGetBasicQot(pkt *Packet) (*Packet, error) {
 				Turnover:       &turn,
 				TurnoverRate:   &turnoverRate,
 				Amplitude:      &amplitude,
+				IsSuspended:    func() *bool { b := false; return &b }(),
+				ListTime:       func() *string { t := "2020-01-01"; return &t }(),
+				PriceSpread:    func() *float64 { p := 0.0; return &p }(),
+				UpdateTime:     func() *string { t := "2026-04-07 10:30:00"; return &t }(),
 			}
 			bqList = append(bqList, bq)
 		}

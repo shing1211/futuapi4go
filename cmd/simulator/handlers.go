@@ -46,6 +46,7 @@ func (s *Server) handleInitConnect(pkt *Packet) (*Packet, error) {
 	connAESKey := "mock_aes_key_12345"
 	serverVer := int32(10100)
 	keepAliveInterval := int32(30)
+	loginUserID := uint64(0)
 	retType := int32(common.RetType_RetType_Succeed)
 
 	resp := &initconnect.Response{
@@ -55,6 +56,7 @@ func (s *Server) handleInitConnect(pkt *Packet) (*Packet, error) {
 			ConnAESKey:        &connAESKey,
 			ServerVer:         &serverVer,
 			KeepAliveInterval: &keepAliveInterval,
+			LoginUserID:       &loginUserID,
 		},
 	}
 

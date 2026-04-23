@@ -30,7 +30,7 @@ import (
 func main() {
 	fmt.Println("=== Starting Simulator ===")
 
-	srv := simulator.New("127.0.0.1:11111")
+	srv := simulator.New("127.0.0.1:11112")
 	srv.RegisterDefaultHandlers()
 	srv.RegisterQotHandlers()
 	srv.AddSecurity(int32(qotcommon.QotMarket_QotMarket_HK_Security), "00700")
@@ -41,13 +41,13 @@ func main() {
 	defer srv.Stop()
 
 	time.Sleep(100 * time.Millisecond)
-	fmt.Println("Simulator running on 127.0.0.1:11111")
+	fmt.Println("Simulator running on 127.0.0.1:11112")
 
 	fmt.Println("=== Connecting SDK Client ===")
 	cli := futuapi.New()
 	defer cli.Close()
 
-	if err := cli.Connect("127.0.0.1:11111"); err != nil {
+	if err := cli.Connect("127.0.0.1:11112"); err != nil {
 		log.Fatalf("Connect failed: %v", err)
 	}
 	fmt.Printf("Connected! ConnID=%d\n", cli.GetConnID())
@@ -58,7 +58,7 @@ func main() {
 	}
 
 	fmt.Println("=== Calling GetBasicQot ===")
-	result, err := qot.GetBasicQot(context.Background(),cli, securities)
+	result, err := qot.GetBasicQot(context.Background(), cli, securities)
 	if err != nil {
 		log.Fatalf("GetBasicQot failed: %v", err)
 	}

@@ -296,16 +296,25 @@ func NowTimestamp() float64 {
 func (s *Server) AddSecurity(market int32, code string) {
 	key := fmt.Sprintf("%d.%s", market, code)
 	s.Securities[key] = &qotcommon.Security{Market: &market, Code: &code}
+	isSuspended := false
+	priceSpread := 0.0
+	turnoverRate := 0.01
+	amplitude := 2.0
 	s.Quotes[key] = &qotcommon.BasicQot{
-		Security:       &qotcommon.Security{Market: &market, Code: &code},
-		CurPrice:       func() *float64 { p := 100.0; return &p }(),
-		OpenPrice:      func() *float64 { p := 99.0; return &p }(),
-		HighPrice:      func() *float64 { p := 102.0; return &p }(),
-		LowPrice:       func() *float64 { p := 98.0; return &p }(),
-		LastClosePrice: func() *float64 { p := 100.0; return &p }(),
-		Volume:         func() *int64 { v := int64(1000000); return &v }(),
-		Turnover:       func() *float64 { t := 100000000.0; return &t }(),
-		UpdateTime:     func() *string { t := "2026-04-07 10:30:00"; return &t }(),
+		Security:        &qotcommon.Security{Market: &market, Code: &code},
+		CurPrice:        func() *float64 { p := 100.0; return &p }(),
+		OpenPrice:       func() *float64 { p := 99.0; return &p }(),
+		HighPrice:       func() *float64 { p := 102.0; return &p }(),
+		LowPrice:        func() *float64 { p := 98.0; return &p }(),
+		LastClosePrice:  func() *float64 { p := 100.0; return &p }(),
+		Volume:          func() *int64 { v := int64(1000000); return &v }(),
+		Turnover:        func() *float64 { t := 100000000.0; return &t }(),
+		UpdateTime:      func() *string { t := "2026-04-07 10:30:00"; return &t }(),
+		IsSuspended:     &isSuspended,
+		ListTime:        func() *string { t := "2020-01-01"; return &t }(),
+		PriceSpread:     &priceSpread,
+		TurnoverRate:    &turnoverRate,
+		Amplitude:       &amplitude,
 	}
 }
 
