@@ -50,9 +50,24 @@ func main() {
         panic(err)
     }
 
+    // Subscribe to ALL available data for NVDA
     // US stocks require subscription before GetQuote works
-    if err := client.Subscribe(cli, constant.Market_US, "NVDA",
-        []int32{int32(constant.SubType_Quote), int32(constant.SubType_K_1Min)}); err != nil {
+    allSubTypes := []constant.SubType{
+        constant.SubType_Quote,     // Real-time quote
+        constant.SubType_OrderBook, // Order book (bid/ask)
+        constant.SubType_Ticker,     // Tick-by-tick trades
+        constant.SubType_RT,         // Intraday time-share
+        constant.SubType_Broker,     // Broker queue
+        constant.SubType_K_1Min,    // 1-minute K-line
+        constant.SubType_K_5Min,    // 5-minute K-line
+        constant.SubType_K_15Min,   // 15-minute K-line
+        constant.SubType_K_30Min,   // 30-minute K-line
+        constant.SubType_K_60Min,   // 60-minute K-line
+        constant.SubType_K_Day,     // Daily K-line
+        constant.SubType_K_Week,    // Weekly K-line
+        constant.SubType_K_Month,   // Monthly K-line
+    }
+    if err := client.Subscribe(cli, constant.Market_US, "NVDA", allSubTypes); err != nil {
         panic(err)
     }
 
@@ -64,10 +79,20 @@ func main() {
     fmt.Printf("US.NVDA: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
         quote.Price, quote.Open, quote.High, quote.Low, quote.Volume)
 
-    // Subscribe to live K-line updates via channel
-    klCh := make(chan *push.UpdateKL, 100)
-    stop := chanpkg.SubscribeKLine(cli, constant.Market_US, "NVDA", constant.KLType_K_1Min, klCh)
-    defer stop()
+    // Set up channel listeners for each data type
+    quoteCh    := make(chan *push.UpdateBasicQot, 100)
+    tickerCh   := make(chan *push.UpdateTicker, 100)
+    orderBookCh := make(chan *push.UpdateOrderBook, 100)
+    rtCh       := make(chan *push.UpdateRT, 100)
+    brokerCh   := make(chan *push.UpdateBroker, 100)
+    klCh       := make(chan *push.UpdateKL, 100)
+
+    chanpkg.SubscribeQuote(cli, constant.Market_US, "NVDA", quoteCh)
+    chanpkg.SubscribeTicker(cli, constant.Market_US, "NVDA", tickerCh)
+    chanpkg.SubscribeOrderBook(cli, constant.Market_US, "NVDA", orderBookCh)
+    chanpkg.SubscribeRT(cli, constant.Market_US, "NVDA", rtCh)
+    chanpkg.SubscribeBroker(cli, constant.Market_US, "NVDA", brokerCh)
+    chanpkg.SubscribeKLine(cli, constant.Market_US, "NVDA", constant.KLType_K_1Min, klCh)
 
     // Graceful shutdown on Ctrl+C
     sig := make(chan os.Signal, 1)
@@ -75,10 +100,25 @@ func main() {
 
     for {
         select {
+        case q := <-quoteCh:
+            fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
+                q.Security.GetCode(), q.CurPrice, q.Volume)
+        case t := <-tickerCh:
+            fmt.Printf("TICKER: price=%.2f qty=%d\n", t.Price, t.Qty)
+        case ob := <-orderBookCh:
+            fmt.Printf("ORDERBOOK: bid=%.2f ask=%.2f\n", ob.BidList[0].Price, ob.AskList[0].Price)
+        case rt := <-rtCh:
+            fmt.Printf("RT: price=%.2f avg=%.2f\n", rt.Price, rt.AvgPrice)
+        case b := <-brokerCh:
+            if len(b.AskBrokerList) > 0 {
+                fmt.Printf("BROKER: name=%s pos=%d\n",
+                    b.AskBrokerList[0].GetName(), b.AskBrokerList[0].GetPos())
+            }
         case kl := <-klCh:
             for _, bar := range kl.KLList {
                 fmt.Printf("KL: time=%s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
-                    *bar.Time, *bar.OpenPrice, *bar.HighPrice, *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+                    *bar.Time, *bar.OpenPrice, *bar.HighPrice,
+                    *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
             }
         case <-sig:
             fmt.Println("Shutting down...")
@@ -88,7 +128,7 @@ func main() {
 }
 ```
 
-> **Note:** US stocks require subscribing before `GetQuote` works. HK stocks don't have this requirement.
+> **Note:** US stocks require subscribing before `GetQuote` works. HK stocks don't need subscription.
 
 ## Package Map
 

@@ -210,7 +210,7 @@ func GetKLines(c *Client, market int32, code string, klType int32, num int) ([]K
 }
 
 // Subscribe subscribes to real-time market data.
-func Subscribe(c *Client, market int32, code string, subTypes []int32) error {
+func Subscribe(c *Client, market int32, code string, subTypes []constant.SubType) error {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 

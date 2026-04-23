@@ -90,61 +90,61 @@ func subscribeOne[T any](
 }
 
 func SubscribeQuote(cli *client.Client, market int32, code string, ch chan<- *push.UpdateBasicQot) stopFunc {
-	client.Subscribe(cli, market, code, []int32{int32(constant.SubType_Quote)})
+	client.Subscribe(cli, market, code, []constant.SubType{constant.SubType_Quote})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateBasicQot, push.ParseUpdateBasicQot, ch)
 }
 
-func SubscribeKLine(cli *client.Client, market int32, code string, klType int32, ch chan<- *push.UpdateKL) stopFunc {
-	client.Subscribe(cli, market, code, []int32{klTypeToSubType(klType)})
+func SubscribeKLine(cli *client.Client, market int32, code string, klType constant.KLType, ch chan<- *push.UpdateKL) stopFunc {
+	client.Subscribe(cli, market, code, []constant.SubType{klTypeToSubType(klType)})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
 }
 
-func klTypeToSubType(klType int32) int32 {
-	switch klType {
-	case 1:
-		return int32(constant.SubType_K_1Min)
-	case 2:
-		return int32(constant.SubType_K_5Min)
-	case 3:
-		return int32(constant.SubType_K_15Min)
-	case 4:
-		return int32(constant.SubType_K_30Min)
-	case 5:
-		return int32(constant.SubType_K_60Min)
-	case 6:
-		return int32(constant.SubType_K_Day)
-	case 7:
-		return int32(constant.SubType_K_Week)
-	case 8:
-		return int32(constant.SubType_K_Month)
-	case 9:
-		return int32(constant.SubType_K_Quarter)
-	case 10:
-		return int32(constant.SubType_K_Year)
-	case 17:
-		return int32(constant.SubType_K_3Min)
+func klTypeToSubType(k constant.KLType) constant.SubType {
+	switch k {
+	case constant.KLType_K_1Min:
+		return constant.SubType_K_1Min
+	case constant.KLType_K_5Min:
+		return constant.SubType_K_5Min
+	case constant.KLType_K_15Min:
+		return constant.SubType_K_15Min
+	case constant.KLType_K_30Min:
+		return constant.SubType_K_30Min
+	case constant.KLType_K_60Min:
+		return constant.SubType_K_60Min
+	case constant.KLType_K_Day:
+		return constant.SubType_K_Day
+	case constant.KLType_K_Week:
+		return constant.SubType_K_Week
+	case constant.KLType_K_Month:
+		return constant.SubType_K_Month
+	case constant.KLType_K_Quarter:
+		return constant.SubType_K_Quarter
+	case constant.KLType_K_Year:
+		return constant.SubType_K_Year
+	case constant.KLType_K_3Min:
+		return constant.SubType_K_3Min
 	default:
-		return int32(constant.SubType_K_1Min)
+		return constant.SubType_K_1Min
 	}
 }
 
 func SubscribeTicker(cli *client.Client, market int32, code string, ch chan<- *push.UpdateTicker) stopFunc {
-	client.Subscribe(cli, market, code, []int32{int32(constant.SubType_Ticker)})
+	client.Subscribe(cli, market, code, []constant.SubType{constant.SubType_Ticker})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateTicker, push.ParseUpdateTicker, ch)
 }
 
 func SubscribeOrderBook(cli *client.Client, market int32, code string, ch chan<- *push.UpdateOrderBook) stopFunc {
-	client.Subscribe(cli, market, code, []int32{int32(constant.SubType_OrderBook)})
+	client.Subscribe(cli, market, code, []constant.SubType{constant.SubType_OrderBook})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateOrderBook, push.ParseUpdateOrderBook, ch)
 }
 
 func SubscribeRT(cli *client.Client, market int32, code string, ch chan<- *push.UpdateRT) stopFunc {
-	client.Subscribe(cli, market, code, []int32{int32(constant.SubType_RT)})
+	client.Subscribe(cli, market, code, []constant.SubType{constant.SubType_RT})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateRT, push.ParseUpdateRT, ch)
 }
 
 func SubscribeBroker(cli *client.Client, market int32, code string, ch chan<- *push.UpdateBroker) stopFunc {
-	client.Subscribe(cli, market, code, []int32{int32(constant.SubType_Broker)})
+	client.Subscribe(cli, market, code, []constant.SubType{constant.SubType_Broker})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateBroker, push.ParseUpdateBroker, ch)
 }
 
