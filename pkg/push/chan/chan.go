@@ -99,6 +99,44 @@ func SubscribeKLine(cli *client.Client, market int32, code string, klType consta
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
 }
 
+const defaultKLineBufSize = 100
+
+func SubscribeKLines(cli *client.Client, market int32, code string, klTypes ...constant.KLType) (map[constant.KLType]chan *push.UpdateKL, func()) {
+	if len(klTypes) == 0 {
+		return nil, func() {}
+	}
+
+	subtypes := make([]constant.SubType, len(klTypes))
+	for i, kt := range klTypes {
+		subtypes[i] = klTypeToSubType(kt)
+	}
+	client.Subscribe(cli, market, code, subtypes)
+
+	channels := make(map[constant.KLType]chan *push.UpdateKL)
+	for _, kt := range klTypes {
+		channels[kt] = make(chan *push.UpdateKL, defaultKLineBufSize)
+	}
+
+	cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, func(pid uint32, body []byte) {
+		data, err := push.ParseUpdateKL(body)
+		if err != nil || data == nil {
+			return
+		}
+		ch, ok := channels[constant.KLType(data.KlType)]
+		if !ok {
+			return
+		}
+		select {
+		case ch <- data:
+		default:
+		}
+	})
+
+	return channels, func() {
+		cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, nil)
+	}
+}
+
 func klTypeToSubType(k constant.KLType) constant.SubType {
 	switch k {
 	case constant.KLType_K_1Min:
