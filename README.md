@@ -30,9 +30,13 @@ go get github.com/shing1211/futuapi4go@v0.9.0
 package main
 
 import (
+    "context"
     "fmt"
+
     "github.com/shing1211/futuapi4go/client"
     "github.com/shing1211/futuapi4go/pkg/constant"
+    "github.com/shing1211/futuapi4go/pkg/push"
+    chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
 )
 
 func main() {
@@ -44,11 +48,12 @@ func main() {
     }
 
     // Real-time quote
-    quote, err := client.GetQuote(nil, cli, constant.Market_HK, "00700")
+    quote, err := client.GetQuote(context.Background(), cli, constant.Market_HK, "00700")
     if err != nil {
         panic(err)
     }
-    fmt.Printf("HK.00700: %.2f\n", quote.CurPrice)
+    fmt.Printf("HK.00700: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
+        quote.Price, quote.Open, quote.High, quote.Low, quote.Volume)
 
     // Subscribe to live K-line updates via channel
     klCh := make(chan *push.UpdateKL, 100)
@@ -56,8 +61,10 @@ func main() {
     defer stop()
 
     for kl := range klCh {
-        fmt.Printf("KL update: O=%.2f H=%.2f L=%.2f C=%.2f\n",
-            kl.OpenPrice, kl.HighPrice, kl.LowPrice, kl.ClosePrice)
+        for _, bar := range kl.KLList {
+            fmt.Printf("KL update: time=%s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
+                *bar.Time, *bar.OpenPrice, *bar.HighPrice, *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+        }
     }
 }
 ```
