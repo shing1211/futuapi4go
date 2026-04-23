@@ -11,12 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **`chanpkg.SubscribeKLines`** — subscribe to multiple K-line periods, returns `map[constant.KLType]chan *UpdateKL` + stop func
-- **`chanpkg.SubscribeKLinesHandler`** — Python-style callback; single callback receives all periods, caller switches on `kl.KlType`
+- **`chanpkg.SubscribeKLines(cli, market, code, map[KLType]func(*UpdateKL))`** — subscribe to multiple K-line periods with type-safe per-period callbacks; replaces both the map-of-channels and callback variants
 
 ### Changed
 
-- **`chanpkg.SubscribeKLines`** — unknown `KlType` (e.g., simulator sends `0`) routes to first subscribed type
+- **`chanpkg.SubscribeKLines`** — unknown `KlType` (e.g., simulator sends `0`) routes to first registered handler
 
 ### Fixed
 
