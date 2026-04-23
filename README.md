@@ -32,6 +32,9 @@ package main
 import (
     "context"
     "fmt"
+    "os"
+    "os/signal"
+    "syscall"
 
     "github.com/shing1211/futuapi4go/client"
     "github.com/shing1211/futuapi4go/pkg/constant"
@@ -47,7 +50,7 @@ func main() {
         panic(err)
     }
 
-    // Real-time quote
+    // Real-time quote (one-shot)
     quote, err := client.GetQuote(context.Background(), cli, constant.Market_HK, "00700")
     if err != nil {
         panic(err)
@@ -60,10 +63,20 @@ func main() {
     stop := chanpkg.SubscribeKLine(cli, constant.Market_HK, "00700", constant.KLType_K_1Min, klCh)
     defer stop()
 
-    for kl := range klCh {
-        for _, bar := range kl.KLList {
-            fmt.Printf("KL update: time=%s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
-                *bar.Time, *bar.OpenPrice, *bar.HighPrice, *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+    // Graceful shutdown on Ctrl+C
+    sig := make(chan os.Signal, 1)
+    signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+    for {
+        select {
+        case kl := <-klCh:
+            for _, bar := range kl.KLList {
+                fmt.Printf("KL: time=%s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
+                    *bar.Time, *bar.OpenPrice, *bar.HighPrice, *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+            }
+        case <-sig:
+            fmt.Println("Shutting down...")
+            return
         }
     }
 }

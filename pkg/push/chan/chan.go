@@ -8,9 +8,16 @@
 // Usage:
 //
 //	import (
+//	    "context"
+//	    "fmt"
+//	    "os"
+//	    "os/signal"
+//	    "syscall"
+//
 //	    "github.com/shing1211/futuapi4go/client"
 //	    "github.com/shing1211/futuapi4go/pkg/constant"
-//	    "github.com/shing1211/futuapi4go/pkg/push/chanpkg"
+//	    "github.com/shing1211/futuapi4go/pkg/push"
+//	    chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
 //	)
 //
 //	cli := client.New()
@@ -24,12 +31,16 @@
 //	stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
 //	defer stop()
 //
+//	// Graceful shutdown on Ctrl+C
+//	sig := make(chan os.Signal, 1)
+//	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+//
 //	for {
 //	    select {
 //	    case q := <-ch:
 //	        fmt.Printf("Quote: %s price=%.2f\n", q.Security.GetCode(), q.CurPrice)
-//	    case <-time.After(30 * time.Second):
-//	        fmt.Println("timeout")
+//	    case <-sig:
+//	        fmt.Println("Shutting down...")
 //	        return
 //	    }
 //	}
@@ -84,8 +95,37 @@ func SubscribeQuote(cli *client.Client, market int32, code string, ch chan<- *pu
 }
 
 func SubscribeKLine(cli *client.Client, market int32, code string, klType int32, ch chan<- *push.UpdateKL) stopFunc {
-	client.Subscribe(cli, market, code, []int32{klType})
+	client.Subscribe(cli, market, code, []int32{klTypeToSubType(klType)})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
+}
+
+func klTypeToSubType(klType int32) int32 {
+	switch klType {
+	case 1:
+		return int32(constant.SubType_K_1Min)
+	case 2:
+		return int32(constant.SubType_K_5Min)
+	case 3:
+		return int32(constant.SubType_K_15Min)
+	case 4:
+		return int32(constant.SubType_K_30Min)
+	case 5:
+		return int32(constant.SubType_K_60Min)
+	case 6:
+		return int32(constant.SubType_K_Day)
+	case 7:
+		return int32(constant.SubType_K_Week)
+	case 8:
+		return int32(constant.SubType_K_Month)
+	case 9:
+		return int32(constant.SubType_K_Quarter)
+	case 10:
+		return int32(constant.SubType_K_Year)
+	case 17:
+		return int32(constant.SubType_K_3Min)
+	default:
+		return int32(constant.SubType_K_1Min)
+	}
 }
 
 func SubscribeTicker(cli *client.Client, market int32, code string, ch chan<- *push.UpdateTicker) stopFunc {
