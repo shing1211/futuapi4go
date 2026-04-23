@@ -258,18 +258,18 @@ func (s SubType) IsKLType() bool {
 type KLType int32
 
 const (
-	KLType_None   KLType = 0  // 未知
-	KLType_K_1Min KLType = 1  // 1分钟
-	KLType_K_3Min KLType = 17 // 3分钟
-	KLType_K_5Min KLType = 2  // 5分钟
-	KLType_K_15Min KLType = 3 // 15分钟
-	KLType_K_30Min KLType = 4 // 30分钟
-	KLType_K_60Min KLType = 5 // 60分钟
-	KLType_K_Day   KLType = 6  // 日K
-	KLType_K_Week  KLType = 7  // 周K
-	KLType_K_Month KLType = 8  // 月K
-	KLType_K_Quarter KLType = 9 // 季度K
-	KLType_K_Year  KLType = 10 // 年K
+	KLType_None      KLType = 0  // 未知
+	KLType_K_1Min    KLType = 1  // 1分钟
+	KLType_K_Day     KLType = 2  // 日K
+	KLType_K_Week    KLType = 3  // 周K
+	KLType_K_Month    KLType = 4  // 月K
+	KLType_K_Year    KLType = 5  // 年K
+	KLType_K_5Min    KLType = 6  // 5分钟
+	KLType_K_15Min   KLType = 7  // 15分钟
+	KLType_K_30Min   KLType = 8  // 30分钟
+	KLType_K_60Min   KLType = 9  // 60分钟
+	KLType_K_3Min   KLType = 10 // 3分钟
+	KLType_K_Quarter KLType = 11 // 季度K
 )
 
 // =============================================================================
