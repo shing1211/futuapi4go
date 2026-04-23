@@ -42,8 +42,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcodechange"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistorykl"
-	qotgethistoryklpoints "github.com/shing1211/futuapi4go/pkg/pb/qotgethistoryklpoints"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
@@ -88,11 +86,11 @@ const (
 	ProtoID_GetStaticInfo           = 3202
 	ProtoID_GetPlateSet             = 3204
 	ProtoID_GetPlateSecurity        = 3205
-	ProtoID_GetSuspend              = 2209
-	ProtoID_GetCodeChange           = 2210
+	ProtoID_GetSuspend              = 3201
+	ProtoID_GetCodeChange           = 3216
 	ProtoID_GetFutureInfo           = 3218
 	ProtoID_GetIpoList              = 3217
-	ProtoID_GetHoldingChangeList    = 2213
+	ProtoID_GetHoldingChangeList    = 3208
 	ProtoID_RequestRehab            = 3105
 	ProtoID_GetUserSecurityGroup    = 3222
 	ProtoID_ModifyUserSecurity      = 3214
@@ -101,8 +99,6 @@ const (
 	ProtoID_GetCapitalDistribution  = 3212
 	ProtoID_StockFilter             = 3215
 	ProtoID_GetOptionChain          = 3209
-	ProtoID_GetHistoryKL            = 3225
-	ProtoID_GetHistoryKLPoints      = 3226
 	ProtoID_GetRehab                = 3208
 	ProtoID_GetOptionExpirationDate = 3224
 	ProtoID_GetWarrant              = 3210
@@ -111,7 +107,7 @@ const (
 	ProtoID_GetTradeDate            = 2205
 	ProtoID_RequestTradeDate        = 3219
 	ProtoID_Subscribe               = 3001
-	ProtoID_RegQotPush              = 3003
+	ProtoID_RegQotPush              = 3002
 	ProtoID_RequestHistoryKL        = 3103
 	ProtoID_RequestHistoryKLQuota   = 3104
 )
@@ -701,7 +697,8 @@ type Plate struct {
 
 // GetPlateSetRequest defines parameters for GetPlateSet.
 type GetPlateSetRequest struct {
-	Market int32
+	Market       int32
+	PlateSetType int32
 }
 
 // GetPlateSetResponse is the response type for GetPlateSet.
@@ -715,7 +712,8 @@ func GetPlateSet(c *futuapi.Client, req *GetPlateSetRequest) (*GetPlateSetRespon
 		return nil, err
 	}
 	c2s := &qotgetplateset.C2S{
-		Market: &req.Market,
+		Market:       &req.Market,
+		PlateSetType: &req.PlateSetType,
 	}
 
 	pkt := &qotgetplateset.Request{C2S: c2s}
@@ -1919,40 +1917,93 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 		return nil, err
 	}
 	c2s := &qotgetwarrant.C2S{
-		Begin:                 &req.Begin,
-		Num:                   &req.Num,
-		SortField:             &req.SortField,
-		Ascend:                &req.Ascend,
-		Owner:                 req.Owner,
-		TypeList:              req.TypeList,
-		IssuerList:            req.IssuerList,
-		MaturityTimeMin:       &req.MaturityTimeMin,
-		MaturityTimeMax:       &req.MaturityTimeMax,
-		IpoPeriod:             &req.IpoPeriod,
-		PriceType:             &req.PriceType,
-		Status:                &req.Status,
-		CurPriceMin:           &req.CurPriceMin,
-		CurPriceMax:           &req.CurPriceMax,
-		StrikePriceMin:        &req.StrikePriceMin,
-		StrikePriceMax:        &req.StrikePriceMax,
-		StreetMin:             &req.StreetMin,
-		StreetMax:             &req.StreetMax,
-		ConversionMin:         &req.ConversionMin,
-		ConversionMax:         &req.ConversionMax,
-		VolMin:                &req.VolMin,
-		VolMax:                &req.VolMax,
-		PremiumMin:            &req.PremiumMin,
-		PremiumMax:            &req.PremiumMax,
-		LeverageRatioMin:      &req.LeverageRatioMin,
-		LeverageRatioMax:      &req.LeverageRatioMax,
-		DeltaMin:              &req.DeltaMin,
-		DeltaMax:              &req.DeltaMax,
-		ImpliedMin:            &req.ImpliedMin,
-		ImpliedMax:            &req.ImpliedMax,
-		RecoveryPriceMin:      &req.RecoveryPriceMin,
-		RecoveryPriceMax:      &req.RecoveryPriceMax,
-		PriceRecoveryRatioMin: &req.PriceRecoveryRatioMin,
-		PriceRecoveryRatioMax: &req.PriceRecoveryRatioMax,
+		Begin:     &req.Begin,
+		Num:       &req.Num,
+		SortField: &req.SortField,
+		Ascend:    &req.Ascend,
+		Owner:     req.Owner,
+		TypeList:  req.TypeList,
+	}
+	if req.MaturityTimeMin != "" {
+		c2s.MaturityTimeMin = &req.MaturityTimeMin
+	}
+	if req.MaturityTimeMax != "" {
+		c2s.MaturityTimeMax = &req.MaturityTimeMax
+	}
+	if req.IpoPeriod != 0 {
+		c2s.IpoPeriod = &req.IpoPeriod
+	}
+	if req.PriceType != 0 {
+		c2s.PriceType = &req.PriceType
+	}
+	if req.Status != 0 {
+		c2s.Status = &req.Status
+	}
+	if req.CurPriceMin != 0 {
+		c2s.CurPriceMin = &req.CurPriceMin
+	}
+	if req.CurPriceMax != 0 {
+		c2s.CurPriceMax = &req.CurPriceMax
+	}
+	if req.StrikePriceMin != 0 {
+		c2s.StrikePriceMin = &req.StrikePriceMin
+	}
+	if req.StrikePriceMax != 0 {
+		c2s.StrikePriceMax = &req.StrikePriceMax
+	}
+	if req.StreetMin != 0 {
+		c2s.StreetMin = &req.StreetMin
+	}
+	if req.StreetMax != 0 {
+		c2s.StreetMax = &req.StreetMax
+	}
+	if req.ConversionMin != 0 {
+		c2s.ConversionMin = &req.ConversionMin
+	}
+	if req.ConversionMax != 0 {
+		c2s.ConversionMax = &req.ConversionMax
+	}
+	if req.VolMin != 0 {
+		c2s.VolMin = &req.VolMin
+	}
+	if req.VolMax != 0 {
+		c2s.VolMax = &req.VolMax
+	}
+	if req.PremiumMin != 0 {
+		c2s.PremiumMin = &req.PremiumMin
+	}
+	if req.PremiumMax != 0 {
+		c2s.PremiumMax = &req.PremiumMax
+	}
+	if req.LeverageRatioMin != 0 {
+		c2s.LeverageRatioMin = &req.LeverageRatioMin
+	}
+	if req.LeverageRatioMax != 0 {
+		c2s.LeverageRatioMax = &req.LeverageRatioMax
+	}
+	if req.DeltaMin != 0 {
+		c2s.DeltaMin = &req.DeltaMin
+	}
+	if req.DeltaMax != 0 {
+		c2s.DeltaMax = &req.DeltaMax
+	}
+	if req.ImpliedMin != 0 {
+		c2s.ImpliedMin = &req.ImpliedMin
+	}
+	if req.ImpliedMax != 0 {
+		c2s.ImpliedMax = &req.ImpliedMax
+	}
+	if req.RecoveryPriceMin != 0 {
+		c2s.RecoveryPriceMin = &req.RecoveryPriceMin
+	}
+	if req.RecoveryPriceMax != 0 {
+		c2s.RecoveryPriceMax = &req.RecoveryPriceMax
+	}
+	if req.PriceRecoveryRatioMin != 0 {
+		c2s.PriceRecoveryRatioMin = &req.PriceRecoveryRatioMin
+	}
+	if req.PriceRecoveryRatioMax != 0 {
+		c2s.PriceRecoveryRatioMax = &req.PriceRecoveryRatioMax
 	}
 
 	pkt := &qotgetwarrant.Request{C2S: c2s}
@@ -2968,164 +3019,6 @@ func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest)
 		UsedQuota:   s2c.GetUsedQuota(),
 		RemainQuota: s2c.GetRemainQuota(),
 		DetailList:  s2c.GetDetailList(),
-	}, nil
-}
-
-// GetHistoryKLRequest defines parameters for GetHistoryKL.
-type GetHistoryKLRequest struct {
-	RehabType        int32
-	KLType           int32
-	Security         *qotcommon.Security
-	BeginTime        string
-	EndTime          string
-	MaxAckKLNum      int32
-	NeedKLFieldsFlag int64
-}
-
-// GetHistoryKLResponse is the response type for GetHistoryKL.
-type GetHistoryKLResponse struct {
-	Security        *qotcommon.Security
-	KLList          []*qotcommon.KLine
-	NextKLTime      string
-	NextKLTimestamp float64
-}
-
-// GetHistoryKL returns historical K-line data for the given security within a time range.
-func GetHistoryKL(c *futuapi.Client, req *GetHistoryKLRequest) (*GetHistoryKLResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
-	c2s := &qotgethistorykl.C2S{
-		RehabType: &req.RehabType,
-		KlType:    &req.KLType,
-		Security:  req.Security,
-		BeginTime: &req.BeginTime,
-		EndTime:   &req.EndTime,
-	}
-	if req.MaxAckKLNum != 0 {
-		c2s.MaxAckKLNum = &req.MaxAckKLNum
-	}
-	if req.NeedKLFieldsFlag != 0 {
-		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
-	}
-
-	pkt := &qotgethistorykl.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetHistoryKL, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
-	var rsp qotgethistorykl.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
-		return nil, err
-	}
-
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetHistoryKL failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
-	}
-
-	s2c := rsp.GetS2C()
-	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryKL: s2c is nil")
-	}
-
-	return &GetHistoryKLResponse{
-		Security:        s2c.GetSecurity(),
-		KLList:          s2c.GetKlList(),
-		NextKLTime:      s2c.GetNextKLTime(),
-		NextKLTimestamp: s2c.GetNextKLTimestamp(),
-	}, nil
-}
-
-// GetHistoryKLPointsRequest defines parameters for GetHistoryKLPoints.
-type GetHistoryKLPointsRequest struct {
-	RehabType         int32
-	KLType            int32
-	NoDataMode        int32
-	SecurityList      []*qotcommon.Security
-	TimeList          []string
-	MaxReqSecurityNum int32
-	NeedKLFieldsFlag  int64
-}
-
-// GetHistoryKLPointsResponse is the response type for GetHistoryKLPoints.
-type GetHistoryKLPointsResponse struct {
-	KLPointList []*qotgethistoryklpoints.SecurityHistoryKLPoints
-	HasNext     bool
-}
-
-// GetHistoryKLPoints returns historical K-line data at specific time points for multiple securities.
-func GetHistoryKLPoints(c *futuapi.Client, req *GetHistoryKLPointsRequest) (*GetHistoryKLPointsResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
-	c2s := &qotgethistoryklpoints.C2S{
-		RehabType:    &req.RehabType,
-		KlType:       &req.KLType,
-		NoDataMode:   &req.NoDataMode,
-		SecurityList: req.SecurityList,
-		TimeList:     req.TimeList,
-	}
-	if req.MaxReqSecurityNum != 0 {
-		c2s.MaxReqSecurityNum = &req.MaxReqSecurityNum
-	}
-	if req.NeedKLFieldsFlag != 0 {
-		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
-	}
-
-	pkt := &qotgethistoryklpoints.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetHistoryKLPoints, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
-	var rsp qotgethistoryklpoints.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
-		return nil, err
-	}
-
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetHistoryKLPoints failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
-	}
-
-	s2c := rsp.GetS2C()
-	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryKLPoints: s2c is nil")
-	}
-
-	return &GetHistoryKLPointsResponse{
-		KLPointList: s2c.GetKlPointList(),
-		HasNext:     s2c.GetHasNext(),
 	}, nil
 }
 
