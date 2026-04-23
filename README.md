@@ -897,17 +897,7 @@ constant.PriceReminderOpAdd    // 1 — add alert
 constant.PriceReminderOpUpdate // 2 — update alert
 constant.PriceReminderOpDelete // 3 — delete alert
 ```
-## Testing Without a Real Account
 
-```bash
-# Terminal 1 — mock OpenD server
-go run cmd/simulator/main.go
-
-# Terminal 2 — your code
-go run ./cmd/demo/main.go
-```
-
-The simulator handles all 78 protobufs with realistic mock responses. Perfect for CI/CD.
 
 ## Build & Test
 
@@ -935,9 +925,8 @@ futuapi4go/
 │   ├── util/              # Code parsing, market helpers
 │   ├── constant/          # Python-style constants + String() methods
 │   └── pb/               # 78 protobuf-generated types
-├── api/proto/             # Original .proto definitions
-├── cmd/simulator/         # Mock OpenD for testing
-└── cmd/demo/              # Interactive demo
+├── api/proto/            # Original .proto definitions
+└── cmd/demo/             # Interactive demo
 ```
 
 ## Python Migration

@@ -27,7 +27,6 @@ futuapi4go/
 ├── pkg/pb/qotgetkl/      # Qot_GetKL proto
 │   └── ... (other pb packages, all under pkg/pb/)
 ├── api/proto/            # Original Protobuf definition files
-├── cmd/simulator/        # OpenD simulator
 ├── cmd/examples/         # Usage examples
 └── scripts/              # Build scripts
 ```

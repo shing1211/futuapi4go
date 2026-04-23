@@ -13,13 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`chanpkg.SubscribeKLines(cli, market, code, map[KLType]func(*UpdateKL))`** — subscribe to multiple K-line periods with type-safe per-period callbacks; replaces both the map-of-channels and callback variants
 
-### Changed
 
-- **`chanpkg.SubscribeKLines`** — unknown `KlType` (e.g., simulator sends `0`) routes to first registered handler
-
-### Fixed
-
-- **simulator** — `handlePushKL` now sets `KlType=1` and `RehabType=0` in the S2C response
 - **`constant.KLType` enum values** — were scrambled (SubType values used instead of KLType values); OpenD sends `KlType=6` for 5min, `KlType=1` for 1min, etc. — constants now match proto wire values
 
 ## [0.9.0] - 2026-04-23 — Feature Parity Achieved

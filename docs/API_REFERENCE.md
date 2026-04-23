@@ -1323,31 +1323,4 @@ cli := futuapi.New(
 )
 ```
 
----
 
-## Simulator
-
-A local mock server is available at `cmd/simulator/`:
-
-```go
-srv := simulator.New("127.0.0.1:22222")
-srv.RegisterDefaultHandlers()
-srv.RegisterQotHandlers()
-srv.RegisterTrdHandlers()
-srv.RegisterPushHandlers()
-srv.AddSecurity(int32(qotcommon.QotMarket_QotMarket_HK_Security), "00700")
-if err := srv.Start(); err != nil {
-    log.Fatalf("Server start failed: %v", err)
-}
-defer srv.Stop()
-
-cli := futuapi.New()
-if err := cli.Connect("127.0.0.1:22222"); err != nil {
-    log.Fatalf("Connect failed: %v", err)
-}
-```
-
-Run the simulator:
-```bash
-go run cmd/simulator/main.go
-```

@@ -114,21 +114,4 @@ func TestAlgoExamplesCompile(t *testing.T) {
 	}
 }
 
-func TestSimulatorCompiles(t *testing.T) {
-	examplesDir := getExamplesDir()
-	if examplesDir == "" {
-		t.Skip("examples directory not found")
-	}
 
-	simPath := filepath.Join(examplesDir, "..", "simulator")
-	if _, err := os.Stat(simPath); os.IsNotExist(err) {
-		t.Skip("simulator directory not found")
-	}
-
-	cmd := exec.Command("go", "build", "-o", os.DevNull, ".")
-	cmd.Dir = simPath
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		t.Errorf("simulator failed to compile:\n%s\n%v", string(output), err)
-	}
-}

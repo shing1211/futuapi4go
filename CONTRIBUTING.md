@@ -27,7 +27,7 @@ go vet ./...
 # Run unit tests (no OpenD required)
 go test ./client/... ./pkg/... ./internal/client/
 
-# Run all tests (some require OpenD or the simulator)
+# Run all tests (some require OpenD)
 go test ./...
 
 # Race detector
