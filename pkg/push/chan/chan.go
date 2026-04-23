@@ -123,8 +123,17 @@ func SubscribeKLines(cli *client.Client, market int32, code string, klTypes ...c
 			return
 		}
 		ch, ok := channels[constant.KLType(data.KlType)]
-		if !ok {
+		if ok {
+			select {
+			case ch <- data:
+			default:
+			}
 			return
+		}
+		c := channels[klTypes[0]]
+		select {
+		case c <- data:
+		default:
 		}
 		select {
 		case ch <- data:
