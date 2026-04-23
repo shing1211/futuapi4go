@@ -517,8 +517,23 @@ func (c *Client) readLoop() {
 		default:
 		}
 
-		pkt, err := c.conn.readOne()
-		if err != nil {
+		resultCh := make(chan *Packet, 1)
+		errCh := make(chan error, 1)
+		go func() {
+			pkt, err := c.conn.readOne()
+			if err != nil {
+				errCh <- err
+			} else {
+				resultCh <- pkt
+			}
+		}()
+
+		select {
+		case <-c.ctx.Done():
+			return
+		case pkt := <-resultCh:
+			c.conn.Dispatch(pkt)
+		case err := <-errCh:
 			c.mu.Lock()
 			if atomic.LoadInt32(&c.connected) == 1 {
 				atomic.StoreInt32(&c.connected, 0)
@@ -530,8 +545,6 @@ func (c *Client) readLoop() {
 			}
 			return
 		}
-
-		c.conn.Dispatch(pkt)
 	}
 }
 
@@ -600,10 +613,10 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 func (c *Client) Close() error {
 	atomic.StoreInt32(&c.connActive, 0)
 	c.cancel()
-	c.wg.Wait()
 	if c.conn != nil {
-		return c.conn.Close()
+		c.conn.Close()
 	}
+	c.wg.Wait()
 	return nil
 }
 
