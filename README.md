@@ -50,17 +50,23 @@ func main() {
         panic(err)
     }
 
+    // US stocks require subscription before GetQuote works
+    if err := client.Subscribe(cli, constant.Market_US, "NVDA",
+        []int32{int32(constant.SubType_Quote), int32(constant.SubType_K_1Min)}); err != nil {
+        panic(err)
+    }
+
     // Real-time quote (one-shot)
-    quote, err := client.GetQuote(context.Background(), cli, constant.Market_HK, "00700")
+    quote, err := client.GetQuote(context.Background(), cli, constant.Market_US, "NVDA")
     if err != nil {
         panic(err)
     }
-    fmt.Printf("HK.00700: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
+    fmt.Printf("US.NVDA: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
         quote.Price, quote.Open, quote.High, quote.Low, quote.Volume)
 
     // Subscribe to live K-line updates via channel
     klCh := make(chan *push.UpdateKL, 100)
-    stop := chanpkg.SubscribeKLine(cli, constant.Market_HK, "00700", constant.KLType_K_1Min, klCh)
+    stop := chanpkg.SubscribeKLine(cli, constant.Market_US, "NVDA", constant.KLType_K_1Min, klCh)
     defer stop()
 
     // Graceful shutdown on Ctrl+C
@@ -81,6 +87,8 @@ func main() {
     }
 }
 ```
+
+> **Note:** US stocks require subscribing before `GetQuote` works. HK stocks don't have this requirement.
 
 ## Package Map
 
