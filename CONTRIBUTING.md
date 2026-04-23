@@ -1,89 +1,94 @@
 # Contributing to futuapi4go
 
-> Thank you for your interest in contributing. This SDK is a Go library for Futu OpenD. Familiarity with Go best practices is expected.
+> Thank you! Even fixing a typo in a comment counts as a valuable contribution.
 
 ## Code of Conduct
 
-Please be respectful and professional in all interactions. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Treat everyone with respect. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Development Setup
 
 ```bash
-git clone https://gitee.com/shing1211/futuapi4go.git
+git clone https://github.com/shing1211/futuapi4go.git
 cd futuapi4go
 go mod download
+go build ./...
 ```
 
-## Building and Testing
+## Build, Lint & Test
 
 ```bash
-# Build
+# Build everything
 go build ./...
 
-# Run tests (core unit tests — no OpenD required)
+# Lint
+go vet ./...
+
+# Run unit tests (no OpenD required)
 go test ./client/... ./pkg/... ./internal/client/
 
-# Run all tests (includes tests requiring real OpenD)
+# Run all tests (some require OpenD or the simulator)
 go test ./...
 
-# Run with race detector
+# Race detector
 go test -race ./client/... ./pkg/... ./internal/client/
-
-# Run go vet
-go vet ./...
 ```
 
 ## Code Standards
 
-- **Format**: Code must be formatted with `gofmt`. Run `go fmt ./...` before committing.
-- **Linting**: All `go vet` checks must pass.
-- **Error handling**: Do not ignore errors with `_`. All errors must be handled or explicitly propagated.
-- **Context**: Use `context.Context` for cancellation and timeouts.
-- **Tests**: New features should include tests. Fixes should include a test that would have caught the bug.
-- **Comments**: Document all exported functions and types. Internal helpers may be uncommented.
+| Rule | Why |
+|------|-----|
+| Run `go fmt ./...` before committing | Consistent formatting |
+| `go vet ./...` must pass | Catch common mistakes |
+| Never ignore errors with `_` | Errors are values — handle them |
+| Use `context.Context` for all APIs | Enables cancellation and timeouts |
+| New features need tests | Bug fixes need regression tests |
+| Document exported functions | Your future self will thank you |
 
-## Commit Message Format
+## Commit Messages
 
-Use this format:
+Use this format (Conventional Commits):
 
 ```
-<package>: <short description>
+<type>: <short description>
 
 Optional longer explanation.
 ```
 
+Types: `fix:`, `feat:`, `docs:`, `test:`, `chore:`, `refactor:`
+
 Examples:
-
 ```
-push: fix ParseUpdateKL unmarshal into S2C directly
-internal/client: fix logf nil logger panic
-docs: update CHANGELOG for v0.6.1
+fix: restore nil guard in ParseUpdateOrderBook
+feat: add GetLoginUserID and IsEncrypt helpers
+docs: update CHANGELOG for v0.9.0
+client: add CanSendProto connection state check
 ```
 
-Types: `fix:`, `feat:`, `docs:`, `test:`, `chore:`, `refactor:` (Conventional Commits are recommended).
+## Pull Request Process
 
-## Pull Request Guidelines
-
-1. Fork the repository and create a feature branch (`git checkout -b fix/your-issue`).
-2. Make your changes. Ensure `go build ./...` and `go test` pass.
-3. Update [docs/CHANGELOG.md](docs/CHANGELOG.md) under the `[Unreleased]` section for user-facing changes.
-4. Open a Pull Request with a clear description of the fix or feature.
-5. Link any related issues.
+1. Fork and create a branch: `git checkout -b fix/your-issue`
+2. Make your changes
+3. Ensure `go build ./...` and `go vet ./...` both pass
+4. Update `docs/CHANGELOG.md` under `[Unreleased]` for user-facing changes
+5. Open a PR with a clear description — link any related issue
+6. A maintainer will review and may request changes
 
 ## What to Contribute
 
-- Bug fixes with tests
-- Missing API wrappers (check `pkg/qot/` and `pkg/trd/` for patterns)
+- Bug fixes (bonus: include a test that would have caught it)
+- Missing API wrappers — check `pkg/qot/` and `pkg/trd/` for patterns
 - Performance improvements
-- Documentation improvements
-- Additional examples in `cmd/examples/`
+- Documentation improvements (this README, code comments, examples)
+- New examples in `cmd/examples/`
 
-## Related Documentation
+## Related Docs
 
 - [docs/DEVELOPER.md](docs/DEVELOPER.md) — Architecture and implementation patterns
-- [docs/TESTING.md](docs/TESTING.md) — Testing guide
-- [docs/API_REFERENCE.md](docs/API_REFERENCE.md) — API reference
+- [docs/TESTING.md](docs/TESTING.md) — Testing guide and fixtures
+- [docs/API_REFERENCE.md](docs/API_REFERENCE.md) — Complete API reference
+- [ROADMAP.md](ROADMAP.md) — What's coming next
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the Apache License 2.0.
+By contributing, you agree your work will be licensed under Apache License 2.0.

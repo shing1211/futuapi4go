@@ -2,61 +2,61 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| v0.6.x  | :white_check_mark: |
-| v0.5.x  | :white_check_mark: |
-| < 0.5   | :x:                |
+| Version | Status |
+|---------|--------|
+| **v0.9.x** | ✅ Actively maintained |
+| v0.8.x | ✅ Receives security patches |
+| v0.7.x | ✅ Receives security patches |
+| < v0.7 | ❌ Not supported |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within futuapi4go, please report it responsibly.
+Found a security issue? **Do not open a public GitHub issue.** Instead:
 
-**Please do NOT report security vulnerabilities through public GitHub Issues.**
+### Option 1 — GitHub Security Advisories (Preferred)
 
-Instead, please report them via one of the following methods:
-
-### Preferred: GitHub Security Advisories
-
-1. Navigate to the [Security Advisories](https://github.com/shing1211/futuapi4go/security/advisories) page
+1. Go to [Security Advisories](https://github.com/shing1211/futuapi4go/security/advisories/new)
 2. Click "Report a vulnerability"
-3. Fill out the vulnerability report form with as much detail as possible
+3. Fill in as much detail as possible
 
-### Alternative: Email
+### Option 2 — Email
 
-Send an email to **shing1211@users.noreply.github.com** with:
+Send to **shing1211@users.noreply.github.com** with:
 - Subject: `[SECURITY] futuapi4go vulnerability report`
-- Description of the vulnerability
 - Steps to reproduce
-- Potential impact assessment
-- Any suggested fixes (optional)
+- Potential impact
+- Any fix suggestions (optional)
 
-## What to Expect
+## Response Timeline
 
-- **Acknowledgment**: We aim to acknowledge your report within **48 hours**
-- **Initial Assessment**: We will assess the severity and impact within **7 days**
-- **Resolution**: We target a fix within **30 days** for critical issues
-- **Disclosure**: We will coordinate disclosure with you before any public announcement
-- **Credit**: With your permission, we will credit you in the security advisory (unless you prefer anonymity)
+| Stage | Timeline |
+|-------|----------|
+| **Acknowledgment** | Within 48 hours |
+| **Initial assessment** | Within 7 days |
+| **Critical fix** | Within 30 days |
+| **Public disclosure** | Coordinated with reporter |
 
-## Security Best Practices for Users
+With your permission, we'll credit you in the advisory. Anonymity is fully supported.
 
-When using futuapi4go:
+## Security Best Practices for SDK Users
 
-- **Never hardcode credentials** — Use environment variables or secure vaults
-- **Protect your Futu OpenD connection** — Do not expose the OpenD port publicly
-- **Use TLS/SSH tunneling** if connecting across untrusted networks
-- **Rotate API credentials** regularly
-- **Run with minimal permissions** — Do not run the trading client as root/administrator
-
-## Security Considerations
-
-futuapi4go is a client library that communicates with Futu OpenD. Security responsibilities are shared between:
-
-- **Futu OpenD**: Handles authentication, encryption, and server-side security
-- **This library**: Safely marshals/unmarshals protobuf data and manages TCP connections
-- **The user**: Securing their trading password, account credentials, and network environment
+- **Never hardcode credentials** — use environment variables or a secrets manager
+- **Protect your OpenD port** — don't expose it to untrusted networks
+- **Use TLS/SSH tunneling** if OpenD must be accessed across networks
+- **Rotate credentials** regularly
+- **Run with minimal permissions** — don't run the trading client as root/admin
+- **Always test trading in simulate mode** first
 
 ## Scope
 
-This security policy covers the futuapi4go codebase. Issues with Futu's servers, Futu OpenD, or the official Futu API should be reported to Futu directly.
+This policy covers the futuapi4go codebase. Issues with Futu's servers, Futu OpenD, or the official API should be reported to [Futu directly](https://www.futunn.com/).
+
+## Security Design Notes
+
+futuapi4go is a client library — security is a shared responsibility:
+
+| Layer | Responsibility |
+|-------|---------------|
+| **Futu OpenD** | Authentication, encryption, server-side security |
+| **futuapi4go** | Safe protobuf marshaling, TCP connection management, no credential storage |
+| **Your application** | Credential security, network configuration, trading safeguards |

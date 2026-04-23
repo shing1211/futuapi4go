@@ -1,32 +1,30 @@
 # futuapi4go
 
-> High-performance, production-ready Go SDK for Futu OpenAPI. Covers all market data, trading, and push notification APIs.
+<p align="center">
+  <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.9.0-00ADD8?style=flat-square" alt="Version">
+</p>
 
-[![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square)](https://golang.org)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square)](LICENSE)
+> **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for Futu OpenAPI — market data, trading, real-time push, and more.
 
----
+## Why futuapi4go?
 
-## Features
+Futu's official SDK is Python-first. futuapi4go is **Go-first** — built from the ground up for Go developers who want:
 
-| Feature | Description |
-|---------|-------------|
-| **78 protobufs** | All Python SDK protos + 28 extras (futures, flow, all push types) |
-| **Type-safe** | Go structs with compile-time safety vs Python DataFrames |
-| **Circuit breaker** | Built-in `pkg/breaker` for resilient trading |
-| **Structured logging** | `pkg/logger` — text + JSON, leveled (Debug/Info/Warn/Error) |
-| **Channel push** | `pkg/push/chan` — goroutine-safe push via Go channels |
-| **Connection pool** | `internal/client/pool.go` — reusable connections with health checks |
-| **Connection resilience** | Auto-reconnect with configurable backoff |
-| **Context support** | Request-level cancellation on all APIs |
+- **Compile-time safety** — structs over DataFrames, no runtime surprises
+- **Go concurrency** — goroutines, channels, context cancellation baked in
+- **No Python dependency** — pure Go, deploy anywhere with `go build`
+- **More protos** — 78 protos vs Python's ~50, including futures, flow summaries, and all push types
+- **Modern infrastructure** — circuit breaker, structured logging, channel-based push delivery, connection pool with health checks
 
----
-
-## Quick Start
+## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go
+go get github.com/shing1211/futuapi4go@v0.9.0
 ```
+
+## Your First Trade
 
 ```go
 package main
@@ -45,132 +43,68 @@ func main() {
         panic(err)
     }
 
-    // Get quote
+    // Real-time quote
     quote, err := client.GetQuote(nil, cli, constant.Market_HK, "00700")
     if err != nil {
         panic(err)
     }
-    fmt.Printf("HK.00700: %.2f\n", quote.Price)
+    fmt.Printf("HK.00700: %.2f\n", quote.CurPrice)
 
-    // Subscribe to real-time data
-    client.Subscribe(cli, constant.Market_HK, "00700",
-        []int32{constant.SubType_Quote, constant.SubType_KL_1Min})
+    // Subscribe to live K-line updates via channel
+    klCh := make(chan *push.UpdateKL, 100)
+    stop := chanpkg.SubscribeKLine(cli, constant.Market_HK, "00700", constant.KLType_K_1Min, klCh)
+    defer stop()
 
-    // Place a simulate order
-    accounts, _ := client.GetAccountList(cli)
-    result, err := client.PlaceOrder(cli, accounts[0].AccID, constant.Market_HK,
-        "00700", constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
-    if err != nil {
-        panic(err)
+    for kl := range klCh {
+        fmt.Printf("KL update: O=%.2f H=%.2f L=%.2f C=%.2f\n",
+            kl.OpenPrice, kl.HighPrice, kl.LowPrice, kl.ClosePrice)
     }
-    fmt.Printf("Order placed: %d\n", result.OrderID)
 }
 ```
 
----
+## Package Map
 
-## Package Overview
+| Package | What it's For |
+|---------|--------------|
+| `client` | High-level wrappers — the recommended entry point |
+| `internal/client` | TCP connection, packet I/O, auto-reconnect, keep-alive |
+| `pkg/qot` | All market data APIs (quotes, K-lines, order book, tick data...) |
+| `pkg/trd` | All trading APIs (orders, positions, funds, history...) |
+| `pkg/sys` | System APIs (global state, user info) |
+| `pkg/push` | Parse push notification payloads |
+| `pkg/push/chan` | Subscribe to real-time data via Go channels |
+| `pkg/breaker` | Circuit breaker — protect trading from cascading failures |
+| `pkg/logger` | Structured logging, text + JSON, leveled (Debug/Info/Warn/Error) |
+| `pkg/util` | Code parsing (`HK.00700` ↔ market+code), market helpers |
+| `pkg/constant` | Python-style constants (`Market_HK`, `TrdSide_Buy`, `KLType_K_Day`...) |
+| `pkg/pb/*` | 78 protobuf-generated types for all Futu OpenAPI messages |
 
-| Package | Purpose |
-|---------|---------|
-| `client` | High-level public API (recommended) — all wrappers return typed structs |
-| `internal/client` | Low-level connection, packet I/O, reconnect, keep-alive |
-| `pkg/qot` | Market data APIs (quotes, K-lines, order book, tick data, etc.) |
-| `pkg/trd` | Trading APIs (orders, positions, funds, history) |
-| `pkg/sys` | System APIs (global state, user info, delay statistics) |
-| `pkg/push` | Push notification parsers (quote updates, order fills) |
-| `pkg/push/chan` | Channel-based push delivery — subscribe via channels |
-| `pkg/breaker` | Circuit breaker pattern — prevents cascading failures |
-| `pkg/logger` | Structured leveled logging (text + JSON formats) |
-| `pkg/util` | Code parsing, market conversion helpers |
-| `pkg/constant` | Python-style constants + String() methods on all enums |
-| `pkg/pb/*` | Protobuf-generated types for all Futu OpenAPI protos |
+## Key Features in Depth
 
----
+### Channel-Based Real-Time Push
 
-## Key Packages
-
-### `pkg/constant` — Python-style Constants
-
-```go
-import "github.com/shing1211/futuapi4go/pkg/constant"
-
-// Markets
-constant.Market_HK  // 1
-constant.Market_US  // 11
-constant.Market_SH  // 21
-constant.Market_SZ  // 22
-constant.Market_SG  // 31
-constant.Market_JP  // 41
-constant.Market_AU  // 51
-constant.Market_MY  // 61
-constant.Market_CA  // 71
-constant.Market_FX  // 81
-
-// K-Line Types
-constant.KLType_K_1Min  // 1
-constant.KLType_K_5Min  // 2
-constant.KLType_K_15Min  // 3
-constant.KLType_K_30Min  // 4
-constant.KLType_K_60Min  // 5
-constant.KLType_K_Day    // 6
-constant.KLType_K_Week   // 7
-constant.KLType_K_Month  // 8
-
-// Trading
-constant.TrdEnv_Real      // 0
-constant.TrdEnv_Simulate   // 1
-constant.TrdSide_Buy       // 1
-constant.TrdSide_Sell      // 2
-constant.OrderType_Normal   // 0
-constant.OrderType_Market   // 2
-
-// Rehab
-constant.RehabType_None     // 0 (不复权)
-constant.RehabType_Forward  // 1 (前复权 QFQ)
-constant.RehabType_Backward // 2 (后复权 HFQ)
-
-// SubTypes
-constant.SubType_Quote
-constant.SubType_K_Day
-constant.SubType_K_1Min
-constant.SubType_Ticker
-constant.SubType_OrderBook
-constant.SubType_RT
-constant.SubType_Broker
-```
-
-All enums have `String()` methods: `constant.Market_HK.String()` → `"Market_HK"`.
-
-### `pkg/push/chan` — Channel-Based Push
+Stop polling. Let data come to you:
 
 ```go
 import (
-    "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/pkg/push/chan"
-    "github.com/shing1211/futuapi4go/pkg/push"
+    "github.com/shing1211/futuapi4go/pkg/push/chan" as chanpkg
 )
 
-// Subscribe to real-time quotes via channel
+// Quote updates stream into the channel
 ch := make(chan *push.UpdateBasicQot, 100)
 stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
 defer stop()
 
 for q := range ch {
-    fmt.Printf("Quote: %.2f\n", q.CurPrice)
+    fmt.Printf("Bid: %.2f | Ask: %.2f\n", q.BidPrice[0], q.AskPrice[0])
 }
-
-// Subscribe to K-line updates
-klCh := make(chan *push.UpdateKL, 100)
-stopK := chanpkg.SubscribeKLine(cli, constant.Market_HK, "00700", constant.KLType_K_1Min, klCh)
-defer stopK()
 ```
 
-### `pkg/breaker` — Circuit Breaker
+### Circuit Breaker for Trading
+
+Protect your trading bot from cascading failures:
 
 ```go
-import "github.com/shing1211/futuapi4go/pkg/breaker"
-
 cb := breaker.New(
     breaker.WithThreshold(5),
     breaker.WithCooldown(30*time.Second),
@@ -180,202 +114,127 @@ result, err := cb.Do(func() (interface{}, error) {
     return client.PlaceOrder(cli, accID, market, "00700", side, orderType, price, qty)
 })
 if err == breaker.ErrOpen {
-    fmt.Println("Circuit open — trading suspended")
+    fmt.Println("Trading suspended — too many failures")
 }
 ```
 
-### `pkg/logger` — Structured Logging
+### Structured Logging
 
 ```go
-import "github.com/shing1211/futuapi4go/pkg/logger"
-
 l := logger.New(
     logger.WithLevel(logger.LevelDebug),
     logger.WithFormat(logger.FormatJSON),
-    logger.WithOutput(os.Stdout),
 )
-
 l.Info("connected", "addr", "127.0.0.1:11111", "conn_id", 42)
 l.Warn("order rejected", "code", "HK.00700", "reason", "insufficient funds")
 ```
 
----
+### Code Helpers
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/util"
+
+// "HK.00700" → market=1, code="00700"
+mkt, code := util.ParseCode("HK.00700")
+
+// Back again
+formatted := util.FormatCode(mkt, code) // "HK.00700"
+
+// Market conversion between quote and trading markets
+secMkt := util.MarketToTrdSecMarket[mkt]
+```
 
 ## Client Options
 
 ```go
 cli := client.New(
-    client.WithDialTimeout(10 * time.Second),
-    client.WithAPISetTimeout(30 * time.Second),
-    client.WithKeepAliveInterval(30 * time.Second),
-    client.WithReconnectInterval(5 * time.Second),
+    client.WithDialTimeout(10*time.Second),
+    client.WithAPISetTimeout(30*time.Second),
+    client.WithKeepAliveInterval(30*time.Second),
+    client.WithReconnectInterval(5*time.Second),
     client.WithMaxRetries(3),
-    client.WithLogLevel(1), // 0=info, 1=warn, 2=error
+    client.WithLogLevel(logger.LevelInfo),
 )
 
-// Trading: set default environment
-cli = cli.WithTradeEnv(constant.TrdEnv_Simulate)  // default is simulate
+// Default to simulate trading (safe by default)
+cli = cli.WithTradeEnv(constant.TrdEnv_Simulate)
 ```
-
----
-
-## Code Helpers (`pkg/util`)
-
-```go
-import "github.com/shing1211/futuapi4go/pkg/util"
-
-// Parse "HK.00700" → market=1, code="00700"
-mkt, code := util.ParseCode("HK.00700")
-
-// Format back → "HK.00700"
-formatted := util.FormatCode(mkt, code)
-
-// Market conversion
-secMkt := util.MarketToTrdSecMarket[mkt]
-qotMkt := util.TrdMarketToQotMarket(secMkt)
-
-// Validate
-if util.IsMarketValid(mkt) {
-    // ...
-}
-```
-
----
 
 ## Full API Reference
 
-See [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) for the complete API documentation.
+### Trading
+`GetAccountList` · `UnlockTrading` · `PlaceOrder` · `ModifyOrder` · `CancelAllOrder` · `GetPositionList` · `GetAccountInfo` · `GetFunds` · `GetAccTradingInfo` · `GetMaxTrdQtys` · `GetOrderFee` · `GetMarginRatio` · `GetOrderList` · `GetHistoryOrderList` · `GetOrderFillList` · `GetHistoryOrderFillList` · `GetFlowSummary` · `SubAccPush` · `ReconfirmOrder`
 
-### Trading APIs
+### Market Data
+`GetQuote` · `GetKLines` · `GetOrderBook` · `GetTicker` · `GetRT` · `GetBroker` · `GetStaticInfo` · `GetTradeDate` · `GetFutureInfo` · `GetPlateSet` · `GetPlateSecurity` · `GetOwnerPlate` · `GetReference` · `GetIpoList` · `GetMarketState` · `GetCapitalFlow` · `GetCapitalDistribution` · `GetSecuritySnapshot` · `GetOptionChain` · `GetOptionExpirationDate` · `GetWarrant` · `StockFilter` · `GetSuspend` · `GetCodeChange` · `GetHoldingChangeList` · `GetUserSecurityGroup` · `ModifyUserSecurity` · `GetPriceReminder` · `SetPriceReminder` · `RequestHistoryKL` · `RequestHistoryKLQuota` · `RequestRehab` · `RequestTradeDate`
 
-| Function | Description |
-|----------|-------------|
-| `GetAccountList` | List all trading accounts |
-| `UnlockTrading` | Unlock trading with MD5 password |
-| `PlaceOrder` | Place buy/sell order |
-| `ModifyOrder` | Modify or cancel order |
-| `CancelAllOrder` | Cancel all pending orders |
-| `GetPositionList` | Get current positions |
-| `GetAccountInfo` | Full account info (multi-currency cash, per-market assets) |
-| `GetFunds` | Account funds (auto-selects first account) |
-| `GetAccTradingInfo` | Max tradable quantities for a security |
-| `GetMaxTrdQtys` | Calculate max buy/sell quantities |
-| `GetOrderFee` | Calculate order fees |
-| `GetMarginRatio` | Margin ratio for short selling |
-| `GetOrderList` | Today's orders |
-| `GetHistoryOrderList` | Historical orders |
-| `GetOrderFillList` | Today's order fills |
-| `GetHistoryOrderFillList` | Historical order fills |
-| `GetFlowSummary` | Account cash flow entries |
-| `SubAccPush` | Subscribe to account push updates |
-| `ReconfirmOrder` | Re-confirm a rejected order |
+### System
+`GetGlobalState` · `GetUserInfo` · `GetDelayStatistics` · `GetLoginUserID` · `IsEncrypt` · `CanSendProto`
 
-### Market Data APIs
+### Subscriptions
+`Subscribe` · `Unsubscribe` · `UnsubscribeAll` · `QuerySubscription` · `RegQotPush`
 
-| Function | Description |
-|----------|-------------|
-| `GetQuote` | Real-time quote |
-| `GetKLines` | K-line (candlestick) data |
-| `GetOrderBook` | Order book (depth) |
-| `GetTicker` | Tick-by-tick trades |
-| `GetRT` | Real-time minute (分时) |
-| `GetBroker` | Broker queue |
-| `GetStaticInfo` | Static security info |
-| `GetTradeDate` | Trading dates |
-| `GetFutureInfo` | Futures contract info |
-| `GetPlateSet` | Available plate sets |
-| `GetPlateSecurity` | Securities in a plate |
-| `GetOwnerPlate` | Plates a security belongs to |
-| `GetReference` | Related securities |
-| `GetIpoList` | IPO calendar |
-| `GetMarketState` | Market open/close state |
-| `GetCapitalFlow` | Capital flow data |
-| `GetCapitalDistribution` | Capital distribution |
-| `GetSecuritySnapshot` | Multi-security snapshots |
-| `GetOptionChain` | Option chain data |
-| `GetOptionExpirationDate` | Option expiry dates |
-| `GetWarrant` | Warrant data |
-| `StockFilter` | Stock screener |
-| `GetSuspend` | Suspended securities |
-| `GetCodeChange` | Code change info |
-| `GetHoldingChangeList` | Director holding changes |
-| `GetUserSecurityGroup` | User security groups |
-| `ModifyUserSecurity` | Add/remove from groups |
-| `GetPriceReminder` | Price alerts |
-| `SetPriceReminder` | Set price alert |
-| `RequestHistoryKL` | Historical K-lines |
-| `RequestHistoryKLQuota` | K-line quota info |
-| `RequestRehab` | Rehabilitation (split/bonus) data |
-| `RequestTradeDate` | Online trading dates |
-
-### System APIs
-
-| Function | Description |
-|----------|-------------|
-| `GetGlobalState` | OpenD connection + market statuses |
-| `GetUserInfo` | User account info |
-| `GetDelayStatistics` | Connection delay stats |
-
-### Subscription APIs
-
-| Function | Description |
-|----------|-------------|
-| `Subscribe` | Subscribe to real-time data |
-| `Unsubscribe` | Unsubscribe |
-| `UnsubscribeAll` | Unsubscribe all |
-| `QuerySubscription` | Query subscription status |
-| `RegQotPush` | Register push notifications |
-
----
-
-## OpenD Simulator (Testing)
+## Testing Without a Real Account
 
 ```bash
-# Terminal 1: run the simulator (in futuapi4go repo)
+# Terminal 1 — mock OpenD server
 go run cmd/simulator/main.go
 
-# Terminal 2: run your demo
-go run ./cmd/demo
+# Terminal 2 — your code
+go run ./cmd/demo/main.go
 ```
 
----
+The simulator handles all 78 protobufs with realistic mock responses. Perfect for CI/CD.
 
-## Testing
+## Build & Test
 
 ```bash
-go test ./...          # Run all tests
-go build ./...         # Build
-go vet ./...           # Lint
+go build ./...      # Compile everything
+go vet ./...        # Lint
+go test ./...       # Run the full test suite
+go test -race ./... # Race detector
 ```
-
----
 
 ## Architecture
 
 ```
 futuapi4go/
-├── client/           # Public high-level API (recommended)
-├── internal/client/  # TCP connection, packet I/O, reconnect
+├── client/               # Public high-level API (recommended)
+├── internal/client/      # TCP connection, packet I/O, reconnect, keep-alive
 ├── pkg/
-│   ├── qot/          # Market data (quotes, K-lines, etc.)
-│   ├── trd/          # Trading (orders, positions, funds)
-│   ├── sys/           # System (global state, user info)
-│   ├── push/          # Push notification parsers
-│   ├── push/chan/    # Channel-based push delivery
-│   ├── breaker/       # Circuit breaker pattern
-│   ├── logger/        # Structured leveled logging
-│   ├── util/          # Code parsing, market helpers
-│   ├── constant/      # Python-style constants
-│   └── pb/            # Generated protobuf code (78 protos)
-├── api/proto/         # Original .proto definitions
-├── cmd/simulator/    # Mock OpenD for testing
-└── cmd/demo/          # Interactive demo
+│   ├── qot/              # Market data — quotes, K-lines, order book, tick data...
+│   ├── trd/              # Trading — orders, positions, funds, history...
+│   ├── sys/              # System — global state, user info
+│   ├── push/             # Push notification parsers
+│   ├── push/chan/         # Channel-based push delivery
+│   ├── breaker/           # Circuit breaker pattern
+│   ├── logger/            # Structured leveled logging
+│   ├── util/              # Code parsing, market helpers
+│   ├── constant/          # Python-style constants + String() methods
+│   └── pb/               # 78 protobuf-generated types
+├── api/proto/             # Original .proto definitions
+├── cmd/simulator/         # Mock OpenD for testing
+└── cmd/demo/              # Interactive demo
 ```
 
----
+## Python Migration
+
+Coming from the Python `futu-api` SDK? The Python-style constants make the transition feel familiar:
+
+```go
+// Python: ft.Market.HK, ft.TrdSide.BUY, ft.KLType.K_DAY
+// Go:     constant.Market_HK, constant.TrdSide_Buy, constant.KLType_K_Day
+```
+
+See the full [Python Migration Guide](PYTHON_MIGRATION_GUIDE.md) for side-by-side comparisons of every API.
+
+## Known Issues
+
+- **`GetDelayStatistics`** / **`GetTradeDate`** — proto2 wire-format incompatibility with OpenD serverVer=1003. Workaround: these calls are skipped gracefully in the demo.
+- Both issues are in the SDK's protobuf marshaling layer and will be fixed in a future release.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE)
+Apache License 2.0 — see [LICENSE](LICENSE).
 
-**Disclaimer:** Trading financial instruments carries significant risk. This SDK is a software utility only and does not provide financial advice.
+> ⚠️ **Trading Disclaimer**: This SDK is a software utility. Trading financial instruments carries significant risk. Always test thoroughly in simulate mode before using real funds.

@@ -1,37 +1,73 @@
-# AGENTS.md — futuapi4go Operational Guide
+# futuapi4go Operational Guide
 
-## 🧠 High-Signal Architectural Constraints (READ FIRST)
-*   **Language:** Go (Golang).
-*   **Architecture Flow:** The library uses a layered structure: `Application` $\rightarrow$ `client/Client` (Public API Wrapper) $\rightarrow$ `pkg/*` (Business Logic) $\rightarrow$ `internal/client/Conn` (Raw I/O) $\rightarrow$ `Futu OpenD Gateway`.
-*   **Protobuf Reliance:** All communication relies on Protobuf; the SDK does not use JSON by default.
-*   **Core Libraries:** The connection pool (`internal/client/pool.go`) and low-level connection logic (`internal/client/conn.go`) are critical for stability.
+## Architecture
 
-## ⚙️ Developer Workflow & Execution Commands
-
-### Building & Testing
-When making changes, always validate against the full test suite:
-```bash
-go build ./...  # Compiles all packages and examples
-go test ./...   # Runs unit tests across the entire codebase (critical verification step)
+```
+Application
+  └── client/Client         (Public wrapper API)
+       └── pkg/*            (qot, trd, sys — business logic)
+            └── internal/client/Client   (Connection management)
+                 └── internal/client/Conn  (TCP I/O, packet framing)
+                      └── Futu OpenD (TCP socket)
 ```
 
-### Code Review Focus Areas
-*   **Concurrency:** Scrutinize mutex usage in connection handlers (`internal/client/conn.go`) for race condition prevention, especially when managing `connected` or `connActive` state flags.
-*   **Pool Safety:** Verify that resource acquisition and release logic in the connection pool is thread-safe under heavy load.
-*   **Context Usage (New Standard):** All public API methods **must** be updated to accept a `context.Context`. This is essential for production readiness to handle operation cancellation gracefully.
+**Key constraint:** All communication is via Protocol Buffers over TCP. No JSON by default.
 
-## ⚠️ Gotchas & Production Constraints
+## Connection Lifecycle
 
-*   **Pool Management:** Always ensure an acquired client from the pool (`Pool.Get()`) is explicitly returned via `Pool.Put(client)` when finished, preventing connection starvation.
-*   **Asynchronous Updates (Real-Time):** Real-time data arrives via push notifications. You must set a handler using `cli.SetPushHandler()` to receive these asynchronous packets after connecting.
-*   **API Timeouts:** Utilize the granular API request timeout mechanism rather than relying solely on global connection timeouts for reliable operation of long-running queries.
+1. `client.New()` — creates a client with options
+2. `cli.Connect(addr)` — TCP dial → InitConnect handshake → AES key exchange
+3. `cli.Close()` — sends close signal, drains goroutines, closes socket
 
-## 🔗 Key Files & Entry Points
-- **Main Client:** `client/client.go` — The primary public interface and wrapper.
-- **Connection Pool:** `internal/client/pool.go` — Resource management logic.
-- **Low-Level I/O:** `internal/client/conn.go` — Raw packet handling, serialization, and reading from the socket.
-- **Examples:** `cmd/examples/*` - Provides concrete usage patterns for trading, market data, and push subscriptions.
+During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `keepAliveInterval`. These are stored and accessible via:
+- `cli.GetConnID()` → `uint64`
+- `cli.GetLoginUserID()` → `uint64` (Futu/NiuNiu user ID)
+- `cli.IsEncrypt()` → `bool` (was RSA key provided?)
+- `cli.GetServerVer()` → `int32`
+- `cli.CanSendProto(protoID)` → `bool` (connection state check)
 
-## 📚 Official Documentation
+## Build & Verify
 
-- **Futu API Proto Documentation:** https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
+```bash
+go build ./...   # Must always pass
+go test ./...    # Run full test suite
+go vet ./...     # Lint — must pass before commit
+```
+
+## Code Review Focus
+
+| Area | What to Watch |
+|------|--------------|
+| Concurrency | Mutex usage in `internal/client/conn.go` and `client.go` |
+| Pool safety | `Pool.Put()` / `Pool.Get()` thread safety |
+| Context | All public APIs should accept `context.Context` |
+| Errors | Never swallow errors with `_` |
+| Proto | Always check `RetType` before accessing `S2C` |
+
+## Key Entry Points
+
+| File | Purpose |
+|------|---------|
+| `client/client.go` | Public API wrapper |
+| `internal/client/client.go` | Connection, serial numbers, reconnect |
+| `internal/client/conn.go` | Raw TCP packet I/O |
+| `internal/client/pool.go` | Connection pool |
+| `pkg/qot/quote.go` | All market data APIs |
+| `pkg/trd/trade.go` | All trading APIs |
+| `pkg/sys/system.go` | System APIs |
+| `pkg/push/qot_push.go` | Push notification parsers |
+
+## Adding a New API
+
+1. Confirm the proto in `api/proto/`
+2. Run `./scripts/regen-all-protos.ps1`
+3. Add the wrapper function in `pkg/qot/` or `pkg/trd/`
+4. Add a public helper in `client/client.go` if it simplifies usage
+5. Add a test
+6. Update `docs/CHANGELOG.md` under `[Unreleased]`
+7. Verify: `go build ./... && go vet ./...`
+
+## Official Documentation
+
+- Proto Reference: https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
+- Go module: `github.com/shing1211/futuapi4go` (v0.9.0)
