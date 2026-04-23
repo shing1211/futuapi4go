@@ -99,57 +99,14 @@ func SubscribeKLine(cli *client.Client, market int32, code string, klType consta
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
 }
 
-const defaultKLineBufSize = 100
-
-func SubscribeKLines(cli *client.Client, market int32, code string, klTypes ...constant.KLType) (map[constant.KLType]chan *push.UpdateKL, func()) {
-	if len(klTypes) == 0 {
-		return nil, func() {}
-	}
-
-	subtypes := make([]constant.SubType, len(klTypes))
-	for i, kt := range klTypes {
-		subtypes[i] = klTypeToSubType(kt)
-	}
-	client.Subscribe(cli, market, code, subtypes)
-
-	channels := make(map[constant.KLType]chan *push.UpdateKL)
-	for _, kt := range klTypes {
-		channels[kt] = make(chan *push.UpdateKL, defaultKLineBufSize)
-	}
-
-	cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, func(pid uint32, body []byte) {
-		data, err := push.ParseUpdateKL(body)
-		if err != nil || data == nil {
-			return
-		}
-		ch, ok := channels[constant.KLType(data.KlType)]
-		if ok {
-			select {
-			case ch <- data:
-			default:
-			}
-			return
-		}
-		ch = channels[klTypes[0]]
-		select {
-		case ch <- data:
-		default:
-		}
-	})
-
-	return channels, func() {
-		cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, nil)
-	}
-}
-
-func SubscribeKLinesHandler(cli *client.Client, market int32, code string, callback func(*push.UpdateKL), klTypes ...constant.KLType) func() {
-	if len(klTypes) == 0 {
+func SubscribeKLines(cli *client.Client, market int32, code string, handlers map[constant.KLType]func(*push.UpdateKL)) func() {
+	if len(handlers) == 0 {
 		return func() {}
 	}
 
-	subtypes := make([]constant.SubType, len(klTypes))
-	for i, kt := range klTypes {
-		subtypes[i] = klTypeToSubType(kt)
+	subtypes := make([]constant.SubType, 0, len(handlers))
+	for kt := range handlers {
+		subtypes = append(subtypes, klTypeToSubType(kt))
 	}
 	client.Subscribe(cli, market, code, subtypes)
 
@@ -158,7 +115,9 @@ func SubscribeKLinesHandler(cli *client.Client, market int32, code string, callb
 		if err != nil || data == nil {
 			return
 		}
-		callback(data)
+		if cb, ok := handlers[constant.KLType(data.KlType)]; ok {
+			cb(data)
+		}
 	})
 
 	return func() {
