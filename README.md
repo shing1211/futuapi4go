@@ -104,11 +104,20 @@ func main() {
             fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
                 q.Security.GetCode(), q.CurPrice, q.Volume)
         case t := <-tickerCh:
-            fmt.Printf("TICKER: price=%.2f qty=%d\n", t.Price, t.Qty)
+            if len(t.TickerList) > 0 {
+                fmt.Printf("TICKER: price=%.2f vol=%d\n",
+                    t.TickerList[0].GetPrice(), t.TickerList[0].GetVolume())
+            }
         case ob := <-orderBookCh:
-            fmt.Printf("ORDERBOOK: bid=%.2f ask=%.2f\n", ob.BidList[0].Price, ob.AskList[0].Price)
+            if len(ob.OrderBookBidList) > 0 && len(ob.OrderBookAskList) > 0 {
+                fmt.Printf("ORDERBOOK: bid=%.2f ask=%.2f\n",
+                    ob.OrderBookBidList[0].GetPrice(), ob.OrderBookAskList[0].GetPrice())
+            }
         case rt := <-rtCh:
-            fmt.Printf("RT: price=%.2f avg=%.2f\n", rt.Price, rt.AvgPrice)
+            if len(rt.RTList) > 0 {
+                fmt.Printf("RT: price=%.2f avg=%.2f\n",
+                    rt.RTList[0].GetPrice(), rt.RTList[0].GetAvgPrice())
+            }
         case b := <-brokerCh:
             if len(b.AskBrokerList) > 0 {
                 fmt.Printf("BROKER: name=%s pos=%d\n",
@@ -155,7 +164,7 @@ Stop polling. Let data come to you:
 
 ```go
 import (
-    "github.com/shing1211/futuapi4go/pkg/push/chan" as chanpkg
+    chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
 )
 
 // Quote updates stream into the channel
@@ -164,7 +173,8 @@ stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
 defer stop()
 
 for q := range ch {
-    fmt.Printf("Bid: %.2f | Ask: %.2f\n", q.BidPrice[0], q.AskPrice[0])
+    fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
+        q.Security.GetCode(), q.CurPrice, q.Volume)
 }
 ```
 
