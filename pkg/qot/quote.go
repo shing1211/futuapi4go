@@ -4,12 +4,25 @@
 // broker queue, capital flow, stock screening, options, warrants, and
 // historical data requests. All functions require a connected client.
 //
-// Usage:
+// For Python SDK migration, use the constant package for Python-style constants:
 //
-//	import "github.com/shing1211/futuapi4go/pkg/qot"
+//	import (
+//	    "github.com/shing1211/futuapi4go/pkg/constant"
+//	    "github.com/shing1211/futuapi4go/pkg/qot"
+//	    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+//	)
 //
-//	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-//	securities := []*qotcommon.Security{{Market: &hkMarket, Code: ptrStr("00700")}}
+//	// Create security with Python-style constants
+//	market := constant.Market_HK
+//	code := "00700"
+//	securities := []*qotcommon.Security{
+//	    {Market: &market, Code: &code},
+//	}
+//
+//	// Use constant package for K-line types, rehab types, etc.
+//	// KLType: constant.KLType_K_Day, constant.KLType_K_1Min, etc.
+//	// RehabType: constant.RehabType_Forward (QFQ), constant.RehabType_Backward (HFQ)
+//
 // Copyright 2026 shing1211
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

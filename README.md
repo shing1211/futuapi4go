@@ -20,6 +20,7 @@
 *   **Robust Connection Handling:** Features a sophisticated connection pool with automatic reconnection logic and configurable health checks.
 *   **Asynchronous Push Notifications:** Easily subscribe to real-time market data and order updates using structured push handlers.
 *   **Advanced Market Tools:** Access specialized functions like `RequestHistoryKL` (with auto-pagination), `GetOptionChain`, and `GetSecuritySnapshot`.
+*   **Python SDK Compatible:** The `constant` package provides Python-style constants (e.g., `constant.Market_HK`, `constant.TrdSide_Buy`) for easy migration from `futu-api`.
 
 ## ⚡️ Getting Started: A Quick Dive
 
@@ -43,8 +44,8 @@ Before you begin, ensure you have a basic understanding of the Futu OpenAPI requ
 
     func main() {
         // Replace with your actual RSA public key PEM string
-        publicKeyPEM := "YOUR_RSA_PUBLIC_KEY_HERE" 
-        
+        publicKeyPEM := "YOUR_RSA_PUBLIC_KEY_HERE"
+
         cli := client.New() // Use New() for default options
         defer cli.Close()
 
@@ -55,8 +56,8 @@ Before you begin, ensure you have a basic understanding of the Futu OpenAPI requ
 
         // Example Market Data Request (HSI)
         marketCode := 2 // HK Market Code
-        symbolCode := "HSImain" 
-        
+        symbolCode := "HSImain"
+
         quote, err := qot.GetBasicQot(cli, marketCode, symbolCode)
         if err != nil {
             fmt.Printf("Failed to get quote: %v\n", err)
@@ -65,6 +66,49 @@ Before you begin, ensure you have a basic understanding of the Futu OpenAPI requ
         }
     }
     ```
+
+### 📦 Constant Package (Python SDK Migration)
+
+For developers migrating from the Python `futu-api` SDK, use the `constant` package for Python-style constants:
+
+```go
+import (
+    "github.com/shing1211/futuapi4go/pkg/constant"
+    "github.com/shing1211/futuapi4go/pkg/qot"
+    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+)
+
+// Python: ft.Market.HK -> Go: constant.Market_HK
+market := constant.Market_HK  // 1
+code := "00700"
+security := &qotcommon.Security{Market: &market, Code: &code}
+
+// Python: ft.KLType.K_DAY -> Go: constant.KLType_K_Day
+klType := constant.KLType_K_Day  // 6
+
+// Python: ft.AuType.QFQ -> Go: constant.RehabType_Forward
+rehab := constant.RehabType_Forward  // 1
+
+// Python: ft.TrdEnv.SIMULATE -> Go: constant.TrdEnv_Simulate
+trdEnv := constant.TrdEnv_Simulate  // 0
+
+// Python: ft.TrdSide.BUY -> Go: constant.TrdSide_Buy
+trdSide := constant.TrdSide_Buy  // 1
+```
+
+**Python to Go Constant Reference:**
+
+| Category | Python | Go |
+|----------|--------|-----|
+| Market | `ft.Market.HK` | `constant.Market_HK` |
+| K-Line Type | `ft.KLType.K_DAY` | `constant.KLType_K_Day` |
+| Rehab Type | `ft.AuType.QFQ` | `constant.RehabType_Forward` |
+| Sub Type | `ft.SubType.QUOTE` | `constant.SubType_Quote` |
+| Trd Env | `ft.TrdEnv.SIMULATE` | `constant.TrdEnv_Simulate` |
+| Trd Side | `ft.TrdSide.BUY` | `constant.TrdSide_Buy` |
+| Order Type | `ft.OrderType.NORMAL` | `constant.OrderType_Normal` |
+
+For a complete reference, see [`PYTHON_MIGRATION_GUIDE.md`](./PYTHON_MIGRATION_GUIDE.md).
 
 ## 🏗️ Architectural Overview (For Developers)
 

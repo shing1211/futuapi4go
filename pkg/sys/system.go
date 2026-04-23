@@ -3,9 +3,14 @@
 // This package covers connection state, user information, delay statistics,
 // and verification. These functions work without an active trading account.
 //
-// Usage:
+// For Python SDK migration, use ProtoIDs from the constant package:
 //
-//	import "github.com/shing1211/futuapi4go/pkg/sys"
+//	import "github.com/shing1211/futuapi4go/pkg/constant"
+//
+//	// ProtoIDs for system functions:
+//	// constant.ProtoID_GetGlobalState
+//	// constant.ProtoID_GetUserInfo
+//	// constant.ProtoID_KeepAlive
 //
 // Copyright 2026 shing1211
 //
@@ -203,19 +208,78 @@ type GetDelayStatisticsResponse struct {
 	PlaceOrderStatisticsList []*getdelaystatistics.PlaceOrderStatisticsItem
 }
 
+// marshalC2SProto2 marshals the C2S message using proto2 wire format.
+// This is a workaround for the proto2 vs proto3 wire format incompatibility.
+// Proto2 uses non-packed encoding for repeated int32, while proto3 uses packed encoding.
+// OpenD's C++ parser expects proto2 non-packed encoding.
+func marshalC2SProto2(c2s *getdelaystatistics.C2S) ([]byte, error) {
+	buf := make([]byte, 0, 64)
+
+	// Field 1: TypeList (proto2 non-packed encoding)
+	// Wire type 0 = varint, field number 1 -> tag = (1 << 3) | 0 = 8
+	for _, v := range c2s.GetTypeList() {
+		buf = append(buf, 8) // tag for field 1, wire type 0
+		buf = appendVarint(buf, uint64(v))
+	}
+
+	// Field 2: QotPushStage (optional int32)
+	if c2s.QotPushStage != nil {
+		// Wire type 0 = varint, field number 2 -> tag = (2 << 3) | 0 = 16
+		buf = append(buf, 16)
+		buf = appendVarint(buf, uint64(*c2s.QotPushStage))
+	}
+
+	// Field 3: SegmentList (proto2 non-packed encoding)
+	// Wire type 0 = varint, field number 3 -> tag = (3 << 3) | 0 = 24
+	for _, v := range c2s.GetSegmentList() {
+		buf = append(buf, 24) // tag for field 3, wire type 0
+		buf = appendVarint(buf, uint64(v))
+	}
+
+	return buf, nil
+}
+
+// appendVarint appends a varint to the buffer.
+func appendVarint(buf []byte, v uint64) []byte {
+	for v >= 0x80 {
+		buf = append(buf, byte(v)|0x80)
+		v >>= 7
+	}
+	buf = append(buf, byte(v))
+	return buf
+}
+
+// marshalGetDelayStatisticsRequest marshals the GetDelayStatistics request using proto2 wire format.
+func marshalGetDelayStatisticsRequest(c2s *getdelaystatistics.C2S) ([]byte, error) {
+	c2sBuf, err := marshalC2SProto2(c2s)
+	if err != nil {
+		return nil, err
+	}
+
+	// Wrap C2S in Request message with proto2 length-delimited encoding
+	// Field 1, wire type 2 = length-delimited
+	buf := make([]byte, 0, len(c2sBuf)+10)
+	buf = append(buf, 0x0A) // tag for field 1, wire type 2 (length-delimited)
+	buf = appendVarint(buf, uint64(len(c2sBuf)))
+	buf = append(buf, c2sBuf...)
+
+	return buf, nil
+}
+
 // GetDelayStatistics retrieves performance delay statistics for quote pushes, request-reply, and order placements.
 // Returns the delay statistics or an error if the request fails.
+//
+// Note: This function uses proto2 wire format for compatibility with OpenD's C++ protobuf parser.
 func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
 	}
 	c2s := &getdelaystatistics.C2S{}
 
-	pkt := &getdelaystatistics.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
+	// Use custom proto2 marshaling to avoid proto3 packed encoding issue
+	body, err := marshalGetDelayStatisticsRequest(c2s)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("marshalGetDelayStatisticsRequest failed: %w", err)
 	}
 
 	serialNo := c.NextSerialNo()

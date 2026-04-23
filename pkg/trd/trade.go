@@ -4,9 +4,17 @@
 // position and funds queries, order history, and trading flow analysis.
 // All trading functions require an unlocked trading account.
 //
-// Usage:
+// For Python SDK migration, use the constant package for Python-style constants:
 //
-//	import "github.com/shing1211/futuapi4go/pkg/trd"
+//	import (
+//	    "github.com/shing1211/futuapi4go/pkg/constant"
+//	    "github.com/shing1211/futuapi4go/pkg/trd"
+//	)
+//
+//	// Trading environment: constant.TrdEnv_Real or constant.TrdEnv_Simulate
+//	// Trade side: constant.TrdSide_Buy, constant.TrdSide_Sell
+//	// Order type: constant.OrderType_Normal, constant.OrderType_Market
+//	// TrdMarket: constant.TrdMarket_HK, constant.TrdMarket_US, etc.
 //
 // Copyright 2026 shing1211
 //

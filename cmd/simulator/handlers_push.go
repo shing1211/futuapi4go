@@ -41,7 +41,7 @@ func (s *Server) RegisterPushHandlers() {
 	s.RegisterHandler(3011, s.handlePushTicker)    // UpdateTicker
 	s.RegisterHandler(3009, s.handlePushRT)        // UpdateRT
 	s.RegisterHandler(3015, s.handlePushBroker)    // UpdateBroker
-	s.RegisterHandler(qotpush.ProtoID_Qot_PushPriceReminder, s.handlePushPriceReminder)
+	s.RegisterHandler(qotpush.ProtoID_Qot_UpdatePriceReminder, s.handlePushPriceReminder)
 	s.RegisterHandler(2208, s.handlePushOrder)     // UpdateOrder
 	s.RegisterHandler(2218, s.handlePushOrderFill) // UpdateOrderFill
 	s.RegisterHandler(2207, s.handlePushTrdNotify) // TrdNotify
