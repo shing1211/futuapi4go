@@ -135,7 +135,7 @@ func TestIntegrationGetBasicQot(t *testing.T) {
 		{Market: &hkMarket, Code: &code},
 	}
 
-	quotes, err := qot.GetBasicQot(client, securities)
+	quotes, err := qot.GetBasicQot(context.Background(), client, securities)
 	if err != nil {
 		t.Fatalf("GetBasicQot failed: %v", err)
 	}
@@ -217,7 +217,7 @@ func TestIntegrationMultipleAPIs(t *testing.T) {
 				securities := []*qotcommon.Security{
 					{Market: &hkMarket, Code: &code},
 				}
-				_, err := qot.GetBasicQot(client, securities)
+				_, err := qot.GetBasicQot(context.Background(), client, securities)
 				return err
 			},
 		},

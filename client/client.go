@@ -2254,15 +2254,6 @@ func RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error) {
 // ============================================================================
 // Types
 // ============================================================================
-// Types
-// ============================================================================
-
-// ============================================================================
-// Types
-// ============================================================================
-// Types
-// ============================================================================
-
 // Quote represents a real-time quote.
 type Quote struct {
 	Symbol       string
@@ -2553,44 +2544,7 @@ type OptionExpiration struct {
 	Desc string
 }
 
-// OptionItem represents option chain item.
-type OptionItem struct {
-	Code         string
-	Name         string
-	CallPut      int32
-	Strike       float64
-	Expire       string
-	Volume       int64
-	OpenInterest int64
-}
 
-// WarrantItem represents warrant data.
-type WarrantItem struct {
-	Code    string
-	Name    string
-	CallPut int32
-	Strike  float64
-	Expire  string
-	Volume  int64
-	Price   float64
-}
-
-// StockFilterItem represents stock filter result.
-type StockFilterItem struct {
-	Code      string
-	Name      string
-	Price     float64
-	ChangePct float64
-	Volume    int64
-	Amount    float64
-}
-
-// MarketStateInfo represents market state info.
-type MarketStateInfo struct {
-	Code        string
-	Name        string
-	MarketState int32
-}
 
 // Common market constants.
 const (

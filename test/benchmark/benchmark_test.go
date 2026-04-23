@@ -15,6 +15,7 @@
 package benchmark_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -57,7 +58,7 @@ func BenchmarkGetBasicQot_Mock(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
+		_, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{fixtures.HSISecurity()})
 		if err != nil {
 			b.Fatalf("GetBasicQot failed: %v", err)
 		}
@@ -228,7 +229,7 @@ func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := qot.GetBasicQot(cli, securities)
+		_, err := qot.GetBasicQot(context.Background(), cli, securities)
 		if err != nil {
 			b.Fatalf("GetBasicQot failed: %v", err)
 		}
@@ -260,7 +261,7 @@ func BenchmarkConcurrentRequests_Mock(b *testing.B) {
 		defer cleanup()
 
 		for pb.Next() {
-			_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
+			_, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{fixtures.HSISecurity()})
 			if err != nil {
 				b.Fatalf("GetBasicQot failed: %v", err)
 			}

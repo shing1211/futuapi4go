@@ -1,6 +1,8 @@
 # Binaries
 *.exe
 *.exe~
+simulator
+sim_server
 *.dll
 *.so
 *.dylib

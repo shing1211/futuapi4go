@@ -96,7 +96,7 @@ func TestIntegration_HSI_BasicQot(t *testing.T) {
 
 	// Get HSI basic quote
 	hsiSecurity := fixtures.HSISecurity()
-	quotes, err := qot.GetBasicQot(cli, []*qotcommon.Security{hsiSecurity})
+	quotes, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{hsiSecurity})
 	if err != nil {
 		t.Fatalf("GetBasicQot for HSI failed: %v", err)
 	}
@@ -491,7 +491,7 @@ func TestIntegration_ContextCancellation(t *testing.T) {
 	cancel()
 
 	// Next API call should fail or timeout
-	_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
+	_, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{fixtures.HSISecurity()})
 	if err == nil {
 		t.Log("API succeeded before context cancellation propagated")
 	}
@@ -513,7 +513,7 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 
 	// Test all major Qot APIs with HSI
 	t.Run("GetBasicQot", func(t *testing.T) {
-		_, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
+		_, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{fixtures.HSISecurity()})
 		if err != nil {
 			t.Errorf("GetBasicQot failed: %v", err)
 		}
