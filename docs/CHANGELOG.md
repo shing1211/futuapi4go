@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **simulator** — `handlePushKL` now sets `KlType=1` and `RehabType=0` in the S2C response
+- **`constant.KLType` enum values** — were scrambled (SubType values used instead of KLType values); OpenD sends `KlType=6` for 5min, `KlType=1` for 1min, etc. — constants now match proto wire values
 
 ## [0.9.0] - 2026-04-23 — Feature Parity Achieved
 
