@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Example: GetTradeDate - 獲取交易日期
+// Example: RequestTradeDate - 獲取交易日期
 //
-// This example demonstrates how to use the GetTradeDate API to retrieve
+// This example demonstrates how to use the RequestTradeDate API to retrieve
 // trading calendar dates for a specific market and date range.
 package main
 
@@ -38,7 +38,7 @@ func main() {
 		addr = "127.0.0.1:11111"
 	}
 
-	fmt.Println("=== GetTradeDate Example / 獲取交易日期示例 ===")
+	fmt.Println("=== RequestTradeDate Example / 獲取交易日期示例 ===")
 	fmt.Printf("Connecting to %s...\n", addr)
 
 	if err := cli.Connect(addr); err != nil {
@@ -54,15 +54,15 @@ func main() {
 	endTime := now.AddDate(0, 1, 0).Format("2006-01-02")
 
 	// Get trade dates / 獲取交易日期
-	req := &qot.GetTradeDateRequest{
+	req := &qot.RequestTradeDateRequest{
 		Market:    hkMarket,
 		BeginTime: beginTime,
 		EndTime:   endTime,
 	}
 
-	resp, err := qot.GetTradeDate(cli, req)
+	resp, err := qot.RequestTradeDate(cli, req)
 	if err != nil {
-		log.Printf("GetTradeDate failed: %v", err)
+		log.Printf("RequestTradeDate failed: %v", err)
 		return
 	}
 

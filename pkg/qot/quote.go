@@ -57,7 +57,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsuspend"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetwarrant"
@@ -104,7 +103,6 @@ const (
 	ProtoID_GetWarrant              = 3210
 	ProtoID_GetUserSecurity         = 3213
 	ProtoID_GetPriceReminder        = 3221
-	ProtoID_GetTradeDate            = 2205
 	ProtoID_RequestTradeDate        = 3219
 	ProtoID_Subscribe               = 3001
 	ProtoID_RegQotPush              = 3002
@@ -821,69 +819,6 @@ func GetPlateSecurity(c *futuapi.Client, req *GetPlateSecurityRequest) (*GetPlat
 
 	return &GetPlateSecurityResponse{
 		StaticInfoList: s2c.GetStaticInfoList(),
-	}, nil
-}
-
-// GetTradeDateRequest defines parameters for GetTradeDate.
-type GetTradeDateRequest struct {
-	Market    int32
-	BeginTime string
-	EndTime   string
-}
-
-// GetTradeDateResponse is the response type for GetTradeDate.
-type GetTradeDateResponse struct {
-	TradeDateList []*qotgettradedate.TradeDate
-}
-
-// GetTradeDate returns the list of trade dates for the given market within the specified time range.
-func GetTradeDate(c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
-	c2s := &qotgettradedate.C2S{
-		Market:    &req.Market,
-		BeginTime: &req.BeginTime,
-		EndTime:   &req.EndTime,
-	}
-
-	pkt := &qotgettradedate.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetTradeDate, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
-	var rsp qotgettradedate.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
-		return nil, err
-	}
-
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetTradeDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
-	}
-
-	s2c := rsp.GetS2C()
-	if s2c == nil {
-		return nil, fmt.Errorf("GetTradeDate: s2c is nil")
-	}
-
-	return &GetTradeDateResponse{
-		TradeDateList: s2c.GetTradeDateList(),
 	}, nil
 }
 

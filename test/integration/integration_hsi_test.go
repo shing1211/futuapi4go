@@ -355,13 +355,13 @@ func TestIntegration_HSI_TradeDate(t *testing.T) {
 		t.Fatalf("Connect failed: %v", err)
 	}
 
-	req := &qot.GetTradeDateRequest{
+	req := &qot.RequestTradeDateRequest{
 		Market: fixtures.HSIMarket,
 	}
 
-	result, err := qot.GetTradeDate(cli, req)
+	result, err := qot.RequestTradeDate(cli, req)
 	if err != nil {
-		t.Fatalf("GetTradeDate failed: %v", err)
+		t.Fatalf("RequestTradeDate failed: %v", err)
 	}
 
 	t.Logf("HK Trade Dates: %d dates received", len(result.TradeDateList))
@@ -585,13 +585,13 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 		}
 	})
 
-	t.Run("GetTradeDate", func(t *testing.T) {
-		req := &qot.GetTradeDateRequest{
+	t.Run("RequestTradeDate", func(t *testing.T) {
+		req := &qot.RequestTradeDateRequest{
 			Market: fixtures.HSIMarket,
 		}
-		_, err := qot.GetTradeDate(cli, req)
+		_, err := qot.RequestTradeDate(cli, req)
 		if err != nil {
-			t.Errorf("GetTradeDate failed: %v", err)
+			t.Errorf("RequestTradeDate failed: %v", err)
 		}
 	})
 

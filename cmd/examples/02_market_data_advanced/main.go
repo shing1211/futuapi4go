@@ -245,16 +245,16 @@ func main() {
 	fmt.Println()
 
 	// 9. Get Trading Dates
-	fmt.Println("=== 9. Trading Calendar (GetTradeDate) ===")
-	tradeDateReq := &qot.GetTradeDateRequest{
+	fmt.Println("=== 9. Trading Calendar (RequestTradeDate) ===")
+	tradeDateReq := &qot.RequestTradeDateRequest{
 		Market:    hkMarket,
 		BeginTime: "2026-04-01",
 		EndTime:   "2026-04-30",
 	}
 
-	tradeDateResp, err := qot.GetTradeDate(cli, tradeDateReq)
+	tradeDateResp, err := qot.RequestTradeDate(cli, tradeDateReq)
 	if err != nil {
-		log.Printf("GetTradeDate failed: %v", err)
+		log.Printf("RequestTradeDate failed: %v", err)
 	} else {
 		fmt.Printf("  Market: HK | April 2026\n")
 		fmt.Printf("  Trading days: ")

@@ -70,9 +70,39 @@ func TestGetDelayStatisticsResponseFields(t *testing.T) {
 		QotPushStatisticsList: []*getdelaystatistics.DelayStatistics{},
 	}
 
-	// Just verify the struct can be created and accessed
 	if resp.QotPushStatisticsList == nil {
 		t.Error("QotPushStatisticsList should not be nil")
+	}
+}
+
+func TestProtoIDConstants(t *testing.T) {
+	tests := []struct {
+		name  string
+		value int
+	}{
+		{"ProtoID_GetGlobalState", 1002},
+		{"ProtoID_GetUserInfo", 1005},
+		{"ProtoID_Verification", 1006},
+		{"ProtoID_GetDelayStatistics", 1007},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			var got int
+			switch tc.name {
+			case "ProtoID_GetGlobalState":
+				got = ProtoID_GetGlobalState
+			case "ProtoID_GetUserInfo":
+				got = ProtoID_GetUserInfo
+			case "ProtoID_Verification":
+				got = ProtoID_Verification
+			case "ProtoID_GetDelayStatistics":
+				got = ProtoID_GetDelayStatistics
+			}
+			if got != tc.value {
+				t.Errorf("%s: expected %d, got %d", tc.name, tc.value, got)
+			}
+		})
 	}
 }
 

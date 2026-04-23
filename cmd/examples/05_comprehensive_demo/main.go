@@ -234,15 +234,15 @@ func runAdvancedMarketDataDemo(cli *futuapi.Client) {
 
 	// 2.4 Trading Dates
 	fmt.Println("📅 Trading Dates (April 2026):")
-	tradeDateReq := &qot.GetTradeDateRequest{
+	tradeDateReq := &qot.RequestTradeDateRequest{
 		Market:    hkMarket,
 		BeginTime: "2026-04-01",
 		EndTime:   "2026-04-30",
 	}
 
-	tradeDateResp, err := qot.GetTradeDate(cli, tradeDateReq)
+	tradeDateResp, err := qot.RequestTradeDate(cli, tradeDateReq)
 	if err != nil {
-		fmt.Printf("   ❌ GetTradeDate failed: %v\n", err)
+		fmt.Printf("   ❌ RequestTradeDate failed: %v\n", err)
 	} else {
 		fmt.Printf("   ✓ Found %d trading days\n",
 			len(tradeDateResp.TradeDateList))

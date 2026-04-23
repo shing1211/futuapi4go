@@ -472,8 +472,6 @@ func TestProtoIDConstants(t *testing.T) {
 				got = ProtoID_GetOwnerPlate
 			case "ProtoID_GetReference":
 				got = ProtoID_GetReference
-			case "ProtoID_GetTradeDate":
-				got = ProtoID_GetTradeDate
 			case "ProtoID_RequestTradeDate":
 				got = ProtoID_RequestTradeDate
 			case "ProtoID_GetMarketState":
@@ -582,21 +580,6 @@ func TestPlateFields(t *testing.T) {
 	}
 	if plate.Plate.GetCode() != "BK1001" {
 		t.Errorf("expected code BK1001, got %s", plate.Plate.GetCode())
-	}
-}
-
-func TestGetTradeDateRequestConstruction(t *testing.T) {
-	req := &GetTradeDateRequest{
-		Market:    int32(qotcommon.QotMarket_QotMarket_HK_Security),
-		BeginTime: "2026-01-01",
-		EndTime:   "2026-12-31",
-	}
-
-	if req.BeginTime != "2026-01-01" {
-		t.Errorf("expected BeginTime 2026-01-01, got %s", req.BeginTime)
-	}
-	if req.EndTime != "2026-12-31" {
-		t.Errorf("expected EndTime 2026-12-31, got %s", req.EndTime)
 	}
 }
 

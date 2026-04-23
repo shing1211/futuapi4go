@@ -15,6 +15,7 @@
 package qot_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
@@ -27,7 +28,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesttradedate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/test/fixtures"
@@ -64,7 +65,7 @@ func TestGetBasicQot_HSI(t *testing.T) {
 	defer cleanup()
 
 	// Call API
-	result, err := qot.GetBasicQot(cli, []*qotcommon.Security{fixtures.HSISecurity()})
+	result, err := qot.GetBasicQot(context.Background(), cli, []*qotcommon.Security{fixtures.HSISecurity()})
 	if err != nil {
 		t.Fatalf("GetBasicQot failed: %v", err)
 	}
@@ -479,11 +480,11 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 	server.AssertProtoID(t, 3202)
 }
 
-func TestGetTradeDate_HK(t *testing.T) {
+func TestRequestTradeDate_HK(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3201, func(req []byte) ([]byte, error) {
-		tradeDates := []*qotgettradedate.TradeDate{
+	server.RegisterHandler(3219, func(req []byte) ([]byte, error) {
+		tradeDates := []*qotrequesttradedate.TradeDate{
 			{Time: proto.String("2026-04-01")},
 			{Time: proto.String("2026-04-02")},
 			{Time: proto.String("2026-04-03")},
@@ -491,11 +492,11 @@ func TestGetTradeDate_HK(t *testing.T) {
 			{Time: proto.String("2026-04-07")},
 		}
 
-		s2c := &qotgettradedate.S2C{
+		s2c := &qotrequesttradedate.S2C{
 			TradeDateList: tradeDates,
 		}
 
-		return proto.Marshal(&qotgettradedate.Response{S2C: s2c})
+		return proto.Marshal(&qotrequesttradedate.Response{S2C: s2c})
 	})
 
 	if err := server.Start(); err != nil {
@@ -506,20 +507,20 @@ func TestGetTradeDate_HK(t *testing.T) {
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
 
-	req := &qot.GetTradeDateRequest{
+	req := &qot.RequestTradeDateRequest{
 		Market: fixtures.HSIMarket,
 	}
 
-	result, err := qot.GetTradeDate(cli, req)
+	result, err := qot.RequestTradeDate(cli, req)
 	if err != nil {
-		t.Fatalf("GetTradeDate failed: %v", err)
+		t.Fatalf("RequestTradeDate failed: %v", err)
 	}
 
 	if len(result.TradeDateList) != 5 {
 		t.Errorf("Expected 5 trade dates, got %d", len(result.TradeDateList))
 	}
 
-	server.AssertProtoID(t, 3201)
+	server.AssertProtoID(t, 3219)
 }
 
 func TestSubscribe_HSI(t *testing.T) {

@@ -865,7 +865,7 @@ func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
 
 // GetTradeDate retrieves trade dates.
 func GetTradeDate(c *Client, market int32, startDate, endDate string) ([]string, error) {
-	resp, err := qot.GetTradeDate(c.inner, &qot.GetTradeDateRequest{
+	resp, err := qot.RequestTradeDate(c.inner, &qot.RequestTradeDateRequest{
 		Market:    market,
 		BeginTime: startDate,
 		EndTime:   endDate,

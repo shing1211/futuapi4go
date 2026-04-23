@@ -42,8 +42,8 @@ import (
 const (
 	ProtoID_GetGlobalState     = 1002
 	ProtoID_GetUserInfo        = 1005
-	ProtoID_GetDelayStatistics = 1006
-	ProtoID_Verification       = 8001
+	ProtoID_Verification       = 1006
+	ProtoID_GetDelayStatistics = 1007
 )
 
 // GetGlobalStateResponse represents the global connection state including server info, login status, and market availability.
