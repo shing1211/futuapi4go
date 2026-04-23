@@ -51,7 +51,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplatesecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetpricereminder"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
@@ -97,9 +96,8 @@ const (
 	ProtoID_GetCapitalFlow          = 3211
 	ProtoID_GetCapitalDistribution  = 3212
 	ProtoID_StockFilter             = 3215
-	ProtoID_GetOptionChain          = 3209
-	ProtoID_GetRehab                = 3208
-	ProtoID_GetOptionExpirationDate = 3224
+	ProtoID_GetOptionChain            = 3209
+	ProtoID_GetOptionExpirationDate   = 3224
 	ProtoID_GetWarrant              = 3210
 	ProtoID_GetUserSecurity         = 3213
 	ProtoID_GetPriceReminder        = 3221
@@ -2959,24 +2957,24 @@ func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest)
 
 // GetRehabRequest defines parameters for GetRehab.
 type GetRehabRequest struct {
-	SecurityList []*qotcommon.Security
+	Security *qotcommon.Security
 }
 
 // GetRehabResponse is the response type for GetRehab.
 type GetRehabResponse struct {
-	SecurityRehabList []*qotgetrehab.SecurityRehab
+	RehabList []*qotcommon.Rehab
 }
 
-// GetRehab returns rehabilitation (复权) data for the given securities.
+// GetRehab returns rehabilitation (复权) data for the given security.
 func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
 	if err := c.EnsureConnected(); err != nil {
 		return nil, err
 	}
-	c2s := &qotgetrehab.C2S{
-		SecurityList: req.SecurityList,
+	c2s := &qotrequestrehab.C2S{
+		Security: req.Security,
 	}
 
-	pkt := &qotgetrehab.Request{C2S: c2s}
+	pkt := &qotrequestrehab.Request{C2S: c2s}
 
 	body, err := proto.Marshal(pkt)
 	if err != nil {
@@ -2984,7 +2982,7 @@ func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error
 	}
 
 	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetRehab, serialNo, body); err != nil {
+	if err := c.Conn().WritePacket(ProtoID_RequestRehab, serialNo, body); err != nil {
 		return nil, err
 	}
 
@@ -2997,7 +2995,7 @@ func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error
 		return nil, err
 	}
 
-	var rsp qotgetrehab.Response
+	var rsp qotrequestrehab.Response
 	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
 		return nil, err
 	}
@@ -3012,6 +3010,6 @@ func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error
 	}
 
 	return &GetRehabResponse{
-		SecurityRehabList: s2c.GetSecurityRehabList(),
+		RehabList: s2c.GetRehabList(),
 	}, nil
 }

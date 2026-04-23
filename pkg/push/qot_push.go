@@ -50,7 +50,7 @@ const (
 	ProtoID_Qot_UpdateTicker      = 3011
 	ProtoID_Qot_UpdateRT          = 3009
 	ProtoID_Qot_UpdateBroker      = 3015
-	ProtoID_Qot_PushPriceReminder = 3107
+	ProtoID_Qot_UpdatePriceReminder = 3019
 )
 
 type UpdateBasicQot struct {
