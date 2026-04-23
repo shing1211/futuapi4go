@@ -130,11 +130,7 @@ func SubscribeKLines(cli *client.Client, market int32, code string, klTypes ...c
 			}
 			return
 		}
-		c := channels[klTypes[0]]
-		select {
-		case c <- data:
-		default:
-		}
+		ch = channels[klTypes[0]]
 		select {
 		case ch <- data:
 		default:
@@ -142,6 +138,30 @@ func SubscribeKLines(cli *client.Client, market int32, code string, klTypes ...c
 	})
 
 	return channels, func() {
+		cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, nil)
+	}
+}
+
+func SubscribeKLinesHandler(cli *client.Client, market int32, code string, callback func(*push.UpdateKL), klTypes ...constant.KLType) func() {
+	if len(klTypes) == 0 {
+		return func() {}
+	}
+
+	subtypes := make([]constant.SubType, len(klTypes))
+	for i, kt := range klTypes {
+		subtypes[i] = klTypeToSubType(kt)
+	}
+	client.Subscribe(cli, market, code, subtypes)
+
+	cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, func(pid uint32, body []byte) {
+		data, err := push.ParseUpdateKL(body)
+		if err != nil || data == nil {
+			return
+		}
+		callback(data)
+	})
+
+	return func() {
 		cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, nil)
 	}
 }
