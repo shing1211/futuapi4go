@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.7] - 2026-04-24
+
+### Added
+
+- **`chanpkg.SubscribeKLines`** — subscribe to multiple K-line periods, returns `map[constant.KLType]chan *UpdateKL` + stop func
+- **`chanpkg.SubscribeKLinesHandler`** — Python-style callback; single callback receives all periods, caller switches on `kl.KlType`
+
+### Changed
+
+- **`chanpkg.SubscribeKLines`** — unknown `KlType` (e.g., simulator sends `0`) routes to first subscribed type
+
+### Fixed
+
+- **simulator** — `handlePushKL` now sets `KlType=1` and `RehabType=0` in the S2C response
+
 ## [0.9.0] - 2026-04-23 — Feature Parity Achieved
 
 ### Added
