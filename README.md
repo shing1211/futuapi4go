@@ -30,110 +30,75 @@ go get github.com/shing1211/futuapi4go@v0.9.4
 package main
 
 import (
-    "context"
-    "fmt"
-    "os"
-    "os/signal"
-    "syscall"
+	"context"
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
-    "github.com/shing1211/futuapi4go/client"
-    "github.com/shing1211/futuapi4go/pkg/constant"
-    "github.com/shing1211/futuapi4go/pkg/push"
-    chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
+	"github.com/shing1211/futuapi4go/pkg/push"
+	chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
 )
 
 func main() {
-    cli := client.New()
-    defer cli.Close()
+	cli := client.New()
+	defer cli.Close()
 
-    if err := cli.Connect("127.0.0.1:11111"); err != nil {
-        panic(err)
-    }
+	if err := cli.Connect("127.0.0.1:11111"); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to connect: %v\n", err)
+		os.Exit(1)
+	}
 
-    // Subscribe to ALL available data for NVDA
-    // US stocks require subscription before GetQuote works
-    allSubTypes := []constant.SubType{
-        constant.SubType_Quote,     // Real-time quote
-        constant.SubType_OrderBook, // Order book (bid/ask)
-        constant.SubType_Ticker,     // Tick-by-tick trades
-        constant.SubType_RT,         // Intraday time-share
-        constant.SubType_Broker,     // Broker queue
-        constant.SubType_K_1Min,    // 1-minute K-line
-        constant.SubType_K_5Min,    // 5-minute K-line
-        constant.SubType_K_15Min,   // 15-minute K-line
-        constant.SubType_K_30Min,   // 30-minute K-line
-        constant.SubType_K_60Min,   // 60-minute K-line
-        constant.SubType_K_Day,     // Daily K-line
-        constant.SubType_K_Week,    // Weekly K-line
-        constant.SubType_K_Month,   // Monthly K-line
-    }
-    if err := client.Subscribe(cli, constant.Market_US, "NVDA", allSubTypes); err != nil {
-        panic(err)
-    }
+	// Note: US stocks require subscription before GetQuote works
+	// Get a one-shot quote
+	quote, err := client.GetQuote(context.Background(), cli, constant.Market_US, "NVDA")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get quote: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("US.NVDA: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
+		quote.Price, quote.Open, quote.High, quote.Low, quote.Volume)
 
-    // Real-time quote (one-shot)
-    quote, err := client.GetQuote(context.Background(), cli, constant.Market_US, "NVDA")
-    if err != nil {
-        panic(err)
-    }
-    fmt.Printf("US.NVDA: price=%.2f open=%.2f high=%.2f low=%.2f vol=%d\n",
-        quote.Price, quote.Open, quote.High, quote.Low, quote.Volume)
+	// Set up channel listeners for real-time data
+	quoteCh := make(chan *push.UpdateBasicQot, 100)
+	stopQuote := chanpkg.SubscribeQuote(cli, constant.Market_US, "NVDA", quoteCh)
+	defer stopQuote()
 
-    // Set up channel listeners for each data type
-    quoteCh    := make(chan *push.UpdateBasicQot, 100)
-    tickerCh   := make(chan *push.UpdateTicker, 100)
-    orderBookCh := make(chan *push.UpdateOrderBook, 100)
-    rtCh       := make(chan *push.UpdateRT, 100)
-    brokerCh   := make(chan *push.UpdateBroker, 100)
-    klCh       := make(chan *push.UpdateKL, 100)
+	// Set up multiple K-line handlers
+	klHandlers := map[constant.KLType]func(*push.UpdateKL){
+		constant.KLType_K_1Min: func(kl *push.UpdateKL) {
+			for _, bar := range kl.KLList {
+				fmt.Printf("1MIN KL: %s C=%.2f V=%d\n",
+					*bar.Time, *bar.ClosePrice, *bar.Volume)
+			}
+		},
+		constant.KLType_K_Day: func(kl *push.UpdateKL) {
+			for _, bar := range kl.KLList {
+				fmt.Printf("DAY KL: %s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
+					*bar.Time, *bar.OpenPrice, *bar.HighPrice,
+					*bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+			}
+		},
+	}
+	stopKLines := chanpkg.SubscribeKLines(cli, constant.Market_US, "NVDA", klHandlers)
+	defer stopKLines()
 
-    chanpkg.SubscribeQuote(cli, constant.Market_US, "NVDA", quoteCh)
-    chanpkg.SubscribeTicker(cli, constant.Market_US, "NVDA", tickerCh)
-    chanpkg.SubscribeOrderBook(cli, constant.Market_US, "NVDA", orderBookCh)
-    chanpkg.SubscribeRT(cli, constant.Market_US, "NVDA", rtCh)
-    chanpkg.SubscribeBroker(cli, constant.Market_US, "NVDA", brokerCh)
-    chanpkg.SubscribeKLine(cli, constant.Market_US, "NVDA", constant.KLType_K_1Min, klCh)
+	// Graceful shutdown on Ctrl+C
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-    // Graceful shutdown on Ctrl+C
-    sig := make(chan os.Signal, 1)
-    signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-
-    for {
-        select {
-        case q := <-quoteCh:
-            fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
-                q.Security.GetCode(), q.CurPrice, q.Volume)
-        case t := <-tickerCh:
-            if len(t.TickerList) > 0 {
-                fmt.Printf("TICKER: price=%.2f vol=%d\n",
-                    t.TickerList[0].GetPrice(), t.TickerList[0].GetVolume())
-            }
-        case ob := <-orderBookCh:
-            if len(ob.OrderBookBidList) > 0 && len(ob.OrderBookAskList) > 0 {
-                fmt.Printf("ORDERBOOK: bid=%.2f ask=%.2f\n",
-                    ob.OrderBookBidList[0].GetPrice(), ob.OrderBookAskList[0].GetPrice())
-            }
-        case rt := <-rtCh:
-            if len(rt.RTList) > 0 {
-                fmt.Printf("RT: price=%.2f avg=%.2f\n",
-                    rt.RTList[0].GetPrice(), rt.RTList[0].GetAvgPrice())
-            }
-        case b := <-brokerCh:
-            if len(b.AskBrokerList) > 0 {
-                fmt.Printf("BROKER: name=%s pos=%d\n",
-                    b.AskBrokerList[0].GetName(), b.AskBrokerList[0].GetPos())
-            }
-        case kl := <-klCh:
-            for _, bar := range kl.KLList {
-                fmt.Printf("KL: time=%s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
-                    *bar.Time, *bar.OpenPrice, *bar.HighPrice,
-                    *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
-            }
-        case <-sig:
-            fmt.Println("Shutting down...")
-            return
-        }
-    }
+	for {
+		select {
+		case q := <-quoteCh:
+			fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
+				q.Security.GetCode(), q.CurPrice, q.Volume)
+		case <-sig:
+			fmt.Println("Shutting down...")
+			return
+		}
+	}
 }
 ```
 
@@ -162,9 +127,11 @@ func main() {
 
 Stop polling. Let data come to you:
 
+#### Single data type (channel-based):
+
 ```go
 import (
-    chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
+	chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
 )
 
 // Quote updates stream into the channel
@@ -173,9 +140,37 @@ stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
 defer stop()
 
 for q := range ch {
-    fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
-        q.Security.GetCode(), q.CurPrice, q.Volume)
+	fmt.Printf("QUOTE [%s]: price=%.2f vol=%d\n",
+		q.Security.GetCode(), q.CurPrice, q.Volume)
 }
+```
+
+#### Multiple K-line types (callback-based with `SubscribeKLines`):
+
+```go
+import (
+	chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
+)
+
+// Subscribe to 1-minute and daily K-lines with separate handlers
+handlers := map[constant.KLType]func(*push.UpdateKL){
+	constant.KLType_K_1Min: func(kl *push.UpdateKL) {
+		for _, bar := range kl.KLList {
+			fmt.Printf("1MIN KL: %s C=%.2f V=%d\n",
+				*bar.Time, *bar.ClosePrice, *bar.Volume)
+		}
+	},
+	constant.KLType_K_Day: func(kl *push.UpdateKL) {
+		for _, bar := range kl.KLList {
+			fmt.Printf("DAY KL: %s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
+				*bar.Time, *bar.OpenPrice, *bar.HighPrice,
+				*bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+		}
+	},
+}
+
+stop := chanpkg.SubscribeKLines(cli, constant.Market_HK, "00700", handlers)
+defer stop()
 ```
 
 ### Circuit Breaker for Trading
@@ -434,6 +429,8 @@ err := client.Subscribe(cli, constant.Market_US, "NVDA", []constant.SubType{
 
 #### Channel-based subscription — `chanpkg` (recommended)
 
+##### Single K-line type (channel-based):
+
 ```go
 quoteCh   := make(chan *push.UpdateBasicQot, 100)
 tickerCh  := make(chan *push.UpdateTicker, 100)
@@ -489,9 +486,46 @@ for {
                 *bar.Time, *bar.ClosePrice, *bar.Volume)
         }
     case <-sig:
+        fmt.Println("Shutting down...")
         return
     }
 }
+```
+
+##### Multiple K-line types (callback-based with `SubscribeKLines`):
+
+```go
+// Define handlers for different K-line periods
+handlers := map[constant.KLType]func(*push.UpdateKL){
+    constant.KLType_K_1Min: func(kl *push.UpdateKL) {
+        for _, bar := range kl.KLList {
+            fmt.Printf("1MIN KL: %s C=%.2f V=%d\n",
+                *bar.Time, *bar.ClosePrice, *bar.Volume)
+        }
+    },
+    constant.KLType_K_5Min: func(kl *push.UpdateKL) {
+        for _, bar := range kl.KLList {
+            fmt.Printf("5MIN KL: %s C=%.2f V=%d\n",
+                *bar.Time, *bar.ClosePrice, *bar.Volume)
+        }
+    },
+    constant.KLType_K_Day: func(kl *push.UpdateKL) {
+        for _, bar := range kl.KLList {
+            fmt.Printf("DAY KL: %s O=%.2f H=%.2f L=%.2f C=%.2f V=%d\n",
+                *bar.Time, *bar.OpenPrice, *bar.HighPrice,
+                *bar.LowPrice, *bar.ClosePrice, *bar.Volume)
+        }
+    },
+}
+
+stopKLines := chanpkg.SubscribeKLines(cli, constant.Market_HK, "00700", handlers)
+defer stopKLines()
+
+// Wait for Ctrl+C to exit
+sig := make(chan os.Signal, 1)
+signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+<-sig
+fmt.Println("Shutting down...")
 ```
 
 | Function | Signature | Description |
