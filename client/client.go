@@ -99,6 +99,22 @@ func (c *Client) GetServerVer() int32 {
 	return c.inner.GetServerVer()
 }
 
+// GetLoginUserID returns the Futu/NiuNiu user ID that logged into OpenD.
+func (c *Client) GetLoginUserID() uint64 {
+	return c.inner.GetLoginUserID()
+}
+
+// IsEncrypt returns true if the connection uses AES encryption.
+func (c *Client) IsEncrypt() bool {
+	return c.inner.IsEncrypt()
+}
+
+// CanSendProto reports whether a request for the given proto ID can be sent,
+// based on the current connection state.
+func (c *Client) CanSendProto(protoID uint32) bool {
+	return c.inner.CanSendProto(protoID)
+}
+
 // EnsureConnected returns an error if the client is not connected.
 func (c *Client) EnsureConnected() error {
 	return c.inner.EnsureConnected()

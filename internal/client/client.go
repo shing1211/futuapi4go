@@ -196,7 +196,9 @@ type Client struct {
 	mu                sync.RWMutex
 	opts              *ClientOptions
 	connID            uint64
+	loginUserID       uint64
 	aesKey            string
+	isEncrypt         bool
 	serverVer         int32
 	keepAliveInterval int32
 	serialNo          uint32
@@ -403,7 +405,9 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 
 	c.mu.Lock()
 	c.connID = s2c.GetConnID()
+	c.loginUserID = s2c.GetLoginUserID()
 	c.aesKey = s2c.GetConnAESKey()
+	c.isEncrypt = rsaPublicKeyPEM != ""
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
 	atomic.StoreInt32(&c.connected, 1)
@@ -621,6 +625,35 @@ func (c *Client) GetServerVer() int32 {
 	return c.serverVer
 }
 
+// GetLoginUserID returns the Futu/NiuNiu user ID that logged into OpenD.
+func (c *Client) GetLoginUserID() uint64 {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.loginUserID
+}
+
+// IsEncrypt returns true if the connection uses AES encryption.
+func (c *Client) IsEncrypt() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.isEncrypt
+}
+
+// CanSendProto reports whether a request for the given proto ID can be sent,
+// based on the current connection state. InitConnect can be sent when connected.
+// All other protos require the connection to be fully ready (connected + handshaken).
+func (c *Client) CanSendProto(protoID uint32) bool {
+	if !c.IsConnected() {
+		return false
+	}
+	if protoID == ProtoID_InitConnect {
+		return true
+	}
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.serverVer > 0
+}
+
 func (c *Client) IsConnected() bool {
 	return atomic.LoadInt32(&c.connected) == 1
 }
@@ -662,7 +695,9 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 	}
 	newClient.mu.RLock()
 	newClient.connID = c.connID
+	newClient.loginUserID = c.loginUserID
 	newClient.aesKey = c.aesKey
+	newClient.isEncrypt = c.isEncrypt
 	newClient.serverVer = c.serverVer
 	newClient.keepAliveInterval = c.keepAliveInterval
 	newClient.connected = atomic.LoadInt32(&c.connected)

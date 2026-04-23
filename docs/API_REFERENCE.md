@@ -434,6 +434,18 @@ Returns the connection ID assigned by OpenD after successful connection.
 
 Returns the OpenD server version.
 
+### `cli.GetLoginUserID() uint64`
+
+Returns the Futu/NiuNiu user ID that logged into OpenD. Zero if not logged in.
+
+### `cli.IsEncrypt() bool`
+
+Returns true if the connection uses AES encryption after the handshake.
+
+### `cli.CanSendProto(protoID uint32) bool`
+
+Reports whether a request for the given proto ID can be sent based on current connection state. InitConnect can be sent when connected; all other protos require the connection to be fully ready (serverVer > 0).
+
 ### `cli.NextSerialNo() uint32`
 
 Returns the next serial number for packet tracking.
