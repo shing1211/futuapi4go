@@ -22,6 +22,7 @@ import (
 	"time"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
@@ -384,13 +385,34 @@ func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 	return positions, nil
 }
 
-// GetFunds retrieves account funds.
-func GetFunds(c *Client, accID uint64) (*Funds, error) {
-	resp, err := trd.GetFunds(c.inner, &trd.GetFundsRequest{AccID: accID})
+// GetAccountInfo retrieves full account information including multi-currency cash and per-market assets.
+// Maps to Python's accinfo_query. Returns all fields in a single flat struct plus CashInfoList/MarketInfoList.
+func GetAccountInfo(c *Client, accID uint64, market int32) (*Funds, error) {
+	resp, err := trd.GetFunds(c.inner, &trd.GetFundsRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    c.trdEnv,
+	})
 	if err != nil {
 		return nil, err
 	}
 	f := resp.Funds
+	cashList := make([]AccCashInfo, 0, len(f.CashInfoList))
+	for _, c := range f.CashInfoList {
+		cashList = append(cashList, AccCashInfo{
+			Currency:         c.Currency,
+			Cash:             c.Cash,
+			AvailableBalance: c.AvailableBalance,
+			NetCashPower:     c.NetCashPower,
+		})
+	}
+	marketList := make([]AccMarketInfo, 0, len(f.MarketInfoList))
+	for _, m := range f.MarketInfoList {
+		marketList = append(marketList, AccMarketInfo{
+			TrdMarket: m.TrdMarket,
+			Assets:    m.Assets,
+		})
+	}
 	return &Funds{
 		Power:             f.Power,
 		TotalAssets:       f.TotalAssets,
@@ -413,7 +435,29 @@ func GetFunds(c *Client, accID uint64) (*Funds, error) {
 		PendingAsset:      f.PendingAsset,
 		MaxWithdrawal:     f.MaxWithdrawal,
 		RiskStatus:        f.RiskStatus,
+		MarginCallMargin:  f.MarginCallMargin,
+		IsPDT:             f.IsPDT,
+		PDTSeq:            f.PDTSeq,
+		BeginningDTBP:     f.BeginningDTBP,
+		RemainingDTBP:     f.RemainingDTBP,
+		DtCallAmount:      f.DtCallAmount,
+		DtStatus:          f.DtStatus,
+		CashInfoList:      cashList,
+		MarketInfoList:    marketList,
 	}, nil
+}
+
+// GetFunds retrieves account funds.
+func GetFunds(c *Client, accID uint64) (*Funds, error) {
+	accounts, err := GetAccountList(c)
+	if err != nil {
+		return nil, err
+	}
+	if len(accounts) == 0 {
+		return nil, fmt.Errorf("no accounts available")
+	}
+	acc := accounts[0]
+	return GetAccountInfo(c, acc.AccID, acc.TrdMarketAuthList[0])
 }
 
 // MaxTrdQtysInfo represents maximum tradable quantities.
@@ -699,6 +743,102 @@ func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill
 		})
 	}
 	return fills, nil
+}
+
+// FlowSummaryInfo represents a single cash flow entry.
+// Maps to Python's get_acc_cash_flow return columns.
+type FlowSummaryInfo struct {
+	CashFlowID        uint64
+	ClearingDate      string
+	SettlementDate    string
+	Currency          int32
+	CashFlowType      string
+	CashFlowDirection int32
+	CashFlowAmount    float64
+	CashFlowRemark    string
+}
+
+// GetFlowSummary retrieves account cash flow entries.
+// clearingDate: clearing date in "YYYY-MM-DD" format, empty means today.
+// direction: 0=none, 1=in, 2=out. Maps to Python's CashFlowDirection.
+func GetFlowSummary(c *Client, accID uint64, market int32, clearingDate string, direction int32) ([]*FlowSummaryInfo, error) {
+	header := &trdcommon.TrdHeader{
+		AccID:     &accID,
+		TrdMarket: &market,
+		TrdEnv:    &c.trdEnv,
+	}
+	resp, err := trd.GetFlowSummary(c.inner, &trd.GetFlowSummaryRequest{
+		Header:            header,
+		ClearingDate:      clearingDate,
+		CashFlowDirection: direction,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*FlowSummaryInfo, 0, len(resp.FlowSummaryList))
+	for _, f := range resp.FlowSummaryList {
+		if f == nil {
+			continue
+		}
+		result = append(result, &FlowSummaryInfo{
+			CashFlowID:        f.GetCashFlowID(),
+			ClearingDate:      f.GetClearingDate(),
+			SettlementDate:    f.GetSettlementDate(),
+			Currency:          f.GetCurrency(),
+			CashFlowType:      f.GetCashFlowType(),
+			CashFlowDirection: f.GetCashFlowDirection(),
+			CashFlowAmount:    f.GetCashFlowAmount(),
+			CashFlowRemark:    f.GetCashFlowRemark(),
+		})
+	}
+	return result, nil
+}
+
+// AccTradingInfo represents trading capability for a security.
+// Maps to Python's acctradinginfo_query return columns.
+type AccTradingInfo struct {
+	MaxCashBuy          float64
+	MaxCashAndMarginBuy float64
+	MaxPositionSell     float64
+	MaxSellShort        float64
+	MaxBuyBack          float64
+	LongRequiredIM      float64
+	ShortRequiredIM     float64
+}
+
+// GetAccTradingInfo retrieves maximum tradable quantities and margin info for a security.
+// orderType: constant.OrderType_Normal, OrderType_Market, etc.
+// price: quote price with 3 decimal precision.
+// Returns max buy/sell quantities and required initial margins.
+// Maps to Python's acctradinginfo_query.
+func GetAccTradingInfo(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*AccTradingInfo, error) {
+	secMarket := constant.MarketToTrdSecMarket[market]
+	resp, err := trd.GetMaxTrdQtys(c.inner, &trd.GetMaxTrdQtysRequest{
+		AccID:    accID,
+		TrdMarket: market,
+		TrdEnv:   c.trdEnv,
+		OrderType: orderType,
+		Code:     code,
+		Price:    price,
+		SecMarket: int32(secMarket),
+	})
+	if err != nil {
+		return nil, err
+	}
+	if resp.MaxTrdQtys == nil {
+		return nil, fmt.Errorf("GetAccTradingInfo: MaxTrdQtys is nil")
+	}
+	m := resp.MaxTrdQtys
+	return &AccTradingInfo{
+		MaxCashBuy:          m.MaxCashBuy,
+		MaxCashAndMarginBuy: m.MaxCashAndMarginBuy,
+		MaxPositionSell:     m.MaxPositionSell,
+		MaxSellShort:        m.MaxSellShort,
+		MaxBuyBack:          m.MaxBuyBack,
+		LongRequiredIM:      m.LongRequiredIM,
+		ShortRequiredIM:     m.ShortRequiredIM,
+	}, nil
 }
 
 // GetOrderBook retrieves order book data.
@@ -2333,7 +2473,23 @@ type Position struct {
 	AveragePnLRate   float64
 }
 
+// AccCashInfo represents per-currency cash (futures accounts).
+// Maps to Python's hkd_net_cash_power, usd_net_cash_power, etc.
+type AccCashInfo struct {
+	Currency        int32
+	Cash            float64
+	AvailableBalance float64
+	NetCashPower    float64
+}
+
+// AccMarketInfo represents per-market assets.
+type AccMarketInfo struct {
+	TrdMarket int32
+	Assets    float64
+}
+
 // Funds represents account funds.
+// Maps to Python's accinfo_query return columns.
 type Funds struct {
 	Power             float64
 	TotalAssets       float64
@@ -2356,6 +2512,15 @@ type Funds struct {
 	PendingAsset      float64
 	MaxWithdrawal     float64
 	RiskStatus        int32
+	MarginCallMargin  float64
+	IsPDT             bool
+	PDTSeq            string
+	BeginningDTBP     float64
+	RemainingDTBP     float64
+	DtCallAmount      float64
+	DtStatus          int32
+	CashInfoList      []AccCashInfo
+	MarketInfoList    []AccMarketInfo
 }
 
 // Order represents an order.

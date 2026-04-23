@@ -208,9 +208,60 @@ Cancels all pending orders for the account.
 
 Retrieves current positions.
 
+#### `client.GetAccountInfo(c *Client, accID uint64, market int32) (*Funds, error)`
+
+Retrieves full account information including multi-currency cash (per-currency cash, available balance, net cash power) and per-market assets. Maps to Python's `accinfo_query`. This is the recommended way to get account data.
+
+```go
+funds, err := client.GetAccountInfo(c, accID, constant.TrdMarket_HK)
+// Access per-currency cash:
+for _, ci := range funds.CashInfoList {
+    fmt.Printf("Currency=%d, Cash=%.2f, Available=%.2f\n",
+        ci.Currency, ci.Cash, ci.AvailableBalance)
+}
+// Access per-market assets:
+for _, mi := range funds.MarketInfoList {
+    fmt.Printf("Market=%d, Assets=%.2f\n", mi.TrdMarket, mi.Assets)
+}
+```
+
+**Response:** `Funds` struct with all base fields plus:
+- `CashInfoList []AccCashInfo` — per-currency: `Currency`, `Cash`, `AvailableBalance`, `NetCashPower`
+- `MarketInfoList []AccMarketInfo` — per-market: `TrdMarket`, `Assets`
+- Plus all base fields: `Power`, `TotalAssets`, `Cash`, `MarketVal`, `FrozenCash`, `DebtCash`, `AvlWithdrawalCash`, `Currency`, `AvailableFunds`, `UnrealizedPL`, `RealizedPL`, `RiskLevel`, `InitialMargin`, `MaintenanceMargin`, `MaxPowerShort`, `NetCashPower`, `LongMv`, `ShortMv`, `PendingAsset`, `MaxWithdrawal`, `RiskStatus`, `MarginCallMargin`, `IsPDT`, `PDTSeq`, `BeginningDTBP`, `RemainingDTBP`, `DtCallAmount`, `DtStatus`
+
 #### `client.GetFunds(c *Client, accID uint64) (*Funds, error)`
 
-Retrieves account funds.
+Retrieves account funds. Auto-selects the first available account and market. Internally calls `GetAccountInfo`.
+
+#### `client.GetFlowSummary(c *Client, accID uint64, market int32, clearingDate string, direction int32) ([]*FlowSummaryInfo, error)`
+
+Retrieves account cash flow entries (清算资金流水). Maps to Python's `get_acc_cash_flow`.
+- `clearingDate`: clearing date in "YYYY-MM-DD" format, empty means today.
+- `direction`: 0=none, 1=in, 2=out. Use `constant.CashFlowDirection_In` etc.
+
+```go
+flows, err := client.GetFlowSummary(c, accID, constant.TrdMarket_HK, "2026-04-23", 0)
+for _, f := range flows {
+    fmt.Printf("ID=%d Date=%s Type=%s Dir=%d Amount=%.2f\n",
+        f.CashFlowID, f.ClearingDate, f.CashFlowType, f.CashFlowDirection, f.CashFlowAmount)
+}
+```
+
+**Response:** `[]*FlowSummaryInfo` with `CashFlowID`, `ClearingDate`, `SettlementDate`, `Currency`, `CashFlowType`, `CashFlowDirection`, `CashFlowAmount`, `CashFlowRemark`
+
+#### `client.GetAccTradingInfo(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*AccTradingInfo, error)`
+
+Retrieves maximum tradable quantities and margin requirements for a security. Maps to Python's `acctradinginfo_query`.
+
+```go
+info, err := client.GetAccTradingInfo(c, accID, constant.Market_HK, "00700",
+    constant.OrderType_Normal, 350.00)
+fmt.Printf("Max Cash Buy: %.0f, Max Sell: %.0f\n",
+    info.MaxCashBuy, info.MaxPositionSell)
+```
+
+**Response:** `AccTradingInfo` with `MaxCashBuy`, `MaxCashAndMarginBuy`, `MaxPositionSell`, `MaxSellShort`, `MaxBuyBack`, `LongRequiredIM`, `ShortRequiredIM`
 
 #### `client.GetOrderList(c *Client, accID uint64) ([]Order, error)`
 

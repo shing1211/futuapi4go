@@ -33,7 +33,11 @@ import (
     "github.com/shing1211/futuapi4go/client"
 )
 
-cli := client.New(client.WithAddress("127.0.0.1:11111"))
+cli := client.New()
+defer cli.Close()
+if err := cli.Connect("127.0.0.1:11111"); err != nil {
+    panic(err)
+}
 defer cli.Close()
 ```
 
@@ -70,19 +74,15 @@ quote_ctx.subscribe(code, [
 **Go:**
 ```go
 import (
-    "github.com/shing1211/futuapi4go/pkg/qot"
     "github.com/shing1211/futuapi4go/pkg/constant"
 )
 
-_, err := qot.Subscribe(cli.Inner(), &qot.SubscribeRequest{
-    SecurityList: securities,
-    SubTypeList: []qot.SubType{
-        qot.SubType(constant.SubType_Quote),
-        qot.SubType(constant.SubType_Ticker),
-        qot.SubType(constant.SubType_K_Day),
-        qot.SubType(constant.SubType_OrderBook),
-    },
-    IsSubOrUnSub: true,
+// High-level client wrapper (recommended)
+err := client.Subscribe(cli, constant.Market_HK, "00700", []int32{
+    constant.SubType_Quote,
+    constant.SubType_Ticker,
+    constant.SubType_K_Day,
+    constant.SubType_OrderBook,
 })
 ```
 

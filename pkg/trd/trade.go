@@ -174,7 +174,22 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 	return result, nil
 }
 
+// AccCashInfo represents per-currency cash information (futures accounts).
+type AccCashInfo struct {
+	Currency        int32
+	Cash            float64
+	AvailableBalance float64
+	NetCashPower    float64
+}
+
+// AccMarketInfo represents per-market asset information.
+type AccMarketInfo struct {
+	TrdMarket int32
+	Assets    float64
+}
+
 // Funds represents the capital and asset information of a trading account.
+// Maps to Python's accinfo_query return columns.
 type Funds struct {
 	Power             float64
 	TotalAssets       float64
@@ -204,6 +219,8 @@ type Funds struct {
 	RemainingDTBP     float64
 	DtCallAmount      float64
 	DtStatus          int32
+	CashInfoList      []AccCashInfo
+	MarketInfoList    []AccMarketInfo
 }
 
 // GetFundsRequest is the request to retrieve account funds.
@@ -300,8 +317,40 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 			RemainingDTBP:     f.GetRemainingDTBP(),
 			DtCallAmount:      f.GetDtCallAmount(),
 			DtStatus:          f.GetDtStatus(),
+			CashInfoList:      accCashInfoListToGo(f.GetCashInfoList()),
+			MarketInfoList:    accMarketInfoListToGo(f.GetMarketInfoList()),
 		},
 	}, nil
+}
+
+func accCashInfoListToGo(in []*trdcommon.AccCashInfo) []AccCashInfo {
+	out := make([]AccCashInfo, 0, len(in))
+	for _, c := range in {
+		if c == nil {
+			continue
+		}
+		out = append(out, AccCashInfo{
+			Currency:        c.GetCurrency(),
+			Cash:            c.GetCash(),
+			AvailableBalance: c.GetAvailableBalance(),
+			NetCashPower:    c.GetNetCashPower(),
+		})
+	}
+	return out
+}
+
+func accMarketInfoListToGo(in []*trdcommon.AccMarketInfo) []AccMarketInfo {
+	out := make([]AccMarketInfo, 0, len(in))
+	for _, m := range in {
+		if m == nil {
+			continue
+		}
+		out = append(out, AccMarketInfo{
+			TrdMarket: m.GetTrdMarket(),
+			Assets:    m.GetAssets(),
+		})
+	}
+	return out
 }
 
 // Position represents a stock position with quantity, price, cost, and profit/loss information.

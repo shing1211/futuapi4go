@@ -1,138 +1,381 @@
-# 🚀 futuapi4go: The Resilient Open-Source Go SDK for Futu OpenAPI
+# futuapi4go
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Language">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/Version-0.8.0-blue?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" alt="Status">
-</p>
+> High-performance, production-ready Go SDK for Futu OpenAPI. Covers all market data, trading, and push notification APIs.
+
+[![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square)](https://golang.org)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square)](LICENSE)
 
 ---
 
-## ✨ Introduction: Your Gateway to Futu Trading Data
+## Features
 
-`futuapi4go` is a powerful, high-performance, and resilient Go SDK engineered to provide developers with seamless access to the comprehensive suite of trading and market data provided by the Futu OpenAPI. We've built this library from the ground up using modern Go concurrency patterns (goroutines, channels) and robust error handling to ensure it performs reliably even in challenging real-world network environments.
+| Feature | Description |
+|---------|-------------|
+| **78 protobufs** | All Python SDK protos + 28 extras (futures, flow, all push types) |
+| **Type-safe** | Go structs with compile-time safety vs Python DataFrames |
+| **Circuit breaker** | Built-in `pkg/breaker` for resilient trading |
+| **Structured logging** | `pkg/logger` — text + JSON, leveled (Debug/Info/Warn/Error) |
+| **Channel push** | `pkg/push/chan` — goroutine-safe push via Go channels |
+| **Connection pool** | `internal/client/pool.go` — reusable connections with health checks |
+| **Connection resilience** | Auto-reconnect with configurable backoff |
+| **Context support** | Request-level cancellation on all APIs |
 
-**We are building this project with an Open Source mindset.** Our commitment is to create a developer experience that is intuitive, reliable, and easy to contribute to.
+---
 
-## 💡 Key Features
-*   **Unified API:** Single interface for Market Data (quotes, KLines), Trading Operations (`PlaceOrder`, `GetPositionList`), and System Status checks.
-*   **Robust Connection Handling:** Features a sophisticated connection pool with automatic reconnection logic and configurable health checks.
-*   **Asynchronous Push Notifications:** Easily subscribe to real-time market data and order updates using structured push handlers.
-*   **Advanced Market Tools:** Access specialized functions like `RequestHistoryKL` (with auto-pagination), `GetOptionChain`, and `GetSecuritySnapshot`.
-*   **Python SDK Compatible:** The `constant` package provides Python-style constants (e.g., `constant.Market_HK`, `constant.TrdSide_Buy`) for easy migration from `futu-api`.
+## Quick Start
 
-## ⚡️ Getting Started: A Quick Dive
+```bash
+go get github.com/shing1211/futuapi4go
+```
 
-### Prerequisites
-Before you begin, ensure you have a basic understanding of the Futu OpenAPI requirements, including RSA public key generation for secure connection.
+```go
+package main
 
-1.  **Installation:**
-    ```bash
-    go get github.com/shing1211/futuapi4go
-    ```
-2.  **Connection Example (Simplified):**
-    *(Note: Full implementation requires robust error checking.)*
-    ```go
-    package main
+import (
+    "fmt"
+    "github.com/shing1211/futuapi4go/client"
+    "github.com/shing1211/futuapi4go/pkg/constant"
+)
 
-    import (
-        "fmt"
-        "github.com/shing1211/futuapi4go/client"
-        "github.com/shing1211/futuapi4go/pkg/qot"
-    )
+func main() {
+    cli := client.New()
+    defer cli.Close()
 
-    func main() {
-        // Replace with your actual RSA public key PEM string
-        publicKeyPEM := "YOUR_RSA_PUBLIC_KEY_HERE"
-
-        cli := client.New() // Use New() for default options
-        defer cli.Close()
-
-        fmt.Println("Attempting connection...")
-        if err := cli.ConnectWithRSA("127.0.0.1:11111", publicKeyPEM); err != nil {
-            panic(fmt.Sprintf("FATAL CONNECTION ERROR: %v", err))
-        }
-
-        // Example Market Data Request (HSI)
-        marketCode := 2 // HK Market Code
-        symbolCode := "HSImain"
-
-        quote, err := qot.GetBasicQot(cli, marketCode, symbolCode)
-        if err != nil {
-            fmt.Printf("Failed to get quote: %v\n", err)
-        } else {
-            fmt.Printf("📈 Quote for %s: Price=%.2f | Volume=%d\n", quote.Symbol, quote.Price, quote.Volume)
-        }
+    if err := cli.Connect("127.0.0.1:11111"); err != nil {
+        panic(err)
     }
-    ```
 
-### 📦 Constant Package (Python SDK Migration)
+    // Get quote
+    quote, err := client.GetQuote(nil, cli, constant.Market_HK, "00700")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("HK.00700: %.2f\n", quote.Price)
 
-For developers migrating from the Python `futu-api` SDK, use the `constant` package for Python-style constants:
+    // Subscribe to real-time data
+    client.Subscribe(cli, constant.Market_HK, "00700",
+        []int32{constant.SubType_Quote, constant.SubType_KL_1Min})
+
+    // Place a simulate order
+    accounts, _ := client.GetAccountList(cli)
+    result, err := client.PlaceOrder(cli, accounts[0].AccID, constant.Market_HK,
+        "00700", constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("Order placed: %d\n", result.OrderID)
+}
+```
+
+---
+
+## Package Overview
+
+| Package | Purpose |
+|---------|---------|
+| `client` | High-level public API (recommended) — all wrappers return typed structs |
+| `internal/client` | Low-level connection, packet I/O, reconnect, keep-alive |
+| `pkg/qot` | Market data APIs (quotes, K-lines, order book, tick data, etc.) |
+| `pkg/trd` | Trading APIs (orders, positions, funds, history) |
+| `pkg/sys` | System APIs (global state, user info, delay statistics) |
+| `pkg/push` | Push notification parsers (quote updates, order fills) |
+| `pkg/push/chan` | Channel-based push delivery — subscribe via channels |
+| `pkg/breaker` | Circuit breaker pattern — prevents cascading failures |
+| `pkg/logger` | Structured leveled logging (text + JSON formats) |
+| `pkg/util` | Code parsing, market conversion helpers |
+| `pkg/constant` | Python-style constants + String() methods on all enums |
+| `pkg/pb/*` | Protobuf-generated types for all Futu OpenAPI protos |
+
+---
+
+## Key Packages
+
+### `pkg/constant` — Python-style Constants
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/constant"
+
+// Markets
+constant.Market_HK  // 1
+constant.Market_US  // 11
+constant.Market_SH  // 21
+constant.Market_SZ  // 22
+constant.Market_SG  // 31
+constant.Market_JP  // 41
+constant.Market_AU  // 51
+constant.Market_MY  // 61
+constant.Market_CA  // 71
+constant.Market_FX  // 81
+
+// K-Line Types
+constant.KLType_K_1Min  // 1
+constant.KLType_K_5Min  // 2
+constant.KLType_K_15Min  // 3
+constant.KLType_K_30Min  // 4
+constant.KLType_K_60Min  // 5
+constant.KLType_K_Day    // 6
+constant.KLType_K_Week   // 7
+constant.KLType_K_Month  // 8
+
+// Trading
+constant.TrdEnv_Real      // 0
+constant.TrdEnv_Simulate   // 1
+constant.TrdSide_Buy       // 1
+constant.TrdSide_Sell      // 2
+constant.OrderType_Normal   // 0
+constant.OrderType_Market   // 2
+
+// Rehab
+constant.RehabType_None     // 0 (不复权)
+constant.RehabType_Forward  // 1 (前复权 QFQ)
+constant.RehabType_Backward // 2 (后复权 HFQ)
+
+// SubTypes
+constant.SubType_Quote
+constant.SubType_K_Day
+constant.SubType_K_1Min
+constant.SubType_Ticker
+constant.SubType_OrderBook
+constant.SubType_RT
+constant.SubType_Broker
+```
+
+All enums have `String()` methods: `constant.Market_HK.String()` → `"Market_HK"`.
+
+### `pkg/push/chan` — Channel-Based Push
 
 ```go
 import (
-    "github.com/shing1211/futuapi4go/pkg/constant"
-    "github.com/shing1211/futuapi4go/pkg/qot"
-    "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+    "github.com/shing1211/futuapi4go/client"
+    "github.com/shing1211/futuapi4go/pkg/push/chan"
+    "github.com/shing1211/futuapi4go/pkg/push"
 )
 
-// Python: ft.Market.HK -> Go: constant.Market_HK
-market := constant.Market_HK  // 1
-code := "00700"
-security := &qotcommon.Security{Market: &market, Code: &code}
+// Subscribe to real-time quotes via channel
+ch := make(chan *push.UpdateBasicQot, 100)
+stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
+defer stop()
 
-// Python: ft.KLType.K_DAY -> Go: constant.KLType_K_Day
-klType := constant.KLType_K_Day  // 6
+for q := range ch {
+    fmt.Printf("Quote: %.2f\n", q.CurPrice)
+}
 
-// Python: ft.AuType.QFQ -> Go: constant.RehabType_Forward
-rehab := constant.RehabType_Forward  // 1
-
-// Python: ft.TrdEnv.SIMULATE -> Go: constant.TrdEnv_Simulate
-trdEnv := constant.TrdEnv_Simulate  // 0
-
-// Python: ft.TrdSide.BUY -> Go: constant.TrdSide_Buy
-trdSide := constant.TrdSide_Buy  // 1
+// Subscribe to K-line updates
+klCh := make(chan *push.UpdateKL, 100)
+stopK := chanpkg.SubscribeKLine(cli, constant.Market_HK, "00700", constant.KLType_K_1Min, klCh)
+defer stopK()
 ```
 
-**Python to Go Constant Reference:**
+### `pkg/breaker` — Circuit Breaker
 
-| Category | Python | Go |
-|----------|--------|-----|
-| Market | `ft.Market.HK` | `constant.Market_HK` |
-| K-Line Type | `ft.KLType.K_DAY` | `constant.KLType_K_Day` |
-| Rehab Type | `ft.AuType.QFQ` | `constant.RehabType_Forward` |
-| Sub Type | `ft.SubType.QUOTE` | `constant.SubType_Quote` |
-| Trd Env | `ft.TrdEnv.SIMULATE` | `constant.TrdEnv_Simulate` |
-| Trd Side | `ft.TrdSide.BUY` | `constant.TrdSide_Buy` |
-| Order Type | `ft.OrderType.NORMAL` | `constant.OrderType_Normal` |
+```go
+import "github.com/shing1211/futuapi4go/pkg/breaker"
 
-For a complete reference, see [`PYTHON_MIGRATION_GUIDE.md`](./PYTHON_MIGRATION_GUIDE.md).
+cb := breaker.New(
+    breaker.WithThreshold(5),
+    breaker.WithCooldown(30*time.Second),
+)
 
-## 🏗️ Architectural Overview (For Developers)
+result, err := cb.Do(func() (interface{}, error) {
+    return client.PlaceOrder(cli, accID, market, "00700", side, orderType, price, qty)
+})
+if err == breaker.ErrOpen {
+    fmt.Println("Circuit open — trading suspended")
+}
+```
 
-The SDK follows a layered architecture designed for modularity and testability:
+### `pkg/logger` — Structured Logging
 
-`Application Logic` $\rightarrow$ `client/Client` (Public Interface) $\rightarrow$ `pkg/*` (Business Logic Wrappers, e.g., `qot`, `trd`) $\rightarrow$ `internal/client/Conn` (Low-Level Network Handling) $\rightarrow$ `Futu OpenD Gateway`.
+```go
+import "github.com/shing1211/futuapi4go/pkg/logger"
 
-**Key Components:**
-*   **`ClientPool` (`internal/client/pool.go`):** Manages and reuses underlying connections for efficiency, minimizing connection overhead per request.
-*   **`Connection` (`internal/client/conn.go`):** Handles the raw TCP socket communication, packet serialization/deserialization, and the primary read loop.
-*   **Push Handlers (`pkg/push/*.go`):** Dedicated parsers to translate complex binary push notifications into clean Go structs for immediate use by the application layer.
+l := logger.New(
+    logger.WithLevel(logger.LevelDebug),
+    logger.WithFormat(logger.FormatJSON),
+    logger.WithOutput(os.Stdout),
+)
 
-## 🛠️ Contributing & Development Standards (Open Source Focus)
-
-We welcome contributions! Whether it's a bug fix, a feature addition, or documentation improvement, your help is invaluable.
-
-1.  **Code Style:** Adhere to standard Golang conventions and maintain consistency with existing patterns in `futuapi4go`.
-2.  **Testing:** All new features must be accompanied by unit tests (`*_test.go`). Utilize the provided mock server utilities for integration testing where possible.
-3.  **Process:** Follow the Git workflow (branching, committing) and submit a Pull Request with a clear description of the changes.
-
-For detailed contribution guidelines, please refer to [`CONTRIBUTING.md`](./CONTRIBUTING.md). For questions, feel free to open an issue!
+l.Info("connected", "addr", "127.0.0.1:11111", "conn_id", 42)
+l.Warn("order rejected", "code", "HK.00700", "reason", "insufficient funds")
+```
 
 ---
-### 🛡️ Legal & Disclaimer
-**WARNING: TRADING FINANCIAL INSTRUMENTS CARRIES SIGNIFICANT RISK.** The `futuapi4go` library is a software utility only and does not provide financial advice. By using this SDK, you acknowledge that all trading decisions are made at your own risk. We provide this software "as is."
 
-*Trademark Notice: Futu Holdings Limited trademarks are used descriptively to indicate the protocol implementation. This project is independent of Futu.*
+## Client Options
+
+```go
+cli := client.New(
+    client.WithDialTimeout(10 * time.Second),
+    client.WithAPISetTimeout(30 * time.Second),
+    client.WithKeepAliveInterval(30 * time.Second),
+    client.WithReconnectInterval(5 * time.Second),
+    client.WithMaxRetries(3),
+    client.WithLogLevel(1), // 0=info, 1=warn, 2=error
+)
+
+// Trading: set default environment
+cli = cli.WithTradeEnv(constant.TrdEnv_Simulate)  // default is simulate
+```
+
+---
+
+## Code Helpers (`pkg/util`)
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/util"
+
+// Parse "HK.00700" → market=1, code="00700"
+mkt, code := util.ParseCode("HK.00700")
+
+// Format back → "HK.00700"
+formatted := util.FormatCode(mkt, code)
+
+// Market conversion
+secMkt := util.MarketToTrdSecMarket[mkt]
+qotMkt := util.TrdMarketToQotMarket(secMkt)
+
+// Validate
+if util.IsMarketValid(mkt) {
+    // ...
+}
+```
+
+---
+
+## Full API Reference
+
+See [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) for the complete API documentation.
+
+### Trading APIs
+
+| Function | Description |
+|----------|-------------|
+| `GetAccountList` | List all trading accounts |
+| `UnlockTrading` | Unlock trading with MD5 password |
+| `PlaceOrder` | Place buy/sell order |
+| `ModifyOrder` | Modify or cancel order |
+| `CancelAllOrder` | Cancel all pending orders |
+| `GetPositionList` | Get current positions |
+| `GetAccountInfo` | Full account info (multi-currency cash, per-market assets) |
+| `GetFunds` | Account funds (auto-selects first account) |
+| `GetAccTradingInfo` | Max tradable quantities for a security |
+| `GetMaxTrdQtys` | Calculate max buy/sell quantities |
+| `GetOrderFee` | Calculate order fees |
+| `GetMarginRatio` | Margin ratio for short selling |
+| `GetOrderList` | Today's orders |
+| `GetHistoryOrderList` | Historical orders |
+| `GetOrderFillList` | Today's order fills |
+| `GetHistoryOrderFillList` | Historical order fills |
+| `GetFlowSummary` | Account cash flow entries |
+| `SubAccPush` | Subscribe to account push updates |
+| `ReconfirmOrder` | Re-confirm a rejected order |
+
+### Market Data APIs
+
+| Function | Description |
+|----------|-------------|
+| `GetQuote` | Real-time quote |
+| `GetKLines` | K-line (candlestick) data |
+| `GetOrderBook` | Order book (depth) |
+| `GetTicker` | Tick-by-tick trades |
+| `GetRT` | Real-time minute (分时) |
+| `GetBroker` | Broker queue |
+| `GetStaticInfo` | Static security info |
+| `GetTradeDate` | Trading dates |
+| `GetFutureInfo` | Futures contract info |
+| `GetPlateSet` | Available plate sets |
+| `GetPlateSecurity` | Securities in a plate |
+| `GetOwnerPlate` | Plates a security belongs to |
+| `GetReference` | Related securities |
+| `GetIpoList` | IPO calendar |
+| `GetMarketState` | Market open/close state |
+| `GetCapitalFlow` | Capital flow data |
+| `GetCapitalDistribution` | Capital distribution |
+| `GetSecuritySnapshot` | Multi-security snapshots |
+| `GetOptionChain` | Option chain data |
+| `GetOptionExpirationDate` | Option expiry dates |
+| `GetWarrant` | Warrant data |
+| `StockFilter` | Stock screener |
+| `GetSuspend` | Suspended securities |
+| `GetCodeChange` | Code change info |
+| `GetHoldingChangeList` | Director holding changes |
+| `GetUserSecurityGroup` | User security groups |
+| `ModifyUserSecurity` | Add/remove from groups |
+| `GetPriceReminder` | Price alerts |
+| `SetPriceReminder` | Set price alert |
+| `RequestHistoryKL` | Historical K-lines |
+| `RequestHistoryKLQuota` | K-line quota info |
+| `RequestRehab` | Rehabilitation (split/bonus) data |
+| `RequestTradeDate` | Online trading dates |
+
+### System APIs
+
+| Function | Description |
+|----------|-------------|
+| `GetGlobalState` | OpenD connection + market statuses |
+| `GetUserInfo` | User account info |
+| `GetDelayStatistics` | Connection delay stats |
+
+### Subscription APIs
+
+| Function | Description |
+|----------|-------------|
+| `Subscribe` | Subscribe to real-time data |
+| `Unsubscribe` | Unsubscribe |
+| `UnsubscribeAll` | Unsubscribe all |
+| `QuerySubscription` | Query subscription status |
+| `RegQotPush` | Register push notifications |
+
+---
+
+## OpenD Simulator (Testing)
+
+```bash
+# Terminal 1: run the simulator (in futuapi4go repo)
+go run cmd/simulator/main.go
+
+# Terminal 2: run your demo
+go run ./cmd/demo
+```
+
+---
+
+## Testing
+
+```bash
+go test ./...          # Run all tests
+go build ./...         # Build
+go vet ./...           # Lint
+```
+
+---
+
+## Architecture
+
+```
+futuapi4go/
+├── client/           # Public high-level API (recommended)
+├── internal/client/  # TCP connection, packet I/O, reconnect
+├── pkg/
+│   ├── qot/          # Market data (quotes, K-lines, etc.)
+│   ├── trd/          # Trading (orders, positions, funds)
+│   ├── sys/           # System (global state, user info)
+│   ├── push/          # Push notification parsers
+│   ├── push/chan/    # Channel-based push delivery
+│   ├── breaker/       # Circuit breaker pattern
+│   ├── logger/        # Structured leveled logging
+│   ├── util/          # Code parsing, market helpers
+│   ├── constant/      # Python-style constants
+│   └── pb/            # Generated protobuf code (78 protos)
+├── api/proto/         # Original .proto definitions
+├── cmd/simulator/    # Mock OpenD for testing
+└── cmd/demo/          # Interactive demo
+```
+
+---
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE)
+
+**Disclaimer:** Trading financial instruments carries significant risk. This SDK is a software utility only and does not provide financial advice.

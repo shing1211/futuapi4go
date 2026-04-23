@@ -178,7 +178,7 @@ const (
 	Market_FX   = 81 // 外汇市场
 )
 
-// MarketToTrdSecMarket maps QotMarket to TrdSecMarket
+// MarketToTrdSecMarket maps QotMarket (int32) to TrdSecMarket.
 var MarketToTrdSecMarket = map[int32]TrdSecMarket{
 	Market_None: TrdSecMarket_Unknown,
 	Market_SH:   TrdSecMarket_CN_SH,
