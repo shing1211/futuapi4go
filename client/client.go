@@ -23,6 +23,7 @@ import (
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
+	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
@@ -36,7 +37,7 @@ import (
 // It wraps the internal client to provide a public API.
 type Client struct {
 	inner  *futuapi.Client
-	trdEnv int32 // trading environment: 0=real, 1=simulate (default)
+	trdEnv int32 // trading environment: 0=simulate, 1=real (default)
 	trdMkt int32 // default trading market (0 = auto-detect per request)
 }
 
@@ -637,10 +638,18 @@ func GetOrderList(c *Client, accID uint64) ([]Order, error) {
 
 // GetHistoryOrderList retrieves historical orders.
 func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDate string) ([]Order, error) {
+	var fc *trdcommon.TrdFilterConditions
+	if startDate != "" || endDate != "" {
+		fc = &trdcommon.TrdFilterConditions{
+			BeginTime: &startDate,
+			EndTime:   &endDate,
+		}
+	}
 	resp, err := trd.GetHistoryOrderList(c.inner, &trd.GetHistoryOrderListRequest{
-		AccID:     accID,
-		TrdMarket: market,
-		TrdEnv:    c.trdEnv,
+		AccID:            accID,
+		TrdMarket:        market,
+		TrdEnv:           c.trdEnv,
+		FilterConditions: fc,
 	})
 	if err != nil {
 		return nil, err
@@ -724,9 +733,10 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 // GetHistoryOrderFillList retrieves historical order fills.
 func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill, error) {
 	resp, err := trd.GetHistoryOrderFillList(c.inner, &trd.GetHistoryOrderFillListRequest{
-		AccID:     accID,
-		TrdMarket: market,
-		TrdEnv:    c.trdEnv,
+		AccID:            accID,
+		TrdMarket:        market,
+		TrdEnv:           c.trdEnv,
+		FilterConditions: &trdcommon.TrdFilterConditions{},
 	})
 	if err != nil {
 		return nil, err
@@ -778,6 +788,9 @@ type FlowSummaryInfo struct {
 // clearingDate: clearing date in "YYYY-MM-DD" format, empty means today.
 // direction: 0=none, 1=in, 2=out. Maps to Python's CashFlowDirection.
 func GetFlowSummary(c *Client, accID uint64, market int32, clearingDate string, direction int32) ([]*FlowSummaryInfo, error) {
+	if clearingDate == "" {
+		clearingDate = time.Now().Format("2006-01-02")
+	}
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
 		TrdMarket: &market,
@@ -2251,8 +2264,15 @@ func ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reaso
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
 		TrdMarket: &market,
+		TrdEnv:    &c.trdEnv,
 	}
+	connID := c.inner.GetConnID()
+	serialNo := c.inner.NextSerialNo()
 	resp, err := trd.ReconfirmOrder(c.inner, &trd.ReconfirmOrderRequest{
+		PacketID: &common.PacketID{
+			ConnID:   &connID,
+			SerialNo: &serialNo,
+		},
 		Header:          header,
 		OrderID:         orderID,
 		ReconfirmReason: reason,

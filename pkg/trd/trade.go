@@ -820,6 +820,9 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 		OrderType: &req.OrderType,
 		Code:      &req.Code,
 		Qty:       &req.Qty,
+		PacketID: &common.PacketID{
+			ConnID: proto.Uint64(c.GetConnID()),
+		},
 	}
 	if req.Price != 0 {
 		c2s.Price = &req.Price
@@ -861,6 +864,9 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 		c2s.PositionID = &req.PositionID
 	}
 
+	serialNo := c.NextSerialNo()
+	c2s.PacketID.SerialNo = &serialNo
+
 	pkt := &trdplaceorder.Request{C2S: c2s}
 
 	body, err := proto.Marshal(pkt)
@@ -868,7 +874,6 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 		return nil, err
 	}
 
-	serialNo := c.NextSerialNo()
 	if err := c.Conn().WritePacket(ProtoID_PlaceOrder, serialNo, body); err != nil {
 		return nil, err
 	}
@@ -948,6 +953,9 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderRespon
 		Header:        header,
 		OrderID:       &orderID,
 		ModifyOrderOp: &req.ModifyOrderOp,
+		PacketID: &common.PacketID{
+			ConnID: proto.Uint64(c.GetConnID()),
+		},
 	}
 	// Optional fields - only set when provided
 	if req.Qty != 0 {
@@ -984,6 +992,9 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderRespon
 		c2s.OrderIDEx = &req.OrderIDEx
 	}
 
+	serialNo := c.NextSerialNo()
+	c2s.PacketID.SerialNo = &serialNo
+
 	pkt := &trdmodifyorder.Request{C2S: c2s}
 
 	body, err := proto.Marshal(pkt)
@@ -991,7 +1002,6 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderRespon
 		return nil, err
 	}
 
-	serialNo := c.NextSerialNo()
 	if err := c.Conn().WritePacket(ProtoID_ModifyOrder, serialNo, body); err != nil {
 		return nil, err
 	}
@@ -1435,6 +1445,9 @@ func GetHistoryOrderList(c *futuapi.Client, req *GetHistoryOrderListRequest) (*G
 		FilterConditions: req.FilterConditions,
 		FilterStatusList: req.FilterStatusList,
 	}
+	if c2s.FilterConditions == nil {
+		c2s.FilterConditions = &trdcommon.TrdFilterConditions{}
+	}
 
 	pkt := &trdgethistoryorderlist.Request{C2S: c2s}
 
@@ -1504,6 +1517,9 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 	c2s := &trdgethistoryorderfilllist.C2S{
 		Header:           header,
 		FilterConditions: req.FilterConditions,
+	}
+	if c2s.FilterConditions == nil {
+		c2s.FilterConditions = &trdcommon.TrdFilterConditions{}
 	}
 
 	pkt := &trdgethistoryorderfilllist.Request{C2S: c2s}
