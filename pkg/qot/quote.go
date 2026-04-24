@@ -2754,13 +2754,14 @@ func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*Mod
 
 // SetPriceReminderRequest defines parameters for SetPriceReminder.
 type SetPriceReminderRequest struct {
-	Security *qotcommon.Security
-	Op       int32
-	Key      int64
-	Type     int32
-	Freq     int32
-	Value    float64
-	Note     string
+	Security           *qotcommon.Security
+	Op                 int32
+	Key                int64
+	Type               int32
+	Freq               int32
+	Value              float64
+	Note               string
+	ReminderSessionList []int32
 }
 
 // SetPriceReminderResponse is the response type for SetPriceReminder.
@@ -2774,13 +2775,26 @@ func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPric
 		return nil, err
 	}
 	c2s := &qotsetpricereminder.C2S{
-		Security: req.Security,
-		Op:       &req.Op,
-		Key:      &req.Key,
-		Type:     &req.Type,
-		Freq:     &req.Freq,
-		Value:    &req.Value,
-		Note:     &req.Note,
+		Security:           req.Security,
+		Op:                 &req.Op,
+		ReminderSessionList: req.ReminderSessionList,
+	}
+	// Key is optional - only set for non-add operations
+	if req.Key != 0 {
+		c2s.Key = &req.Key
+	}
+	// Type, Freq, Value, Note are ignored for delete/enable/disable operations
+	if req.Type != 0 {
+		c2s.Type = &req.Type
+	}
+	if req.Freq != 0 {
+		c2s.Freq = &req.Freq
+	}
+	if req.Value != 0 {
+		c2s.Value = &req.Value
+	}
+	if req.Note != "" {
+		c2s.Note = &req.Note
 	}
 
 	pkt := &qotsetpricereminder.Request{C2S: c2s}

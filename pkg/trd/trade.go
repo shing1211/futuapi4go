@@ -395,9 +395,14 @@ type Position struct {
 
 // GetPositionListRequest is the request to retrieve position list.
 type GetPositionListRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	TrdEnv    int32
+	AccID            uint64
+	TrdMarket        int32
+	TrdEnv           int32
+	FilterConditions *trdcommon.TrdFilterConditions
+	FilterPLRatioMin float64
+	FilterPLRatioMax float64
+	RefreshCache     bool
+	AssetCategory    int32
 }
 
 // GetPositionListResponse is the response containing a list of positions.
@@ -418,7 +423,20 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 	}
 
 	c2s := &trdgetpositionlist.C2S{
-		Header: header,
+		Header:           header,
+		FilterConditions: req.FilterConditions,
+	}
+	if req.FilterPLRatioMin != 0 {
+		c2s.FilterPLRatioMin = &req.FilterPLRatioMin
+	}
+	if req.FilterPLRatioMax != 0 {
+		c2s.FilterPLRatioMax = &req.FilterPLRatioMax
+	}
+	if req.RefreshCache {
+		c2s.RefreshCache = &req.RefreshCache
+	}
+	if req.AssetCategory != 0 {
+		c2s.AssetCategory = &req.AssetCategory
 	}
 
 	pkt := &trdgetpositionlist.Request{C2S: c2s}
@@ -526,9 +544,12 @@ type Order struct {
 
 // GetOrderListRequest is the request to retrieve order list.
 type GetOrderListRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	TrdEnv    int32
+	AccID            uint64
+	TrdMarket        int32
+	TrdEnv           int32
+	FilterConditions *trdcommon.TrdFilterConditions
+	FilterStatusList []int32
+	RefreshCache     bool
 }
 
 // GetOrderListResponse is the response containing a list of orders.
@@ -549,7 +570,12 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 	}
 
 	c2s := &trdgetorderlist.C2S{
-		Header: header,
+		Header:           header,
+		FilterConditions: req.FilterConditions,
+		FilterStatusList: req.FilterStatusList,
+	}
+	if req.RefreshCache {
+		c2s.RefreshCache = &req.RefreshCache
 	}
 
 	pkt := &trdgetorderlist.Request{C2S: c2s}
@@ -651,9 +677,10 @@ type OrderFill struct {
 
 // GetOrderFillListRequest is the request to retrieve order fill list.
 type GetOrderFillListRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	TrdEnv    int32
+	AccID            uint64
+	TrdMarket        int32
+	TrdEnv           int32
+	FilterConditions *trdcommon.TrdFilterConditions
 }
 
 // GetOrderFillListResponse is the response containing a list of order fills.
@@ -674,8 +701,11 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 	}
 
 	c2s := &trdgetorderfilllist.C2S{
-		Header: header,
+		Header:           header,
+		FilterConditions: req.FilterConditions,
 	}
+	// Note: RefreshCache field is missing from the generated proto
+	// This needs to be regenerated if you need this field
 
 	pkt := &trdgetorderfilllist.Request{C2S: c2s}
 
