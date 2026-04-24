@@ -1521,6 +1521,14 @@ func GetHistoryOrderFillList(c *futuapi.Client, req *GetHistoryOrderFillListRequ
 	if c2s.FilterConditions == nil {
 		c2s.FilterConditions = &trdcommon.TrdFilterConditions{}
 	}
+	if c2s.FilterConditions.GetBeginTime() == "" {
+		begin := time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
+		c2s.FilterConditions.BeginTime = &begin
+	}
+	if c2s.FilterConditions.GetEndTime() == "" {
+		end := time.Now().Format("2006-01-02 15:04:05")
+		c2s.FilterConditions.EndTime = &end
+	}
 
 	pkt := &trdgethistoryorderfilllist.Request{C2S: c2s}
 

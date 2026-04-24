@@ -1617,6 +1617,12 @@ func StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResul
 
 // GetOptionChain returns the option chain for the given underlying security.
 func GetOptionChain(c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
+	if beginTime == "" {
+		beginTime = time.Now().Format("2006-01-02")
+	}
+	if endTime == "" {
+		endTime = time.Now().AddDate(0, 1, 0).Format("2006-01-02")
+	}
 	marketPtr := market
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
