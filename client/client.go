@@ -1206,12 +1206,18 @@ type CapitalFlow struct {
 }
 
 // GetCapitalFlow retrieves capital flow data.
-func GetCapitalFlow(c *Client, market int32, code string) ([]CapitalFlow, error) {
+func GetCapitalFlow(c *Client, market int32, code string, periodType ...int32) ([]CapitalFlow, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	
+	period := int32(0)
+	if len(periodType) > 0 {
+		period = periodType[0]
+	}
 
 	resp, err := qot.GetCapitalFlow(c.inner, &qot.GetCapitalFlowRequest{
-		Security: sec,
+		Security:   sec,
+		PeriodType: period,
 	})
 	if err != nil {
 		return nil, err
