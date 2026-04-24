@@ -404,7 +404,7 @@ func CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error {
 		OrderID:       0,
 		ModifyOrderOp: 1, // Cancel
 		Price:         0,
-		Qty:           0,
+		Qty:            1, // Required by OpenD even for cancel-all; value ignored
 		ForAll:        true,
 	})
 	return err
@@ -537,7 +537,10 @@ type MaxTrdQtysInfo struct {
 }
 
 // GetMaxTrdQtys retrieves maximum tradable quantities.
-func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*MaxTrdQtysInfo, error) {
+func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType int32, price float64, secMarket int32) (*MaxTrdQtysInfo, error) {
+	if secMarket == 0 {
+		secMarket = inferSecMarket(code)
+	}
 	resp, err := trd.GetMaxTrdQtys(c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -545,6 +548,7 @@ func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType
 		Code:      code,
 		OrderType: orderType,
 		Price:     price,
+		SecMarket: secMarket,
 	})
 	if err != nil {
 		return nil, err
