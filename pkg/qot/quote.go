@@ -900,14 +900,16 @@ func RequestTradeDate(c *futuapi.Client, req *RequestTradeDateRequest) (*Request
 
 // RequestHistoryKLRequest defines parameters for RequestHistoryKL.
 type RequestHistoryKLRequest struct {
-	RehabType    int32
-	KlType       int32
-	Security     *qotcommon.Security
-	BeginTime    string
-	EndTime      string
-	MaxAckKLNum  int32
-	NextReqKey   []byte
-	ExtendedTime bool
+	RehabType        int32
+	KlType           int32
+	Security         *qotcommon.Security
+	BeginTime        string
+	EndTime          string
+	MaxAckKLNum      int32
+	NeedKLFieldsFlag int64
+	NextReqKey       []byte
+	ExtendedTime     bool
+	Session          int32
 }
 
 // RequestHistoryKLResponse is the response type for RequestHistoryKL.
@@ -924,14 +926,26 @@ func RequestHistoryKL(c *futuapi.Client, req *RequestHistoryKLRequest) (*Request
 		return nil, err
 	}
 	c2s := &qotrequesthistorykl.C2S{
-		RehabType:    &req.RehabType,
-		KlType:       &req.KlType,
-		Security:     req.Security,
-		BeginTime:    &req.BeginTime,
-		EndTime:      &req.EndTime,
-		MaxAckKLNum:  &req.MaxAckKLNum,
-		NextReqKey:   req.NextReqKey,
-		ExtendedTime: &req.ExtendedTime,
+		RehabType: &req.RehabType,
+		KlType:    &req.KlType,
+		Security:  req.Security,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+	}
+	if req.MaxAckKLNum != 0 {
+		c2s.MaxAckKLNum = &req.MaxAckKLNum
+	}
+	if req.NeedKLFieldsFlag != 0 {
+		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
+	}
+	if len(req.NextReqKey) > 0 {
+		c2s.NextReqKey = req.NextReqKey
+	}
+	if req.ExtendedTime {
+		c2s.ExtendedTime = &req.ExtendedTime
+	}
+	if req.Session != 0 {
+		c2s.Session = &req.Session
 	}
 
 	pkt := &qotrequesthistorykl.Request{C2S: c2s}
@@ -1087,6 +1101,9 @@ type SubscribeRequest struct {
 	RegPushRehabTypeList []int32
 	IsFirstPush          bool
 	IsUnsubAll           bool
+	IsSubOrderBookDetail bool
+	ExtendedTime         bool
+	Session              int32
 }
 
 // SubscribeResponse is the response type for Subscribe.
@@ -1109,10 +1126,28 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 		SecurityList:         req.SecurityList,
 		SubTypeList:          subTypeList,
 		IsSubOrUnSub:         &req.IsSubOrUnSub,
-		IsRegOrUnRegPush:     &req.IsRegOrUnRegPush,
-		RegPushRehabTypeList: req.RegPushRehabTypeList,
-		IsFirstPush:          &req.IsFirstPush,
-		IsUnsubAll:           &req.IsUnsubAll,
+	}
+	// IsRegOrUnRegPush - proto2 optional, only set if explicitly needed
+	if req.IsRegOrUnRegPush {
+		c2s.IsRegOrUnRegPush = &req.IsRegOrUnRegPush
+	}
+	if len(req.RegPushRehabTypeList) > 0 {
+		c2s.RegPushRehabTypeList = req.RegPushRehabTypeList
+	}
+	// IsFirstPush defaults to true server-side if not set
+	// Only set if user explicitly set it
+	c2s.IsFirstPush = &req.IsFirstPush
+	if req.IsUnsubAll {
+		c2s.IsUnsubAll = &req.IsUnsubAll
+	}
+	if req.IsSubOrderBookDetail {
+		c2s.IsSubOrderBookDetail = &req.IsSubOrderBookDetail
+	}
+	if req.ExtendedTime {
+		c2s.ExtendedTime = &req.ExtendedTime
+	}
+	if req.Session != 0 {
+		c2s.Session = &req.Session
 	}
 
 	pkt := &qotsub.Request{C2S: c2s}
@@ -1184,10 +1219,16 @@ func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalF
 		return nil, err
 	}
 	c2s := &qotgetcapitalflow.C2S{
-		Security:   req.Security,
-		PeriodType: &req.PeriodType,
-		BeginTime:  &req.BeginTime,
-		EndTime:    &req.EndTime,
+		Security: req.Security,
+	}
+	if req.PeriodType != 0 {
+		c2s.PeriodType = &req.PeriodType
+	}
+	if req.BeginTime != "" {
+		c2s.BeginTime = &req.BeginTime
+	}
+	if req.EndTime != "" {
+		c2s.EndTime = &req.EndTime
 	}
 
 	pkt := &qotgetcapitalflow.Request{C2S: c2s}

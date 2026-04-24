@@ -225,9 +225,12 @@ type Funds struct {
 
 // GetFundsRequest is the request to retrieve account funds.
 type GetFundsRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	TrdEnv    int32
+	AccID         uint64
+	TrdMarket     int32
+	TrdEnv        int32
+	RefreshCache  bool
+	Currency      int32
+	AssetCategory int32
 }
 
 // GetFundsResponse is the response containing account funds information.
@@ -249,6 +252,15 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 
 	c2s := &trdgetfunds.C2S{
 		Header: header,
+	}
+	if req.RefreshCache {
+		c2s.RefreshCache = &req.RefreshCache
+	}
+	if req.Currency != 0 {
+		c2s.Currency = &req.Currency
+	}
+	if req.AssetCategory != 0 {
+		c2s.AssetCategory = &req.AssetCategory
 	}
 
 	pkt := &trdgetfunds.Request{C2S: c2s}
@@ -732,14 +744,26 @@ func GetOrderFillList(c *futuapi.Client, req *GetOrderFillListRequest) (*GetOrde
 
 // PlaceOrderRequest is the request to place a new order.
 type PlaceOrderRequest struct {
-	AccID     uint64
-	TrdMarket int32
-	TrdEnv    int32
-	Code      string
-	TrdSide   int32
-	OrderType int32
-	Price     float64
-	Qty       float64
+	AccID              uint64
+	TrdMarket          int32
+	TrdEnv             int32
+	Code               string
+	TrdSide            int32
+	OrderType          int32
+	Price              float64
+	Qty                float64
+	AdjustPrice        bool
+	AdjustSideAndLimit float64
+	SecMarket          int32
+	Remark             string
+	TimeInForce        int32
+	FillOutsideRTH     bool
+	AuxPrice           float64
+	TrailType          int32
+	TrailValue         float64
+	TrailSpread        float64
+	Session            int32
+	PositionID         uint64
 }
 
 // PlaceOrderResponse is the response containing the newly placed order ID.
@@ -765,8 +789,46 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 		TrdSide:   &req.TrdSide,
 		OrderType: &req.OrderType,
 		Code:      &req.Code,
-		Price:     &req.Price,
 		Qty:       &req.Qty,
+	}
+	if req.Price != 0 {
+		c2s.Price = &req.Price
+	}
+	if req.AdjustPrice {
+		c2s.AdjustPrice = &req.AdjustPrice
+	}
+	if req.AdjustSideAndLimit != 0 {
+		c2s.AdjustSideAndLimit = &req.AdjustSideAndLimit
+	}
+	if req.SecMarket != 0 {
+		c2s.SecMarket = &req.SecMarket
+	}
+	if req.Remark != "" {
+		c2s.Remark = &req.Remark
+	}
+	if req.TimeInForce != 0 {
+		c2s.TimeInForce = &req.TimeInForce
+	}
+	if req.FillOutsideRTH {
+		c2s.FillOutsideRTH = &req.FillOutsideRTH
+	}
+	if req.AuxPrice != 0 {
+		c2s.AuxPrice = &req.AuxPrice
+	}
+	if req.TrailType != 0 {
+		c2s.TrailType = &req.TrailType
+	}
+	if req.TrailValue != 0 {
+		c2s.TrailValue = &req.TrailValue
+	}
+	if req.TrailSpread != 0 {
+		c2s.TrailSpread = &req.TrailSpread
+	}
+	if req.Session != 0 {
+		c2s.Session = &req.Session
+	}
+	if req.PositionID != 0 {
+		c2s.PositionID = &req.PositionID
 	}
 
 	pkt := &trdplaceorder.Request{C2S: c2s}
