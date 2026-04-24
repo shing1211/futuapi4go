@@ -49,7 +49,7 @@ func New(opts ...Option) *Client {
 	}
 	return &Client{
 		inner:  futuapi.New(futuOpts...),
-		trdEnv: 1, // default to simulate for safety
+		trdEnv: 0, // default to simulate for safety
 	}
 }
 
@@ -65,6 +65,20 @@ func (c *Client) WithTradeEnv(trdEnv int32) *Client {
 	clone := *c
 	clone.trdEnv = trdEnv
 	return &clone
+}
+
+// FindAccount returns the first account matching the client's trdEnv.
+// Falls back to the first account if none match.
+func (c *Client) FindAccount(accounts []Account) *Account {
+	for _, acc := range accounts {
+		if acc.TrdEnv == c.trdEnv {
+			return &acc
+		}
+	}
+	if len(accounts) > 0 {
+		return &accounts[0]
+	}
+	return nil
 }
 
 // WithTradeMarket returns a Client that uses the given default trading market.
@@ -313,8 +327,43 @@ func UnlockTrading(c *Client, pwdMD5 string) error {
 	})
 }
 
+// inferSecMarket extracts the market from a market-prefixed stock code (e.g., "HK.00700" or "00700.HK" -> 1).
+func inferSecMarket(code string) int32 {
+	if len(code) < 3 {
+		return 0
+	}
+	// Handle "HK.00700" format
+	if len(code) > 3 && code[:3] == "HK." {
+		return 1 // TrdMarket_HK
+	}
+	if len(code) > 3 && code[:3] == "US." {
+		return 2 // TrdMarket_US
+	}
+	if len(code) > 3 && code[:3] == "SH." {
+		return 3 // TrdMarket_CN
+	}
+	if len(code) > 3 && code[:3] == "SZ." {
+		return 3 // TrdMarket_CN
+	}
+	// Handle "00700.HK" format
+	if len(code) > 3 && code[len(code)-3:] == ".HK" {
+		return 1 // TrdMarket_HK
+	}
+	if len(code) > 3 && code[len(code)-3:] == ".US" {
+		return 2 // TrdMarket_US
+	}
+	if len(code) > 3 && code[len(code)-3:] == ".SH" || code[len(code)-3:] == ".SZ" {
+		return 3 // TrdMarket_CN
+	}
+	return 0
+}
+
 // PlaceOrder places a trading order.
-func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64) (*PlaceOrderResult, error) {
+// secMarket: the security's market (1=HK, 2=US, 3=CN). If 0, tries to infer from code prefix.
+func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64, secMarket int32) (*PlaceOrderResult, error) {
+	if secMarket == 0 {
+		secMarket = inferSecMarket(code)
+	}
 	resp, err := trd.PlaceOrder(c.inner, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -324,6 +373,7 @@ func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderT
 		OrderType: orderType,
 		Price:     price,
 		Qty:       qty,
+		SecMarket: secMarket,
 	})
 	if err != nil {
 		return nil, err
