@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.9.4-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.0.5-00ADD8?style=flat-square" alt="Version">
 </p>
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for Futu OpenAPI — market data, trading, real-time push, and more.
@@ -21,7 +21,7 @@ Futu's official SDK is Python-first. futuapi4go is **Go-first** — built from t
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.9.4
+go get github.com/shing1211/futuapi4go@v0.0.5
 ```
 
 ## Your First Trade
