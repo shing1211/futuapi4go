@@ -2848,8 +2848,9 @@ func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse,
 		SubTypeList:   req.SubTypeList,
 		RehabTypeList: req.RehabTypeList,
 		IsRegOrUnReg:  &req.IsRegOrUnReg,
-		IsFirstPush:   &req.IsFirstPush,
 	}
+	// IsFirstPush is optional in proto2 - only set when user explicitly wants to override
+	c2s.IsFirstPush = &req.IsFirstPush
 
 	pkt := &qotregqotpush.Request{C2S: c2s}
 

@@ -874,15 +874,22 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 
 // ModifyOrderRequest is the request to modify an existing order (cancel, update price, or update quantity).
 type ModifyOrderRequest struct {
-	AccID         uint64
-	TrdMarket     int32
-	TrdEnv        int32
-	OrderID       uint64
-	ModifyOrderOp int32
-	Price         float64
-	Qty           float64
-	ForAll        bool
-	TrdMarket2    int32
+	AccID              uint64
+	TrdMarket          int32
+	TrdEnv             int32
+	OrderID            uint64
+	ModifyOrderOp      int32
+	Price              float64
+	Qty                float64
+	ForAll             bool
+	TrdMarket2         int32
+	AdjustPrice        bool
+	AdjustSideAndLimit float64
+	AuxPrice           float64
+	TrailType          int32
+	TrailValue         float64
+	TrailSpread        float64
+	OrderIDEx          string
 }
 
 // ModifyOrderResponse is the response returned after modifying an order.
@@ -907,16 +914,44 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderRespon
 	}
 
 	orderID := req.OrderID
-	forAll := req.ForAll
-	trdMarket2 := req.TrdMarket2
 	c2s := &trdmodifyorder.C2S{
 		Header:        header,
 		OrderID:       &orderID,
 		ModifyOrderOp: &req.ModifyOrderOp,
-		Price:         &req.Price,
-		Qty:           &req.Qty,
-		ForAll:        &forAll,
-		TrdMarket:     &trdMarket2,
+	}
+	// Optional fields - only set when provided
+	if req.Qty != 0 {
+		c2s.Qty = &req.Qty
+	}
+	if req.Price != 0 {
+		c2s.Price = &req.Price
+	}
+	if req.ForAll {
+		c2s.ForAll = &req.ForAll
+	}
+	if req.TrdMarket2 != 0 {
+		c2s.TrdMarket = &req.TrdMarket2
+	}
+	if req.AdjustPrice {
+		c2s.AdjustPrice = &req.AdjustPrice
+	}
+	if req.AdjustSideAndLimit != 0 {
+		c2s.AdjustSideAndLimit = &req.AdjustSideAndLimit
+	}
+	if req.AuxPrice != 0 {
+		c2s.AuxPrice = &req.AuxPrice
+	}
+	if req.TrailType != 0 {
+		c2s.TrailType = &req.TrailType
+	}
+	if req.TrailValue != 0 {
+		c2s.TrailValue = &req.TrailValue
+	}
+	if req.TrailSpread != 0 {
+		c2s.TrailSpread = &req.TrailSpread
+	}
+	if req.OrderIDEx != "" {
+		c2s.OrderIDEx = &req.OrderIDEx
 	}
 
 	pkt := &trdmodifyorder.Request{C2S: c2s}
@@ -1266,15 +1301,28 @@ func GetMaxTrdQtys(c *futuapi.Client, req *GetMaxTrdQtysRequest) (*GetMaxTrdQtys
 	}
 
 	c2s := &trdgetmaxtrdqtys.C2S{
-		Header:             header,
-		OrderType:          &req.OrderType,
-		Code:               &req.Code,
-		Price:              &req.Price,
-		OrderID:            &req.OrderID,
-		AdjustPrice:        &req.AdjustPrice,
-		AdjustSideAndLimit: &req.AdjustSideAndLimit,
-		SecMarket:          &req.SecMarket,
-		OrderIDEx:          &req.OrderIDEx,
+		Header:    header,
+		OrderType: &req.OrderType,
+		Code:      &req.Code,
+	}
+	// Optional fields - only set when provided
+	if req.Price != 0 {
+		c2s.Price = &req.Price
+	}
+	if req.OrderID != 0 {
+		c2s.OrderID = &req.OrderID
+	}
+	if req.AdjustPrice {
+		c2s.AdjustPrice = &req.AdjustPrice
+	}
+	if req.AdjustSideAndLimit != 0 {
+		c2s.AdjustSideAndLimit = &req.AdjustSideAndLimit
+	}
+	if req.SecMarket != 0 {
+		c2s.SecMarket = &req.SecMarket
+	}
+	if req.OrderIDEx != "" {
+		c2s.OrderIDEx = &req.OrderIDEx
 	}
 
 	pkt := &trdgetmaxtrdqtys.Request{C2S: c2s}
