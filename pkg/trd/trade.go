@@ -35,6 +35,7 @@
 package trd
 
 import (
+	"context"
 	"fmt"
 
 	"google.golang.org/protobuf/proto"
@@ -104,12 +105,14 @@ type GetAccListResponse struct {
 	AccList []*Acc
 }
 
+// wrapError standardizes error messages for proto response failures
+func wrapError(funcName string, retType int32, retMsg string) error {
+	return fmt.Errorf("%s failed: retType=%d, retMsg=%s", funcName, retType, retMsg)
+}
+
 // GetAccList retrieves the list of trading accounts, optionally including general security account info.
 // Returns the account list or an error if the request fails.
-func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool) (*GetAccListResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool) (*GetAccListResponse, error) {
 	c2s := &trdgetacclist.C2S{
 		UserID:                proto.Uint64(0), // Deprecated but required by protocol, set to 0
 		TrdCategory:           &trdCategory,
@@ -117,33 +120,14 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 	}
 
 	pkt := &trdgetacclist.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetAccList, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdgetacclist.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetAccList, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetAccList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetAccList", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -156,6 +140,9 @@ func GetAccList(c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool
 	}
 
 	for _, acc := range s2c.GetAccList() {
+		if acc == nil {
+			continue
+		}
 		result.AccList = append(result.AccList, &Acc{
 			TrdEnv:            acc.GetTrdEnv(),
 			AccID:             acc.GetAccID(),
@@ -240,10 +227,7 @@ type GetFundsResponse struct {
 
 // GetFunds retrieves the account funds information including cash, assets, and available funds.
 // Returns the funds data or an error if the request fails.
-func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
@@ -264,33 +248,14 @@ func GetFunds(c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error
 	}
 
 	pkt := &trdgetfunds.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetFunds, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdgetfunds.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetFunds, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetFunds failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetFunds", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -412,10 +377,7 @@ type GetPositionListResponse struct {
 
 // GetPositionList retrieves the current position list for the account.
 // Returns the position list or an error if the request fails.
-func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositionListResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetPositionList(ctx context.Context, c *futuapi.Client, req *GetPositionListRequest) (*GetPositionListResponse, error) {
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
@@ -440,33 +402,14 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 	}
 
 	pkt := &trdgetpositionlist.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetPositionList, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdgetpositionlist.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetPositionList, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetPositionList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetPositionList", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -479,6 +422,9 @@ func GetPositionList(c *futuapi.Client, req *GetPositionListRequest) (*GetPositi
 	}
 
 	for _, p := range s2c.GetPositionList() {
+		if p == nil {
+			continue
+		}
 		result.PositionList = append(result.PositionList, &Position{
 			PositionID:       p.GetPositionID(),
 			Code:             p.GetCode(),
@@ -559,10 +505,12 @@ type GetOrderListResponse struct {
 
 // GetOrderList retrieves the current order list for the account.
 // Returns the order list or an error if the request fails.
-func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetOrderList(ctx context.Context, c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListResponse, error) {
+	// Input validation
+	if req.AccID == 0 {
+		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
+
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
@@ -579,33 +527,14 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 	}
 
 	pkt := &trdgetorderlist.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetOrderList, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdgetorderlist.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetOrderList, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetOrderList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetOrderList", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -618,6 +547,9 @@ func GetOrderList(c *futuapi.Client, req *GetOrderListRequest) (*GetOrderListRes
 	}
 
 	for _, o := range s2c.GetOrderList() {
+		if o == nil {
+			continue
+		}
 		result.OrderList = append(result.OrderList, &Order{
 			OrderID:         o.GetOrderID(),
 			OrderIDEx:       o.GetOrderIDEx(),
@@ -804,10 +736,24 @@ type PlaceOrderResponse struct {
 
 // PlaceOrder places a new order and returns the order ID.
 // Returns the order ID or an error if the placement fails.
-func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse, error) {
+	// Input validation
+	if req.AccID == 0 {
+		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
+	if req.Code == "" {
+		return nil, fmt.Errorf("stock code is required")
+	}
+	if req.Qty <= 0 {
+		return nil, fmt.Errorf("invalid quantity: must be positive")
+	}
+	if req.OrderType <= 0 {
+		return nil, fmt.Errorf("invalid order type: must be valid order type constant")
+	}
+	if req.TrdSide <= 0 {
+		return nil, fmt.Errorf("invalid trade side: must be buy/sell/other valid type")
+	}
+
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
@@ -868,32 +814,14 @@ func PlaceOrder(c *futuapi.Client, req *PlaceOrderRequest) (*PlaceOrderResponse,
 	c2s.PacketID.SerialNo = &serialNo
 
 	pkt := &trdplaceorder.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := c.Conn().WritePacket(ProtoID_PlaceOrder, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdplaceorder.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_PlaceOrder, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("PlaceOrder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("PlaceOrder", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -938,10 +866,18 @@ type ModifyOrderResponse struct {
 
 // ModifyOrder modifies or cancels an existing order.
 // Returns the modification response or an error if it fails.
-func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderResponse, error) {
+	// Input validation
+	if req.AccID == 0 {
+		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
+	if req.OrderID == 0 && req.OrderIDEx == "" {
+		return nil, fmt.Errorf("order ID or OrderIDEx must be provided")
+	}
+	if req.ModifyOrderOp <= 0 {
+		return nil, fmt.Errorf("invalid modify operation: must be valid order operation type")
+	}
+
 	header := &trdcommon.TrdHeader{
 		TrdEnv:    &req.TrdEnv,
 		AccID:     &req.AccID,
@@ -996,32 +932,14 @@ func ModifyOrder(c *futuapi.Client, req *ModifyOrderRequest) (*ModifyOrderRespon
 	c2s.PacketID.SerialNo = &serialNo
 
 	pkt := &trdmodifyorder.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := c.Conn().WritePacket(ProtoID_ModifyOrder, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp trdmodifyorder.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_ModifyOrder, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("ModifyOrder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("ModifyOrder", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()

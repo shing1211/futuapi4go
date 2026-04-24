@@ -192,11 +192,11 @@ func GetQuote(ctx context.Context, c *Client, market int32, code string) (*Quote
 }
 
 // GetKLines retrieves K-line (candlestick) data.
-func GetKLines(c *Client, market int32, code string, klType int32, num int) ([]KLine, error) {
+func GetKLines(ctx context.Context, c *Client, market int32, code string, klType int32, num int) ([]KLine, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetKL(c.inner, &qot.GetKLRequest{
+	resp, err := qot.GetKL(ctx, c.inner, &qot.GetKLRequest{
 		Security:  sec,
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
 		KLType:    klType,
@@ -294,8 +294,8 @@ func RegQotPush(c *Client, market int32, code string, subTypes []int32, rehabTyp
 }
 
 // GetAccountList retrieves the list of trading accounts.
-func GetAccountList(c *Client) ([]Account, error) {
-	resp, err := trd.GetAccList(c.inner, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+func GetAccountList(ctx context.Context, c *Client) ([]Account, error) {
+	resp, err := trd.GetAccList(ctx, c.inner, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
 	if err != nil {
 		return nil, err
 	}
@@ -360,11 +360,11 @@ func inferSecMarket(code string) int32 {
 
 // PlaceOrder places a trading order.
 // secMarket: the security's market (1=HK, 2=US, 3=CN). If 0, tries to infer from code prefix.
-func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64, secMarket int32) (*PlaceOrderResult, error) {
+func PlaceOrder(ctx context.Context, c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64, secMarket int32) (*PlaceOrderResult, error) {
 	if secMarket == 0 {
 		secMarket = inferSecMarket(code)
 	}
-	resp, err := trd.PlaceOrder(c.inner, &trd.PlaceOrderRequest{
+	resp, err := trd.PlaceOrder(ctx, c.inner, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
 		TrdEnv:    c.trdEnv,
@@ -382,8 +382,8 @@ func PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderT
 }
 
 // ModifyOrder modifies or cancels an existing order.
-func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
-	return trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
+func ModifyOrder(ctx context.Context, c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
+	return trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
 		TrdEnv:        c.trdEnv,
@@ -396,23 +396,23 @@ func ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp
 
 // CancelAllOrder cancels all pending orders for the specified account and market.
 // Note: Simulate trading and HKCC accounts do not support CancelAllOrder.
-func CancelAllOrder(c *Client, accID uint64, market int32, trdEnv int32) error {
-	_, err := trd.ModifyOrder(c.inner, &trd.ModifyOrderRequest{
+func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market int32, trdEnv int32) error {
+	_, err := trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
 		TrdEnv:        trdEnv,
 		OrderID:       0,
 		ModifyOrderOp: 1, // Cancel
 		Price:         0,
-		Qty:            1, // Required by OpenD even for cancel-all; value ignored
+		Qty:           1, // Required by OpenD even for cancel-all; value ignored
 		ForAll:        true,
 	})
 	return err
 }
 
 // GetPositionList retrieves the current positions.
-func GetPositionList(c *Client, accID uint64) ([]Position, error) {
-	resp, err := trd.GetPositionList(c.inner, &trd.GetPositionListRequest{
+func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, error) {
+	resp, err := trd.GetPositionList(ctx, c.inner, &trd.GetPositionListRequest{
 		AccID:     accID,
 		TrdMarket: 0,
 		TrdEnv:    c.trdEnv,
@@ -454,8 +454,8 @@ func GetPositionList(c *Client, accID uint64) ([]Position, error) {
 
 // GetAccountInfo retrieves full account information including multi-currency cash and per-market assets.
 // Maps to Python's accinfo_query. Returns all fields in a single flat struct plus CashInfoList/MarketInfoList.
-func GetAccountInfo(c *Client, accID uint64, market int32) (*Funds, error) {
-	resp, err := trd.GetFunds(c.inner, &trd.GetFundsRequest{
+func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market int32) (*Funds, error) {
+	resp, err := trd.GetFunds(ctx, c.inner, &trd.GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: market,
 		TrdEnv:    c.trdEnv,
@@ -515,8 +515,8 @@ func GetAccountInfo(c *Client, accID uint64, market int32) (*Funds, error) {
 }
 
 // GetFunds retrieves account funds.
-func GetFunds(c *Client, accID uint64) (*Funds, error) {
-	accounts, err := GetAccountList(c)
+func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
+	accounts, err := GetAccountList(ctx, c)
 	if err != nil {
 		return nil, err
 	}
@@ -524,7 +524,7 @@ func GetFunds(c *Client, accID uint64) (*Funds, error) {
 		return nil, fmt.Errorf("no accounts available")
 	}
 	acc := accounts[0]
-	return GetAccountInfo(c, acc.AccID, acc.TrdMarketAuthList[0])
+	return GetAccountInfo(ctx, c, acc.AccID, acc.TrdMarketAuthList[0])
 }
 
 // MaxTrdQtysInfo represents maximum tradable quantities.
@@ -645,8 +645,8 @@ func GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcomm
 }
 
 // GetOrderList retrieves active orders.
-func GetOrderList(c *Client, accID uint64) ([]Order, error) {
-	resp, err := trd.GetOrderList(c.inner, &trd.GetOrderListRequest{
+func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error) {
+	resp, err := trd.GetOrderList(ctx, c.inner, &trd.GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: 0,
 		TrdEnv:    c.trdEnv,
@@ -925,11 +925,11 @@ func GetAccTradingInfo(c *Client, accID uint64, market int32, code string, order
 }
 
 // GetOrderBook retrieves order book data.
-func GetOrderBook(c *Client, market int32, code string, num int) (*OrderBook, error) {
+func GetOrderBook(ctx context.Context, c *Client, market int32, code string, num int) (*OrderBook, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetOrderBook(c.inner, &qot.GetOrderBookRequest{
+	resp, err := qot.GetOrderBook(ctx, c.inner, &qot.GetOrderBookRequest{
 		Security: sec,
 		Num:      int32(num),
 	})
@@ -963,11 +963,11 @@ func GetOrderBook(c *Client, market int32, code string, num int) (*OrderBook, er
 }
 
 // GetTicker retrieves ticker data.
-func GetTicker(c *Client, market int32, code string, num int) ([]Ticker, error) {
+func GetTicker(ctx context.Context, c *Client, market int32, code string, num int) ([]Ticker, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetTicker(c.inner, &qot.GetTickerRequest{
+	resp, err := qot.GetTicker(ctx, c.inner, &qot.GetTickerRequest{
 		Security: sec,
 		Num:      int32(num),
 	})
@@ -1001,11 +1001,11 @@ func GetTicker(c *Client, market int32, code string, num int) ([]Ticker, error) 
 }
 
 // GetRT retrieves real-time data.
-func GetRT(c *Client, market int32, code string) ([]RT, error) {
+func GetRT(ctx context.Context, c *Client, market int32, code string) ([]RT, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetRT(c.inner, &qot.GetRTRequest{Security: sec})
+	resp, err := qot.GetRT(ctx, c.inner, &qot.GetRTRequest{Security: sec})
 	if err != nil {
 		return nil, err
 	}
@@ -1025,11 +1025,11 @@ func GetRT(c *Client, market int32, code string) ([]RT, error) {
 }
 
 // GetBroker retrieves broker data.
-func GetBroker(c *Client, market int32, code string, num int) ([]Broker, []Broker, error) {
+func GetBroker(ctx context.Context, c *Client, market int32, code string, num int) ([]Broker, []Broker, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetBroker(c.inner, &qot.GetBrokerRequest{
+	resp, err := qot.GetBroker(ctx, c.inner, &qot.GetBrokerRequest{
 		Security: sec,
 		Num:      int32(num),
 	})
@@ -1049,11 +1049,11 @@ func GetBroker(c *Client, market int32, code string, num int) ([]Broker, []Broke
 }
 
 // GetStaticInfo retrieves static security info.
-func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
+func GetStaticInfo(ctx context.Context, c *Client, market int32, code string) ([]StaticInfo, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetStaticInfo(c.inner, &qot.GetStaticInfoRequest{
+	resp, err := qot.GetStaticInfo(ctx, c.inner, &qot.GetStaticInfoRequest{
 		Market:       market,
 		SecurityList: []*qotcommon.Security{sec},
 	})
@@ -1087,8 +1087,8 @@ func GetStaticInfo(c *Client, market int32, code string) ([]StaticInfo, error) {
 }
 
 // GetTradeDate retrieves trade dates.
-func GetTradeDate(c *Client, market int32, startDate, endDate string) ([]string, error) {
-	resp, err := qot.RequestTradeDate(c.inner, &qot.RequestTradeDateRequest{
+func GetTradeDate(ctx context.Context, c *Client, market int32, startDate, endDate string) ([]string, error) {
+	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
 		Market:    market,
 		BeginTime: startDate,
 		EndTime:   endDate,
@@ -1151,8 +1151,8 @@ func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
 }
 
 // GetPlateSet retrieves plate set (板块) list.
-func GetPlateSet(c *Client, market int32) ([]Plate, error) {
-	resp, err := qot.GetPlateSet(c.inner, &qot.GetPlateSetRequest{Market: market})
+func GetPlateSet(ctx context.Context, c *Client, market int32) ([]Plate, error) {
+	resp, err := qot.GetPlateSet(ctx, c.inner, &qot.GetPlateSetRequest{Market: market})
 	if err != nil {
 		return nil, err
 	}
@@ -1371,15 +1371,15 @@ var HistoryKLPaginationDelay = DefaultHistoryKLDelay
 // RequestHistoryKL requests historical K-line data with automatic pagination.
 // It fetches all available K-lines between startDate and endDate (inclusive),
 // automatically handling page boundaries via NextReqKey.
-func RequestHistoryKL(c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
-	return RequestHistoryKLWithLimit(c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
+func RequestHistoryKL(ctx context.Context, c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
+	return RequestHistoryKLWithLimit(ctx, c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
 }
 
 // RequestHistoryKLWithLimit requests historical K-line data with a configurable
 // page size. It automatically paginates until all data is retrieved.
 // maxPerPage controls how many K-lines are requested per API call (max 1000).
 // Uses HistoryKLPaginationDelay between pages.
-func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int32, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
+func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market int32, code string, klType int32, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -1387,7 +1387,7 @@ func RequestHistoryKLWithLimit(c *Client, market int32, code string, klType int3
 	var nextReqKey []byte
 
 	for {
-		resp, err := qot.RequestHistoryKL(c.inner, &qot.RequestHistoryKLRequest{
+		resp, err := qot.RequestHistoryKL(ctx, c.inner, &qot.RequestHistoryKLRequest{
 			Security:    sec,
 			KlType:      klType,
 			BeginTime:   startDate,
@@ -1467,11 +1467,11 @@ func GetReference(c *Client, market int32, code string, refType int32) ([]Static
 }
 
 // GetPlateSecurity retrieves securities in a plate.
-func GetPlateSecurity(c *Client, market int32, plateCode string) ([]StaticInfo, error) {
+func GetPlateSecurity(ctx context.Context, c *Client, market int32, plateCode string) ([]StaticInfo, error) {
 	marketPtr := market
 	plate := &qotcommon.Security{Market: &marketPtr, Code: &plateCode}
 
-	resp, err := qot.GetPlateSecurity(c.inner, &qot.GetPlateSecurityRequest{Plate: plate})
+	resp, err := qot.GetPlateSecurity(ctx, c.inner, &qot.GetPlateSecurityRequest{Plate: plate})
 	if err != nil {
 		return nil, err
 	}
@@ -1578,11 +1578,11 @@ func GetSubInfo(c *Client) (*SubInfo, error) {
 }
 
 // RequestTradeDate requests trade dates for a specific security.
-func RequestTradeDate(c *Client, market int32, startDate, endDate string, code string) ([]string, error) {
+func RequestTradeDate(ctx context.Context, c *Client, market int32, startDate, endDate string, code string) ([]string, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.RequestTradeDate(c.inner, &qot.RequestTradeDateRequest{
+	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
 		Market:    market,
 		BeginTime: startDate,
 		EndTime:   endDate,
