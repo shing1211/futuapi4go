@@ -454,7 +454,6 @@ enum QotRight
 	QotRight_Level2 = 3; //Level2
 	QotRight_SF = 4; //SF高级行情
 	QotRight_No = 5; //无权限
-	QotRight_Level3 = 6; //Level3
 }
 
 // 提醒类型

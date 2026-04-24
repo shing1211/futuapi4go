@@ -3,7 +3,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.0.6-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.1.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for Futu OpenAPI — market data, trading, real-time push, and more.
@@ -19,7 +20,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.0.6
+go get github.com/shing1211/futuapi4go@v0.1.0
 ```
 
 ## Your First Trade
@@ -956,8 +957,8 @@ futuapi4go/
 │   ├── logger/            # Structured leveled logging
 │   ├── util/              # Code parsing, market helpers
 │   ├── constant/          # Python-style constants + String() methods
-│   └── pb/               # 78 protobuf-generated types
-├── api/proto/            # Original .proto definitions
+│   └── pb/               # 78 protobuf-generated types (v10.4.6408)
+├── api/proto/            # Original .proto definitions (v10.4.6408)
 └── cmd/demo/             # Interactive demo
 ```
 

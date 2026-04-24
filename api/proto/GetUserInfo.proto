@@ -62,6 +62,7 @@ message S2C
 	optional bool isAppNNOrMM = 30; //true:NN false:MM
 	optional int32 shQotRight = 31; //上海市场行情权限, Qot_Common.QotRight
 	optional int32 szQotRight = 32; //深圳市场行情权限, Qot_Common.QotRight
+	optional int32 extra=33; // 透传信息
 }
 
 message Request

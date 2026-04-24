@@ -59,8 +59,8 @@ func (*C2S) Descriptor() ([]byte, []int) {
 
 type S2C struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	UsedSubQuota   *int32                 `protobuf:"varint,1,opt,name=used_sub_quota,json=usedSubQuota" json:"used_sub_quota,omitempty"`       // 已使用订阅额度
-	UsedKlineQuota *int32                 `protobuf:"varint,2,opt,name=used_kline_quota,json=usedKlineQuota" json:"used_kline_quota,omitempty"` // 已使用历史K线额度
+	UsedSubQuota   *int32                 `protobuf:"varint,1,opt,name=usedSubQuota" json:"usedSubQuota,omitempty"`     // 已使用订阅额度
+	UsedKLineQuota *int32                 `protobuf:"varint,2,opt,name=usedKLineQuota" json:"usedKLineQuota,omitempty"` // 已使用历史K线额度
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -102,9 +102,9 @@ func (x *S2C) GetUsedSubQuota() int32 {
 	return 0
 }
 
-func (x *S2C) GetUsedKlineQuota() int32 {
-	if x != nil && x.UsedKlineQuota != nil {
-		return *x.UsedKlineQuota
+func (x *S2C) GetUsedKLineQuota() int32 {
+	if x != nil && x.UsedKLineQuota != nil {
+		return *x.UsedKLineQuota
 	}
 	return 0
 }
@@ -231,10 +231,10 @@ var File_UsedQuota_proto protoreflect.FileDescriptor
 const file_UsedQuota_proto_rawDesc = "" +
 	"\n" +
 	"\x0fUsedQuota.proto\x12\tUsedQuota\"\x05\n" +
-	"\x03C2S\"U\n" +
-	"\x03S2C\x12$\n" +
-	"\x0eused_sub_quota\x18\x01 \x01(\x05R\fusedSubQuota\x12(\n" +
-	"\x10used_kline_quota\x18\x02 \x01(\x05R\x0eusedKlineQuota\"+\n" +
+	"\x03C2S\"Q\n" +
+	"\x03S2C\x12\"\n" +
+	"\fusedSubQuota\x18\x01 \x01(\x05R\fusedSubQuota\x12&\n" +
+	"\x0eusedKLineQuota\x18\x02 \x01(\x05R\x0eusedKLineQuota\"+\n" +
 	"\aRequest\x12 \n" +
 	"\x03c2s\x18\x01 \x02(\v2\x0e.UsedQuota.C2SR\x03c2s\"~\n" +
 	"\bResponse\x12\x1e\n" +

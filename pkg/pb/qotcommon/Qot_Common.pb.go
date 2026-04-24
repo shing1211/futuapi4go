@@ -2290,7 +2290,6 @@ const (
 	QotRight_QotRight_Level2 QotRight = 3 //Level2
 	QotRight_QotRight_SF     QotRight = 4 //SF高级行情
 	QotRight_QotRight_No     QotRight = 5 //无权限
-	QotRight_QotRight_Level3 QotRight = 6 //Level3
 )
 
 // Enum value maps for QotRight.
@@ -2302,7 +2301,6 @@ var (
 		3: "QotRight_Level2",
 		4: "QotRight_SF",
 		5: "QotRight_No",
-		6: "QotRight_Level3",
 	}
 	QotRight_value = map[string]int32{
 		"QotRight_Unknow": 0,
@@ -2311,7 +2309,6 @@ var (
 		"QotRight_Level2": 3,
 		"QotRight_SF":     4,
 		"QotRight_No":     5,
-		"QotRight_Level3": 6,
 	}
 )
 
@@ -5800,15 +5797,14 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x0eCompanyAct_Add\x10 \x12\x17\n" +
 	"\x13CompanyAct_Dividend\x10@\x12\x1a\n" +
 	"\x15CompanyAct_SPDividend\x10\x80\x01\x12\x17\n" +
-	"\x12CompanyAct_SpinOff\x10\x80\x02*\x92\x01\n" +
+	"\x12CompanyAct_SpinOff\x10\x80\x02*}\n" +
 	"\bQotRight\x12\x13\n" +
 	"\x0fQotRight_Unknow\x10\x00\x12\x10\n" +
 	"\fQotRight_Bmp\x10\x01\x12\x13\n" +
 	"\x0fQotRight_Level1\x10\x02\x12\x13\n" +
 	"\x0fQotRight_Level2\x10\x03\x12\x0f\n" +
 	"\vQotRight_SF\x10\x04\x12\x0f\n" +
-	"\vQotRight_No\x10\x05\x12\x13\n" +
-	"\x0fQotRight_Level3\x10\x06*\xce\x04\n" +
+	"\vQotRight_No\x10\x05*\xce\x04\n" +
 	"\x11PriceReminderType\x12\x1d\n" +
 	"\x19PriceReminderType_Unknown\x10\x00\x12\x1d\n" +
 	"\x19PriceReminderType_PriceUp\x10\x01\x12\x1f\n" +

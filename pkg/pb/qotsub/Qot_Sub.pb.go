@@ -34,7 +34,7 @@ type C2S struct {
 	IsUnsubAll           *bool                  `protobuf:"varint,7,opt,name=isUnsubAll" json:"isUnsubAll,omitempty"`                     //当被设置为True时忽略其他参数，取消当前连接的所有订阅，并且反注册推送。
 	IsSubOrderBookDetail *bool                  `protobuf:"varint,8,opt,name=isSubOrderBookDetail" json:"isSubOrderBookDetail,omitempty"` //订阅摆盘可用,是否订阅摆盘明细,仅支持SF行情,该参数不指定则默认false
 	ExtendedTime         *bool                  `protobuf:"varint,9,opt,name=extendedTime" json:"extendedTime,omitempty"`                 // 是否允许美股盘前盘后数据（仅用于订阅美股的实时K线、实时分时、实时逐笔）
-	Session              *int32                 `protobuf:"varint,10,opt,name=session" json:"session,omitempty"`                          // 时段 Common.Session
+	Session              *int32                 `protobuf:"varint,10,opt,name=session" json:"session,omitempty"`                          // 时段
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }

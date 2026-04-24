@@ -1241,7 +1241,7 @@ type UserAttribution int32
 const (
 	UserAttribution_Unknown UserAttribution = 0 // 未知
 	UserAttribution_NN      UserAttribution = 1 // 大陆
-	UserAttribution_MM      UserAttribution = 2 // 美国
+	UserAttribution_MM      UserAttribution = 2 // MooMoo
 	UserAttribution_SG      UserAttribution = 3 // 新加坡
 	UserAttribution_AU      UserAttribution = 4 // 澳洲
 	UserAttribution_JP      UserAttribution = 5 // 日本

@@ -46,3 +46,6 @@ dist/
 tmp/
 temp/
 /.qwen
+
+# Protobuf tools (downloaded locally, not committed)
+download/

@@ -147,6 +147,9 @@ type GetUserInfoResponse struct {
 	AvatarUrl             string
 	ApiLevel              string
 	IsNeedAgreeDisclaimer bool
+	ShQotRight            int32 //上海市场行情权限
+	SzQotRight            int32 //深圳市场行情权限
+	Extra                 int32 //透传信息
 }
 
 // GetUserInfo retrieves the current user information including nickname, avatar, and API level.
@@ -198,6 +201,9 @@ func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
 		AvatarUrl:             s2c.GetAvatarUrl(),
 		ApiLevel:              s2c.GetApiLevel(),
 		IsNeedAgreeDisclaimer: s2c.GetIsNeedAgreeDisclaimer(),
+		ShQotRight:            s2c.GetShQotRight(),
+		SzQotRight:            s2c.GetSzQotRight(),
+		Extra:                 s2c.GetExtra(),
 	}, nil
 }
 

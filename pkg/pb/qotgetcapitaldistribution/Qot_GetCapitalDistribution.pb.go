@@ -70,15 +70,15 @@ func (x *C2S) GetSecurity() *qotcommon.Security {
 type S2C struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	CapitalInSuper  *float64               `protobuf:"fixed64,9,opt,name=capitalInSuper" json:"capitalInSuper,omitempty"`    // 流入资金额度，特大单
-	CapitalInBig    *float64               `protobuf:"fixed64,1,req,name=capitalInBig" json:"capitalInBig,omitempty"`        //流入资金额度，大单
-	CapitalInMid    *float64               `protobuf:"fixed64,2,req,name=capitalInMid" json:"capitalInMid,omitempty"`        //流入资金额度，中单
-	CapitalInSmall  *float64               `protobuf:"fixed64,3,req,name=capitalInSmall" json:"capitalInSmall,omitempty"`    //流入资金额度，小单
+	CapitalInBig    *float64               `protobuf:"fixed64,1,req,name=capitalInBig" json:"capitalInBig,omitempty"`        // 流入资金额度，大单
+	CapitalInMid    *float64               `protobuf:"fixed64,2,req,name=capitalInMid" json:"capitalInMid,omitempty"`        // 流入资金额度，中单
+	CapitalInSmall  *float64               `protobuf:"fixed64,3,req,name=capitalInSmall" json:"capitalInSmall,omitempty"`    // 流入资金额度，小单
 	CapitalOutSuper *float64               `protobuf:"fixed64,10,opt,name=capitalOutSuper" json:"capitalOutSuper,omitempty"` // 流出资金额度，特大单
-	CapitalOutBig   *float64               `protobuf:"fixed64,4,req,name=capitalOutBig" json:"capitalOutBig,omitempty"`      //流出资金额度，大单
-	CapitalOutMid   *float64               `protobuf:"fixed64,5,req,name=capitalOutMid" json:"capitalOutMid,omitempty"`      //流出资金额度，中单
-	CapitalOutSmall *float64               `protobuf:"fixed64,6,req,name=capitalOutSmall" json:"capitalOutSmall,omitempty"`  //流出资金额度，小单
-	UpdateTime      *string                `protobuf:"bytes,7,opt,name=updateTime" json:"updateTime,omitempty"`              //更新时间字符串
-	UpdateTimestamp *float64               `protobuf:"fixed64,8,opt,name=updateTimestamp" json:"updateTimestamp,omitempty"`  //更新时间戳
+	CapitalOutBig   *float64               `protobuf:"fixed64,4,req,name=capitalOutBig" json:"capitalOutBig,omitempty"`      // 流出资金额度，大单
+	CapitalOutMid   *float64               `protobuf:"fixed64,5,req,name=capitalOutMid" json:"capitalOutMid,omitempty"`      // 流出资金额度，中单
+	CapitalOutSmall *float64               `protobuf:"fixed64,6,req,name=capitalOutSmall" json:"capitalOutSmall,omitempty"`  // 流出资金额度，小单
+	UpdateTime      *string                `protobuf:"bytes,7,opt,name=updateTime" json:"updateTime,omitempty"`              // 更新时间字符串
+	UpdateTimestamp *float64               `protobuf:"fixed64,8,opt,name=updateTimestamp" json:"updateTimestamp,omitempty"`  // 更新时间戳
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }

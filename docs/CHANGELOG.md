@@ -7,7 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.9.7] - 2026-04-24
+## [0.1.0] - 2026-04-25
+
+### Added
+
+- **Futu OpenAPI proto v10.4.6408 upgrade** — full proto regeneration from v10.2 → v10.4
+- **`Extra` field in `GetUserInfoResponse`** — passthrough information field for future API extensibility
+- **`ShQotRight` / `SzQotRight` fields in `GetUserInfoResponse`** — Shanghai/Shenzhen market quote permissions
+
+### Changed
+
+- **`UserAttribution_MM` comment updated** — from "美国" to "MooMoo" (branding alignment)
+- **`QotRight_Level3` enum removed** — deprecated Level3 quote right removed from protos
+
+### Fixed
+
+- All proto `go_package` paths now correctly reference project module path (`github.com/shing1211/futuapi4go/pkg/pb/...`)
+
+### Maintenance
+
+- 78 proto files regenerated with proper package directory structure
+- `go build ./...` and `go vet ./...` both pass cleanly
+
+## [0.0.7] - 2026-04-24
 
 ### Added
 
@@ -16,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`constant.KLType` enum values** — were scrambled (SubType values used instead of KLType values); OpenD sends `KlType=6` for 5min, `KlType=1` for 1min, etc. — constants now match proto wire values
 
-## [0.9.0] - 2026-04-23 — Feature Parity Achieved
+## [0.0.6] - 2026-04-23 — Feature Parity Achieved
 
 ### Added
 
@@ -39,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `go.mod`: `go 1.26.1`, published to `proxy.golang.org` as `v0.9.0`
+- `go.mod`: `go 1.26.1`, published to `proxy.golang.org` as `v0.0.6`
 - `client/client.go`: `GetLoginUserID`, `IsEncrypt`, `CanSendProto` wrappers
 - `internal/client/client.go`: `loginUserID`, `isEncrypt` fields stored on connect; new methods added
 
