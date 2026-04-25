@@ -51,6 +51,19 @@ type Packet struct {
 
 type PacketHandler func(pkt *Packet)
 
+type ConnInterface interface {
+	io.Closer
+	WritePacket(protoID uint32, serialNo uint32, body []byte) error
+	ReadResponse(serialNo uint32, timeout time.Duration) (*Packet, error)
+	ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error)
+	SetPushHandler(handler PacketHandler)
+	Dispatch(pkt *Packet)
+	APITimeout() time.Duration
+	SetAPITimeout(time.Duration)
+	Dial(addr string) error
+	readOne() (*Packet, error)
+}
+
 type Conn struct {
 	conn   net.Conn
 	reader *bufio.Reader
@@ -80,6 +93,10 @@ func (c *Conn) SetPushHandler(handler PacketHandler) {
 
 func (c *Conn) APITimeout() time.Duration {
 	return c.apiTimeout
+}
+
+func (c *Conn) SetAPITimeout(timeout time.Duration) {
+	c.apiTimeout = timeout
 }
 
 func (c *Conn) Dial(addr string) error {

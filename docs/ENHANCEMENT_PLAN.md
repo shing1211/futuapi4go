@@ -217,13 +217,13 @@
 
 | # | Item | Category | Status |
 |---|------|----------|-------|
-| 1 | WebSocket transport | Performance | 🔄 Pending |
-| 2 | Zero-allocation request path | Performance | 🔄 Pending |
-| 3 | Connection pool O(1) lookup | Performance | 🔄 Pending |
-| 4 | Historical data downloader in SDK | Advanced | 🔄 Pending |
+| 1 | WebSocket transport | Performance | 🔄 In Progress |
+| 2 | Zero-allocation request path | Performance | ✅ Done |
+| 3 | Connection pool O(1) lookup | Performance | ✅ Done |
+| 4 | Historical data downloader in SDK | Advanced | ✅ Done |
 | 5 | Option chain utilities | Advanced | ✅ Done |
 | 6 | Market hours utility (`pkg/market/hours.go`) | Advanced | ✅ Done |
-| 7 | Structured logging (slog) | Observability | 🔄 Pending |
+| 7 | Structured logging (slog) | Observability | ✅ Done |
 | 8 | Benchmark regression CI | Testing | 🔄 Pending |
 | 9 | Performance profiling guide | Docs | 🔄 Pending |
 | 10 | Architecture Decision Records | Docs | 🔄 Pending |
@@ -234,7 +234,7 @@
 | # | Item | Category | Status |
 |---|------|----------|-------|
 | 1 | Makefile with standard targets | ✅ Done |
-| 2 | Fuzz testing pipeline | 🔄 Pending |
+| 2 | Fuzz testing pipeline | 🔄 Done |
 | 3 | Property-based testing | 🔄 Pending |
 | 4 | GraphQL interface alternative | 🔄 Pending |
 | 5 | Stability report (`docs/STABILITY.md`) | 🔄 Pending |

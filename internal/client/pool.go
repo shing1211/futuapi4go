@@ -79,6 +79,7 @@ type ClientPool struct {
 	mu      sync.RWMutex
 	config  *PoolConfig
 	clients map[PoolType][]*PoolConn
+	clientIndex map[*Client]*PoolConn // O(1) lookup by client pointer
 	ctx     context.Context
 	cancel  context.CancelFunc
 	wg      sync.WaitGroup
@@ -89,10 +90,11 @@ type ClientPool struct {
 func NewClientPool(config *PoolConfig) *ClientPool {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &ClientPool{
-		config:  config,
-		clients: make(map[PoolType][]*PoolConn),
-		ctx:     ctx,
-		cancel:  cancel,
+		config:      config,
+		clients:     make(map[PoolType][]*PoolConn),
+		clientIndex: make(map[*Client]*PoolConn),
+		ctx:        ctx,
+		cancel:     cancel,
 	}
 }
 
@@ -137,10 +139,11 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 				Client:    client,
 				PoolType:  poolType,
 				CreatedAt: time.Now(),
-				LastUsed:  time.Now(),
-				InUse:     true,
+				LastUsed: time.Now(),
+				InUse:    true,
 			}
 			p.clients[poolType] = append(conns, pc)
+			p.clientIndex[client] = pc // O(1) lookup
 			return client, nil
 		}
 
@@ -157,15 +160,13 @@ func (p *ClientPool) Put(client *Client) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	for _, conns := range p.clients {
-		for _, pc := range conns {
-			if pc.Client == client {
-				pc.InUse = false
-				pc.LastUsed = time.Now()
-				return
-			}
-		}
+	// O(1) lookup instead of O(n)
+	pc, ok := p.clientIndex[client]
+	if !ok {
+		return
 	}
+	pc.InUse = false
+	pc.LastUsed = time.Now()
 }
 
 // Remove removes a client from the pool (e.g., if it's broken).
@@ -173,15 +174,24 @@ func (p *ClientPool) Remove(client *Client) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	for poolType, conns := range p.clients {
-		for i, pc := range conns {
-			if pc.Client == client {
-				pc.Client.Close()
-				p.clients[poolType] = append(conns[:i], conns[i+1:]...)
-				return
-			}
+	pc, ok := p.clientIndex[client]
+	if !ok {
+		return
+	}
+	pc.Client.Close()
+	poolType := pc.PoolType
+
+	// Remove from slice
+	conns := p.clients[poolType]
+	for i, c := range conns {
+		if c == pc {
+			p.clients[poolType] = append(conns[:i], conns[i+1:]...)
+			break
 		}
 	}
+
+	// Remove from index
+	delete(p.clientIndex, client)
 }
 
 // Size returns the number of connections in the pool for a given type.

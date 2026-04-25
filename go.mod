@@ -3,6 +3,7 @@ module github.com/shing1211/futuapi4go
 go 1.26.1
 
 require (
+	github.com/gorilla/websocket v1.5.3
 	github.com/prometheus/client_golang v1.20.5
 	google.golang.org/protobuf v1.36.11
 )

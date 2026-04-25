@@ -25,6 +25,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/gorilla/websocket"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
@@ -121,7 +122,11 @@ type ClientOptions struct {
 
 	// Logging
 	Logger   *log.Logger // Custom logger (nil = use default)
-	LogLevel int         // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
+	SlogLogger *SlogLogger // Structured logger (nil = use default)
+	LogLevel int           // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
+
+	// WebSocket
+	WSSecretKey string // Secret key for WebSocket authentication
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
@@ -191,8 +196,23 @@ func WithPushHandler(h PacketHandler) Option {
 	return func(o *ClientOptions) { o.PushHandler = h }
 }
 
+// WithWSSecretKey sets the secret key for WebSocket authentication.
+func WithWSSecretKey(key string) Option {
+	return func(o *ClientOptions) { o.WSSecretKey = key }
+}
+
+// SetWSSecretKey sets the WebSocket secret key on an existing client.
+func (c *Client) SetWSSecretKey(key string) {
+	c.opts.WSSecretKey = key
+}
+
+// WithSlog sets a structured logger.
+func WithSlog(sl *SlogLogger) Option {
+	return func(o *ClientOptions) { o.SlogLogger = sl }
+}
+
 type Client struct {
-	conn              *Conn
+	conn              ConnInterface
 	mu                sync.RWMutex
 	opts              *ClientOptions
 	connID            uint64
@@ -215,6 +235,9 @@ type Client struct {
 	reconnecting int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
 
 	rsaKey string // RSA public key used during last successful connection
+
+	// Zero-allocation buffers
+	bufPool *bufferPool
 
 	// Metrics / µîçµ¿Ö
 	metrics   *Metrics
@@ -288,8 +311,9 @@ func New(opts ...Option) *Client {
 		ctx:      ctx,
 		cancel:   cancel,
 		metrics:  &Metrics{},
+		bufPool:  newBufferPool(8192, 4096),
 	}
-	client.conn.apiTimeout = options.APITimeout
+	client.conn.SetAPITimeout(options.APITimeout)
 	return client
 }
 
@@ -301,8 +325,139 @@ func NewWithOptions(addr string, maxRetries int, reconnectInterval time.Duration
 	)
 }
 
+// Connect connects to Futu OpenD via TCP (default).
 func (c *Client) Connect(addr string) error {
 	return c.ConnectWithRSA(addr, "")
+}
+
+// ConnectWS connects to Futu OpenD via WebSocket.
+func (c *Client) ConnectWS(addr string) error {
+	return c.connectWebSocket(addr, false)
+}
+
+// ConnectWSS connects to Futu OpenD via WebSocket Secure (TLS).
+func (c *Client) ConnectWSS(addr string) error {
+	return c.connectWebSocket(addr, true)
+}
+
+func (c *Client) connectWebSocket(addr string, tls bool) error {
+	c.mu.Lock()
+	c.addr = addr
+	c.mu.Unlock()
+
+	secretKey := c.opts.WSSecretKey
+
+	var ws *websocket.Conn
+	var err error
+
+	if tls {
+		ws, _, err = DialWebSocketSecure(context.Background(), addr, secretKey)
+	} else {
+		ws, _, err = DialWebSocket(context.Background(), addr, secretKey)
+	}
+
+	if err != nil {
+		return fmt.Errorf("websocket dial: %w", err)
+	}
+
+	c.conn = newWSConn(ws)
+	c.conn.SetAPITimeout(c.opts.APITimeout)
+
+	clientVer := int32(10100)
+	clientID := "futuapi4go"
+	recvNotify := true
+	var packetEncAlgo int32 = -1
+	programmingLanguage := "Go"
+
+	c2s := &initconnect.C2S{
+		ClientVer:           &clientVer,
+		ClientID:            &clientID,
+		RecvNotify:          &recvNotify,
+		PacketEncAlgo:       &packetEncAlgo,
+		ProgrammingLanguage: &programmingLanguage,
+		PushProtoFmt:        func() *int32 { v := int32(0); return &v }(),
+	}
+
+	pkt := &initconnect.Request{
+		C2S: c2s,
+	}
+
+	body, err := proto.Marshal(pkt)
+	if err != nil {
+		c.conn.Close()
+		return fmt.Errorf("marshal request: %w", err)
+	}
+
+	serialNo := c.nextSerialNo()
+	if err := c.conn.WritePacket(ProtoID_InitConnect, serialNo, body); err != nil {
+		c.conn.Close()
+		return fmt.Errorf("write request: %w", err)
+	}
+
+	rspPkt, err := c.conn.ReadResponse(serialNo, 10*time.Second)
+	if err != nil {
+		c.conn.Close()
+		return fmt.Errorf("read response: %w", err)
+	}
+
+	rsp := &initconnect.Response{}
+	if err := proto.Unmarshal(rspPkt.Body, rsp); err != nil {
+		c.conn.Close()
+		return fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		c.conn.Close()
+		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		c.conn.Close()
+		return errors.New("init connect: s2c is nil")
+	}
+
+	c.mu.Lock()
+	c.connID = s2c.GetConnID()
+	c.loginUserID = s2c.GetLoginUserID()
+	c.keepAliveInterval = s2c.GetKeepAliveInterval()
+	c.isEncrypt = false
+	c.serverVer = s2c.GetServerVer()
+	atomic.StoreInt32(&c.connected, 1)
+	atomic.StoreInt32(&c.connActive, 1)
+	c.metricsMu.Lock()
+	c.metrics.ConnectedSince = time.Now()
+	c.metricsMu.Unlock()
+	c.mu.Unlock()
+
+	c.conn.SetPushHandler(func(pkt *Packet) {
+		c.recordPush()
+		c.handlersMu.RLock()
+		handler, ok := c.handlers[pkt.Header.ProtoID]
+		c.handlersMu.RUnlock()
+		if ok {
+			handler(pkt.Header.ProtoID, pkt.Body)
+		}
+		if c.opts.PushHandler != nil {
+			c.opts.PushHandler(pkt)
+		}
+	})
+
+	c.logInfo("connected (WS) to %s (connID=%d, userID=%d, ver=%d)", addr, c.connID, c.loginUserID, c.serverVer)
+
+	keepAliveInterval := c.opts.KeepAliveInterval
+	if keepAliveInterval == 0 {
+		if c.keepAliveInterval > 0 {
+			keepAliveInterval = time.Duration(c.keepAliveInterval) * time.Second
+		} else {
+			keepAliveInterval = DefaultKeepAliveInterval
+		}
+	}
+	if keepAliveInterval > 0 {
+		go c.keepAliveLoop(keepAliveInterval)
+	}
+
+	return nil
 }
 
 func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
@@ -718,7 +873,7 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 	return newClient
 }
 
-func (c *Client) Conn() *Conn {
+func (c *Client) Conn() ConnInterface {
 	return c.conn
 }
 
@@ -774,7 +929,11 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return ErrNotConnected
 	}
 
+	// Use pooled marshal buffer
+	buf := c.bufPool.GetMarshalBuf()
 	body, err := proto.Marshal(req)
+	copy(buf.data, body)
+	c.bufPool.PutMarshalBuf(buf)
 	if err != nil {
 		return err
 	}
@@ -793,7 +952,12 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return fmt.Errorf("read response: %w", err)
 	}
 
-	if err := proto.Unmarshal(pkt.Body, rsp); err != nil {
+	// Get pooled response buffer for unmarshal
+	respBuf := c.bufPool.GetResponseBuf()
+	defer c.bufPool.PutResponseBuf(respBuf)
+
+	respBuf.data = pkt.Body
+	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
 
@@ -820,7 +984,6 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		apiTimeout = DefaultTimeout
 	}
 
-	// Merge context timeout with API timeout
 	deadline, hasDeadline := ctx.Deadline()
 	if hasDeadline {
 		if timeout := time.Until(deadline); timeout < apiTimeout {
@@ -833,7 +996,12 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		return fmt.Errorf("read response: %w", err)
 	}
 
-	if err := proto.Unmarshal(pkt.Body, rsp); err != nil {
+	// Use pooled response buffer
+	respBuf := c.bufPool.GetResponseBuf()
+	defer c.bufPool.PutResponseBuf(respBuf)
+	respBuf.data = pkt.Body
+
+	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
 

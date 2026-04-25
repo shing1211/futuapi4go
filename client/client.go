@@ -94,6 +94,24 @@ func (c *Client) Connect(addr string) error {
 	return c.inner.Connect(addr)
 }
 
+// ConnectWS connects to the Futu OpenD server via WebSocket.
+// Optional secret key can be passed as second argument.
+func (c *Client) ConnectWS(addr string, secretKey ...string) error {
+	if len(secretKey) > 0 && secretKey[0] != "" {
+		c.inner.SetWSSecretKey(secretKey[0])
+	}
+	return c.inner.ConnectWS(addr)
+}
+
+// ConnectWSS connects to the Futu OpenD server via WebSocket Secure (TLS).
+// Optional secret key can be passed as second argument.
+func (c *Client) ConnectWSS(addr string, secretKey ...string) error {
+	if len(secretKey) > 0 && secretKey[0] != "" {
+		c.inner.SetWSSecretKey(secretKey[0])
+	}
+	return c.inner.ConnectWSS(addr)
+}
+
 // ConnectAddr is an alias for Connect.
 func (c *Client) ConnectAddr(addr string) error {
 	return c.inner.Connect(addr)
@@ -165,8 +183,8 @@ func (c *Client) RegisterHandler(protoID uint32, h func(protoID uint32, body []b
 	c.inner.RegisterHandler(protoID, h)
 }
 
-// GetConn returns the underlying connection (for advanced use).
-func (c *Client) GetConn() *futuapi.Conn {
+// GetConn returns the underlying connection interface (for advanced use).
+func (c *Client) GetConn() futuapi.ConnInterface {
 	return c.inner.Conn()
 }
 

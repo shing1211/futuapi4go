@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **P2-2: Zero-allocation path** — `sync.Pool` buffer management in internal/client/alloc.go
+- **P2-3: Pool O(1) lookup** — `clientIndex` map for fast connection retrieval
+- **P2-4: Historical data downloader** — `pkg/history` package for batch data retrieval
+- **P2-7: Structured logging** — `internal/client/slog.go` with slog support
+- **WebSocket transport infrastructure** — `internal/client/ws.go` (incomplete, not yet working)
+
+### Changed
+
+- **P1-5: Buffered I/O** — Conn now uses `bufio.Reader` for packet reads
+
 ## [0.3.0] - 2026-04-25
 
 ### Breaking Changes (v0.3.0)
