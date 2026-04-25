@@ -1,11 +1,54 @@
 # Implementation Plan Phase 6 - World-Class SDK
 
-**Version:** v0.3.0 (Breaking Changes)  
-**Goal:** Production-grade SDK with enterprise features
+**Version:** v0.3.0 (BREAKING)  
+**Status:** ✅ Complete
 
 ---
 
-## Phase 6: Enterprise Features
+## Phase 6 Complete Items
+
+| Item | Status | Changes |
+|------|--------|---------|
+| **P6-1 Context API** | ✅ | All functions require ctx, WithTimeout()/WithDeadline() |
+| **P6-2 Typed Market** | ✅ | constant.Market type, no int32() casts |
+| **P6-3 Error Codes** | ✅ | 20+ new error codes + predicates |
+| **P6-4 Timeouts** | ✅ Already existed | Client.WithTimeout() |
+| **P6-5 Bounded Channels** | ✅ | Buffer size constants & helpers |
+| **P6-6 Market Detection** | ✅ | Warrants, CBBC, futures support |
+| **P6-7 Retry Logic** | ✅ Already existed | MaxRetries, backoff |
+
+---
+
+## v0.3.0 API Migration
+
+```go
+// OLD (v0.2.x)
+client.QuerySubscription(cli)
+client.Subscribe(ctx, cli, int32(constant.Market_US), ...)
+
+// NEW (v0.3.0)
+client.QuerySubscription(ctx, cli)
+client.Subscribe(ctx, cli, constant.Market_US, ...)
+
+// With timeout
+ctx, cancel := cli.WithTimeout(5 * time.Second)
+defer cancel()
+```
+
+---
+
+## v0.3.0 Error Handling
+
+```go
+// Check specific errors
+if constant.IsInsufficientBalance(err) { ... }
+if constant.IsMarketClosed(err) { ... }
+if constant.IsOrderRejected(err) { ... }
+
+// Check categories
+if constant.IsNetworkError(err) { ... }
+if constant.IsAccountError(err) { ... }
+```
 
 ### P6-1: Context-Aware API Calls
 **Severity:** CRITICAL | **Status:** ✅ Done | **Assignee:** opencode
