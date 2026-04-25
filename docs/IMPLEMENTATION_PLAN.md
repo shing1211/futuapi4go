@@ -876,10 +876,49 @@ func PlaceOrder(...) {
 ---
 
 ### P5-1: Pagination Iterator for Historical Data
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
+
+**New Helpers:**
+- `NewHistoryKLineIterator(ctx, client, req)` - Iterator for paginated K-line queries
+- `HasNext()`, `Next()`, `Err()` methods
+- Added in `pkg/qot/iterator.go`
+
+---
+
 ### P5-2: Unified Client Wrapper API
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode (already existed)
+
+**Already Implemented:**
+- Single `client.New()` in `client/client.go`
+- All trading/market functions accept `*Client` parameter
+- No need to import qot/trd/sys separately (they're internal packages)
+
+---
+
 ### P5-3: Package Documentation (GoDoc)
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode (already existed)
+
+**Already Implemented:**
+- All packages have GoDoc comments
+- Examples available in test files
+
+---
+
 ### P5-4: ProtoID Constant Naming Standardization
+**Severity:** LOW | **Status:** ✅ Done | **Assignee:** opencode (already standardized)
+
+**Already Implemented:**
+- All constants use `ProtoID_{Name}` pattern (no _ACK suffixes)
+
+---
+
 ### P5-5: Comprehensive Examples & Tutorials
+**Severity:** LOW | **Status:** ✅ Done | **Assignee:** opencode (already existed)
+
+**Already Implemented:**
+- README.md with HK, US market examples
+- Complete trading flow examples
+- Push subscription examples
 
 ---
 

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-04-25
+
+### Added (Phase 5 Polish)
+
+- **P5-1: Pagination Iterator** — Add `NewHistoryKLineIterator()` in pkg/qot/iterator.go
+
+### Completed (Previously Existed)
+
+- **P5-2: Unified Client** — client.New() already provides unified API
+- **P5-3: GoDoc** — All packages already documented
+- **P5-4: ProtoID naming** — Already standardized
+- **P5-5: Examples** — README.md with HK, US examples
+
 ## [0.2.5] - 2026-04-25
 
 ### Completed (Previously Existed)
