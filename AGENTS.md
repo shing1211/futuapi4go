@@ -42,14 +42,21 @@ This document contains **24 enhancement items** across 5 phases. Each item has:
 3. **MEDIUM** → Then
 4. **LOW** → Last
 
-**Current Priority Queue:**
-1. **P1-1** - Connection Pool Race Condition (CRITICAL) - `internal/client/pool.go`
-2. **P1-2** - Packet Length Overflow Check (CRITICAL) - `internal/client/conn.go`
-3. **P1-3** - Sensitive Data Logging Protection (CRITICAL) - `pkg/trd/trade.go`
-4. **P1-4** - Goroutine Leaks in Push Subscription (HIGH) - `pkg/chanpkg/chan.go`
-5. **P1-5** - Buffered I/O for Packet Reading (HIGH) - `internal/client/conn.go`
-6. **P1-6** - Input Validation on All Public APIs (HIGH) - All
-7. **P1-7** - Proto Field Nil Checks (HIGH) - All response parsing
+**Phase 1 (Critical Security & Correctness) - ✅ COMPLETE**
+All Phase 1 items have been implemented and verified:
+- ✅ P1-1: Connection Pool Race Condition - `internal/client/pool.go`
+- ✅ P1-2: Packet Length Overflow Check - `internal/client/conn.go`
+- ✅ P1-3: Sensitive Data Logging Protection - `pkg/trd/trade.go`
+- ✅ P1-4: Goroutine Leaks in Push Subscription - `pkg/chanpkg/chan.go`
+- ✅ P1-5: Buffered I/O for Packet Reading - `internal/client/conn.go`
+- ✅ P1-6: Input Validation on All Public APIs - All
+- ✅ P1-7: Proto Field Nil Checks - All response parsing
+
+**Current Priority Queue (Phase 2):**
+- P2-1: Typed Enum Parameters Everywhere (In Progress)
+- P2-2: Builder Pattern for Requests (Done)
+- P2-3: Convenience Wrappers for Common Operations (Done)
+- P2-4: Market Auto-Detection Helper (Done)
 
 ### Step 3: Update Status Before Starting
 Before writing any code:
@@ -115,6 +122,7 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 | **Phase 3** | Infrastructure Improvements | 4 | 15-20 hrs | v0.3.1 | No |
 | **Phase 4** | Testing & Validation | 4 | 15-20 hrs | v0.3.2 | No |
 | **Phase 5** | Polish & Documentation | 5 | 10-15 hrs | v0.4.0 | Partial |
+| **Phase 6** | World-Class SDK | 9 | 13-15 hrs | v0.3.0 | Partial |
 | **TOTAL** | | **24** | **75-100 hrs** | | |
 
 ### Phase Gates
@@ -299,7 +307,7 @@ Use these consistently in IMPLEMENTATION_PLAN.md:
 - **Migration Guide:** `docs/MIGRATION_GUIDE.md`
 - **API Reference:** `docs/API_REFERENCE.md`
 - **Proto Reference:** https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.2.0)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.3.0)
 
 ---
 

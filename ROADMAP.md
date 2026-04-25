@@ -1,6 +1,6 @@
 # futuapi4go Roadmap
 
-> **Last updated: 2026-04-23 — v0.9.0 published** 🎉
+> **Last updated: 2026-04-25 — v0.3.0 published** 🎉
 
 ---
 
@@ -12,9 +12,9 @@ The Go SDK has already surpassed the Python SDK in proto coverage (78 vs ~50), t
 
 ---
 
-## v0.9.0 — Feature Parity Achieved ✅
+## v0.3.0 — Feature Parity Achieved ✅
 
-Released 2026-04-23. Full parity with the Python SDK plus Go-native extras.
+Released 2026-04-25. Full parity with the Python SDK plus Go-native extras.
 
 **New methods:**
 - `GetLoginUserID()` — Futu/NiuNiu user ID from OpenD

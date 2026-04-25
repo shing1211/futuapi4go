@@ -977,7 +977,7 @@ futuapi4go/
 │   ├── constant/          # Python-style constants + String() methods
 │   └── pb/               # 78 protobuf-generated types (v10.4.6408)
 ├── api/proto/            # Original .proto definitions (v10.4.6408)
-└── cmd/demo/             # Interactive demo
+└── test/                 # Test suite with examples
 ```
 
 ## Python Migration

@@ -4,10 +4,10 @@
 
 | Version | Status |
 |---------|--------|
-| **v0.9.x** | ✅ Actively maintained |
-| v0.8.x | ✅ Receives security patches |
-| v0.7.x | ✅ Receives security patches |
-| < v0.7 | ❌ Not supported |
+| **v0.3.x** | ✅ Actively maintained |
+| v0.2.x | ✅ Receives security patches |
+| v0.1.x | ✅ Receives security patches |
+| < v0.1 | ❌ Not supported |
 
 ## Reporting a Vulnerability
 
