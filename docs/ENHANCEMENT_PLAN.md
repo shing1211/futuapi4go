@@ -215,18 +215,18 @@
 ### Phase 2 — Performance & Polish (P2 items)
 > *Fine-tuning for high-frequency trading workloads.*
 
-| # | Item | Category |
-|---|------|----------|
-| 1 | WebSocket transport | Performance |
-| 2 | Zero-allocation request path | Performance |
-| 3 | Connection pool O(1) lookup | Performance |
-| 4 | Historical data downloader in SDK | Advanced |
-| 5 | Option chain utilities | Advanced |
-| 6 | Market hours utility (`pkg/market/hours.go`) | Advanced |
-| 7 | Structured logging (slog) | Observability |
-| 8 | Benchmark regression CI | Testing |
-| 9 | Performance profiling guide | Docs |
-| 10 | Architecture Decision Records | Docs |
+| # | Item | Category | Status |
+|---|------|----------|-------|
+| 1 | WebSocket transport | Performance | 🔄 Pending |
+| 2 | Zero-allocation request path | Performance | 🔄 Pending |
+| 3 | Connection pool O(1) lookup | Performance | 🔄 Pending |
+| 4 | Historical data downloader in SDK | Advanced | 🔄 Pending |
+| 5 | Option chain utilities | Advanced | ✅ Done |
+| 6 | Market hours utility (`pkg/market/hours.go`) | Advanced | ✅ Done |
+| 7 | Structured logging (slog) | Observability | 🔄 Pending |
+| 8 | Benchmark regression CI | Testing | 🔄 Pending |
+| 9 | Performance profiling guide | Docs | 🔄 Pending |
+| 10 | Architecture Decision Records | Docs | 🔄 Pending |
 
 ### Phase 3 — Ecosystem (P3 items)
 > *Building a developer ecosystem around the SDK.*
