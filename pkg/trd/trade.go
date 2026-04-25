@@ -37,6 +37,7 @@ package trd
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"google.golang.org/protobuf/proto"
 
@@ -104,6 +105,33 @@ type Acc struct {
 // GetAccListResponse is the response containing a list of trading accounts.
 type GetAccListResponse struct {
 	AccList []*Acc
+}
+
+var (
+	trdHeaderPool = sync.Pool{
+		New: func() interface{} { return &trdcommon.TrdHeader{} },
+	}
+	placeOrderC2SPool = sync.Pool{
+		New: func() interface{} { return &trdplaceorder.C2S{} },
+	}
+)
+
+func getTrdHeader() *trdcommon.TrdHeader {
+	return trdHeaderPool.Get().(*trdcommon.TrdHeader)
+}
+
+func putTrdHeader(h *trdcommon.TrdHeader) {
+	*h = trdcommon.TrdHeader{}
+	trdHeaderPool.Put(h)
+}
+
+func getPlaceOrderC2S() *trdplaceorder.C2S {
+	return placeOrderC2SPool.Get().(*trdplaceorder.C2S)
+}
+
+func putPlaceOrderC2S(c *trdplaceorder.C2S) {
+	*c = trdplaceorder.C2S{}
+	placeOrderC2SPool.Put(c)
 }
 
 // wrapError standardizes error messages for proto response failures

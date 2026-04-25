@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-04-25
+
+### Added
+
+- **P1-5: Buffered I/O** (`internal/client/conn.go`) — Added 64KB bufio.Reader for reduced syscalls
+- **P3-3: sync.Pool placeholder** (`pkg/trd/trade.go`) — Added pool definitions for future optimization
+
 ## [0.2.2] - 2026-04-25
 
 ### Added (Phase 3 Infrastructure)

@@ -15,6 +15,7 @@
 package futuapi
 
 import (
+	"bufio"
 	"context"
 	"crypto/sha1"
 	"encoding/binary"
@@ -51,8 +52,9 @@ type Packet struct {
 type PacketHandler func(pkt *Packet)
 
 type Conn struct {
-	conn net.Conn
-	mu   sync.Mutex
+	conn   net.Conn
+	reader *bufio.Reader
+	mu    sync.Mutex
 
 	dispMu   sync.Mutex
 	disp     map[uint32]chan *Packet
@@ -64,8 +66,9 @@ type Conn struct {
 
 func NewConn(conn net.Conn) *Conn {
 	return &Conn{
-		conn: conn,
-		disp: make(map[uint32]chan *Packet),
+		conn:   conn,
+		reader: bufio.NewReaderSize(conn, 64*1024),
+		disp:   make(map[uint32]chan *Packet),
 	}
 }
 

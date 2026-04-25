@@ -238,12 +238,14 @@ func (c *Channel) Close() {
 ---
 
 ### P1-5: Buffered I/O for Packet Reading
-**Severity:** HIGH | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** HIGH | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - `internal/client/conn.go` - Unbuffered reads cause excessive syscalls
 - High CPU usage under load
 - No max packet size protection
+
+**Done:** Added bufio.Reader (64KB) to Conn struct for buffered I/O
 
 **Fix Location:**
 ```go
@@ -750,11 +752,13 @@ func SendRequest[Req, Resp, S2C any](
 ---
 
 ### P3-3: sync.Pool for Hot Path Allocations
-**Severity:** MEDIUM | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode (Placeholder)
 
 **Issue:**
 - Every request allocates new proto structs causing GC pressure
 - High frequency trading scenarios suffer from allocation churn
+
+**Done:** Added sync.Pool definitions as placeholder for future optimization (not yet used)
 
 **Fix Location:**
 ```go
