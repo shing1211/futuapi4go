@@ -16,11 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **`wrapError` helper** — standardized error messages across all API functions (`%s failed: retType=%d, retMsg=%s`)
+- **Race detection tests for connection pool** — `TestPoolConcurrentAccess` and `TestPoolConcurrentGetPutRemove`
+- **Packet validation tests** — `TestConnWritePacketEmptyBody` and `TestConnWritePacketBodyTooBig`
 
 ### Fixed
 
 - **Nil pointer guards** — all list iteration loops now check for nil elements before dereferencing
 - **Input validation** — all API functions now validate required fields before sending requests
+- **Packet length overflow check** — `WritePacket()` now validates body size before casting to `uint32` (prevents silent overflow)
+- **Empty packet rejection** — `WritePacket()` now rejects empty bodies with `CodeInvalidPacket` error
+
+### Security
+
+- **Connection pool mutex protection verified** — all `ClientPool` methods properly protected with `sync.RWMutex`
 
 ## [0.1.0] - 2026-04-25
 

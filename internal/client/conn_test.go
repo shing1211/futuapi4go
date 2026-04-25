@@ -173,3 +173,62 @@ func TestConnReadResponseTimeout(t *testing.T) {
 		t.Error("expected timeout error")
 	}
 }
+
+func TestConnWritePacketEmptyBody(t *testing.T) {
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+
+	conn := NewConn(nil)
+	go func() {
+		c, _ := l.Accept()
+		conn.conn = c
+	}()
+
+	c, err := net.Dial("tcp", l.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer c.Close()
+	conn.conn = c
+
+	err = conn.WritePacket(1001, 1, []byte{})
+	if err == nil {
+		t.Error("WritePacket should return error for empty body")
+	}
+	if apiErr, ok := err.(*Error); !ok || apiErr.Code != CodeInvalidPacket {
+		t.Errorf("expected CodeInvalidPacket, got error: %v", err)
+	}
+}
+
+func TestConnWritePacketBodyTooBig(t *testing.T) {
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+
+	conn := NewConn(nil)
+	go func() {
+		c, _ := l.Accept()
+		conn.conn = c
+	}()
+
+	c, err := net.Dial("tcp", l.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer c.Close()
+	conn.conn = c
+
+	bigBody := make([]byte, MaxPacketSize+1)
+	err = conn.WritePacket(1001, 1, bigBody)
+	if err == nil {
+		t.Error("WritePacket should return error for body exceeding MaxPacketSize")
+	}
+	if apiErr, ok := err.(*Error); !ok || apiErr.Code != CodePacketTooBig {
+		t.Errorf("expected CodePacketTooBig, got error: %v", err)
+	}
+}

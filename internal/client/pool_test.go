@@ -16,6 +16,7 @@ package futuapi
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 )
@@ -207,4 +208,74 @@ func TestPoolRemove(t *testing.T) {
 	if pool.Size(PoolTypeGeneral) >= initialSize {
 		t.Errorf("expected size to decrease after Remove, was %d now %d", initialSize, pool.Size(PoolTypeGeneral))
 	}
+}
+
+func TestPoolConcurrentAccess(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 5
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	const goroutines = 10
+	const requestsPerGoroutine = 20
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		go func(goroutineID int) {
+			defer wg.Done()
+			for j := 0; j < requestsPerGoroutine; j++ {
+				ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+				defer cancel()
+
+				client, err := pool.Get(ctx, PoolTypeGeneral)
+				if err != nil {
+					continue
+				}
+
+				pool.Put(client)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+}
+
+func TestPoolConcurrentGetPutRemove(t *testing.T) {
+	config := DefaultPoolConfig("127.0.0.1:11111")
+	config.MaxSize = 10
+	config.MinIdle = 0
+	pool := NewClientPool(config)
+	defer pool.Close()
+
+	const goroutines = 8
+	const operationsPerGoroutine = 30
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		go func(goroutineID int) {
+			defer wg.Done()
+			for j := 0; j < operationsPerGoroutine; j++ {
+				ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+				defer cancel()
+
+				client, err := pool.Get(ctx, PoolTypeGeneral)
+				if err != nil {
+					continue
+				}
+
+				if goroutineID%3 == 0 {
+					pool.Remove(client)
+				} else {
+					pool.Put(client)
+				}
+			}
+		}(i)
+	}
+
+	wg.Wait()
 }

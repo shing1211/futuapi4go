@@ -244,6 +244,13 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 		return fmt.Errorf("write packet: %w", ErrNotConnected)
 	}
 
+	if len(body) > MaxPacketSize {
+		return NewError(CodePacketTooBig, fmt.Sprintf("body too large: %d bytes (max %d)", len(body), MaxPacketSize))
+	}
+	if len(body) == 0 {
+		return NewError(CodeInvalidPacket, "empty packet body")
+	}
+
 	header := make([]byte, HeaderLen)
 	header[0] = 'F'
 	header[1] = 'T'

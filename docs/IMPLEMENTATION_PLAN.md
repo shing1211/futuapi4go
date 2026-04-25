@@ -23,7 +23,9 @@ This document tracks all improvements identified in the full-spectrum code revie
 ---
 
 ### P1-1: Connection Pool Race Condition
-**Severity:** CRITICAL | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** CRITICAL | **Status:** ✅ Done | **Assignee:** LLM Agent (2026-04-25)
+
+**Notes:** Already implemented correctly. `ClientPool` has `sync.RWMutex` protecting all methods (`Get()`, `Put()`, `Remove()`, `Size()`, `Available()`, `Close()`, `healthCheck()`). Added race detection tests.
 
 **Issue:**
 - `internal/client/pool.go` - No mutex protection for concurrent `Get()/Put()` calls
@@ -65,7 +67,12 @@ func (p *Pool) Get() *Conn {
 ---
 
 ### P1-2: Packet Length Overflow Check
-**Severity:** CRITICAL | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** CRITICAL | **Status:** ✅ Done | **Assignee:** LLM Agent (2026-04-25)
+
+**Notes:** Read path already had `MaxPacketSize` check in `readOne()`. Added check in `WritePacket()` for:
+- Empty body check (`len(body) == 0`) with `CodeInvalidPacket` error
+- Body size check (`len(body) > MaxPacketSize`) with `CodePacketTooBig` error
+- Added unit tests for both edge cases
 
 **Issue:**
 - `internal/client/conn.go` - No bounds check before `uint32(len(body))` cast
