@@ -44,6 +44,17 @@
 
 ---
 
+## 1.5. Prometheus Metrics (NEW - v0.3.x)
+> *Production observability - metrics endpoint.*
+
+| # | Item | Category | Status |
+|---|------|----------|--------|
+| 1 | Prometheus metrics endpoint | ✅ Done |
+| 2 | Connection metrics (connect count, reconnect count, latency) | ✅ Done |
+| 3 | API call metrics (latency histogram) | ✅ Done |
+
+---
+
 ## 2. SDK Quality & Stability
 
 | Priority | Effort | Item | Action |
