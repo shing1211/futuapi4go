@@ -44,8 +44,6 @@ import (
 	"context"
 	"fmt"
 
-	"google.golang.org/protobuf/proto"
-
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
@@ -81,8 +79,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
-
-	"time"
 )
 
 // wrapError standardizes error messages for proto response failures
@@ -903,42 +899,25 @@ type GetSecuritySnapshotResponse struct {
 }
 
 // GetSecuritySnapshot returns snapshot data for the given securities.
-func GetSecuritySnapshot(c *futuapi.Client, req *GetSecuritySnapshotRequest) (*GetSecuritySnapshotResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetSecuritySnapshot(ctx context.Context, c *futuapi.Client, req *GetSecuritySnapshotRequest) (*GetSecuritySnapshotResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetsecuritysnapshot.C2S{
 		SecurityList: req.SecurityList,
 	}
 
 	pkt := &qotgetsecuritysnapshot.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetSecuritySnapshot, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetsecuritysnapshot.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetSecuritySnapshot, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetSecuritySnapshot failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetSecuritySnapshot", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()

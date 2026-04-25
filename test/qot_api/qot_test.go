@@ -124,7 +124,7 @@ func TestGetKL_HSI_Day(t *testing.T) {
 		ReqNum:    10,
 	}
 
-	result, err := qot.GetKL(cli, req)
+	result, err := qot.GetKL(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetKL failed: %v", err)
 	}
@@ -182,7 +182,7 @@ func TestGetKL_HSI_Min1(t *testing.T) {
 		ReqNum:    5,
 	}
 
-	result, err := qot.GetKL(cli, req)
+	result, err := qot.GetKL(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetKL 1min failed: %v", err)
 	}
@@ -229,7 +229,7 @@ func TestGetOrderBook_HSI(t *testing.T) {
 		Num:      10,
 	}
 
-	result, err := qot.GetOrderBook(cli, req)
+	result, err := qot.GetOrderBook(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetOrderBook failed: %v", err)
 	}
@@ -288,7 +288,7 @@ func TestGetTicker_HSI(t *testing.T) {
 		Num:      20,
 	}
 
-	result, err := qot.GetTicker(cli, req)
+	result, err := qot.GetTicker(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetTicker failed: %v", err)
 	}
@@ -343,7 +343,7 @@ func TestGetRT_HSI(t *testing.T) {
 		Security: fixtures.HSISecurity(),
 	}
 
-	result, err := qot.GetRT(cli, req)
+	result, err := qot.GetRT(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetRT failed: %v", err)
 	}
@@ -406,7 +406,7 @@ func TestGetBroker_HSI(t *testing.T) {
 		Num:      10,
 	}
 
-	result, err := qot.GetBroker(cli, req)
+	result, err := qot.GetBroker(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetBroker failed: %v", err)
 	}
@@ -463,7 +463,7 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 		SecurityList: []*qotcommon.Security{fixtures.HSISecurity()},
 	}
 
-	result, err := qot.GetStaticInfo(cli, req)
+	result, err := qot.GetStaticInfo(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetStaticInfo failed: %v", err)
 	}
@@ -511,7 +511,7 @@ func TestRequestTradeDate_HK(t *testing.T) {
 		Market: fixtures.HSIMarket,
 	}
 
-	result, err := qot.RequestTradeDate(cli, req)
+	result, err := qot.RequestTradeDate(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("RequestTradeDate failed: %v", err)
 	}
@@ -545,7 +545,7 @@ func TestSubscribe_HSI(t *testing.T) {
 		IsSubOrUnSub: true,
 	}
 
-	_, err := qot.Subscribe(cli, req)
+	_, err := qot.Subscribe(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("Subscribe failed: %v", err)
 	}
@@ -592,7 +592,7 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 		Security: fixtures.HSISecurity(),
 	}
 
-	result, err := qot.GetCapitalFlow(cli, req)
+	result, err := qot.GetCapitalFlow(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetCapitalFlow failed: %v", err)
 	}
@@ -628,7 +628,7 @@ func TestGetCapitalDistribution_HSI(t *testing.T) {
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
 
-	result, err := qot.GetCapitalDistribution(cli, fixtures.HSISecurity())
+	result, err := qot.GetCapitalDistribution(context.Background(), cli, fixtures.HSISecurity())
 	if err != nil {
 		t.Fatalf("GetCapitalDistribution failed: %v", err)
 	}

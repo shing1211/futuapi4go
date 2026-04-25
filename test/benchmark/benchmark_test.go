@@ -98,7 +98,7 @@ func BenchmarkGetKL_Mock(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := qot.GetKL(cli, req)
+		_, err := qot.GetKL(context.Background(), cli, req)
 		if err != nil {
 			b.Fatalf("GetKL failed: %v", err)
 		}
@@ -137,7 +137,7 @@ func BenchmarkGetOrderBook_Mock(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := qot.GetOrderBook(cli, req)
+		_, err := qot.GetOrderBook(context.Background(), cli, req)
 		if err != nil {
 			b.Fatalf("GetOrderBook failed: %v", err)
 		}

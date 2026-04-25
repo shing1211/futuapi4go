@@ -104,7 +104,7 @@ func TestIntegrationGetGlobalState(t *testing.T) {
 		t.Fatalf("Connect failed: %v", err)
 	}
 
-	state, err := sys.GetGlobalState(client)
+	state, err := sys.GetGlobalState(context.Background(), client)
 	if err != nil {
 		t.Fatalf("GetGlobalState failed: %v", err)
 	}
@@ -174,7 +174,7 @@ func TestIntegrationSubscribe(t *testing.T) {
 		IsRegOrUnRegPush: true,
 	}
 
-	subResp, err := qot.Subscribe(client, subReq)
+	subResp, err := qot.Subscribe(context.Background(), client, subReq)
 	if err != nil {
 		t.Fatalf("Subscribe failed: %v", err)
 	}
@@ -205,7 +205,7 @@ func TestIntegrationMultipleAPIs(t *testing.T) {
 		{
 			name: "GetGlobalState",
 			fn: func() error {
-				_, err := sys.GetGlobalState(client)
+				_, err := sys.GetGlobalState(context.Background(), client)
 				return err
 			},
 		},
@@ -233,7 +233,7 @@ func TestIntegrationMultipleAPIs(t *testing.T) {
 					IsSubOrUnSub:     true,
 					IsRegOrUnRegPush: true,
 				}
-				_, err := qot.Subscribe(client, subReq)
+				_, err := qot.Subscribe(context.Background(), client, subReq)
 				return err
 			},
 		},

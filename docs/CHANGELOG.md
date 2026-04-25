@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **All API functions now accept `context.Context` as first parameter** — enables request cancellation, timeouts, and deadline propagation across all `pkg/qot`, `pkg/trd`, and `pkg/sys` functions
+
+### Added
+
+- **`wrapError` helper** — standardized error messages across all API functions (`%s failed: retType=%d, retMsg=%s`)
+
+### Fixed
+
+- **Nil pointer guards** — all list iteration loops now check for nil elements before dereferencing
+- **Input validation** — all API functions now validate required fields before sending requests
+
 ## [0.1.0] - 2026-04-25
 
 ### Added

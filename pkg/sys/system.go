@@ -30,7 +30,9 @@
 package sys
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"google.golang.org/protobuf/proto"
 
@@ -40,9 +42,12 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/verification"
-
-	"time"
 )
+
+// wrapError standardizes error messages for proto response failures
+func wrapError(funcName string, retType int32, retMsg string) error {
+	return fmt.Errorf("%s failed: retType=%d, retMsg=%s", funcName, retType, retMsg)
+}
 
 const (
 	ProtoID_GetGlobalState     = 1002
@@ -75,42 +80,20 @@ type GetGlobalStateResponse struct {
 
 // GetGlobalState retrieves the global connection state including server version, login status, and market information.
 // Returns the global state or an error if the request fails.
-func GetGlobalState(c *futuapi.Client) (*GetGlobalStateResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetGlobalState(ctx context.Context, c *futuapi.Client) (*GetGlobalStateResponse, error) {
 	c2s := &getglobalstate.C2S{
 		UserID: func() *uint64 { v := uint64(0); return &v }(),
 	}
 
 	pkt := &getglobalstate.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetGlobalState, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp getglobalstate.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetGlobalState, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetGlobalState failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetGlobalState", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -154,40 +137,18 @@ type GetUserInfoResponse struct {
 
 // GetUserInfo retrieves the current user information including nickname, avatar, and API level.
 // Returns the user info or an error if the request fails.
-func GetUserInfo(c *futuapi.Client) (*GetUserInfoResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetUserInfo(ctx context.Context, c *futuapi.Client) (*GetUserInfoResponse, error) {
 	c2s := &getuserinfo.C2S{}
 
 	pkt := &getuserinfo.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetUserInfo, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp getuserinfo.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetUserInfo, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetUserInfo failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetUserInfo", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -276,10 +237,7 @@ func marshalGetDelayStatisticsRequest(c2s *getdelaystatistics.C2S) ([]byte, erro
 // Returns the delay statistics or an error if the request fails.
 //
 // Note: This function uses proto2 wire format for compatibility with OpenD's C++ protobuf parser.
-func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetDelayStatistics(ctx context.Context, c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
 	c2s := &getdelaystatistics.C2S{}
 
 	// Use custom proto2 marshaling to avoid proto3 packed encoding issue
@@ -288,16 +246,17 @@ func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) 
 		return nil, fmt.Errorf("marshalGetDelayStatisticsRequest failed: %w", err)
 	}
 
+	apiTimeout := c.Conn().APITimeout()
+	if apiTimeout == 0 {
+		apiTimeout = 30 * time.Second
+	}
+
 	serialNo := c.NextSerialNo()
 	if err := c.Conn().WritePacket(ProtoID_GetDelayStatistics, serialNo, body); err != nil {
 		return nil, err
 	}
 
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
+	pktResp, err := c.Conn().ReadResponseContext(ctx, serialNo, apiTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +267,7 @@ func GetDelayStatistics(c *futuapi.Client) (*GetDelayStatisticsResponse, error) 
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetDelayStatistics failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetDelayStatistics", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -332,10 +291,12 @@ type VerificationRequest struct {
 
 // Verification submits a verification request for user authentication.
 // Returns an error if the verification fails.
-func Verification(c *futuapi.Client, req *VerificationRequest) error {
-	if err := c.EnsureConnected(); err != nil {
-		return err
+func Verification(ctx context.Context, c *futuapi.Client, req *VerificationRequest) error {
+	// Input validation
+	if req.Code == "" {
+		return fmt.Errorf("verification code is required")
 	}
+
 	c2s := &verification.C2S{
 		Type: func() *int32 { v := int32(req.Type); return &v }(),
 		Op:   func() *int32 { v := int32(req.Op); return &v }(),
@@ -343,33 +304,14 @@ func Verification(c *futuapi.Client, req *VerificationRequest) error {
 	}
 
 	pkt := &verification.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_Verification, serialNo, body); err != nil {
-		return err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return err
-	}
-
 	var rsp verification.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_Verification, pkt, &rsp); err != nil {
 		return err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return fmt.Errorf("Verification failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return wrapError("Verification", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	return nil

@@ -15,6 +15,7 @@
 package trd_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
@@ -62,7 +63,7 @@ func TestGetAccList(t *testing.T) {
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
 
-	result, err := trd.GetAccList(cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	result, err := trd.GetAccList(context.Background(), cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
 	if err != nil {
 		t.Fatalf("GetAccList failed: %v", err)
 	}
@@ -103,7 +104,7 @@ func TestUnlockTrade(t *testing.T) {
 		PwdMD5: pwdMD5,
 	}
 
-	err := trd.UnlockTrade(cli, req)
+	err := trd.UnlockTrade(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("UnlockTrade failed: %v", err)
 	}
@@ -137,7 +138,7 @@ func TestGetFunds_HSI(t *testing.T) {
 		TrdMarket: fixtures.TestTrdMkt,
 	}
 
-	result, err := trd.GetFunds(cli, req)
+	result, err := trd.GetFunds(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetFunds failed: %v", err)
 	}
@@ -184,7 +185,7 @@ func TestGetPositionList_HSI(t *testing.T) {
 		TrdMarket: fixtures.TestTrdMkt,
 	}
 
-	result, err := trd.GetPositionList(cli, req)
+	result, err := trd.GetPositionList(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetPositionList failed: %v", err)
 	}
@@ -256,7 +257,7 @@ func TestPlaceOrder_HSI(t *testing.T) {
 		Qty:       1,
 	}
 
-	result, err := trd.PlaceOrder(cli, req)
+	result, err := trd.PlaceOrder(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("PlaceOrder failed: %v", err)
 	}
@@ -299,7 +300,7 @@ func TestPlaceOrder_HSI_Sell(t *testing.T) {
 		Qty:       1,
 	}
 
-	result, err := trd.PlaceOrder(cli, req)
+	result, err := trd.PlaceOrder(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("PlaceOrder (sell) failed: %v", err)
 	}
@@ -338,7 +339,7 @@ func TestGetOrderList(t *testing.T) {
 		TrdMarket: fixtures.TestTrdMkt,
 	}
 
-	result, err := trd.GetOrderList(cli, req)
+	result, err := trd.GetOrderList(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetOrderList failed: %v", err)
 	}
@@ -396,7 +397,7 @@ func TestModifyOrder_HSI(t *testing.T) {
 		Qty:           0, // Keep unchanged
 	}
 
-	_, err := trd.ModifyOrder(cli, req)
+	_, err := trd.ModifyOrder(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("ModifyOrder failed: %v", err)
 	}
@@ -430,7 +431,7 @@ func TestModifyOrder_Cancel(t *testing.T) {
 		Qty:           0,
 	}
 
-	_, err := trd.ModifyOrder(cli, req)
+	_, err := trd.ModifyOrder(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("CancelOrder failed: %v", err)
 	}
@@ -465,7 +466,7 @@ func TestGetOrderFillList_HSI(t *testing.T) {
 		TrdMarket: fixtures.TestTrdMkt,
 	}
 
-	result, err := trd.GetOrderFillList(cli, req)
+	result, err := trd.GetOrderFillList(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("GetOrderFillList failed: %v", err)
 	}
@@ -539,14 +540,14 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	defer cleanup()
 
 	// Step 1: Get account list
-	accList, err := trd.GetAccList(cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	accList, err := trd.GetAccList(context.Background(), cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
 	if err != nil {
 		t.Fatalf("Step 1 - GetAccList failed: %v", err)
 	}
 	accID := accList.AccList[0].AccID
 
 	// Step 2: Unlock trade
-	err = trd.UnlockTrade(cli, &trd.UnlockTradeRequest{
+	err = trd.UnlockTrade(context.Background(), cli, &trd.UnlockTradeRequest{
 		Unlock: true,
 		PwdMD5: "test123",
 	})
@@ -555,7 +556,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	}
 
 	// Step 3: Check funds
-	funds, err := trd.GetFunds(cli, &trd.GetFundsRequest{
+	funds, err := trd.GetFunds(context.Background(), cli, &trd.GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: fixtures.TestTrdMkt,
 	})
@@ -568,7 +569,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	}
 
 	// Step 4: Place order
-	_, err = trd.PlaceOrder(cli, &trd.PlaceOrderRequest{
+	_, err = trd.PlaceOrder(context.Background(), cli, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: fixtures.TestTrdMkt,
 		Code:      fixtures.HSIFuturesCode,
@@ -582,7 +583,7 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	}
 
 	// Step 5: Verify order
-	orders, err := trd.GetOrderList(cli, &trd.GetOrderListRequest{
+	orders, err := trd.GetOrderList(context.Background(), cli, &trd.GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: fixtures.TestTrdMkt,
 	})

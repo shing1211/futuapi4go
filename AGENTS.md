@@ -70,4 +70,4 @@ go vet ./...     # Lint — must pass before commit
 ## Official Documentation
 
 - Proto Reference: https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
-- Go module: `github.com/shing1211/futuapi4go` (v0.9.0)
+- Go module: `github.com/shing1211/futuapi4go` (v0.2.0)

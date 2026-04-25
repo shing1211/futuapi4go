@@ -15,9 +15,8 @@
 package qot
 
 import (
+	"context"
 	"fmt"
-
-	"google.golang.org/protobuf/proto"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
@@ -26,8 +25,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
-
-	"time"
 )
 
 const (
@@ -48,42 +45,25 @@ type GetOwnerPlateResponse struct {
 }
 
 // GetOwnerPlate returns the owner plates for the given securities.
-func GetOwnerPlate(c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlateResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetOwnerPlate(ctx context.Context, c *futuapi.Client, req *GetOwnerPlateRequest) (*GetOwnerPlateResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetownerplate.C2S{
 		SecurityList: req.SecurityList,
 	}
 
 	pkt := &qotgetownerplate.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetOwnerPlate, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetownerplate.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetOwnerPlate, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetOwnerPlate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetOwnerPlate", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -108,43 +88,26 @@ type GetReferenceResponse struct {
 }
 
 // GetReference returns related securities (e.g., futures underlying) for the given security.
-func GetReference(c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetReference(ctx context.Context, c *futuapi.Client, req *GetReferenceRequest) (*GetReferenceResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotgetreference.C2S{
 		Security:      req.Security,
 		ReferenceType: &req.ReferenceType,
 	}
 
 	pkt := &qotgetreference.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetReference, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetreference.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetReference, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetReference failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetReference", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -175,42 +138,25 @@ type GetMarketStateResponse struct {
 }
 
 // GetMarketState returns the market state (trading status) for the given securities.
-func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketStateResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetMarketState(ctx context.Context, c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketStateResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetmarketstate.C2S{
 		SecurityList: req.SecurityList,
 	}
 
 	pkt := &qotgetmarketstate.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetMarketState, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetmarketstate.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetMarketState, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetMarketState failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetMarketState", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -223,6 +169,9 @@ func GetMarketState(c *futuapi.Client, req *GetMarketStateRequest) (*GetMarketSt
 	}
 
 	for _, mi := range s2c.GetMarketInfoList() {
+		if mi == nil {
+			continue
+		}
 		result.MarketInfoList = append(result.MarketInfoList, &MarketStateInfo{
 			Security:    mi.GetSecurity(),
 			Name:        mi.GetName(),
@@ -241,40 +190,18 @@ type GetSubInfoResponse struct {
 }
 
 // GetSubInfo returns subscription information and quota usage.
-func GetSubInfo(c *futuapi.Client) (*GetSubInfoResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetSubInfo(ctx context.Context, c *futuapi.Client) (*GetSubInfoResponse, error) {
 	c2s := &qotgetsubinfo.C2S{}
 
 	pkt := &qotgetsubinfo.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetSubInfo, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetsubinfo.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetSubInfo, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetSubInfo failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetSubInfo", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
