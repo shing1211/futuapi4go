@@ -193,24 +193,24 @@
 | 6 | Fix `go vet` failures | Quality | Block merges on lint failures |
 | 7 | Export `Packet`/`PacketHandler` for testing | API Design | Enables proper SDK testing |
 | 8 | Update ROADMAP.md (replace stubs) | Docs | Current roadmap is misleading |
-| 9 | Tag proper semver release (`v0.7.0`) | DX | `futugo4bot` depends on `v0.0.0` |
-| 10 | Secrets in env vars (update examples) | Security | Current examples show hardcoded passwords |
+| 9 | Tag proper semver release (v0.3.0, v0.3.1) | ✅ Done | DX | Released v0.3.0, v0.3.1 |
+| 10 | Secrets in env vars | ✅ Done | Security | Already using env vars |
 
 ### Phase 1 — Production Quality (P1 items)
 > *SDK is reliable enough for serious trading bots.*
 
-| # | Item | Category |
-|---|------|----------|
-| 1 | Prometheus metrics endpoint (`/metrics`) | Observability |
-| 2 | OpenTelemetry tracing | Observability |
-| 3 | Context propagation on all APIs | Quality |
-| 4 | Structured error types | Quality |
-| 5 | Connection health check (ping/pong) | Quality |
-| 6 | Chaos connection tests (mock server failure modes) | Testing |
-| 7 | TLS support | Security |
-| 8 | Update test state | Docs |
-| 9 | Example programs audit + index | DX |
-| 10 | golangci-lint config | DX |
+| # | Item | Category | Status |
+|---|------|----------|-------|
+| 1 | Prometheus metrics endpoint (`/metrics`) | ✅ Done |
+| 2 | OpenTelemetry tracing | 🔄 Pending |
+| 3 | Context propagation on all APIs | ✅ Done (v0.3.0) |
+| 4 | Structured error types | ✅ Done (v0.3.0) |
+| 5 | Connection health check (ping/pong) | ✅ Exists |
+| 6 | Chaos connection tests (mock server failure modes) | ✅ Exists |
+| 7 | TLS support | ✅ Skipped (RSA+AES sufficient) |
+| 8 | Update test state | ✅ Done |
+| 9 | Example programs audit + index | ✅ Done |
+| 10 | golangci-lint config | 🔄 Pending | |
 
 ### Phase 2 — Performance & Polish (P2 items)
 > *Fine-tuning for high-frequency trading workloads.*
