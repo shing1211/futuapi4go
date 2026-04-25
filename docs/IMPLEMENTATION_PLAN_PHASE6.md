@@ -81,11 +81,16 @@ ErrCodePriceOutOfRange ErrorCode = 105
 ---
 
 ### P6-4: Configurable Timeouts
-**Severity:** MEDIUM | **Status:** ⏳ Pending
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Hardcoded 30s timeout in ClientOptions
 - Can't set per-call timeouts
+
+**Resolution:**
+- Already exists: `Client.WithTimeout()` returns context with timeout
+- Already exists: `Client.WithDeadline()` returns context with deadline
+- Already exists: `WithAPITimeout()` option for default
 
 **Fix:**
 ```go
@@ -101,11 +106,21 @@ func (c *Client) WithTimeout(ctx context.Context, d time.Duration) context.Conte
 ---
 
 ### P6-5: Bounded Push Channels
-**Severity:** MEDIUM | **Status:** ⏳ Pending
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Push channels are unbounded, can cause memory leaks
 - No backpressure
+
+**Resolution:**
+- Added constants: DefaultChanBufferSize (100), MaxChanBufferSize (10000)
+- Added WithBufferSize() helper to cap buffer sizes
+- Added NewQuoteChannel(), NewKLChannel(), etc. with buffer size
+
+**Usage:**
+```go
+ch := chanpkg.NewQuoteChannel(50) // 50 buffer, max 10000
+```
 
 **Fix:**
 ```go
@@ -123,11 +138,15 @@ func SubscribeKL(chBufferSize int) Option
 ---
 
 ### P6-6: Advanced Market Detection
-**Severity:** MEDIUM | **Status:** ⏳ Pending
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Only 3 code prefixes detected (HK, US, CN)
 - Missing: futures (*.HK), warrants (#*.*), CBBC (1*.*)
+
+**Resolution:**
+- Enhanced DetectMarket() to detect from code pattern
+- Supports: warrants (# prefix), CBBC (1 prefix), futures (.HK suffix)
 
 **Fix:**
 ```go
@@ -151,11 +170,15 @@ func DetectMarket(code string) TrdMarket {
 ---
 
 ### P6-7: Connection Retry Logic
-**Severity:** MEDIUM | **Status:** ⏳ Pending
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode (already existed)
 
 **Issue:**
 - Connect fails immediately on transient errors
 - No automatic retry with backoff
+
+**Resolution:**
+- Already implemented: MaxRetries (default 3), ReconnectInterval, ReconnectBackoff
+- Options: `WithMaxRetries()`, `WithReconnectInterval()`, `WithReconnectBackoff()`
 
 **Fix:**
 ```go

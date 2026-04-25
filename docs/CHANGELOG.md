@@ -19,10 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **P6-1: Context helpers** — Added `WithTimeout()`, `WithDeadline()` to Client
 - **P6-2: Typed Market** — `constant.Market` type for all market parameters
 - **P6-3: Enhanced Error Codes** — Added 20+ error codes with predicates
+- **P6-5: Bounded Push Channels** — Added buffer size constants & helpers
+- **P6-6: Market Detection** — Detect warrants, CBBC, futures from code patterns
 
-### Fixed
+### Already Existed
 
-- **Error handling** — New predicates: IsInsufficientBalance(), IsMarketClosed(), IsOrderRejected(), IsNetworkError(), IsServerBusy(), IsAccountError(), IsSubscriptionError()
+- **P6-4: Configurable Timeouts** — Client.WithTimeout(), WithDeadline()
+- **P6-7: Retry Logic** — MaxRetries, ReconnectInterval, ReconnectBackoff
 
 ## [0.2.6] - 2026-04-25
 

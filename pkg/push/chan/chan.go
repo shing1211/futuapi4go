@@ -68,7 +68,46 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/push"
 )
 
+const (
+	DefaultChanBufferSize = 100
+	MaxChanBufferSize  = 10000
+)
+
 type stopFunc func()
+
+func WithBufferSize(size int) int {
+	if size <= 0 {
+		return DefaultChanBufferSize
+	}
+	if size > MaxChanBufferSize {
+		return MaxChanBufferSize
+	}
+	return size
+}
+
+func NewQuoteChannel(bufferSize int) chan *push.UpdateBasicQot {
+	return make(chan *push.UpdateBasicQot, WithBufferSize(bufferSize))
+}
+
+func NewKLChannel(bufferSize int) chan *push.UpdateKL {
+	return make(chan *push.UpdateKL, WithBufferSize(bufferSize))
+}
+
+func NewTickerChannel(bufferSize int) chan *push.UpdateTicker {
+	return make(chan *push.UpdateTicker, WithBufferSize(bufferSize))
+}
+
+func NewOrderBookChannel(bufferSize int) chan *push.UpdateOrderBook {
+	return make(chan *push.UpdateOrderBook, WithBufferSize(bufferSize))
+}
+
+func NewRTChannel(bufferSize int) chan *push.UpdateRT {
+	return make(chan *push.UpdateRT, WithBufferSize(bufferSize))
+}
+
+func NewBrokerChannel(bufferSize int) chan *push.UpdateBroker {
+	return make(chan *push.UpdateBroker, WithBufferSize(bufferSize))
+}
 
 func subscribeOne[T any](
 	cli *client.Client,

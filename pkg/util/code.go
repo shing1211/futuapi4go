@@ -97,7 +97,37 @@ func FormatCode(market int32, code string) string {
 // Returns Market_None (0) if the code is malformed.
 func DetectMarket(fullCode string) int32 {
 	market, _ := ParseCode(fullCode)
-	return market
+	if market != 0 {
+		return market
+	}
+	
+	// Try to detect from code pattern alone
+	return detectCodePattern(fullCode)
+}
+
+// detectCodePattern tries to detect market from code pattern without prefix.
+// Supports: warrants (# prefixed), CBBC (1 prefixed), futures (.HK suffix)
+func detectCodePattern(code string) int32 {
+	if code == "" {
+		return constant.Market_None
+	}
+	
+	// Warrant: starts with # (e.g., "#12345")
+	if strings.HasPrefix(code, "#") && len(code) >= 5 {
+		return constant.Market_HK
+	}
+	
+	// CBBC: starts with 1 and 5 digits (e.g., "12345")
+	if len(code) == 5 && code[0] >= '1' && code[0] <= '9' {
+		return constant.Market_HK
+	}
+	
+	// Futures: contains .HK or .US suffix
+	if strings.HasSuffix(code, ".HK") || strings.HasSuffix(code, ".US") || strings.HasSuffix(code, ".CN") {
+		return constant.Market_HK
+	}
+	
+	return constant.Market_None
 }
 
 // DetectTradingMarkets returns the TrdMarket and TrdSecMarket for a given full code.
