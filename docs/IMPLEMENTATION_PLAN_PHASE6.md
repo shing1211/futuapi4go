@@ -1,0 +1,235 @@
+# Implementation Plan Phase 6 - World-Class SDK
+
+**Version:** v0.3.0 (Breaking Changes)  
+**Goal:** Production-grade SDK with enterprise features
+
+---
+
+## Phase 6: Enterprise Features
+
+### P6-1: Context-Aware API Calls
+**Severity:** CRITICAL | **Status:** ✅ Done | **Assignee:** opencode
+
+**Issue:**
+- 50+ API calls use `context.Background()`, no timeout propagation
+- Impossible to cancel long-running requests
+
+**Resolution:**
+- Updated all API calls to use client's context
+- Added `Client.WithTimeout()` and `Client.WithDeadline()` helpers
+- Breaking change: QuerySubscription, UnlockTrading now require ctx
+
+---
+
+### P6-2: Typed Market Constants
+**Severity:** HIGH | **Status:** ⏳ Pending
+
+**Issue:**
+- client.Subscribe uses `int32(constant.Market_US)` casting
+- Inconsistent API in demo
+
+**Fix:**
+```go
+// BEFORE
+client.Subscribe(ctx, cli, int32(constant.Market_US), "NVDA", ...)
+
+// AFTER
+client.Subscribe(ctx, cli, constant.Market_US, "NVDA", ...)
+```
+
+**Files:**
+- [ ] `client/client.go` - Change int32 params to constant.TrdMarket
+- [ ] All 66 demo examples updated
+
+---
+
+### P6-3: Enhanced Error Codes
+**Severity:** HIGH | **Status:** ⏳ Pending
+
+**Issue:**
+- Only ErrCodeSuccess, ErrCodeTimeout, ErrCodeInvalidParams
+- 20+ OpenD error types not mapped
+
+**Fix:**
+```go
+// Add error codes
+ErrCodeAccountNotFound     ErrorCode = 101
+ErrCodeInsufficientBalance ErrorCode = 102
+ErrCodeMarketClosed      ErrorCode = 103
+ErrCodeOrderRejected    ErrorCode = 104
+ErrCodePriceOutOfRange ErrorCode = 105
+// ... and more
+```
+
+**Files:**
+- [ ] `pkg/constant/errors.go` - Add 30+ error codes
+- [ ] `pkg/constant/errors_test.go` - Add tests
+
+---
+
+### P6-4: Configurable Timeouts
+**Severity:** MEDIUM | **Status:** ⏳ Pending
+
+**Issue:**
+- Hardcoded 30s timeout in ClientOptions
+- Can't set per-call timeouts
+
+**Fix:**
+```go
+// Add timeout options
+func WithTimeout(d time.Duration) Option
+func (c *Client) WithTimeout(ctx context.Context, d time.Duration) context.Context
+```
+
+**Files:**
+- [ ] `internal/client/options.go` - Add timeout options
+- [ ] `client/client.go` - Add helper methods
+
+---
+
+### P6-5: Bounded Push Channels
+**Severity:** MEDIUM | **Status:** ⏳ Pending
+
+**Issue:**
+- Push channels are unbounded, can cause memory leaks
+- No backpressure
+
+**Fix:**
+```go
+// Add buffer size options
+func SubscribeQuote(chBufferSize int) Option
+func SubscribeKL(chBufferSize int) Option
+
+// Default to 100, max 10000
+```
+
+**Files:**
+- [ ] `pkg/push/chan.go` - Add buffer size config
+- [ ] `client/client.go` - Add subscribe options
+
+---
+
+### P6-6: Advanced Market Detection
+**Severity:** MEDIUM | **Status:** ⏳ Pending
+
+**Issue:**
+- Only 3 code prefixes detected (HK, US, CN)
+- Missing: futures (*.HK), warrants (#*.*), CBBC (1*.*)
+
+**Fix:**
+```go
+func DetectMarket(code string) TrdMarket {
+    switch {
+    case strings.HasPrefix(code, "0") && len(code) == 5:
+        return TrdMarket_HK
+    case isWarrant(code):
+        return TrdMarket_HK // warrants in HK
+    case isFuture(code):
+        return TrdMarket_HK // futures
+    // ...
+    }
+}
+```
+
+**Files:**
+- [ ] `pkg/util/code.go` - Enhance detection
+- [ ] `pkg/util/code_test.go` - Add tests
+
+---
+
+### P6-7: Connection Retry Logic
+**Severity:** MEDIUM | **Status:** ⏳ Pending
+
+**Issue:**
+- Connect fails immediately on transient errors
+- No automatic retry with backoff
+
+**Fix:**
+```go
+// Add retry options
+func WithMaxRetries(n int) Option
+func WithRetryBackoff(min, max time.Duration) Option
+
+// Auto-retry on: ECONNREFUSED, ETIMEDOUT, ENETUNREACH
+```
+
+**Files:**
+- [ ] `internal/client/client.go` - Add retry logic
+- [ ] `internal/client/retry_test.go` - Add tests
+
+---
+
+### P6-8: Graceful Shutdown Helpers
+**Severity:** LOW | **Status:** ⏳ Pending
+
+**Issue:**
+- No standard shutdown pattern
+- Each demo re-implements signal handling
+
+**Fix:**
+```go
+// Add to client.go
+func (c *Client) HandleSignal(sig os.Signal, cleanup func()) {
+    // Standard signal handling
+}
+
+// Or use context for shutdown
+func (c *Client) Context() context.Context
+```
+
+**Files:**
+- [ ] `client/client.go` - Add shutdown helpers
+
+---
+
+### P6-9: Comprehensive Examples Overhaul
+**Severity:** LOW | **Status:** ⏳ Pending
+
+**Issue:**
+- 66 examples but missing patterns
+- No error handling in many
+
+**Fix:**
+- Add retry patterns
+- Add timeout patterns
+- Add graceful shutdown examples
+- Add HK/CN market examples
+
+**Files:**
+- [ ] `futuapi4go-demo/examples/` - Update examples
+
+---
+
+## Definition of Done Checklist
+
+- [ ] `go build ./...` passes
+- [ ] `go vet ./...` passes
+- [ ] All tests pass with `-race` flag
+- [ ] demo project builds after SDK changes
+- [ ] CHANGELOG.md updated
+- [ ] Version bumped to v0.3.0
+
+## Migration Guide Required For
+
+- P6-1: Add context parameter to all API calls (BREAKING)
+- P6-2: Remove int32() casting (BREAKING)
+- P6-3: New error codes (compatible)
+- P6-4: New timeout options (compatible)
+- P6-5: Bounded channels (compatible)
+
+---
+
+## Timeline Estimate
+
+| Item | Effort | Priority |
+|------|--------|----------|
+| P6-1 Context | 2-3 hrs | CRITICAL |
+| P6-2 Typed Market | 1 hr | HIGH |
+| P6-3 Error Codes | 2 hrs | HIGH |
+| P6-4 Timeouts | 1 hr | MEDIUM |
+| P6-5 Bounded Channels | 1 hr | MEDIUM |
+| P6-6 Market Detection | 1 hr | MEDIUM |
+| P6-7 Retry Logic | 2 hrs | MEDIUM |
+| P6-8 Shutdown | 1 hr | LOW |
+| P6-9 Examples | 2 hrs | LOW |
+| **Total** | **13-15 hrs** | |

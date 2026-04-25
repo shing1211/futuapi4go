@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-25
+
+### Breaking Changes (v0.3.0)
+
+- **P6-1: Context-required API** — All functions now require context as first parameter
+  - `client.QuerySubscription(ctx, cli)` instead of `client.QuerySubscription(cli)`
+  - `client.UnlockTrading(ctx, cli, pwd)` instead of `client.UnlockTrading(cli, pwd)`
+  - 20+ internal API calls now use client's context
+
+### Added
+
+- **P6-1: Context helpers** — Added `WithTimeout()`, `WithDeadline()` to Client
+- **P6-2**: Typed market constants (partially done)
+- **Phase 6 Implementation Plan** — docs/IMPLEMENTATION_PLAN_PHASE6.md
+
 ## [0.2.6] - 2026-04-25
 
 ### Added (Phase 5 Polish)
