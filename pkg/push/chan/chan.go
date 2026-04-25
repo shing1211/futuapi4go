@@ -91,17 +91,17 @@ func subscribeOne[T any](
 	}
 }
 
-func SubscribeQuote(cli *client.Client, market int32, code string, ch chan<- *push.UpdateBasicQot) stopFunc {
+func SubscribeQuote(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBasicQot) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Quote})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateBasicQot, push.ParseUpdateBasicQot, ch)
 }
 
-func SubscribeKLine(cli *client.Client, market int32, code string, klType constant.KLType, ch chan<- *push.UpdateKL) stopFunc {
+func SubscribeKLine(cli *client.Client, market constant.Market, code string, klType constant.KLType, ch chan<- *push.UpdateKL) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{klTypeToSubType(klType)})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
 }
 
-func SubscribeKLines(cli *client.Client, market int32, code string, handlers map[constant.KLType]func(*push.UpdateKL)) func() {
+func SubscribeKLines(cli *client.Client, market constant.Market, code string, handlers map[constant.KLType]func(*push.UpdateKL)) func() {
 	if len(handlers) == 0 {
 		return func() {}
 	}
@@ -156,22 +156,22 @@ func klTypeToSubType(k constant.KLType) constant.SubType {
 	}
 }
 
-func SubscribeTicker(cli *client.Client, market int32, code string, ch chan<- *push.UpdateTicker) stopFunc {
+func SubscribeTicker(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateTicker) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Ticker})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateTicker, push.ParseUpdateTicker, ch)
 }
 
-func SubscribeOrderBook(cli *client.Client, market int32, code string, ch chan<- *push.UpdateOrderBook) stopFunc {
+func SubscribeOrderBook(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateOrderBook) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_OrderBook})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateOrderBook, push.ParseUpdateOrderBook, ch)
 }
 
-func SubscribeRT(cli *client.Client, market int32, code string, ch chan<- *push.UpdateRT) stopFunc {
+func SubscribeRT(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateRT) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_RT})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateRT, push.ParseUpdateRT, ch)
 }
 
-func SubscribeBroker(cli *client.Client, market int32, code string, ch chan<- *push.UpdateBroker) stopFunc {
+func SubscribeBroker(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBroker) stopFunc {
 	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Broker})
 	return subscribeOne(cli, push.ProtoID_Qot_UpdateBroker, push.ParseUpdateBroker, ch)
 }

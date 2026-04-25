@@ -22,11 +22,16 @@
 ---
 
 ### P6-2: Typed Market Constants
-**Severity:** HIGH | **Status:** ⏳ Pending
+**Severity:** HIGH | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - client.Subscribe uses `int32(constant.Market_US)` casting
 - Inconsistent API in demo
+
+**Resolution:**
+- All market parameters now use `constant.Market` type
+- Demo updated to remove `int32()` casts
+- Push channels updated
 
 **Fix:**
 ```go

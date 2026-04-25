@@ -171,8 +171,8 @@ func (c *Client) GetConn() *futuapi.Conn {
 }
 
 // GetQuote retrieves the current quote for a security.
-func GetQuote(ctx context.Context, c *Client, market int32, code string) (*Quote, error) {
-	marketPtr := market
+func GetQuote(ctx context.Context, c *Client, market constant.Market, code string) (*Quote, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	quotes, err := qot.GetBasicQot(ctx, c.inner, []*qotcommon.Security{sec})
@@ -186,7 +186,7 @@ func GetQuote(ctx context.Context, c *Client, market int32, code string) (*Quote
 	q := quotes[0]
 	return &Quote{
 		Symbol:       code,
-		Market:       market,
+		Market:       int32(market),
 		Price:        q.CurPrice,
 		Open:         q.OpenPrice,
 		High:         q.HighPrice,
@@ -202,14 +202,14 @@ func GetQuote(ctx context.Context, c *Client, market int32, code string) (*Quote
 }
 
 // GetKLines retrieves K-line (candlestick) data.
-func GetKLines(ctx context.Context, c *Client, market int32, code string, klType int32, num int) ([]KLine, error) {
-	marketPtr := market
+func GetKLines(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, num int) ([]KLine, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetKL(ctx, c.inner, &qot.GetKLRequest{
 		Security:  sec,
 		RehabType: int32(qotcommon.RehabType_RehabType_None),
-		KLType:    klType,
+		KLType:    int32(klType),
 		ReqNum:    int32(num),
 	})
 	if err != nil {
@@ -235,8 +235,8 @@ func GetKLines(ctx context.Context, c *Client, market int32, code string, klType
 }
 
 // Subscribe subscribes to real-time market data.
-func Subscribe(ctx context.Context, c *Client, market int32, code string, subTypes []constant.SubType) error {
-	marketPtr := market
+func Subscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	subTypesConverted := make([]qot.SubType, len(subTypes))
@@ -255,8 +255,8 @@ func Subscribe(ctx context.Context, c *Client, market int32, code string, subTyp
 }
 
 // Unsubscribe unsubscribes from real-time market data.
-func Unsubscribe(ctx context.Context, c *Client, market int32, code string, subTypes []int32) error {
-	marketPtr := market
+func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []int32) error {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	subTypesConverted := make([]qot.SubType, len(subTypes))
@@ -289,8 +289,8 @@ func QuerySubscription(ctx context.Context, c *Client) (*qot.GetSubInfoResponse,
 }
 
 // RegQotPush registers or unregisters real-time push notifications for a security.
-func RegQotPush(ctx context.Context, c *Client, market int32, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
-	marketPtr := market
+func RegQotPush(ctx context.Context, c *Client, market constant.Market, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	_, err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
@@ -935,8 +935,8 @@ func GetAccTradingInfo(c *Client, accID uint64, market constant.TrdMarket, code 
 }
 
 // GetOrderBook retrieves order book data.
-func GetOrderBook(ctx context.Context, c *Client, market int32, code string, num int) (*OrderBook, error) {
-	marketPtr := market
+func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code string, num int) (*OrderBook, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetOrderBook(ctx, c.inner, &qot.GetOrderBookRequest{
@@ -973,8 +973,8 @@ func GetOrderBook(ctx context.Context, c *Client, market int32, code string, num
 }
 
 // GetTicker retrieves ticker data.
-func GetTicker(ctx context.Context, c *Client, market int32, code string, num int) ([]Ticker, error) {
-	marketPtr := market
+func GetTicker(ctx context.Context, c *Client, market constant.Market, code string, num int) ([]Ticker, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetTicker(ctx, c.inner, &qot.GetTickerRequest{
@@ -1011,8 +1011,8 @@ func GetTicker(ctx context.Context, c *Client, market int32, code string, num in
 }
 
 // GetRT retrieves real-time data.
-func GetRT(ctx context.Context, c *Client, market int32, code string) ([]RT, error) {
-	marketPtr := market
+func GetRT(ctx context.Context, c *Client, market constant.Market, code string) ([]RT, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetRT(ctx, c.inner, &qot.GetRTRequest{Security: sec})
@@ -1035,8 +1035,8 @@ func GetRT(ctx context.Context, c *Client, market int32, code string) ([]RT, err
 }
 
 // GetBroker retrieves broker data.
-func GetBroker(ctx context.Context, c *Client, market int32, code string, num int) ([]Broker, []Broker, error) {
-	marketPtr := market
+func GetBroker(ctx context.Context, c *Client, market constant.Market, code string, num int) ([]Broker, []Broker, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetBroker(ctx, c.inner, &qot.GetBrokerRequest{
@@ -1059,12 +1059,12 @@ func GetBroker(ctx context.Context, c *Client, market int32, code string, num in
 }
 
 // GetStaticInfo retrieves static security info.
-func GetStaticInfo(ctx context.Context, c *Client, market int32, code string) ([]StaticInfo, error) {
-	marketPtr := market
+func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code string) ([]StaticInfo, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetStaticInfo(ctx, c.inner, &qot.GetStaticInfoRequest{
-		Market:       market,
+		Market:       int32(market),
 		SecurityList: []*qotcommon.Security{sec},
 	})
 	if err != nil {
@@ -1097,9 +1097,9 @@ func GetStaticInfo(ctx context.Context, c *Client, market int32, code string) ([
 }
 
 // GetTradeDate retrieves trade dates.
-func GetTradeDate(ctx context.Context, c *Client, market int32, startDate, endDate string) ([]string, error) {
+func GetTradeDate(ctx context.Context, c *Client, market constant.Market, startDate, endDate string) ([]string, error) {
 	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
-		Market:    market,
+		Market:    int32(market),
 		BeginTime: startDate,
 		EndTime:   endDate,
 	})
@@ -1252,8 +1252,8 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 }
 
 // GetMarketState retrieves market state (trading status).
-func GetMarketState(c *Client, market int32, code string) (int32, error) {
-	marketPtr := market
+func GetMarketState(c *Client, market constant.Market, code string) (int32, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetMarketState(c.inner.Context(), c.inner, &qot.GetMarketStateRequest{
