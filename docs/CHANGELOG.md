@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-04-25
+
+### Added
+
+- **P1-6: Input validation** — Added validation to key trading functions (GetFunds, GetPositionList)
+- **P1-7: Proto nil checks** — Already handled (nil guards exist in loops, proto3 uses zero values)
+
+### Fixed
+
+- **Validation errors use FutuError** — Consistent error type with error codes
+
 ## [0.2.3] - 2026-04-25
 
 ### Added

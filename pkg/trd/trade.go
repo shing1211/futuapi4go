@@ -270,6 +270,9 @@ type GetFundsResponse struct {
 // GetFunds retrieves the account funds information including cash, assets, and available funds.
 // Returns the funds data or an error if the request fails.
 func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
+	if req == nil || req.AccID == 0 {
+		return nil, constant.ErrInvalidAccID
+	}
 	trdEnv := int32(req.TrdEnv)
 	trdMarket := int32(req.TrdMarket)
 
