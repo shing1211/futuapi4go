@@ -996,9 +996,13 @@ type SubscribeResponse struct {
 }
 
 // Subscribe subscribes to or unsubscribes from real-time market data.
-func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
+	}
+	if len(req.SubTypeList) == 0 {
+		return nil, fmt.Errorf("subtype list is empty")
 	}
 	subTypeList := make([]int32, len(req.SubTypeList))
 	for i, st := range req.SubTypeList {
@@ -1034,33 +1038,14 @@ func Subscribe(c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, er
 	}
 
 	pkt := &qotsub.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_Subscribe, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotsub.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_Subscribe, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("Subscribe failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("Subscribe", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	return &SubscribeResponse{
@@ -1097,10 +1082,12 @@ type GetCapitalFlowResponse struct {
 }
 
 // GetCapitalFlow returns capital flow data for the given security.
-func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalFlowResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetCapitalFlow(ctx context.Context, c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalFlowResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotgetcapitalflow.C2S{
 		Security: req.Security,
 	}
@@ -1115,33 +1102,14 @@ func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalF
 	}
 
 	pkt := &qotgetcapitalflow.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetCapitalFlow, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetcapitalflow.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetCapitalFlow, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetCapitalFlow failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetCapitalFlow", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1156,6 +1124,9 @@ func GetCapitalFlow(c *futuapi.Client, req *GetCapitalFlowRequest) (*GetCapitalF
 	}
 
 	for _, f := range s2c.GetFlowItemList() {
+		if f == nil {
+			continue
+		}
 		result.FlowItemList = append(result.FlowItemList, &CapitalFlowItem{
 			InFlow:      f.GetInFlow(),
 			Time:        f.GetTime(),
@@ -1191,42 +1162,25 @@ type GetCapitalDistributionResponse struct {
 }
 
 // GetCapitalDistribution returns capital distribution data for the given security.
-func GetCapitalDistribution(c *futuapi.Client, security *qotcommon.Security) (*GetCapitalDistributionResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetCapitalDistribution(ctx context.Context, c *futuapi.Client, security *qotcommon.Security) (*GetCapitalDistributionResponse, error) {
+	// Input validation
+	if security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotgetcapitaldistribution.C2S{
 		Security: security,
 	}
 
 	pkt := &qotgetcapitaldistribution.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetCapitalDistribution, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetcapitaldistribution.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetCapitalDistribution, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetCapitalDistribution failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetCapitalDistribution", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1256,42 +1210,25 @@ type GetUserSecurityResponse struct {
 }
 
 // GetUserSecurity returns the list of user-defined securities in the specified group.
-func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetUserSecurity(ctx context.Context, c *futuapi.Client, groupName string) (*GetUserSecurityResponse, error) {
+	// Input validation
+	if groupName == "" {
+		return nil, fmt.Errorf("group name is required")
 	}
+
 	c2s := &qotgetusersecurity.C2S{
 		GroupName: &groupName,
 	}
 
 	pkt := &qotgetusersecurity.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetUserSecurity, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetusersecurity.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetUserSecurity, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetUserSecurity failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetUserSecurity", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1299,9 +1236,17 @@ func GetUserSecurity(c *futuapi.Client, groupName string) (*GetUserSecurityRespo
 		return nil, fmt.Errorf("GetUserSecurity: s2c is nil")
 	}
 
-	return &GetUserSecurityResponse{
-		StaticInfoList: s2c.GetStaticInfoList(),
-	}, nil
+	result := &GetUserSecurityResponse{
+		StaticInfoList: make([]*qotcommon.SecurityStaticInfo, 0, len(s2c.GetStaticInfoList())),
+	}
+	for _, si := range s2c.GetStaticInfoList() {
+		if si == nil {
+			continue
+		}
+		result.StaticInfoList = append(result.StaticInfoList, si)
+	}
+
+	return result, nil
 }
 
 // PriceReminderItemInfo represents a single price reminder item.
@@ -1328,43 +1273,26 @@ type GetPriceReminderResponse struct {
 }
 
 // GetPriceReminder returns price reminder settings for the given security.
-func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market int32) (*GetPriceReminderResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetPriceReminder(ctx context.Context, c *futuapi.Client, security *qotcommon.Security, market int32) (*GetPriceReminderResponse, error) {
+	// Input validation
+	if security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotgetpricereminder.C2S{
 		Security: security,
 		Market:   &market,
 	}
 
 	pkt := &qotgetpricereminder.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetPriceReminder, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetpricereminder.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetPriceReminder, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetPriceReminder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetPriceReminder", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1377,12 +1305,18 @@ func GetPriceReminder(c *futuapi.Client, security *qotcommon.Security, market in
 	}
 
 	for _, pr := range s2c.GetPriceReminderList() {
+		if pr == nil {
+			continue
+		}
 		info := &PriceReminderInfo{
 			Security: pr.GetSecurity(),
 			Name:     pr.GetName(),
 			ItemList: make([]*PriceReminderItemInfo, 0, len(pr.GetItemList())),
 		}
 		for _, item := range pr.GetItemList() {
+			if item == nil {
+				continue
+			}
 			info.ItemList = append(info.ItemList, &PriceReminderItemInfo{
 				Key:                 item.GetKey(),
 				Type:                item.GetType(),
@@ -1419,9 +1353,10 @@ type GetOptionExpirationDateResponse struct {
 }
 
 // GetOptionExpirationDate returns the list of option expiration dates for the given underlying.
-func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetOptionExpirationDate(ctx context.Context, c *futuapi.Client, req *GetOptionExpirationDateRequest) (*GetOptionExpirationDateResponse, error) {
+	// Input validation
+	if req.Owner == nil {
+		return nil, fmt.Errorf("owner security is required")
 	}
 
 	c2s := &qotgetoptionexpirationdate.C2S{
@@ -1430,32 +1365,14 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 	}
 
 	pkt := &qotgetoptionexpirationdate.Request{C2S: c2s}
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetOptionExpirationDate, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetoptionexpirationdate.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionExpirationDate, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetOptionExpirationDate failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetOptionExpirationDate", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1468,6 +1385,9 @@ func GetOptionExpirationDate(c *futuapi.Client, req *GetOptionExpirationDateRequ
 	}
 
 	for _, d := range s2c.GetDateList() {
+		if d == nil {
+			continue
+		}
 		result.DateList = append(result.DateList, &OptionExpirationDateInfo{
 			StrikeTime:               d.GetStrikeTime(),
 			StrikeTimestamp:          d.GetStrikeTimestamp(),
@@ -1509,9 +1429,10 @@ type GetOptionChainResponse struct {
 }
 
 // GetOptionChain returns the option chain (期权链) for the given underlying security.
-func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionChainResponse, error) {
+	// Input validation
+	if req.Owner == nil {
+		return nil, fmt.Errorf("owner security is required")
 	}
 
 	c2s := &qotgetoptionchain.C2S{
@@ -1524,32 +1445,14 @@ func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionCh
 	}
 
 	pkt := &qotgetoptionchain.Request{C2S: c2s}
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetOptionChain, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetoptionchain.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionChain, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetOptionChain failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetOptionChain", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1562,6 +1465,9 @@ func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionCh
 	}
 
 	for _, chain := range s2c.GetOptionChain() {
+		if chain == nil {
+			continue
+		}
 		oc := &OptionChain{
 			StrikeTime:      chain.GetStrikeTime(),
 			StrikeTimestamp: chain.GetStrikeTimestamp(),
@@ -1569,6 +1475,9 @@ func GetOptionChain(c *futuapi.Client, req *GetOptionChainRequest) (*GetOptionCh
 		}
 
 		for _, opt := range chain.GetOption() {
+			if opt == nil {
+				continue
+			}
 			item := &OptionItem{}
 			if opt.GetCall() != nil {
 				item.Call = opt.GetCall()

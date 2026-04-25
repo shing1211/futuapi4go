@@ -225,7 +225,7 @@ func GetKLines(ctx context.Context, c *Client, market int32, code string, klType
 }
 
 // Subscribe subscribes to real-time market data.
-func Subscribe(c *Client, market int32, code string, subTypes []constant.SubType) error {
+func Subscribe(ctx context.Context, c *Client, market int32, code string, subTypes []constant.SubType) error {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -234,7 +234,7 @@ func Subscribe(c *Client, market int32, code string, subTypes []constant.SubType
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(c.inner, &qot.SubscribeRequest{
+	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     []*qotcommon.Security{sec},
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     true,
@@ -245,7 +245,7 @@ func Subscribe(c *Client, market int32, code string, subTypes []constant.SubType
 }
 
 // Unsubscribe unsubscribes from real-time market data.
-func Unsubscribe(c *Client, market int32, code string, subTypes []int32) error {
+func Unsubscribe(ctx context.Context, c *Client, market int32, code string, subTypes []int32) error {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -254,7 +254,7 @@ func Unsubscribe(c *Client, market int32, code string, subTypes []int32) error {
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(c.inner, &qot.SubscribeRequest{
+	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     []*qotcommon.Security{sec},
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     false,
@@ -264,8 +264,8 @@ func Unsubscribe(c *Client, market int32, code string, subTypes []int32) error {
 }
 
 // UnsubscribeAll unsubscribes from all market data.
-func UnsubscribeAll(c *Client) error {
-	_, err := qot.Subscribe(c.inner, &qot.SubscribeRequest{
+func UnsubscribeAll(ctx context.Context, c *Client) error {
+	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SubTypeList:  []qot.SubType{},
 		IsSubOrUnSub: false,
 		IsUnsubAll:   true,
@@ -1209,8 +1209,8 @@ func GetUserSecurityGroup(c *Client) ([]UserSecurityGroup, error) {
 }
 
 // GetUserSecurity retrieves user security list by group name.
-func GetUserSecurity(c *Client, groupName string) ([]StaticInfo, error) {
-	resp, err := qot.GetUserSecurity(c.inner, groupName)
+func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]StaticInfo, error) {
+	resp, err := qot.GetUserSecurity(ctx, c.inner, groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -1273,7 +1273,7 @@ type CapitalFlow struct {
 }
 
 // GetCapitalFlow retrieves capital flow data.
-func GetCapitalFlow(c *Client, market int32, code string, periodType ...int32) ([]CapitalFlow, error) {
+func GetCapitalFlow(ctx context.Context, c *Client, market int32, code string, periodType ...int32) ([]CapitalFlow, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -1282,7 +1282,7 @@ func GetCapitalFlow(c *Client, market int32, code string, periodType ...int32) (
 		period = periodType[0]
 	}
 
-	resp, err := qot.GetCapitalFlow(c.inner, &qot.GetCapitalFlowRequest{
+	resp, err := qot.GetCapitalFlow(ctx, c.inner, &qot.GetCapitalFlowRequest{
 		Security:   sec,
 		PeriodType: period,
 	})
@@ -1307,11 +1307,11 @@ func GetCapitalFlow(c *Client, market int32, code string, periodType ...int32) (
 }
 
 // GetCapitalDistribution retrieves capital distribution.
-func GetCapitalDistribution(c *Client, market int32, code string) (*CapitalDistribution, error) {
+func GetCapitalDistribution(ctx context.Context, c *Client, market int32, code string) (*CapitalDistribution, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetCapitalDistribution(c.inner, sec)
+	resp, err := qot.GetCapitalDistribution(ctx, c.inner, sec)
 	if err != nil {
 		return nil, err
 	}
@@ -1503,11 +1503,11 @@ func GetPlateSecurity(ctx context.Context, c *Client, market int32, plateCode st
 }
 
 // GetOptionExpirationDate retrieves option expiration dates.
-func GetOptionExpirationDate(c *Client, market int32, code string) ([]OptionExpiration, error) {
+func GetOptionExpirationDate(ctx context.Context, c *Client, market int32, code string) ([]OptionExpiration, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetOptionExpirationDate(c.inner, &qot.GetOptionExpirationDateRequest{
+	resp, err := qot.GetOptionExpirationDate(ctx, c.inner, &qot.GetOptionExpirationDateRequest{
 		Owner: sec,
 	})
 	if err != nil {
@@ -1670,7 +1670,7 @@ func StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResul
 }
 
 // GetOptionChain returns the option chain for the given underlying security.
-func GetOptionChain(c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
+func GetOptionChain(ctx context.Context, c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
 	if beginTime == "" {
 		beginTime = time.Now().Format("2006-01-02")
 	}
@@ -1680,7 +1680,7 @@ func GetOptionChain(c *Client, market int32, code string, indexOptionType, optTy
 	marketPtr := market
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetOptionChain(c.inner, &qot.GetOptionChainRequest{
+	resp, err := qot.GetOptionChain(ctx, c.inner, &qot.GetOptionChainRequest{
 		Owner:           owner,
 		IndexOptionType: indexOptionType,
 		Type:            optType,
@@ -2276,10 +2276,10 @@ type PriceReminderItemInfo struct {
 }
 
 // GetPriceReminder retrieves price reminders for a security.
-func GetPriceReminder(c *Client, market int32, code string) ([]*PriceReminderInfo, error) {
+func GetPriceReminder(ctx context.Context, c *Client, market int32, code string) ([]*PriceReminderInfo, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.GetPriceReminder(c.inner, sec, market)
+	resp, err := qot.GetPriceReminder(ctx, c.inner, sec, market)
 	if err != nil {
 		return nil, err
 	}
