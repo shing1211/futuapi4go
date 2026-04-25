@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - **Connection pool mutex protection verified** — all `ClientPool` methods properly protected with `sync.RWMutex`
+- **Sensitive data logging protection** — `UnlockTradeRequest.PwdMD5` now uses `constant.SensitiveString` type which redacts itself in all `fmt` output formats (`%s`, `%v`, `%+v`, `%#v`), preventing accidental password exposure in logs
 
 ## [0.1.0] - 2026-04-25
 

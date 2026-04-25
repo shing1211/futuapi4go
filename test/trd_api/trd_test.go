@@ -18,6 +18,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
@@ -101,7 +102,7 @@ func TestUnlockTrade(t *testing.T) {
 
 	req := &trd.UnlockTradeRequest{
 		Unlock: true,
-		PwdMD5: pwdMD5,
+		PwdMD5: constant.SensitiveString(pwdMD5),
 	}
 
 	err := trd.UnlockTrade(context.Background(), cli, req)

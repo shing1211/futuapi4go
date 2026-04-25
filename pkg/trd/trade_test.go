@@ -15,8 +15,10 @@
 package trd
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
@@ -351,18 +353,44 @@ func TestPlaceOrderResponseConstruction(t *testing.T) {
 func TestUnlockTradeRequestFields(t *testing.T) {
 	req := &UnlockTradeRequest{
 		Unlock:       true,
-		PwdMD5:       "abcdef123456",
+		PwdMD5:       constant.SensitiveString("abcdef123456"),
 		SecurityFirm: 1,
 	}
 
 	if !req.Unlock {
 		t.Error("expected Unlock true")
 	}
-	if req.PwdMD5 != "abcdef123456" {
-		t.Errorf("expected PwdMD5 abcdef123456, got %s", req.PwdMD5)
+	if req.PwdMD5.Raw() != "abcdef123456" {
+		t.Errorf("expected PwdMD5 abcdef123456, got %s", req.PwdMD5.Raw())
 	}
 	if req.SecurityFirm != 1 {
 		t.Errorf("expected SecurityFirm 1, got %d", req.SecurityFirm)
+	}
+}
+
+func TestSensitiveStringDoesNotLeakPassword(t *testing.T) {
+	pwd := constant.SensitiveString("mysecretpassword")
+	
+	if fmt.Sprintf("%s", pwd) != "[REDACTED]" {
+		t.Error("SensitiveString should redact in s format")
+	}
+	if fmt.Sprintf("%v", pwd) != "[REDACTED]" {
+		t.Error("SensitiveString should redact in v format")
+	}
+	if fmt.Sprintf("%+v", pwd) != "[REDACTED]" {
+		t.Error("SensitiveString should redact in +v format")
+	}
+	if fmt.Sprintf("%#v", pwd) != "[REDACTED]" {
+		t.Error("SensitiveString should redact in #v format")
+	}
+	if pwd.Raw() != "mysecretpassword" {
+		t.Error("Raw() should return actual password")
+	}
+	if !constant.SensitiveString("").IsEmpty() {
+		t.Error("IsEmpty() should return true for empty string")
+	}
+	if constant.SensitiveString("pwd").IsEmpty() {
+		t.Error("IsEmpty() should return false for non-empty string")
 	}
 }
 

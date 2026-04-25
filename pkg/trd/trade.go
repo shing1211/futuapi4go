@@ -41,6 +41,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
@@ -943,7 +944,7 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 // UnlockTradeRequest is the request to unlock or lock trading with a password.
 type UnlockTradeRequest struct {
 	Unlock       bool
-	PwdMD5       string
+	PwdMD5       constant.SensitiveString
 	SecurityFirm int32
 }
 
@@ -952,13 +953,14 @@ type UnlockTradeRequest struct {
 // UnlockTrade unlocks or locks trading with the given password.
 func UnlockTrade(ctx context.Context, c *futuapi.Client, req *UnlockTradeRequest) error {
 	// Input validation
-	if req.PwdMD5 == "" {
+	if req.PwdMD5.IsEmpty() {
 		return fmt.Errorf("password MD5 is required")
 	}
 
+	pwdRaw := req.PwdMD5.Raw()
 	c2s := &trdunlocktrade.C2S{
 		Unlock:       &req.Unlock,
-		PwdMD5:       &req.PwdMD5,
+		PwdMD5:       &pwdRaw,
 		SecurityFirm: &req.SecurityFirm,
 	}
 

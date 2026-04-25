@@ -323,7 +323,7 @@ func GetAccountList(ctx context.Context, c *Client) ([]Account, error) {
 func UnlockTrading(c *Client, pwdMD5 string) error {
 	return trd.UnlockTrade(context.Background(), c.inner, &trd.UnlockTradeRequest{
 		Unlock: true,
-		PwdMD5: pwdMD5,
+		PwdMD5: constant.SensitiveString(pwdMD5),
 	})
 }
 
