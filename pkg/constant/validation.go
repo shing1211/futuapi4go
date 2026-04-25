@@ -73,8 +73,33 @@ func wrapValidationError(prefix string, vErr error) error {
 		return &FutuError{
 			Code:    fe.Code,
 			Message: fe.Message,
-			Func:    prefix,
+			Func:   prefix,
 		}
 	}
 	return fmt.Errorf("%s: %w", prefix, vErr)
+}
+
+var lotSizeMap = map[TrdMarket]float64{
+	TrdMarket_HK:   100,
+	TrdMarket_US:    1,
+	TrdMarket_CN:    100,
+	TrdMarket_HKCC:  100,
+}
+
+func LotSize(market TrdMarket) (float64, bool) {
+	lot, ok := lotSizeMap[market]
+	return lot, ok
+}
+
+func PriceTick(market TrdMarket) float64 {
+	switch market {
+	case TrdMarket_HK, TrdMarket_HKCC:
+		return 0.01
+	case TrdMarket_US:
+		return 0.01
+	case TrdMarket_CN:
+		return 0.01
+	default:
+		return 0.01
+	}
 }

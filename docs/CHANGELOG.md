@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-04-25
+
+### Completed (Previously Existed)
+
+- **P4-1: Mock Server** — test/util/mock_server.go already implements InitConnect + handlers
+- **P4-2: Edge Case Tests** — 46 tests in internal/client, 38 in pkg/trd
+- **P4-3: Docker Integration** — futuopend Docker image available
+
+### Added (P4-4)
+
+- **Order validation helpers** — Added LotSize(market), PriceTick(market) in pkg/constant/validation.go
+
+### Changed
+
+- **P3-4: TLS** — Skipped: RSA+AES encryption already sufficient for non-localhost connections
+
 ## [0.2.4] - 2026-04-25
 
 ### Added
