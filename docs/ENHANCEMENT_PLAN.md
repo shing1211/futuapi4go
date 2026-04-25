@@ -210,7 +210,7 @@
 | 7 | TLS support | ✅ Skipped (RSA+AES sufficient) |
 | 8 | Update test state | ✅ Done |
 | 9 | Example programs audit + index | ✅ Done |
-| 10 | golangci-lint config | 🔄 Pending | |
+| 10 | golangci-lint config | ✅ Done | |
 
 ### Phase 2 — Performance & Polish (P2 items)
 > *Fine-tuning for high-frequency trading workloads.*
@@ -231,14 +231,14 @@
 ### Phase 3 — Ecosystem (P3 items)
 > *Building a developer ecosystem around the SDK.*
 
-| # | Item | Category |
-|---|------|----------|
-| 1 | Makefile with standard targets | DX |
-| 2 | Fuzz testing pipeline | Testing |
-| 3 | Property-based testing | Testing |
-| 4 | GraphQL interface alternative | Advanced |
-| 5 | Stability report (`docs/STABILITY.md`) | Docs |
-| 6 | Commit convention + commitlint | DX |
+| # | Item | Category | Status |
+|---|------|----------|-------|
+| 1 | Makefile with standard targets | ✅ Done |
+| 2 | Fuzz testing pipeline | 🔄 Pending |
+| 3 | Property-based testing | 🔄 Pending |
+| 4 | GraphQL interface alternative | 🔄 Pending |
+| 5 | Stability report (`docs/STABILITY.md`) | 🔄 Pending |
+| 6 | Commit convention + commitlint | 🔄 Pending |
 
 ---
 
