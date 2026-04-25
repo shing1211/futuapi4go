@@ -295,7 +295,7 @@ func RegQotPush(ctx context.Context, c *Client, market int32, code string, subTy
 
 // GetAccountList retrieves the list of trading accounts.
 func GetAccountList(ctx context.Context, c *Client) ([]Account, error) {
-	resp, err := trd.GetAccList(ctx, c.inner, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	resp, err := trd.GetAccList(ctx, c.inner, constant.TrdCategory_Security, false)
 	if err != nil {
 		return nil, err
 	}
@@ -360,14 +360,14 @@ func inferSecMarket(code string) int32 {
 
 // PlaceOrder places a trading order.
 // secMarket: the security's market (1=HK, 2=US, 3=CN). If 0, tries to infer from code prefix.
-func PlaceOrder(ctx context.Context, c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64, secMarket int32) (*PlaceOrderResult, error) {
+func PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, side constant.TrdSide, orderType constant.OrderType, price float64, qty float64, secMarket constant.TrdSecMarket) (*PlaceOrderResult, error) {
 	if secMarket == 0 {
-		secMarket = inferSecMarket(code)
+		secMarket = constant.TrdSecMarket(inferSecMarket(code))
 	}
 	resp, err := trd.PlaceOrder(ctx, c.inner, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    c.trdEnv,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 		Code:      code,
 		TrdSide:   side,
 		OrderType: orderType,
@@ -382,11 +382,11 @@ func PlaceOrder(ctx context.Context, c *Client, accID uint64, market int32, code
 }
 
 // ModifyOrder modifies or cancels an existing order.
-func ModifyOrder(ctx context.Context, c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
+func ModifyOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, modifyOp constant.ModifyOrderOp, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
 	return trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        c.trdEnv,
+		TrdEnv:        constant.TrdEnv(c.trdEnv),
 		OrderID:       orderID,
 		ModifyOrderOp: modifyOp,
 		Price:         price,
@@ -396,13 +396,13 @@ func ModifyOrder(ctx context.Context, c *Client, accID uint64, market int32, ord
 
 // CancelAllOrder cancels all pending orders for the specified account and market.
 // Note: Simulate trading and HKCC accounts do not support CancelAllOrder.
-func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market int32, trdEnv int32) error {
+func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, trdEnv constant.TrdEnv) error {
 	_, err := trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
 		TrdEnv:        trdEnv,
 		OrderID:       0,
-		ModifyOrderOp: 1, // Cancel
+		ModifyOrderOp: constant.ModifyOrderOp_Cancel,
 		Price:         0,
 		Qty:           1, // Required by OpenD even for cancel-all; value ignored
 		ForAll:        true,
@@ -414,8 +414,8 @@ func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market int32, 
 func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, error) {
 	resp, err := trd.GetPositionList(ctx, c.inner, &trd.GetPositionListRequest{
 		AccID:     accID,
-		TrdMarket: 0,
-		TrdEnv:    c.trdEnv,
+		TrdMarket: constant.TrdMarket_None,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 	})
 	if err != nil {
 		return nil, err
@@ -454,11 +454,11 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 
 // GetAccountInfo retrieves full account information including multi-currency cash and per-market assets.
 // Maps to Python's accinfo_query. Returns all fields in a single flat struct plus CashInfoList/MarketInfoList.
-func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market int32) (*Funds, error) {
+func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) (*Funds, error) {
 	resp, err := trd.GetFunds(ctx, c.inner, &trd.GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    c.trdEnv,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 	})
 	if err != nil {
 		return nil, err
@@ -524,7 +524,7 @@ func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
 		return nil, fmt.Errorf("no accounts available")
 	}
 	acc := accounts[0]
-	return GetAccountInfo(ctx, c, acc.AccID, acc.TrdMarketAuthList[0])
+	return GetAccountInfo(ctx, c, acc.AccID, constant.TrdMarket(acc.TrdMarketAuthList[0]))
 }
 
 // MaxTrdQtysInfo represents maximum tradable quantities.
@@ -537,14 +537,14 @@ type MaxTrdQtysInfo struct {
 }
 
 // GetMaxTrdQtys retrieves maximum tradable quantities.
-func GetMaxTrdQtys(c *Client, accID uint64, market int32, code string, orderType int32, price float64, secMarket int32) (*MaxTrdQtysInfo, error) {
+func GetMaxTrdQtys(c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64, secMarket constant.TrdSecMarket) (*MaxTrdQtysInfo, error) {
 	if secMarket == 0 {
-		secMarket = inferSecMarket(code)
+		secMarket = constant.TrdSecMarket(inferSecMarket(code))
 	}
 	resp, err := trd.GetMaxTrdQtys(context.Background(), c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    c.trdEnv,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 		Code:      code,
 		OrderType: orderType,
 		Price:     price,
@@ -576,11 +576,11 @@ type OrderFeeItemInfo struct {
 }
 
 // GetOrderFee retrieves order fee information.
-func GetOrderFee(c *Client, accID uint64, market int32, orderIDExList []string) ([]*OrderFeeInfo, error) {
+func GetOrderFee(c *Client, accID uint64, market constant.TrdMarket, orderIDExList []string) ([]*OrderFeeInfo, error) {
 	resp, err := trd.GetOrderFee(context.Background(), c.inner, &trd.GetOrderFeeRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        c.trdEnv,
+		TrdEnv:        constant.TrdEnv(c.trdEnv),
 		OrderIDExList: orderIDExList,
 	})
 	if err != nil {
@@ -616,11 +616,11 @@ type MarginRatioInfo struct {
 }
 
 // GetMarginRatio retrieves margin ratio for securities.
-func GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
+func GetMarginRatio(c *Client, accID uint64, market constant.TrdMarket, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
 	resp, err := trd.GetMarginRatio(context.Background(), c.inner, &trd.GetMarginRatioRequest{
 		AccID:        accID,
 		TrdMarket:    market,
-		TrdEnv:       c.trdEnv,
+		TrdEnv:       constant.TrdEnv(c.trdEnv),
 		SecurityList: securities,
 	})
 	if err != nil {
@@ -648,8 +648,8 @@ func GetMarginRatio(c *Client, accID uint64, market int32, securities []*qotcomm
 func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error) {
 	resp, err := trd.GetOrderList(ctx, c.inner, &trd.GetOrderListRequest{
 		AccID:     accID,
-		TrdMarket: 0,
-		TrdEnv:    c.trdEnv,
+		TrdMarket: constant.TrdMarket_None,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 	})
 	if err != nil {
 		return nil, err
@@ -691,7 +691,7 @@ func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error)
 }
 
 // GetHistoryOrderList retrieves historical orders.
-func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDate string) ([]Order, error) {
+func GetHistoryOrderList(c *Client, accID uint64, market constant.TrdMarket, startDate, endDate string) ([]Order, error) {
 	var fc *trdcommon.TrdFilterConditions
 	if startDate != "" || endDate != "" {
 		fc = &trdcommon.TrdFilterConditions{
@@ -702,7 +702,7 @@ func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDa
 	resp, err := trd.GetHistoryOrderList(context.Background(), c.inner, &trd.GetHistoryOrderListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
-		TrdEnv:           c.trdEnv,
+		TrdEnv:           constant.TrdEnv(c.trdEnv),
 		FilterConditions: fc,
 	})
 	if err != nil {
@@ -751,8 +751,8 @@ func GetHistoryOrderList(c *Client, accID uint64, market int32, startDate, endDa
 func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	resp, err := trd.GetOrderFillList(context.Background(), c.inner, &trd.GetOrderFillListRequest{
 		AccID:     accID,
-		TrdMarket: 0,
-		TrdEnv:    c.trdEnv,
+		TrdMarket: constant.TrdMarket_None,
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 	})
 	if err != nil {
 		return nil, err
@@ -785,11 +785,11 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 }
 
 // GetHistoryOrderFillList retrieves historical order fills.
-func GetHistoryOrderFillList(c *Client, accID uint64, market int32) ([]OrderFill, error) {
+func GetHistoryOrderFillList(c *Client, accID uint64, market constant.TrdMarket) ([]OrderFill, error) {
 	resp, err := trd.GetHistoryOrderFillList(context.Background(), c.inner, &trd.GetHistoryOrderFillListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
-		TrdEnv:           c.trdEnv,
+		TrdEnv:           constant.TrdEnv(c.trdEnv),
 		FilterConditions: &trdcommon.TrdFilterConditions{},
 	})
 	if err != nil {
@@ -895,16 +895,16 @@ type AccTradingInfo struct {
 // price: quote price with 3 decimal precision.
 // Returns max buy/sell quantities and required initial margins.
 // Maps to Python's acctradinginfo_query.
-func GetAccTradingInfo(c *Client, accID uint64, market int32, code string, orderType int32, price float64) (*AccTradingInfo, error) {
-	secMarket := constant.MarketToTrdSecMarket[market]
+func GetAccTradingInfo(c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64) (*AccTradingInfo, error) {
+	secMarket := constant.MarketToTrdSecMarket[int32(market)]
 	resp, err := trd.GetMaxTrdQtys(context.Background(), c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:    accID,
 		TrdMarket: market,
-		TrdEnv:   c.trdEnv,
+		TrdEnv:   constant.TrdEnv(c.trdEnv),
 		OrderType: orderType,
 		Code:     code,
 		Price:    price,
-		SecMarket: int32(secMarket),
+		SecMarket: secMarket,
 	})
 	if err != nil {
 		return nil, err

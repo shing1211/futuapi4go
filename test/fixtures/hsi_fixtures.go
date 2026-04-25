@@ -19,6 +19,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 )
@@ -46,8 +47,8 @@ const (
 // Test trading account
 const (
 	TestAccID  = uint64(1234567890)
-	TestTrdEnv = int32(trdcommon.TrdEnv_TrdEnv_Simulate)
-	TestTrdMkt = int32(trdcommon.TrdMarket_TrdMarket_HK)
+	TestTrdEnv = int32(constant.TrdEnv_Simulate)
+	TestTrdMkt = constant.TrdMarket_HK
 )
 
 // ============================================================================

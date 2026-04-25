@@ -397,7 +397,7 @@ for _, kl := range s2c.GetKlList() {
 ---
 
 ### P2-1: Typed Enum Parameters Everywhere
-**Severity:** HIGH | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** HIGH | **Status:** 🔄 In Progress | **Assignee:** LLM Agent (2026-04-25)
 
 **Issue:**
 - 100+ `int32` parameters with NO type safety

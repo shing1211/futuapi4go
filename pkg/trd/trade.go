@@ -113,10 +113,11 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 
 // GetAccList retrieves the list of trading accounts, optionally including general security account info.
 // Returns the account list or an error if the request fails.
-func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory int32, needGeneralSecAccount bool) (*GetAccListResponse, error) {
+func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory constant.TrdCategory, needGeneralSecAccount bool) (*GetAccListResponse, error) {
+	trdCategoryInt := int32(trdCategory)
 	c2s := &trdgetacclist.C2S{
 		UserID:                proto.Uint64(0), // Deprecated but required by protocol, set to 0
-		TrdCategory:           &trdCategory,
+		TrdCategory:           &trdCategoryInt,
 		NeedGeneralSecAccount: &needGeneralSecAccount,
 	}
 
@@ -214,8 +215,8 @@ type Funds struct {
 // GetFundsRequest is the request to retrieve account funds.
 type GetFundsRequest struct {
 	AccID         uint64
-	TrdMarket     int32
-	TrdEnv        int32
+	TrdMarket     constant.TrdMarket
+	TrdEnv        constant.TrdEnv
 	RefreshCache  bool
 	Currency      int32
 	AssetCategory int32
@@ -229,10 +230,13 @@ type GetFundsResponse struct {
 // GetFunds retrieves the account funds information including cash, assets, and available funds.
 // Returns the funds data or an error if the request fails.
 func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetfunds.C2S{
@@ -362,8 +366,8 @@ type Position struct {
 // GetPositionListRequest is the request to retrieve position list.
 type GetPositionListRequest struct {
 	AccID            uint64
-	TrdMarket        int32
-	TrdEnv           int32
+	TrdMarket        constant.TrdMarket
+	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
 	FilterPLRatioMin float64
 	FilterPLRatioMax float64
@@ -379,10 +383,13 @@ type GetPositionListResponse struct {
 // GetPositionList retrieves the current position list for the account.
 // Returns the position list or an error if the request fails.
 func GetPositionList(ctx context.Context, c *futuapi.Client, req *GetPositionListRequest) (*GetPositionListResponse, error) {
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetpositionlist.C2S{
@@ -492,8 +499,8 @@ type Order struct {
 // GetOrderListRequest is the request to retrieve order list.
 type GetOrderListRequest struct {
 	AccID            uint64
-	TrdMarket        int32
-	TrdEnv           int32
+	TrdMarket        constant.TrdMarket
+	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
 	FilterStatusList []int32
 	RefreshCache     bool
@@ -512,10 +519,13 @@ func GetOrderList(ctx context.Context, c *futuapi.Client, req *GetOrderListReque
 		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetorderlist.C2S{
@@ -611,8 +621,8 @@ type OrderFill struct {
 // GetOrderFillListRequest is the request to retrieve order fill list.
 type GetOrderFillListRequest struct {
 	AccID            uint64
-	TrdMarket        int32
-	TrdEnv           int32
+	TrdMarket        constant.TrdMarket
+	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
 }
 
@@ -629,10 +639,13 @@ func GetOrderFillList(ctx context.Context, c *futuapi.Client, req *GetOrderFillL
 		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetorderfilllist.C2S{
@@ -692,21 +705,21 @@ func GetOrderFillList(ctx context.Context, c *futuapi.Client, req *GetOrderFillL
 // PlaceOrderRequest is the request to place a new order.
 type PlaceOrderRequest struct {
 	AccID              uint64
-	TrdMarket          int32
-	TrdEnv             int32
+	TrdMarket          constant.TrdMarket
+	TrdEnv             constant.TrdEnv
 	Code               string
-	TrdSide            int32
-	OrderType          int32
+	TrdSide            constant.TrdSide
+	OrderType          constant.OrderType
 	Price              float64
 	Qty                float64
 	AdjustPrice        bool
 	AdjustSideAndLimit float64
-	SecMarket          int32
+	SecMarket          constant.TrdSecMarket
 	Remark             string
 	TimeInForce        int32
 	FillOutsideRTH     bool
 	AuxPrice           float64
-	TrailType          int32
+	TrailType          constant.TrailType
 	TrailValue         float64
 	TrailSpread        float64
 	Session            int32
@@ -739,16 +752,23 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 		return nil, fmt.Errorf("invalid trade side: must be buy/sell/other valid type")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+	trdSide := int32(req.TrdSide)
+	orderType := int32(req.OrderType)
+	secMarket := int32(req.SecMarket)
+	trailType := int32(req.TrailType)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdplaceorder.C2S{
 		Header:    header,
-		TrdSide:   &req.TrdSide,
-		OrderType: &req.OrderType,
+		TrdSide:   &trdSide,
+		OrderType: &orderType,
 		Code:      &req.Code,
 		Qty:       &req.Qty,
 		PacketID: &common.PacketID{
@@ -765,7 +785,7 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 		c2s.AdjustSideAndLimit = &req.AdjustSideAndLimit
 	}
 	if req.SecMarket != 0 {
-		c2s.SecMarket = &req.SecMarket
+		c2s.SecMarket = &secMarket
 	}
 	if req.Remark != "" {
 		c2s.Remark = &req.Remark
@@ -780,7 +800,7 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 		c2s.AuxPrice = &req.AuxPrice
 	}
 	if req.TrailType != 0 {
-		c2s.TrailType = &req.TrailType
+		c2s.TrailType = &trailType
 	}
 	if req.TrailValue != 0 {
 		c2s.TrailValue = &req.TrailValue
@@ -823,18 +843,18 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 // ModifyOrderRequest is the request to modify an existing order (cancel, update price, or update quantity).
 type ModifyOrderRequest struct {
 	AccID              uint64
-	TrdMarket          int32
-	TrdEnv             int32
+	TrdMarket          constant.TrdMarket
+	TrdEnv             constant.TrdEnv
 	OrderID            uint64
-	ModifyOrderOp      int32
+	ModifyOrderOp      constant.ModifyOrderOp
 	Price              float64
 	Qty                float64
 	ForAll             bool
-	TrdMarket2         int32
+	TrdMarket2         constant.TrdMarket
 	AdjustPrice        bool
 	AdjustSideAndLimit float64
 	AuxPrice           float64
-	TrailType          int32
+	TrailType          constant.TrailType
 	TrailValue         float64
 	TrailSpread        float64
 	OrderIDEx          string
@@ -863,17 +883,23 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 		return nil, fmt.Errorf("invalid modify operation: must be valid order operation type")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+	trdMarket2 := int32(req.TrdMarket2)
+	modifyOrderOp := int32(req.ModifyOrderOp)
+	trailType := int32(req.TrailType)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	orderID := req.OrderID
 	c2s := &trdmodifyorder.C2S{
 		Header:        header,
 		OrderID:       &orderID,
-		ModifyOrderOp: &req.ModifyOrderOp,
+		ModifyOrderOp: &modifyOrderOp,
 		PacketID: &common.PacketID{
 			ConnID: proto.Uint64(c.GetConnID()),
 		},
@@ -889,7 +915,7 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 		c2s.ForAll = &req.ForAll
 	}
 	if req.TrdMarket2 != 0 {
-		c2s.TrdMarket = &req.TrdMarket2
+		c2s.TrdMarket = &trdMarket2
 	}
 	if req.AdjustPrice {
 		c2s.AdjustPrice = &req.AdjustPrice
@@ -901,7 +927,7 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 		c2s.AuxPrice = &req.AuxPrice
 	}
 	if req.TrailType != 0 {
-		c2s.TrailType = &req.TrailType
+		c2s.TrailType = &trailType
 	}
 	if req.TrailValue != 0 {
 		c2s.TrailValue = &req.TrailValue
@@ -981,8 +1007,8 @@ func UnlockTrade(ctx context.Context, c *futuapi.Client, req *UnlockTradeRequest
 // GetOrderFeeRequest is the request to retrieve order fee information.
 type GetOrderFeeRequest struct {
 	AccID         uint64
-	TrdMarket     int32
-	TrdEnv        int32
+	TrdMarket     constant.TrdMarket
+	TrdEnv        constant.TrdEnv
 	OrderIDExList []string
 }
 
@@ -1015,10 +1041,13 @@ func GetOrderFee(ctx context.Context, c *futuapi.Client, req *GetOrderFeeRequest
 		return nil, fmt.Errorf("order ID list is empty")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetorderfee.C2S{
@@ -1073,8 +1102,8 @@ func GetOrderFee(ctx context.Context, c *futuapi.Client, req *GetOrderFeeRequest
 // GetMarginRatioRequest is the request to retrieve margin ratio information.
 type GetMarginRatioRequest struct {
 	AccID        uint64
-	TrdMarket    int32
-	TrdEnv       int32
+	TrdMarket    constant.TrdMarket
+	TrdEnv       constant.TrdEnv
 	SecurityList []*qotcommon.Security
 }
 
@@ -1111,10 +1140,13 @@ func GetMarginRatio(ctx context.Context, c *futuapi.Client, req *GetMarginRatioR
 		return nil, fmt.Errorf("security list is empty")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetmarginratio.C2S{
@@ -1169,15 +1201,15 @@ func GetMarginRatio(ctx context.Context, c *futuapi.Client, req *GetMarginRatioR
 // GetMaxTrdQtysRequest is the request to retrieve maximum tradable quantities.
 type GetMaxTrdQtysRequest struct {
 	AccID              uint64
-	TrdMarket          int32
-	TrdEnv             int32
-	OrderType          int32
+	TrdMarket          constant.TrdMarket
+	TrdEnv             constant.TrdEnv
+	OrderType          constant.OrderType
 	Code               string
 	Price              float64
 	OrderID            uint64
 	AdjustPrice        bool
 	AdjustSideAndLimit float64
-	SecMarket          int32
+	SecMarket          constant.TrdSecMarket
 	OrderIDEx          string
 }
 
@@ -1208,15 +1240,20 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 		return nil, fmt.Errorf("security code is required")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+	orderType := int32(req.OrderType)
+	secMarket := int32(req.SecMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgetmaxtrdqtys.C2S{
 		Header:    header,
-		OrderType: &req.OrderType,
+		OrderType: &orderType,
 		Code:      &req.Code,
 	}
 	// Optional fields - only set when provided
@@ -1233,7 +1270,7 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 		c2s.AdjustSideAndLimit = &req.AdjustSideAndLimit
 	}
 	if req.SecMarket != 0 {
-		c2s.SecMarket = &req.SecMarket
+		c2s.SecMarket = &secMarket
 	}
 	if req.OrderIDEx != "" {
 		c2s.OrderIDEx = &req.OrderIDEx
@@ -1275,8 +1312,8 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 // GetHistoryOrderListRequest is the request to retrieve historical order list.
 type GetHistoryOrderListRequest struct {
 	AccID            uint64
-	TrdMarket        int32
-	TrdEnv           int32
+	TrdMarket        constant.TrdMarket
+	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
 	FilterStatusList []int32
 }
@@ -1294,10 +1331,13 @@ func GetHistoryOrderList(ctx context.Context, c *futuapi.Client, req *GetHistory
 		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgethistoryorderlist.C2S{
@@ -1333,8 +1373,8 @@ func GetHistoryOrderList(ctx context.Context, c *futuapi.Client, req *GetHistory
 // GetHistoryOrderFillListRequest is the request to retrieve historical order fill list.
 type GetHistoryOrderFillListRequest struct {
 	AccID            uint64
-	TrdMarket        int32
-	TrdEnv           int32
+	TrdMarket        constant.TrdMarket
+	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
 }
 
@@ -1351,10 +1391,13 @@ func GetHistoryOrderFillList(ctx context.Context, c *futuapi.Client, req *GetHis
 		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
 
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
 	header := &trdcommon.TrdHeader{
-		TrdEnv:    &req.TrdEnv,
+		TrdEnv:    &trdEnv,
 		AccID:     &req.AccID,
-		TrdMarket: &req.TrdMarket,
+		TrdMarket: &trdMarket,
 	}
 
 	c2s := &trdgethistoryorderfilllist.C2S{

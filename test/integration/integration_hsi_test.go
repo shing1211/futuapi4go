@@ -21,8 +21,8 @@ import (
 	"time"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 	"github.com/shing1211/futuapi4go/pkg/trd"
@@ -415,7 +415,8 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 	}
 
 	t.Log("=== Step 1: Get Account List ===")
-	accList, err := trd.GetAccList(context.Background(), cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	trdCategory := constant.TrdCategory(1) // TrdCategory_Security
+	accList, err := trd.GetAccList(context.Background(), cli, trdCategory, false)
 	if err != nil {
 		t.Fatalf("GetAccList failed: %v", err)
 	}
@@ -430,7 +431,7 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 	t.Log("=== Step 2: Get Funds ===")
 	funds, err := trd.GetFunds(context.Background(), cli, &trd.GetFundsRequest{
 		AccID:     acc.AccID,
-		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
+		TrdMarket: constant.TrdMarket_HK,
 	})
 	if err != nil {
 		t.Fatalf("GetFunds failed: %v", err)
@@ -442,7 +443,7 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 	t.Log("=== Step 3: Get Positions ===")
 	positions, err := trd.GetPositionList(context.Background(), cli, &trd.GetPositionListRequest{
 		AccID:     acc.AccID,
-		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
+		TrdMarket: constant.TrdMarket_HK,
 	})
 	if err != nil {
 		t.Fatalf("GetPositionList failed: %v", err)
@@ -456,7 +457,7 @@ func TestIntegration_Trading_Workflow(t *testing.T) {
 	t.Log("=== Step 4: Get Orders ===")
 	orders, err := trd.GetOrderList(context.Background(), cli, &trd.GetOrderListRequest{
 		AccID:     acc.AccID,
-		TrdMarket: int32(trdcommon.TrdMarket_TrdMarket_HK),
+		TrdMarket: constant.TrdMarket_HK,
 	})
 	if err != nil {
 		t.Fatalf("GetOrderList failed: %v", err)

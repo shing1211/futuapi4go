@@ -64,7 +64,7 @@ func TestGetAccList(t *testing.T) {
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
 
-	result, err := trd.GetAccList(context.Background(), cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	result, err := trd.GetAccList(context.Background(), cli, constant.TrdCategory_Security, false)
 	if err != nil {
 		t.Fatalf("GetAccList failed: %v", err)
 	}
@@ -252,8 +252,8 @@ func TestPlaceOrder_HSI(t *testing.T) {
 		AccID:     fixtures.TestAccID,
 		TrdMarket: fixtures.TestTrdMkt,
 		Code:      fixtures.HSIFuturesCode,
-		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
-		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+		TrdSide:   constant.TrdSide_Buy,
+		OrderType: constant.OrderType_Normal,
 		Price:     18520.00,
 		Qty:       1,
 	}
@@ -295,8 +295,8 @@ func TestPlaceOrder_HSI_Sell(t *testing.T) {
 		AccID:     fixtures.TestAccID,
 		TrdMarket: fixtures.TestTrdMkt,
 		Code:      fixtures.HSIFuturesCode,
-		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Sell),
-		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+		TrdSide:   constant.TrdSide_Sell,
+		OrderType: constant.OrderType_Normal,
 		Price:     18530.00,
 		Qty:       1,
 	}
@@ -393,7 +393,7 @@ func TestModifyOrder_HSI(t *testing.T) {
 		AccID:         fixtures.TestAccID,
 		TrdMarket:     fixtures.TestTrdMkt,
 		OrderID:       1001,
-		ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Normal),
+		ModifyOrderOp: constant.ModifyOrderOp_Normal,
 		Price:         18525.00,
 		Qty:           0, // Keep unchanged
 	}
@@ -427,7 +427,7 @@ func TestModifyOrder_Cancel(t *testing.T) {
 		AccID:         fixtures.TestAccID,
 		TrdMarket:     fixtures.TestTrdMkt,
 		OrderID:       1001,
-		ModifyOrderOp: int32(trdcommon.ModifyOrderOp_ModifyOrderOp_Cancel),
+		ModifyOrderOp: constant.ModifyOrderOp_Cancel,
 		Price:         0,
 		Qty:           0,
 	}
@@ -541,7 +541,8 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	defer cleanup()
 
 	// Step 1: Get account list
-	accList, err := trd.GetAccList(context.Background(), cli, int32(trdcommon.TrdCategory_TrdCategory_Security), false)
+	trdCategory := constant.TrdCategory(1)
+	accList, err := trd.GetAccList(context.Background(), cli, trdCategory, false)
 	if err != nil {
 		t.Fatalf("Step 1 - GetAccList failed: %v", err)
 	}
@@ -574,8 +575,8 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 		AccID:     accID,
 		TrdMarket: fixtures.TestTrdMkt,
 		Code:      fixtures.HSIFuturesCode,
-		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
-		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+		TrdSide:   constant.TrdSide_Buy,
+		OrderType: constant.OrderType_Normal,
 		Price:     18500.00,
 		Qty:       1,
 	})

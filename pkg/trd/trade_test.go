@@ -26,13 +26,13 @@ import (
 )
 
 func TestPlaceOrderRequestValidation(t *testing.T) {
-	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
+	hkMarket := constant.TrdMarket_HK
 	req := &PlaceOrderRequest{
 		AccID:     123456789,
 		TrdMarket: hkMarket,
 		Code:      "00700",
-		TrdSide:   int32(trdcommon.TrdSide_TrdSide_Buy),
-		OrderType: int32(trdcommon.OrderType_OrderType_Normal),
+		TrdSide:   constant.TrdSide_Buy,
+		OrderType: constant.OrderType_Normal,
 		Price:     350.00,
 		Qty:       100.0,
 	}
@@ -52,7 +52,7 @@ func TestPlaceOrderRequestValidation(t *testing.T) {
 }
 
 func TestGetFundsRequestValidation(t *testing.T) {
-	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
+	hkMarket := constant.TrdMarket_HK
 	req := &GetFundsRequest{
 		AccID:     123456789,
 		TrdMarket: hkMarket,
@@ -66,7 +66,7 @@ func TestGetFundsRequestValidation(t *testing.T) {
 func TestGetPositionListRequestValidation(t *testing.T) {
 	req := &GetPositionListRequest{
 		AccID:     123456789,
-		TrdMarket: 0, // All markets
+		TrdMarket: constant.TrdMarket_None, // All markets
 	}
 
 	if req.TrdMarket != 0 {
@@ -126,12 +126,12 @@ func TestPositionStructFields(t *testing.T) {
 }
 
 func TestModifyOrderRequestValidation(t *testing.T) {
-	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
+	hkMarket := constant.TrdMarket_HK
 	req := &ModifyOrderRequest{
 		AccID:         123456789,
 		TrdMarket:     hkMarket,
 		OrderID:       9876543210,
-		ModifyOrderOp: 1,
+		ModifyOrderOp: constant.ModifyOrderOp_Enable,
 		Qty:           200.0,
 		Price:         360.00,
 	}
@@ -142,8 +142,8 @@ func TestModifyOrderRequestValidation(t *testing.T) {
 	if req.Qty != 200.0 {
 		t.Errorf("expected Qty 200.0, got %f", req.Qty)
 	}
-	if req.ModifyOrderOp != 1 {
-		t.Errorf("expected ModifyOrderOp 1, got %d", req.ModifyOrderOp)
+	if req.ModifyOrderOp != constant.ModifyOrderOp_Enable {
+		t.Errorf("expected ModifyOrderOp Enable (%d), got %d", constant.ModifyOrderOp_Enable, req.ModifyOrderOp)
 	}
 }
 
@@ -454,11 +454,11 @@ func TestGetOrderFeeResponseConstruction(t *testing.T) {
 }
 
 func TestGetMarginRatioRequestConstruction(t *testing.T) {
-	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
-	security := &qotcommon.Security{Market: &hkMarket, Code: func() *string { s := "00700"; return &s }()}
+	hkMarket := constant.TrdMarket_HK
+	security := &qotcommon.Security{Market: func() *int32 { m := int32(hkMarket); return &m }(), Code: func() *string { s := "00700"; return &s }()}
 	req := &GetMarginRatioRequest{
 		AccID:        123456789,
-		TrdMarket:    1,
+		TrdMarket:    constant.TrdMarket_HK,
 		SecurityList: []*qotcommon.Security{security},
 	}
 
@@ -468,9 +468,9 @@ func TestGetMarginRatioRequestConstruction(t *testing.T) {
 }
 
 func TestMarginRatioInfoFields(t *testing.T) {
-	hkMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
+	hkMarket := constant.TrdMarket_HK
 	info := &MarginRatioInfo{
-		Security:        &qotcommon.Security{Market: &hkMarket, Code: func() *string { s := "00700"; return &s }()},
+		Security:        &qotcommon.Security{Market: func() *int32 { m := int32(hkMarket); return &m }(), Code: func() *string { s := "00700"; return &s }()},
 		IsLongPermit:    true,
 		IsShortPermit:   false,
 		ShortPoolRemain: 5000.0,
