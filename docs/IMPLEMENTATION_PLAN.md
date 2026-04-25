@@ -13,13 +13,25 @@ Upgrade all API functions to support `context.Context` for cancellation, timeout
 
 ### Completed Functions
 
-#### pkg/qot/quote.go (6/30)
+#### pkg/qot/quote.go (13/30)
 - [x] `GetBasicQot` - context, nil guard, wrapError
 - [x] `GetKL` - context, nil guard, wrapError
 - [x] `GetOrderBook` - context, nil guard, wrapError
 - [x] `GetTicker` - context, nil guard, wrapError
 - [x] `GetRT` - context, nil guard, wrapError
 - [x] `GetBroker` - context, nil guard, wrapError
+- [x] `GetStaticInfo` - context, nil guard, wrapError
+- [x] `GetPlateSet` - context, nil guard, wrapError
+- [x] `GetPlateSecurity` - context, nil guard, wrapError
+- [x] `RequestTradeDate` - context, nil guard, wrapError
+- [x] `RequestHistoryKL` - context, nil guard, wrapError
+- [x] `Subscribe` - context, nil guard, wrapError
+- [x] `GetCapitalFlow` - context, nil guard, wrapError
+- [x] `GetCapitalDistribution` - context, nil guard, wrapError
+- [x] `GetUserSecurity` - context, nil guard, wrapError
+- [x] `GetPriceReminder` - context, nil guard, wrapError
+- [x] `GetOptionExpirationDate` - context, nil guard, wrapError
+- [x] `GetOptionChain` - context, nil guard, wrapError
 
 #### pkg/trd/trade.go (6/18)
 - [x] `GetAccList` - context, nil guard, wrapError
@@ -34,21 +46,8 @@ Upgrade all API functions to support `context.Context` for cancellation, timeout
 
 ### Remaining Functions
 
-#### pkg/qot/quote.go (24 remaining)
+#### pkg/qot/quote.go (14 remaining)
 ```
-GetStaticInfo
-GetPlateSet
-GetPlateSecurity
-RequestTradeDate
-RequestHistoryKL
-GetSecuritySnapshot
-Subscribe
-GetCapitalFlow
-GetCapitalDistribution
-GetUserSecurity
-GetPriceReminder
-GetOptionExpirationDate
-GetOptionChain
 StockFilter
 GetWarrant
 GetSuspend
