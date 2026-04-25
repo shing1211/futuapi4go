@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2026-04-25
+
+### Added (Phase 2 Ease of Use)
+
+- **P2-2: OrderBuilder** (`pkg/trd/builder.go`) — fluent builder pattern for orders:
+  ```go
+  trd.NewOrder(accID, market, env).Buy("00700", 100).At(350.5).Build()
+  ```
+- **P2-3: Convenience wrappers** (`pkg/trd/convenience.go`) — one-liner functions:
+  - `QuickBuy()`, `QuickSell()`, `QuickMarketBuy()`, `QuickMarketSell()`
+  - `CancelAllOrders()`, `GetPositions()`
+- **P2-4: DetectTradingMarkets** (`pkg/util/code.go`) — auto-detect TrdMarket/TrdSecMarket from code
+
 ## [0.0.8] - 2026-04-25
 
 ### Changed

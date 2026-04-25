@@ -447,7 +447,7 @@ client.PlaceOrder(ctx, cli, accID, constant.TrdMarket_HK, constant.TrdEnv_Real, 
 ---
 
 ### P2-2: Builder Pattern for Requests
-**Severity:** HIGH | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** HIGH | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Constructing request structs with many optional fields is verbose
@@ -523,7 +523,7 @@ orderID, err := trd.PlaceOrder(ctx, client,
 ---
 
 ### P2-3: Convenience Wrappers for Common Operations
-**Severity:** HIGH | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** HIGH | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - 80% of users need only 20% of functionality
@@ -581,11 +581,13 @@ func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64,
 ---
 
 ### P2-4: Market Auto-Detection Helper
-**Severity:** MEDIUM | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Users must manually specify `TrdMarket` and `SecMarket`
 - Easy to mix up or use wrong values for codes like "00700.HK"
+
+**Done:** `DetectTradingMarkets(code)` already exists in `pkg/util/code.go` - enhanced to return typed markets
 
 **Fix Location:**
 ```go

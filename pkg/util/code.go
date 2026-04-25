@@ -100,6 +100,21 @@ func DetectMarket(fullCode string) int32 {
 	return market
 }
 
+// DetectTradingMarkets returns the TrdMarket and TrdSecMarket for a given full code.
+// Supports formats: "00700.HK", "HK.00700", "AAPL.US", "US.AAPL"
+//
+// Example:
+//
+//	trdMarket, secMarket := util.DetectTradingMarkets("00700.HK")  // HK, HK
+//	trdMarket, secMarket := util.DetectTradingMarkets("AAPL.US")  // US, US
+func DetectTradingMarkets(fullCode string) (constant.TrdMarket, constant.TrdSecMarket) {
+	market := DetectMarket(fullCode)
+	if market == 0 {
+		return constant.TrdMarket_None, constant.TrdSecMarket_Unknown
+	}
+	return constant.TrdMarket(market), constant.MarketToTrdSecMarket[int32(market)]
+}
+
 // MarketToTrdMarket converts a QotMarket (quote market) to the corresponding
 // TrdSecMarket (trading security market).
 //
