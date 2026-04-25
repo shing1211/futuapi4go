@@ -49,11 +49,19 @@ client.Subscribe(ctx, cli, constant.Market_US, "NVDA", ...)
 ---
 
 ### P6-3: Enhanced Error Codes
-**Severity:** HIGH | **Status:** ⏳ Pending
+**Severity:** HIGH | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Only ErrCodeSuccess, ErrCodeTimeout, ErrCodeInvalidParams
 - 20+ OpenD error types not mapped
+
+**Resolution:**
+- Added 20+ new error codes:
+  - Connection: NetworkError, ProtocolErr, ServerBusy
+  - Account: AccNotFound, AccDisabled, AccLocked, AccAuthFail
+  - Trading: InsufficientBalance, MarketClosed, OrderRejected, PriceOutOfRange
+  - Subscription: AlreadySubbed, NotSubbed
+- Added predicate functions for each category
 
 **Fix:**
 ```go

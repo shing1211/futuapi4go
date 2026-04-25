@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **P6-1: Context helpers** — Added `WithTimeout()`, `WithDeadline()` to Client
 - **P6-2: Typed Market** — `constant.Market` type for all market parameters
+- **P6-3: Enhanced Error Codes** — Added 20+ error codes with predicates
+
+### Fixed
+
+- **Error handling** — New predicates: IsInsufficientBalance(), IsMarketClosed(), IsOrderRejected(), IsNetworkError(), IsServerBusy(), IsAccountError(), IsSubscriptionError()
 
 ## [0.2.6] - 2026-04-25
 
