@@ -1,0 +1,76 @@
+# golangci-lint configuration for futuapi4go
+
+linters:
+  enable:
+    - govet      # Go compiler checks
+    - staticcheck # Static analysis checks
+    - unused    # Check for unused code
+    - errcheck   # Check for unchecked errors
+    - gofmt      # Check formatting
+    - goimports  # Check imports
+    - goheader   # Check source file headers
+    - misspell   # Check for misspellings
+    - unconvert  # Check for unnecessary type conversions
+    - unparam    # Check for unused function parameters
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: github.com/shing1211/futuapi4go
+  goheader:
+    template: |
+      Copyright 2026 shing1211
+      ->
+      Licensed under the Apache License, Version 2.0 (the "License");
+      ->
+      Licensed under the Apache License, Version 2.0 (the "License");
+    template-placeholder:
+      -
+        key: "->"
+        value: ""
+      -
+        key: "^Copyright"
+        value: "// Copyright {{.FormatYear}} shing1211"
+      -
+        key: "^Licensed"
+        value: "// Licensed under the Apache License, Version 2.0 (the \"License\");"
+  misspell:
+    locale: US
+  unconvert:
+    ignore-always: true
+    enabled: false # May have false positives with proto conversions
+
+issues:
+  exclude-rules:
+    # Exclude generated protobuf code
+    - path: pkg/pb/
+    - path: _test\.go
+    - path: test/
+    - path: \.pb\.go$
+    
+    # Exclude documentation files
+    - path: \.md$
+    - path: _test\.go
+    
+    # Exclude common safe patterns
+    - text: "errcheck|unchecked"
+      # _ = err is acceptable in cleanup functions
+      
+  exclude-use-default: false
+  
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+# Output settings  
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true

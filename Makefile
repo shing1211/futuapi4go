@@ -1,92 +1,76 @@
-# Makefile for futuapi4go
+# futuapi4go Makefile
 
-.PHONY: help build test vet lint fmt clean cover install-tools ci build-examples
-
-# Go parameters
-GOCMD := go
-GOBUILD := $(GOCMD) build
-GOTEST := $(GOCMD) test
-GOVET := $(GOCMD) vet
-GOFMT := gofmt
-GOMOD := $(GOCMD) mod
-GOCOVER := $(GOCMD) test -coverprofile=coverage.out
-
-# Default target
-help:
-	@echo "futuapi4go Makefile"
-	@echo ""
-	@echo "Usage:"
-	@echo "  make build        Build all packages"
-	@echo "  make test         Run all tests"
-	@echo "  make test-race    Run tests with race detector"
-	@echo "  make vet          Run go vet"
-	@echo "  make fmt          Format code"
-	@echo "  make lint         Run linters (requires golint, staticcheck)"
-	@echo "  make cover        Run tests with coverage report"
-	@echo "  make ci           Run full CI pipeline (build, vet, fmt, test)"
-	@echo "  make clean        Clean build artifacts"
-	@echo "  make build-examples  Build all example programs"
+.PHONY: build test vet lint clean install bench help
 
 # Build all packages
 build:
-	$(GOBUILD) ./...
+	go build ./...
 
-# Build example programs
-build-examples:
-	cd cmd/examples && $(GOBUILD) ./...
-
-# Run all tests
+# Run all tests (with race detection)
 test:
-	$(GOTEST) ./...
+	go test -race ./...
 
-# Run tests with race detector
-test-race:
-	$(GOTEST) -race ./...
+# Run tests with coverage
+test-cover:
+	go test -cover ./...
 
 # Run go vet
 vet:
-	$(GOVET) ./...
+	go vet ./...
+
+# Run fmt check
+fmt:
+	gofmt -l .
+	gofmt -d .
 
 # Format code
-fmt:
-	$(GOFMT) -w .
-	@echo "Formatting complete. Check for any unformatted files with: gofmt -l ."
+fmt-fix:
+	gofmt -w .
 
-# Check formatting (exit non-zero if files need formatting)
-fmt-check:
-	@files=$$($(GOFMT) -l .); \
-	if [ -n "$$files" ]; then \
-		echo "Files need formatting:"; \
-		echo "$$files"; \
-		exit 1; \
-	fi
-	@echo "All files properly formatted."
+# Run static analysis
+staticcheck:
+	go run honnef.co/go/tools/cmd/staticcheck@latest ./...
 
-# Install linting tools
-install-tools:
-	$(GOCMD) install golang.org/x/lint/golint@latest
-	$(GOCMD) install honnef.co/go/tools/cmd/staticcheck@latest
-
-# Run linters (install tools first with: make install-tools)
-lint: vet
-	@echo "Running golint..."
-	golint -set_exit_status ./...
-	@echo "Running staticcheck..."
-	staticcheck ./...
-
-# Run tests with coverage report
-cover:
-	$(GOCOVER) ./...
-	$(GOCMD) tool cover -html=coverage.out -o coverage.html
-	@echo "Coverage report generated: coverage.html"
-	@echo "Coverage summary:"
-	$(GOCMD) tool cover -func=coverage.out | tail -1
-
-# Full CI pipeline (mirrors .github/workflows/ci.yml)
-ci: fmt-check vet build test
+# Run benchmarks
+bench:
+	go test -bench=. -benchmem -count=3 ./...
 
 # Clean build artifacts
 clean:
-	$(GOCMD) clean
-	rm -f coverage.out coverage.html
-	find . -name "*.test" -delete 2>/dev/null || true
+	go clean -cache
+	rm -f *.out
+
+# Install dependencies
+install:
+	go mod download
+	go mod tidy
+
+# Quick check (fmt + vet + build)
+check: fmt-fix vet build
+
+# Run specific package tests
+test-pkg:
+	go test -race ./pkg/constant/...
+	go test -race ./client/...
+	go test -race ./internal/client/...
+
+# Run integration tests (requires OpenD)
+test-integration:
+	go test -tags=integration ./test/integration/...
+
+# Show help
+help:
+	@echo "futuapi4go Makefile targets:"
+	@echo "  make build         - Build all packages"
+	@echo "  make test         - Run all tests with race detection"
+	@echo "  make test-cover  - Run tests with coverage"
+	@echo "  make vet         - Run go vet"
+	@echo "  make fmt         - Check code formatting"
+	@echo "  make fmt-fix     - Fix code formatting"
+	@echo "  make staticcheck - Run static analysis"
+	@echo "  make bench       - Run benchmarks"
+	@echo "  make clean       - Clean build artifacts"
+	@echo "  make install     - Install dependencies"
+	@echo "  make check       - Quick check (fmt + vet + build)"
+	@echo "  make test-pkg    - Run specific package tests"
+	@echo "  make help        - Show this help"
