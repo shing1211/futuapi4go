@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.9] - 2026-04-25
+## [0.2.1] - 2026-04-25
 
 ### Added (Phase 2 Ease of Use)
 
@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CancelAllOrders()`, `GetPositions()`
 - **P2-4: DetectTradingMarkets** (`pkg/util/code.go`) — auto-detect TrdMarket/TrdSecMarket from code
 
-## [0.0.8] - 2026-04-25
+## [0.2.0] - 2026-04-25
 
 ### Changed
 
