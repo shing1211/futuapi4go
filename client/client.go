@@ -908,12 +908,12 @@ type AccTradingInfo struct {
 func GetAccTradingInfo(c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64) (*AccTradingInfo, error) {
 	secMarket := constant.MarketToTrdSecMarket[int32(market)]
 	resp, err := trd.GetMaxTrdQtys(c.inner.Context(), c.inner, &trd.GetMaxTrdQtysRequest{
-		AccID:    accID,
+		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:   constant.TrdEnv(c.trdEnv),
+		TrdEnv:    constant.TrdEnv(c.trdEnv),
 		OrderType: orderType,
-		Code:     code,
-		Price:    price,
+		Code:      code,
+		Price:     price,
 		SecMarket: secMarket,
 	})
 	if err != nil {
@@ -2588,10 +2588,10 @@ type Position struct {
 // AccCashInfo represents per-currency cash (futures accounts).
 // Maps to Python's hkd_net_cash_power, usd_net_cash_power, etc.
 type AccCashInfo struct {
-	Currency        int32
-	Cash            float64
+	Currency         int32
+	Cash             float64
 	AvailableBalance float64
-	NetCashPower    float64
+	NetCashPower     float64
 }
 
 // AccMarketInfo represents per-market assets.
@@ -2820,8 +2820,6 @@ type OptionExpiration struct {
 	Days int32
 	Desc string
 }
-
-
 
 // Common market constants.
 const (

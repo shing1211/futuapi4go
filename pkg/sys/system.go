@@ -58,7 +58,7 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 	return &constant.FutuError{
 		Code:    code,
 		Message: retMsg,
-		Func:   funcName,
+		Func:    funcName,
 	}
 }
 

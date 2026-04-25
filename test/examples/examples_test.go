@@ -113,5 +113,3 @@ func TestAlgoExamplesCompile(t *testing.T) {
 		})
 	}
 }
-
-

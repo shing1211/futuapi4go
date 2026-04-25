@@ -12,13 +12,13 @@
 //	trdMkt := util.MarketToTrdMarket(market)            // convert qot->trd market
 //	detected := util.DetectMarket("US.AAPL")            // market=11
 //
-// Copyright 2026 shing1211
+// # Copyright 2026 shing1211
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,9 +34,9 @@ import (
 )
 
 const (
-	codeSep       = "."
-	minCodeLen    = 1
-	maxCodeLen    = 32
+	codeSep    = "."
+	minCodeLen = 1
+	maxCodeLen = 32
 )
 
 // ParseCode splits a full stock code string into its market prefix and code.
@@ -100,7 +100,7 @@ func DetectMarket(fullCode string) int32 {
 	if market != 0 {
 		return market
 	}
-	
+
 	// Try to detect from code pattern alone
 	return detectCodePattern(fullCode)
 }
@@ -111,22 +111,22 @@ func detectCodePattern(code string) int32 {
 	if code == "" {
 		return constant.Market_None
 	}
-	
+
 	// Warrant: starts with # (e.g., "#12345")
 	if strings.HasPrefix(code, "#") && len(code) >= 5 {
 		return constant.Market_HK
 	}
-	
+
 	// CBBC: starts with 1 and 5 digits (e.g., "12345")
 	if len(code) == 5 && code[0] >= '1' && code[0] <= '9' {
 		return constant.Market_HK
 	}
-	
+
 	// Futures: contains .HK or .US suffix
 	if strings.HasSuffix(code, ".HK") || strings.HasSuffix(code, ".US") || strings.HasSuffix(code, ".CN") {
 		return constant.Market_HK
 	}
-	
+
 	return constant.Market_None
 }
 
@@ -199,16 +199,16 @@ func IsMarketValid(market int32) bool {
 
 // marketPrefixMap maps QotMarket IDs to their string prefix.
 var marketPrefixMap = map[int32]string{
-	constant.Market_HK:  "HK",
-	constant.Market_US:  "US",
-	constant.Market_SH:  "SH",
-	constant.Market_SZ:  "SZ",
-	constant.Market_SG:  "SG",
-	constant.Market_JP:  "JP",
-	constant.Market_AU:  "AU",
-	constant.Market_MY:  "MY",
-	constant.Market_CA:  "CA",
-	constant.Market_FX:  "FX",
+	constant.Market_HK: "HK",
+	constant.Market_US: "US",
+	constant.Market_SH: "SH",
+	constant.Market_SZ: "SZ",
+	constant.Market_SG: "SG",
+	constant.Market_JP: "JP",
+	constant.Market_AU: "AU",
+	constant.Market_MY: "MY",
+	constant.Market_CA: "CA",
+	constant.Market_FX: "FX",
 }
 
 func marketToPrefix(market int32) string {

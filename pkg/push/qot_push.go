@@ -44,12 +44,12 @@ import (
 )
 
 const (
-	ProtoID_Qot_UpdateBasicQot    = 3005
-	ProtoID_Qot_UpdateKL          = 3007
-	ProtoID_Qot_UpdateOrderBook   = 3013
-	ProtoID_Qot_UpdateTicker      = 3011
-	ProtoID_Qot_UpdateRT          = 3009
-	ProtoID_Qot_UpdateBroker      = 3015
+	ProtoID_Qot_UpdateBasicQot      = 3005
+	ProtoID_Qot_UpdateKL            = 3007
+	ProtoID_Qot_UpdateOrderBook     = 3013
+	ProtoID_Qot_UpdateTicker        = 3011
+	ProtoID_Qot_UpdateRT            = 3009
+	ProtoID_Qot_UpdateBroker        = 3015
 	ProtoID_Qot_UpdatePriceReminder = 3019
 )
 

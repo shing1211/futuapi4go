@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
-	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -26,9 +26,9 @@ func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, marke
 		TrdEnv:    &trdEnv,
 	}
 	c2s := &trdmodifyorder.C2S{
-		Header:       header,
+		Header:        header,
 		ModifyOrderOp: proto.Int32(int32(constant.ModifyOrderOp_Cancel)),
-		ForAll:      proto.Bool(true),
+		ForAll:        proto.Bool(true),
 	}
 	pkt := &trdmodifyorder.Request{C2S: c2s}
 	var rsp trdmodifyorder.Response
@@ -52,10 +52,10 @@ func QuickBuy(ctx context.Context, c *futuapi.Client, accID uint64, market const
 		TrdMarket: market,
 		TrdEnv:    env,
 		Code:      code,
-		TrdSide:  constant.TrdSide_Buy,
+		TrdSide:   constant.TrdSide_Buy,
 		OrderType: constant.OrderType_Normal,
-		Price:    price,
-		Qty:      qty,
+		Price:     price,
+		Qty:       qty,
 	})
 }
 
@@ -65,10 +65,10 @@ func QuickSell(ctx context.Context, c *futuapi.Client, accID uint64, market cons
 		TrdMarket: market,
 		TrdEnv:    env,
 		Code:      code,
-		TrdSide:  constant.TrdSide_Sell,
+		TrdSide:   constant.TrdSide_Sell,
 		OrderType: constant.OrderType_Normal,
-		Price:    price,
-		Qty:      qty,
+		Price:     price,
+		Qty:       qty,
 	})
 }
 
@@ -78,10 +78,10 @@ func QuickMarketBuy(ctx context.Context, c *futuapi.Client, accID uint64, market
 		TrdMarket: market,
 		TrdEnv:    env,
 		Code:      code,
-		TrdSide:  constant.TrdSide_Buy,
+		TrdSide:   constant.TrdSide_Buy,
 		OrderType: constant.OrderType_Market,
-		Price:    0,
-		Qty:      qty,
+		Price:     0,
+		Qty:       qty,
 	})
 }
 
@@ -91,10 +91,10 @@ func QuickMarketSell(ctx context.Context, c *futuapi.Client, accID uint64, marke
 		TrdMarket: market,
 		TrdEnv:    env,
 		Code:      code,
-		TrdSide:  constant.TrdSide_Sell,
+		TrdSide:   constant.TrdSide_Sell,
 		OrderType: constant.OrderType_Market,
-		Price:    0,
-		Qty:      qty,
+		Price:     0,
+		Qty:       qty,
 	})
 }
 
@@ -104,7 +104,7 @@ type PositionDetail struct {
 	Qty         float64
 	CostPrice   float64
 	CostBalance float64
-	Market     constant.TrdMarket
+	Market      constant.TrdMarket
 }
 
 func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]PositionDetail, error) {
@@ -128,7 +128,7 @@ func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]Posit
 			Qty:         p.Qty,
 			CostPrice:   p.CostPrice,
 			CostBalance: p.CostPrice * p.Qty,
-			Market:     constant.TrdMarket(p.TrdMarket),
+			Market:      constant.TrdMarket(p.TrdMarket),
 		})
 	}
 	return positions, nil

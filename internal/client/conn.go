@@ -54,7 +54,7 @@ type PacketHandler func(pkt *Packet)
 type Conn struct {
 	conn   net.Conn
 	reader *bufio.Reader
-	mu    sync.Mutex
+	mu     sync.Mutex
 
 	dispMu   sync.Mutex
 	disp     map[uint32]chan *Packet

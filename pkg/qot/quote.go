@@ -95,7 +95,7 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 	return &constant.FutuError{
 		Code:    code,
 		Message: retMsg,
-		Func:   funcName,
+		Func:    funcName,
 	}
 }
 
@@ -123,8 +123,8 @@ const (
 	ProtoID_GetCapitalFlow          = 3211
 	ProtoID_GetCapitalDistribution  = 3212
 	ProtoID_StockFilter             = 3215
-	ProtoID_GetOptionChain            = 3209
-	ProtoID_GetOptionExpirationDate   = 3224
+	ProtoID_GetOptionChain          = 3209
+	ProtoID_GetOptionExpirationDate = 3224
 	ProtoID_GetWarrant              = 3210
 	ProtoID_GetUserSecurity         = 3213
 	ProtoID_GetPriceReminder        = 3221
@@ -1002,9 +1002,9 @@ func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) (*
 	}
 
 	c2s := &qotsub.C2S{
-		SecurityList:         req.SecurityList,
-		SubTypeList:          subTypeList,
-		IsSubOrUnSub:         &req.IsSubOrUnSub,
+		SecurityList: req.SecurityList,
+		SubTypeList:  subTypeList,
+		IsSubOrUnSub: &req.IsSubOrUnSub,
 	}
 	// IsRegOrUnRegPush - proto2 optional, only set if explicitly needed
 	if req.IsRegOrUnRegPush {
@@ -2411,13 +2411,13 @@ func ModifyUserSecurity(ctx context.Context, c *futuapi.Client, req *ModifyUserS
 
 // SetPriceReminderRequest defines parameters for SetPriceReminder.
 type SetPriceReminderRequest struct {
-	Security           *qotcommon.Security
-	Op                 int32
-	Key                int64
-	Type               int32
-	Freq               int32
-	Value              float64
-	Note               string
+	Security            *qotcommon.Security
+	Op                  int32
+	Key                 int64
+	Type                int32
+	Freq                int32
+	Value               float64
+	Note                string
 	ReminderSessionList []int32
 }
 
@@ -2437,8 +2437,8 @@ func SetPriceReminder(ctx context.Context, c *futuapi.Client, req *SetPriceRemin
 	}
 
 	c2s := &qotsetpricereminder.C2S{
-		Security:           req.Security,
-		Op:                 &req.Op,
+		Security:            req.Security,
+		Op:                  &req.Op,
 		ReminderSessionList: req.ReminderSessionList,
 	}
 	// Key is optional - only set for non-add operations
@@ -2528,7 +2528,7 @@ func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) 
 	return &RegQotPushResponse{
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),
-}, nil
+	}, nil
 }
 
 // RequestRehabRequest defines parameters for RequestRehab.

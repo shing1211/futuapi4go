@@ -5,43 +5,43 @@ import "fmt"
 type ErrorCode int32
 
 const (
-	ErrCodeSuccess        ErrorCode = 0
-	ErrCodeInvalidParams   ErrorCode = -1
+	ErrCodeSuccess       ErrorCode = 0
+	ErrCodeInvalidParams ErrorCode = -1
 	ErrCodeTimeout       ErrorCode = -100
 	ErrCodeDisconnected  ErrorCode = -200
 	ErrCodeUnknown       ErrorCode = -400
 
 	// Connection errors
-	ErrCodeNetworkError    ErrorCode = -101
+	ErrCodeNetworkError ErrorCode = -101
 	ErrCodeProtocolErr  ErrorCode = -102
-	ErrCodeServerBusy    ErrorCode = -103
+	ErrCodeServerBusy   ErrorCode = -103
 
 	// Account errors
-	ErrCodeAccNotFound      ErrorCode = -201
-	ErrCodeAccDisabled    ErrorCode = -202
-	ErrCodeAccLocked      ErrorCode = -203
-	ErrCodeAccAuthFail    ErrorCode = -204
+	ErrCodeAccNotFound ErrorCode = -201
+	ErrCodeAccDisabled ErrorCode = -202
+	ErrCodeAccLocked   ErrorCode = -203
+	ErrCodeAccAuthFail ErrorCode = -204
 
 	// Trading errors
 	ErrCodeInsufficientBalance ErrorCode = -301
-	ErrCodeMarketClosed      ErrorCode = -302
-	ErrCodeOrderRejected    ErrorCode = -303
-	ErrCodePriceOutOfRange ErrorCode = -304
-	ErrCodeQtyTooLarge      ErrorCode = -305
-	ErrCodeTradingDisabled ErrorCode = -306
-	ErrCodeInvalidSecurity ErrorCode = -307
-	ErrCodeNoPermission    ErrorCode = -308
+	ErrCodeMarketClosed        ErrorCode = -302
+	ErrCodeOrderRejected       ErrorCode = -303
+	ErrCodePriceOutOfRange     ErrorCode = -304
+	ErrCodeQtyTooLarge         ErrorCode = -305
+	ErrCodeTradingDisabled     ErrorCode = -306
+	ErrCodeInvalidSecurity     ErrorCode = -307
+	ErrCodeNoPermission        ErrorCode = -308
 
 	// Subscription errors
-	ErrCodeAlreadySubbed  ErrorCode = -401
-	ErrCodeNotSubbed      ErrorCode = -402
+	ErrCodeAlreadySubbed ErrorCode = -401
+	ErrCodeNotSubbed     ErrorCode = -402
 )
 
 type FutuError struct {
 	Code    ErrorCode
 	Message string
-	Func   string
-	Err    error
+	Func    string
+	Err     error
 }
 
 func (e *FutuError) Error() string {

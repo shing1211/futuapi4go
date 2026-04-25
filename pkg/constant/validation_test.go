@@ -4,10 +4,10 @@ import "testing"
 
 func TestLotSize(t *testing.T) {
 	tests := []struct {
-		name    string
-		market  TrdMarket
-		want    float64
-		wantOk  bool
+		name   string
+		market TrdMarket
+		want   float64
+		wantOk bool
 	}{
 		{"HK", TrdMarket_HK, 100, true},
 		{"US", TrdMarket_US, 1, true},

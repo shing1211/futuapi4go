@@ -7,7 +7,7 @@ var (
 	ErrInvalidAccID = &FutuError{Code: ErrCodeInvalidParams, Message: "account ID is required"}
 	ErrInvalidPrice = &FutuError{Code: ErrCodeInvalidParams, Message: "price must be positive"}
 	ErrInvalidQty   = &FutuError{Code: ErrCodeInvalidParams, Message: "quantity must be positive"}
-	ErrInvalidCode = &FutuError{Code: ErrCodeInvalidParams, Message: "stock code is required"}
+	ErrInvalidCode  = &FutuError{Code: ErrCodeInvalidParams, Message: "stock code is required"}
 )
 
 type PlaceOrderRequest interface {
@@ -73,7 +73,7 @@ func wrapValidationError(prefix string, vErr error) error {
 		return &FutuError{
 			Code:    fe.Code,
 			Message: fe.Message,
-			Func:   prefix,
+			Func:    prefix,
 		}
 	}
 	return fmt.Errorf("%s: %w", prefix, vErr)
@@ -81,9 +81,9 @@ func wrapValidationError(prefix string, vErr error) error {
 
 var lotSizeMap = map[TrdMarket]float64{
 	TrdMarket_HK:   100,
-	TrdMarket_US:    1,
-	TrdMarket_CN:    100,
-	TrdMarket_HKCC:  100,
+	TrdMarket_US:   1,
+	TrdMarket_CN:   100,
+	TrdMarket_HKCC: 100,
 }
 
 func LotSize(market TrdMarket) (float64, bool) {

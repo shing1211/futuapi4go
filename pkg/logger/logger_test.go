@@ -8,7 +8,7 @@ import (
 
 func TestLevelString(t *testing.T) {
 	tests := []struct {
-		lvl Level
+		lvl  Level
 		want string
 	}{
 		{LevelDebug, "DEBUG"},

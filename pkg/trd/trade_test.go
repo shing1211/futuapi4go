@@ -370,7 +370,7 @@ func TestUnlockTradeRequestFields(t *testing.T) {
 
 func TestSensitiveStringDoesNotLeakPassword(t *testing.T) {
 	pwd := constant.SensitiveString("mysecretpassword")
-	
+
 	if fmt.Sprintf("%s", pwd) != "[REDACTED]" {
 		t.Error("SensitiveString should redact in s format")
 	}

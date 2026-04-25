@@ -22,13 +22,13 @@
 //
 // The breaker is safe for concurrent use.
 //
-// Copyright 2026 shing1211
+// # Copyright 2026 shing1211
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,12 +71,12 @@ type Breaker struct {
 	state    State
 	failures int
 
-	threshold    int
-	cooldown     time.Duration
+	threshold   int
+	cooldown    time.Duration
 	halfOpenMax int
 
 	lastFailure time.Time
-	openTime   time.Time
+	openTime    time.Time
 
 	onOpen   func()
 	onClose  func()
@@ -84,8 +84,8 @@ type Breaker struct {
 }
 
 type Config struct {
-	Threshold    int
-	Cooldown     time.Duration
+	Threshold   int
+	Cooldown    time.Duration
 	HalfOpenMax int
 	OnOpen      func()
 	OnClose     func()
@@ -120,7 +120,7 @@ func WithOnChange(fn func(from, to State)) Option {
 
 func New(opts ...Option) *Breaker {
 	cfg := Config{
-		Threshold:    5,
+		Threshold:   5,
 		Cooldown:    30 * time.Second,
 		HalfOpenMax: 1,
 	}
@@ -128,13 +128,13 @@ func New(opts ...Option) *Breaker {
 		opt(&cfg)
 	}
 	return &Breaker{
-		state:        StateClosed,
-		threshold:    cfg.Threshold,
-		cooldown:     cfg.Cooldown,
-		halfOpenMax:  cfg.HalfOpenMax,
-		onOpen:       cfg.OnOpen,
-		onClose:      cfg.OnClose,
-		onChange:     cfg.OnChange,
+		state:       StateClosed,
+		threshold:   cfg.Threshold,
+		cooldown:    cfg.Cooldown,
+		halfOpenMax: cfg.HalfOpenMax,
+		onOpen:      cfg.OnOpen,
+		onClose:     cfg.OnClose,
+		onChange:    cfg.OnChange,
 	}
 }
 
@@ -272,20 +272,20 @@ func (b *Breaker) Stats() Stats {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return Stats{
-		State:         b.state,
-		Failures:      b.failures,
-		Threshold:     b.threshold,
+		State:        b.state,
+		Failures:     b.failures,
+		Threshold:    b.threshold,
 		CooldownSecs: int(b.cooldown.Seconds()),
-		LastFailure:   b.lastFailure,
-		OpenSince:     b.openTime,
+		LastFailure:  b.lastFailure,
+		OpenSince:    b.openTime,
 	}
 }
 
 type Stats struct {
-	State         State
-	Failures      int
-	Threshold     int
+	State        State
+	Failures     int
+	Threshold    int
 	CooldownSecs int
-	LastFailure   time.Time
-	OpenSince     time.Time
+	LastFailure  time.Time
+	OpenSince    time.Time
 }

@@ -147,7 +147,7 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 	return &constant.FutuError{
 		Code:    code,
 		Message: retMsg,
-		Func:   funcName,
+		Func:    funcName,
 	}
 }
 
@@ -205,10 +205,10 @@ func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory constant.Trd
 
 // AccCashInfo represents per-currency cash information (futures accounts).
 type AccCashInfo struct {
-	Currency        int32
-	Cash            float64
+	Currency         int32
+	Cash             float64
 	AvailableBalance float64
-	NetCashPower    float64
+	NetCashPower     float64
 }
 
 // AccMarketInfo represents per-market asset information.
@@ -355,10 +355,10 @@ func accCashInfoListToGo(in []*trdcommon.AccCashInfo) []AccCashInfo {
 			continue
 		}
 		out = append(out, AccCashInfo{
-			Currency:        c.GetCurrency(),
-			Cash:            c.GetCash(),
+			Currency:         c.GetCurrency(),
+			Cash:             c.GetCash(),
 			AvailableBalance: c.GetAvailableBalance(),
-			NetCashPower:    c.GetNetCashPower(),
+			NetCashPower:     c.GetNetCashPower(),
 		})
 	}
 	return out

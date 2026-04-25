@@ -34,13 +34,13 @@
 //	// Trading Environment
 //	trdEnv := constant.TrdEnv_Real  // 1
 //
-// Copyright 2026 shing1211
+// # Copyright 2026 shing1211
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,12 +65,12 @@ const (
 	ProtoID_InitQuantMode      = 1009
 
 	// Trading APIs
-	ProtoID_Trd_GetAccList               = 2001 // 获取业务账户列表
+	ProtoID_Trd_GetAccList              = 2001 // 获取业务账户列表
 	ProtoID_Trd_UnlockTrade             = 2005 // 解锁或锁定交易
 	ProtoID_Trd_SubAccPush              = 2008 // 订阅业务账户的交易推送数据
 	ProtoID_Trd_GetFunds                = 2101 // 获取账户资金
 	ProtoID_Trd_GetPositionList         = 2102 // 获取账户持仓
-	ProtoID_Trd_GetMaxTrdQtys          = 2111 // 查询最大买卖数量
+	ProtoID_Trd_GetMaxTrdQtys           = 2111 // 查询最大买卖数量
 	ProtoID_Trd_GetOrderList            = 2201 // 获取订单列表
 	ProtoID_Trd_PlaceOrder              = 2202 // 下单
 	ProtoID_Trd_ModifyOrder             = 2205 // 修改订单
@@ -84,52 +84,52 @@ const (
 	ProtoID_Trd_FlowSummary             = 2226 // 获取现金流水
 
 	// Qot (Quote) APIs
-	ProtoID_Qot_Sub                    = 3001 // 订阅或者反订阅
-	ProtoID_Qot_RegQotPush             = 3002 // 注册推送
-	ProtoID_Qot_GetSubInfo             = 3003 // 获取订阅信息
-	ProtoID_Qot_GetBasicQot           = 3004 // 获取股票基本行情
-	ProtoID_Qot_UpdateBasicQot        = 3005 // 推送股票基本行情
-	ProtoID_Qot_GetKL                 = 3006 // 获取K线
-	ProtoID_Qot_UpdateKL               = 3007 // 推送K线
-	ProtoID_Qot_GetRT                 = 3008 // 获取分时
-	ProtoID_Qot_UpdateRT              = 3009 // 推送分时
-	ProtoID_Qot_GetTicker             = 3010 // 获取逐笔
-	ProtoID_Qot_UpdateTicker          = 3011 // 推送逐笔
-	ProtoID_Qot_GetOrderBook          = 3012 // 获取买卖盘
-	ProtoID_Qot_UpdateOrderBook       = 3013 // 推送买卖盘
-	ProtoID_Qot_GetBroker             = 3014 // 获取经纪队列
-	ProtoID_Qot_UpdateBroker          = 3015 // 推送经纪队列
-	ProtoID_Qot_UpdatePriceReminder   = 3019 // 到价提醒通知
+	ProtoID_Qot_Sub                 = 3001 // 订阅或者反订阅
+	ProtoID_Qot_RegQotPush          = 3002 // 注册推送
+	ProtoID_Qot_GetSubInfo          = 3003 // 获取订阅信息
+	ProtoID_Qot_GetBasicQot         = 3004 // 获取股票基本行情
+	ProtoID_Qot_UpdateBasicQot      = 3005 // 推送股票基本行情
+	ProtoID_Qot_GetKL               = 3006 // 获取K线
+	ProtoID_Qot_UpdateKL            = 3007 // 推送K线
+	ProtoID_Qot_GetRT               = 3008 // 获取分时
+	ProtoID_Qot_UpdateRT            = 3009 // 推送分时
+	ProtoID_Qot_GetTicker           = 3010 // 获取逐笔
+	ProtoID_Qot_UpdateTicker        = 3011 // 推送逐笔
+	ProtoID_Qot_GetOrderBook        = 3012 // 获取买卖盘
+	ProtoID_Qot_UpdateOrderBook     = 3013 // 推送买卖盘
+	ProtoID_Qot_GetBroker           = 3014 // 获取经纪队列
+	ProtoID_Qot_UpdateBroker        = 3015 // 推送经纪队列
+	ProtoID_Qot_UpdatePriceReminder = 3019 // 到价提醒通知
 
 	// Historical Data
-	ProtoID_Qot_RequestHistoryKL       = 3103 // 拉取历史K线
+	ProtoID_Qot_RequestHistoryKL      = 3103 // 拉取历史K线
 	ProtoID_Qot_RequestHistoryKLQuota = 3104 // 拉取历史K线已经用掉的额度
 	ProtoID_Qot_RequestRehab          = 3105 // 获取除权信息
 
 	// Other Qot APIs
-	ProtoID_Qot_GetSuspend             = 3201 // 获取股票停牌信息
-	ProtoID_Qot_GetStaticInfo          = 3202 // 获取股票列表
-	ProtoID_Qot_GetSecuritySnapshot    = 3203 // 获取股票快照
-	ProtoID_Qot_GetPlateSet           = 3204 // 获取板块集合下的板块
-	ProtoID_Qot_GetPlateSecurity       = 3205 // 获取板块下的股票
-	ProtoID_Qot_GetReference          = 3206 // 获取正股相关股票，暂时只有窝轮
-	ProtoID_Qot_GetOwnerPlate         = 3207 // 获取股票所属板块
-	ProtoID_Qot_GetHoldingChangeList  = 3208 // 获取高管持股变动
-	ProtoID_Qot_GetOptionChain        = 3209 // 获取期权链
-	ProtoID_Qot_GetWarrant            = 3210 // 拉取窝轮信息
-	ProtoID_Qot_GetCapitalFlow        = 3211 // 获取资金流向
-	ProtoID_Qot_GetCapitalDistribution = 3212 // 获取资金分布
-	ProtoID_Qot_GetUserSecurity       = 3213 // 获取自选股分组下的股票
-	ProtoID_Qot_ModifyUserSecurity    = 3214 // 修改自选股分组下的股票
-	ProtoID_Qot_StockFilter          = 3215 // 条件选股
-	ProtoID_Qot_GetCodeChange        = 3216 // 代码变换
-	ProtoID_Qot_GetIpoList           = 3217 // 获取新股Ipo
-	ProtoID_Qot_GetFutureInfo         = 3218 // 获取期货资料
-	ProtoID_Qot_RequestTradeDate      = 3219 // 在线拉取交易日
-	ProtoID_Qot_SetPriceReminder      = 3220 // 设置到价提醒
-	ProtoID_Qot_GetPriceReminder      = 3221 // 获取到价提醒
-	ProtoID_Qot_GetUserSecurityGroup  = 3222 // 获取自选股分组
-	ProtoID_Qot_GetMarketState        = 3223 // 获取指定品种的市场状态
+	ProtoID_Qot_GetSuspend              = 3201 // 获取股票停牌信息
+	ProtoID_Qot_GetStaticInfo           = 3202 // 获取股票列表
+	ProtoID_Qot_GetSecuritySnapshot     = 3203 // 获取股票快照
+	ProtoID_Qot_GetPlateSet             = 3204 // 获取板块集合下的板块
+	ProtoID_Qot_GetPlateSecurity        = 3205 // 获取板块下的股票
+	ProtoID_Qot_GetReference            = 3206 // 获取正股相关股票，暂时只有窝轮
+	ProtoID_Qot_GetOwnerPlate           = 3207 // 获取股票所属板块
+	ProtoID_Qot_GetHoldingChangeList    = 3208 // 获取高管持股变动
+	ProtoID_Qot_GetOptionChain          = 3209 // 获取期权链
+	ProtoID_Qot_GetWarrant              = 3210 // 拉取窝轮信息
+	ProtoID_Qot_GetCapitalFlow          = 3211 // 获取资金流向
+	ProtoID_Qot_GetCapitalDistribution  = 3212 // 获取资金分布
+	ProtoID_Qot_GetUserSecurity         = 3213 // 获取自选股分组下的股票
+	ProtoID_Qot_ModifyUserSecurity      = 3214 // 修改自选股分组下的股票
+	ProtoID_Qot_StockFilter             = 3215 // 条件选股
+	ProtoID_Qot_GetCodeChange           = 3216 // 代码变换
+	ProtoID_Qot_GetIpoList              = 3217 // 获取新股Ipo
+	ProtoID_Qot_GetFutureInfo           = 3218 // 获取期货资料
+	ProtoID_Qot_RequestTradeDate        = 3219 // 在线拉取交易日
+	ProtoID_Qot_SetPriceReminder        = 3220 // 设置到价提醒
+	ProtoID_Qot_GetPriceReminder        = 3221 // 获取到价提醒
+	ProtoID_Qot_GetUserSecurityGroup    = 3222 // 获取自选股分组
+	ProtoID_Qot_GetMarketState          = 3223 // 获取指定品种的市场状态
 	ProtoID_Qot_GetOptionExpirationDate = 3224 // 获取期权到期日
 )
 
@@ -201,18 +201,18 @@ var MarketToTrdSecMarket = map[int32]TrdSecMarket{
 type SecurityType int32
 
 const (
-	SecurityType_None   SecurityType = 0  // 未知
-	SecurityType_Bond   SecurityType = 1  // 场内债券
-	SecurityType_Bwrt   SecurityType = 2  // 一揽子权证
-	SecurityType_Stock  SecurityType = 3  // 正股
-	SecurityType_ETF    SecurityType = 4  // 信托/ETF
-	SecurityType_Warrant SecurityType = 5  // 窝轮
-	SecurityType_Index  SecurityType = 6  // 指数
-	SecurityType_Plate  SecurityType = 7  // 板块
-	SecurityType_Drvt   SecurityType = 8  // 期权
+	SecurityType_None     SecurityType = 0  // 未知
+	SecurityType_Bond     SecurityType = 1  // 场内债券
+	SecurityType_Bwrt     SecurityType = 2  // 一揽子权证
+	SecurityType_Stock    SecurityType = 3  // 正股
+	SecurityType_ETF      SecurityType = 4  // 信托/ETF
+	SecurityType_Warrant  SecurityType = 5  // 窝轮
+	SecurityType_Index    SecurityType = 6  // 指数
+	SecurityType_Plate    SecurityType = 7  // 板块
+	SecurityType_Drvt     SecurityType = 8  // 期权
 	SecurityType_PlateSet SecurityType = 9  // 板块集
-	SecurityType_Future SecurityType = 10 // 期货
-	SecurityType_Forex  SecurityType = 11 // 外汇
+	SecurityType_Future   SecurityType = 10 // 期货
+	SecurityType_Forex    SecurityType = 11 // 外汇
 )
 
 // =============================================================================
@@ -262,13 +262,13 @@ const (
 	KLType_K_1Min    KLType = 1  // 1分钟
 	KLType_K_Day     KLType = 2  // 日K
 	KLType_K_Week    KLType = 3  // 周K
-	KLType_K_Month    KLType = 4  // 月K
+	KLType_K_Month   KLType = 4  // 月K
 	KLType_K_Year    KLType = 5  // 年K
 	KLType_K_5Min    KLType = 6  // 5分钟
 	KLType_K_15Min   KLType = 7  // 15分钟
 	KLType_K_30Min   KLType = 8  // 30分钟
 	KLType_K_60Min   KLType = 9  // 60分钟
-	KLType_K_3Min   KLType = 10 // 3分钟
+	KLType_K_3Min    KLType = 10 // 3分钟
 	KLType_K_Quarter KLType = 11 // 季度K
 )
 
@@ -280,8 +280,8 @@ const (
 type RehabType int32
 
 const (
-	RehabType_None    RehabType = 0 // 不复权
-	RehabType_Forward RehabType = 1 // 前复权
+	RehabType_None     RehabType = 0 // 不复权
+	RehabType_Forward  RehabType = 1 // 前复权
 	RehabType_Backward RehabType = 2 // 后复权
 )
 
@@ -308,9 +308,9 @@ const (
 type TickerDirection int32
 
 const (
-	TickerDirection_None   TickerDirection = 0 // 未知
-	TickerDirection_Buy    TickerDirection = 1 // 买
-	TickerDirection_Sell   TickerDirection = 2 // 卖
+	TickerDirection_None    TickerDirection = 0 // 未知
+	TickerDirection_Buy     TickerDirection = 1 // 买
+	TickerDirection_Sell    TickerDirection = 2 // 卖
 	TickerDirection_Neutral TickerDirection = 3 // 中性
 )
 
@@ -322,10 +322,10 @@ const (
 type HolderCategory int32
 
 const (
-	HolderCategory_None       HolderCategory = 0 // 未知
-	HolderCategory_Agency     HolderCategory = 1 // 机构
-	HolderCategory_Fund       HolderCategory = 2 // 基金
-	HolderCategory_SeniorMgr  HolderCategory = 3 // 高管
+	HolderCategory_None      HolderCategory = 0 // 未知
+	HolderCategory_Agency    HolderCategory = 1 // 机构
+	HolderCategory_Fund      HolderCategory = 2 // 基金
+	HolderCategory_SeniorMgr HolderCategory = 3 // 高管
 )
 
 // =============================================================================
@@ -362,17 +362,17 @@ const (
 type MarketState int32
 
 const (
-	MarketState_None              MarketState = 0  // 无交易,美股未开盘
-	MarketState_Auction           MarketState = 1  // 竞价
-	MarketState_WaitingOpen       MarketState = 2  // 早盘前等待开盘
-	MarketState_Morning           MarketState = 3  // 早盘
-	MarketState_Rest              MarketState = 4  // 午间休市
-	MarketState_Afternoon         MarketState = 5  // 午盘
+	MarketState_None             MarketState = 0  // 无交易,美股未开盘
+	MarketState_Auction          MarketState = 1  // 竞价
+	MarketState_WaitingOpen      MarketState = 2  // 早盘前等待开盘
+	MarketState_Morning          MarketState = 3  // 早盘
+	MarketState_Rest             MarketState = 4  // 午间休市
+	MarketState_Afternoon        MarketState = 5  // 午盘
 	MarketState_Closed           MarketState = 6  // 收盘
-	MarketState_PreMarketBegin    MarketState = 7  // 盘前开始
-	MarketState_PreMarketEnd      MarketState = 8  // 盘前结束
-	MarketState_AfterHoursBegin   MarketState = 9  // 盘后开始
-	MarketState_AfterHoursEnd     MarketState = 10 // 盘后结束
+	MarketState_PreMarketBegin   MarketState = 7  // 盘前开始
+	MarketState_PreMarketEnd     MarketState = 8  // 盘前结束
+	MarketState_AfterHoursBegin  MarketState = 9  // 盘后开始
+	MarketState_AfterHoursEnd    MarketState = 10 // 盘后结束
 	MarketState_NightOpen        MarketState = 11 // 夜市开盘
 	MarketState_NightEnd         MarketState = 12 // 夜市收盘
 	MarketState_FutureDayOpen    MarketState = 13 // 期指日市开盘
@@ -381,12 +381,12 @@ const (
 	MarketState_FutureDayWait    MarketState = 16 // 期指日市等待开盘
 	MarketState_HK_CAS           MarketState = 17 // 港股盘后竞价
 	MarketState_FutureNightWait  MarketState = 18 // 夜市等待开盘
-	MarketState_FutureAfternoon   MarketState = 19 // 期货下午开盘
-	MarketState_FutureSwitchDate  MarketState = 20 // 期货切交易日
-	MarketState_FutureOpen        MarketState = 21 // 期货开盘
-	MarketState_FutureBreak       MarketState = 22 // 期货中盘休息
-	MarketState_FutureBreakOver   MarketState = 23 // 期货休息后开盘
-	MarketState_FutureClose       MarketState = 24 // 期货收盘
+	MarketState_FutureAfternoon  MarketState = 19 // 期货下午开盘
+	MarketState_FutureSwitchDate MarketState = 20 // 期货切交易日
+	MarketState_FutureOpen       MarketState = 21 // 期货开盘
+	MarketState_FutureBreak      MarketState = 22 // 期货中盘休息
+	MarketState_FutureBreakOver  MarketState = 23 // 期货休息后开盘
+	MarketState_FutureClose      MarketState = 24 // 期货收盘
 )
 
 // =============================================================================
@@ -409,26 +409,26 @@ const (
 type TrdMarket int32
 
 const (
-	TrdMarket_None                 TrdMarket = 0   // 未知市场
-	TrdMarket_HK                  TrdMarket = 1   // 香港市场
-	TrdMarket_US                  TrdMarket = 2   // 美国市场
-	TrdMarket_CN                  TrdMarket = 3   // 大陆市场
-	TrdMarket_HKCC                TrdMarket = 4   // 香港A股通市场
-	TrdMarket_Futures             TrdMarket = 5   // 期货市场
-	TrdMarket_SG                  TrdMarket = 6   // 新加坡市场
-	TrdMarket_AU                  TrdMarket = 8   // 澳洲市场
-	TrdMarket_JP                  TrdMarket = 15  // 日本市场
-	TrdMarket_MY                  TrdMarket = 111 // 马来西亚市场
-	TrdMarket_CA                  TrdMarket = 112 // 加拿大市场
-	TrdMarket_FuturesSimulateHK  TrdMarket = 10  // 模拟交易期货市场
-	TrdMarket_FuturesSimulateUS  TrdMarket = 11  // 模拟交易期货市场
-	TrdMarket_FuturesSimulateSG  TrdMarket = 12  // 模拟交易期货市场
-	TrdMarket_FuturesSimulateJP  TrdMarket = 13  // 模拟交易期货市场
-	TrdMarket_HKFund              TrdMarket = 113 // 香港基金市场
-	TrdMarket_USFund              TrdMarket = 123 // 美国基金市场
-	TrdMarket_SGFund              TrdMarket = 124 // 新加坡基金市场
-	TrdMarket_MYFund              TrdMarket = 125 // 马来西亚基金市场
-	TrdMarket_JPFund              TrdMarket = 126 // 日本基金市场
+	TrdMarket_None              TrdMarket = 0   // 未知市场
+	TrdMarket_HK                TrdMarket = 1   // 香港市场
+	TrdMarket_US                TrdMarket = 2   // 美国市场
+	TrdMarket_CN                TrdMarket = 3   // 大陆市场
+	TrdMarket_HKCC              TrdMarket = 4   // 香港A股通市场
+	TrdMarket_Futures           TrdMarket = 5   // 期货市场
+	TrdMarket_SG                TrdMarket = 6   // 新加坡市场
+	TrdMarket_AU                TrdMarket = 8   // 澳洲市场
+	TrdMarket_JP                TrdMarket = 15  // 日本市场
+	TrdMarket_MY                TrdMarket = 111 // 马来西亚市场
+	TrdMarket_CA                TrdMarket = 112 // 加拿大市场
+	TrdMarket_FuturesSimulateHK TrdMarket = 10  // 模拟交易期货市场
+	TrdMarket_FuturesSimulateUS TrdMarket = 11  // 模拟交易期货市场
+	TrdMarket_FuturesSimulateSG TrdMarket = 12  // 模拟交易期货市场
+	TrdMarket_FuturesSimulateJP TrdMarket = 13  // 模拟交易期货市场
+	TrdMarket_HKFund            TrdMarket = 113 // 香港基金市场
+	TrdMarket_USFund            TrdMarket = 123 // 美国基金市场
+	TrdMarket_SGFund            TrdMarket = 124 // 新加坡基金市场
+	TrdMarket_MYFund            TrdMarket = 125 // 马来西亚基金市场
+	TrdMarket_JPFund            TrdMarket = 126 // 日本基金市场
 )
 
 // =============================================================================
@@ -473,24 +473,24 @@ const (
 type OrderType int32
 
 const (
-	OrderType_None            OrderType = 0  // 未知
-	OrderType_Normal          OrderType = 1  // 普通订单(港股的增强限价单、A股限价委托、美股的限价单)
-	OrderType_Market          OrderType = 2  // 市价
-	OrderType_AbsoluteLimit  OrderType = 3  // 港股_限价(只有价格完全匹配才成交)
-	OrderType_Auction         OrderType = 4  // 港股_竞价
-	OrderType_AuctionLimit    OrderType = 5  // 港股_竞价限价
-	OrderType_SpecialLimit    OrderType = 6  // 港股_特别限价(即市价IOC)
-	OrderType_SpecialLimitAll OrderType = 7  // 港股_特别限价(要么全部成交，要么自动撤单)
-	OrderType_Stop           OrderType = 10 // 止损市价单
-	OrderType_StopLimit      OrderType = 11 // 止损限价单
-	OrderType_MarketIfTouched OrderType = 12 // 触及市价单(止盈)
-	OrderType_LimitIfTouched  OrderType = 13 // 触及限价单(止盈)
-	OrderType_TrailingStop    OrderType = 14 // 跟踪止损市价单
+	OrderType_None              OrderType = 0  // 未知
+	OrderType_Normal            OrderType = 1  // 普通订单(港股的增强限价单、A股限价委托、美股的限价单)
+	OrderType_Market            OrderType = 2  // 市价
+	OrderType_AbsoluteLimit     OrderType = 3  // 港股_限价(只有价格完全匹配才成交)
+	OrderType_Auction           OrderType = 4  // 港股_竞价
+	OrderType_AuctionLimit      OrderType = 5  // 港股_竞价限价
+	OrderType_SpecialLimit      OrderType = 6  // 港股_特别限价(即市价IOC)
+	OrderType_SpecialLimitAll   OrderType = 7  // 港股_特别限价(要么全部成交，要么自动撤单)
+	OrderType_Stop              OrderType = 10 // 止损市价单
+	OrderType_StopLimit         OrderType = 11 // 止损限价单
+	OrderType_MarketIfTouched   OrderType = 12 // 触及市价单(止盈)
+	OrderType_LimitIfTouched    OrderType = 13 // 触及限价单(止盈)
+	OrderType_TrailingStop      OrderType = 14 // 跟踪止损市价单
 	OrderType_TrailingStopLimit OrderType = 15 // 跟踪止损限价单
-	OrderType_TWAP            OrderType = 20 // 算法订单TWAP市价单(仅展示)
-	OrderType_TWAPLimit      OrderType = 21 // 算法订单TWAP限价单(仅展示)
-	OrderType_VWAP           OrderType = 22 // 算法订单VWAP市价单(仅展示)
-	OrderType_VWAPLimit      OrderType = 23 // 算法订单VWAP限价单(仅展示)
+	OrderType_TWAP              OrderType = 20 // 算法订单TWAP市价单(仅展示)
+	OrderType_TWAPLimit         OrderType = 21 // 算法订单TWAP限价单(仅展示)
+	OrderType_VWAP              OrderType = 22 // 算法订单VWAP市价单(仅展示)
+	OrderType_VWAPLimit         OrderType = 23 // 算法订单VWAP限价单(仅展示)
 )
 
 // =============================================================================
@@ -501,23 +501,23 @@ const (
 type OrderStatus int32
 
 const (
-	OrderStatus_None            OrderStatus = 0  // 未知状态
-	OrderStatus_Unsubmitted     OrderStatus = 1  // 未提交
+	OrderStatus_None           OrderStatus = 0  // 未知状态
+	OrderStatus_Unsubmitted    OrderStatus = 1  // 未提交
 	OrderStatus_WaitingSubmit  OrderStatus = 2  // 等待提交
-	OrderStatus_Submitting      OrderStatus = 3  // 提交中
-	OrderStatus_SubmitFailed    OrderStatus = 4  // 提交失败，下单失败
-	OrderStatus_TimeOut         OrderStatus = 5  // 处理超时，结果未知
-	OrderStatus_Submitted       OrderStatus = 6  // 已提交，等待成交
-	OrderStatus_FilledPart      OrderStatus = 7  // 部分成交
-	OrderStatus_FilledAll       OrderStatus = 8  // 全部已成
-	OrderStatus_CancellingPart  OrderStatus = 9  // 正在撤单_部分(部分已成交，正在撤销剩余部分)
-	OrderStatus_CancellingAll    OrderStatus = 10 // 正在撤单_全部
-	OrderStatus_CancelledPart   OrderStatus = 11 // 部分成交，剩余部分已撤单
-	OrderStatus_CancelledAll     OrderStatus = 12 // 全部已撤单，无成交
-	OrderStatus_Failed          OrderStatus = 13 // 下单失败，服务拒绝
-	OrderStatus_Disabled        OrderStatus = 14 // 已失效
-	OrderStatus_Deleted         OrderStatus = 15 // 已删除，无成交的订单才能删除
-	OrderStatus_FillCancelled   OrderStatus = 16 // 成交被撤销，一般遇不到，意思是已经成交的订单被回滚撤销，成交无效变为废单
+	OrderStatus_Submitting     OrderStatus = 3  // 提交中
+	OrderStatus_SubmitFailed   OrderStatus = 4  // 提交失败，下单失败
+	OrderStatus_TimeOut        OrderStatus = 5  // 处理超时，结果未知
+	OrderStatus_Submitted      OrderStatus = 6  // 已提交，等待成交
+	OrderStatus_FilledPart     OrderStatus = 7  // 部分成交
+	OrderStatus_FilledAll      OrderStatus = 8  // 全部已成
+	OrderStatus_CancellingPart OrderStatus = 9  // 正在撤单_部分(部分已成交，正在撤销剩余部分)
+	OrderStatus_CancellingAll  OrderStatus = 10 // 正在撤单_全部
+	OrderStatus_CancelledPart  OrderStatus = 11 // 部分成交，剩余部分已撤单
+	OrderStatus_CancelledAll   OrderStatus = 12 // 全部已撤单，无成交
+	OrderStatus_Failed         OrderStatus = 13 // 下单失败，服务拒绝
+	OrderStatus_Disabled       OrderStatus = 14 // 已失效
+	OrderStatus_Deleted        OrderStatus = 15 // 已删除，无成交的订单才能删除
+	OrderStatus_FillCancelled  OrderStatus = 16 // 成交被撤销，一般遇不到，意思是已经成交的订单被回滚撤销，成交无效变为废单
 )
 
 // =============================================================================
@@ -544,11 +544,11 @@ const (
 type TrdSide int32
 
 const (
-	TrdSide_None       TrdSide = 0 // 未知
-	TrdSide_Buy        TrdSide = 1 // 买
-	TrdSide_Sell       TrdSide = 2 // 卖
-	TrdSide_SellShort  TrdSide = 3 // 卖空
-	TrdSide_BuyBack    TrdSide = 4 // 买回
+	TrdSide_None      TrdSide = 0 // 未知
+	TrdSide_Buy       TrdSide = 1 // 买
+	TrdSide_Sell      TrdSide = 2 // 卖
+	TrdSide_SellShort TrdSide = 3 // 卖空
+	TrdSide_BuyBack   TrdSide = 4 // 买回
 )
 
 // =============================================================================
@@ -572,8 +572,8 @@ const (
 type TrailType int32
 
 const (
-	TrailType_None  TrailType = 0 // 未知
-	TrailType_Ratio TrailType = 1 // 跟踪百分比
+	TrailType_None   TrailType = 0 // 未知
+	TrailType_Ratio  TrailType = 1 // 跟踪百分比
 	TrailType_Amount TrailType = 2 // 跟踪额
 )
 
@@ -585,11 +585,11 @@ const (
 type TimeInForce int32
 
 const (
-	TimeInForce_None    TimeInForce = 0 // 未知
-	TimeInForce_Day     TimeInForce = 1 // 当日有效
-	TimeInForce_GTC     TimeInForce = 2 // 取消前有效
-	TimeInForce_IOC     TimeInForce = 3 // 即时或取消
-	TimeInForce_FOK     TimeInForce = 4 // 全部成交或取消
+	TimeInForce_None TimeInForce = 0 // 未知
+	TimeInForce_Day  TimeInForce = 1 // 当日有效
+	TimeInForce_GTC  TimeInForce = 2 // 取消前有效
+	TimeInForce_IOC  TimeInForce = 3 // 即时或取消
+	TimeInForce_FOK  TimeInForce = 4 // 全部成交或取消
 )
 
 // =============================================================================
@@ -613,11 +613,11 @@ const (
 type WarrantType int32
 
 const (
-	WarrantType_None  WarrantType = 0 // 未知
-	WarrantType_Buy   WarrantType = 1 // 认购
-	WarrantType_Sell  WarrantType = 2 // 认沽
-	WarrantType_Bull  WarrantType = 3 // 牛
-	WarrantType_Bear  WarrantType = 4 // 熊
+	WarrantType_None   WarrantType = 0 // 未知
+	WarrantType_Buy    WarrantType = 1 // 认购
+	WarrantType_Sell   WarrantType = 2 // 认沽
+	WarrantType_Bull   WarrantType = 3 // 牛
+	WarrantType_Bear   WarrantType = 4 // 熊
 	WarrantType_InLine WarrantType = 5 // 界内证
 )
 
@@ -629,9 +629,9 @@ const (
 type PriceReminderType int32
 
 const (
-	PriceReminderType_None  PriceReminderType = 0 // 未知
-	PriceReminderType_Above PriceReminderType = 1 // 高于
-	PriceReminderType_Below PriceReminderType = 2 // 低于
+	PriceReminderType_None   PriceReminderType = 0 // 未知
+	PriceReminderType_Above  PriceReminderType = 1 // 高于
+	PriceReminderType_Below  PriceReminderType = 2 // 低于
 	PriceReminderType_Remind PriceReminderType = 3 // 提醒
 )
 
@@ -643,10 +643,10 @@ const (
 type PriceReminderOp int32
 
 const (
-	PriceReminderOp_None  PriceReminderOp = 0 // 未知
-	PriceReminderOp_Add   PriceReminderOp = 1 // 添加
-	PriceReminderOp_Del   PriceReminderOp = 2 // 删除
-	PriceReminderOp_Edit  PriceReminderOp = 3 // 修改
+	PriceReminderOp_None PriceReminderOp = 0 // 未知
+	PriceReminderOp_Add  PriceReminderOp = 1 // 添加
+	PriceReminderOp_Del  PriceReminderOp = 2 // 删除
+	PriceReminderOp_Edit PriceReminderOp = 3 // 修改
 )
 
 // =============================================================================
@@ -657,13 +657,13 @@ const (
 type AccounterType int32
 
 const (
-	AccounterType_None         AccounterType = 0 // 未知
-	AccounterType_Cash         AccounterType = 1 // 现金账户
-	AccounterType_Margin       AccounterType = 2 // 保证金账户
-	AccounterType_Short        AccounterType = 3 // 沽空账户
-	AccounterType_Futures      AccounterType = 4 // 期货账户
-	AccounterType_Option       AccounterType = 5 // 期权账户
-	AccounterType_Fund         AccounterType = 6 // 基金账户
+	AccounterType_None    AccounterType = 0 // 未知
+	AccounterType_Cash    AccounterType = 1 // 现金账户
+	AccounterType_Margin  AccounterType = 2 // 保证金账户
+	AccounterType_Short   AccounterType = 3 // 沽空账户
+	AccounterType_Futures AccounterType = 4 // 期货账户
+	AccounterType_Option  AccounterType = 5 // 期权账户
+	AccounterType_Fund    AccounterType = 6 // 基金账户
 )
 
 // =============================================================================
@@ -674,11 +674,11 @@ const (
 type AccStatus int32
 
 const (
-	AccStatus_None       AccStatus = 0 // 未知
-	AccStatus_Normal     AccStatus = 1 // 正常
-	AccStatus_Disabled   AccStatus = 2 // 禁用
-	AccStatus_Deleted   AccStatus = 3 // 已删除
-	AccStatus_Locked     AccStatus = 4 // 锁定
+	AccStatus_None     AccStatus = 0 // 未知
+	AccStatus_Normal   AccStatus = 1 // 正常
+	AccStatus_Disabled AccStatus = 2 // 禁用
+	AccStatus_Deleted  AccStatus = 3 // 已删除
+	AccStatus_Locked   AccStatus = 4 // 锁定
 )
 
 // =============================================================================
@@ -689,21 +689,21 @@ const (
 type Currency int32
 
 const (
-	Currency_None Currency = 0 // 未知
-	Currency_HKD  Currency = 1 // 港币
-	Currency_USD  Currency = 2 // 美元
-	Currency_CNY  Currency = 3 // 人民币
-	Currency_HKD_C Currency = 4 // 港币(柜台)
-	Currency_USD_C Currency = 5 // 美元(柜台)
-	Currency_SGD  Currency = 6 // 新加坡元
-	Currency_AUD  Currency = 7 // 澳元
-	Currency_JPY  Currency = 8 // 日元
-	Currency_MYR  Currency = 9 // 马来西亚林吉特
-	Currency_CAD  Currency = 10 // 加拿大元
-	Currency_EUR  Currency = 11 // 欧元
-	Currency_GBP  Currency = 12 // 英镑
-	Currency_CHF  Currency = 13 // 瑞士法郎
-	Currency_THB  Currency = 14 // 泰铢
+	Currency_None  Currency = 0  // 未知
+	Currency_HKD   Currency = 1  // 港币
+	Currency_USD   Currency = 2  // 美元
+	Currency_CNY   Currency = 3  // 人民币
+	Currency_HKD_C Currency = 4  // 港币(柜台)
+	Currency_USD_C Currency = 5  // 美元(柜台)
+	Currency_SGD   Currency = 6  // 新加坡元
+	Currency_AUD   Currency = 7  // 澳元
+	Currency_JPY   Currency = 8  // 日元
+	Currency_MYR   Currency = 9  // 马来西亚林吉特
+	Currency_CAD   Currency = 10 // 加拿大元
+	Currency_EUR   Currency = 11 // 欧元
+	Currency_GBP   Currency = 12 // 英镑
+	Currency_CHF   Currency = 13 // 瑞士法郎
+	Currency_THB   Currency = 14 // 泰铢
 )
 
 // =============================================================================
@@ -717,7 +717,7 @@ const (
 	PushDataType_None      PushDataType = 0 // 未知
 	PushDataType_Realtime  PushDataType = 1 // 实时
 	PushDataType_ByDisConn PushDataType = 2 // 断线后补
-	PushDataType_Cache      PushDataType = 3 // 缓存
+	PushDataType_Cache     PushDataType = 3 // 缓存
 )
 
 // =============================================================================
@@ -728,13 +728,13 @@ const (
 type SecurityFirm int32
 
 const (
-	SecurityFirm_None              SecurityFirm = 0  // 未知
-	SecurityFirm_FutuSecurities     SecurityFirm = 1  // 富途证券
-	SecurityFirm_FutuFuturesHK      SecurityFirm = 2  // 富途期货(香港)
+	SecurityFirm_None                    SecurityFirm = 0 // 未知
+	SecurityFirm_FutuSecurities          SecurityFirm = 1 // 富途证券
+	SecurityFirm_FutuFuturesHK           SecurityFirm = 2 // 富途期货(香港)
 	SecurityFirm_FutuSecuritiesFuturesHK SecurityFirm = 3 // 富途证券(期货香港)
-	SecurityFirm_Virtu              SecurityFirm = 4  // Virtu
-	SecurityFirm_FutuWealth        SecurityFirm = 5  // 富途财富
-	SecurityFirm_FutuTrust          SecurityFirm = 6  // 富途信托
+	SecurityFirm_Virtu                   SecurityFirm = 4 // Virtu
+	SecurityFirm_FutuWealth              SecurityFirm = 5 // 富途财富
+	SecurityFirm_FutuTrust               SecurityFirm = 6 // 富途信托
 )
 
 // =============================================================================
@@ -745,14 +745,14 @@ const (
 type NotifyType int32
 
 const (
-	NotifyType_None          NotifyType = 0  // 未知
-	NotifyType_GtwEvent      NotifyType = 1  // 网关事件
-	NotifyType_ProgramStatus  NotifyType = 2  // 程序状态
-	NotifyType_ConnStatus     NotifyType = 3  // 连接状态
-	NotifyType_QotRight       NotifyType = 4  // 行情权限
-	NotifyType_APILevel       NotifyType = 5  // API级别
-	NotifyType_APIQuota       NotifyType = 6  // API配额
-	NotifyType_UsedQuota      NotifyType = 7  // 已用配额
+	NotifyType_None          NotifyType = 0 // 未知
+	NotifyType_GtwEvent      NotifyType = 1 // 网关事件
+	NotifyType_ProgramStatus NotifyType = 2 // 程序状态
+	NotifyType_ConnStatus    NotifyType = 3 // 连接状态
+	NotifyType_QotRight      NotifyType = 4 // 行情权限
+	NotifyType_APILevel      NotifyType = 5 // API级别
+	NotifyType_APIQuota      NotifyType = 6 // API配额
+	NotifyType_UsedQuota     NotifyType = 7 // 已用配额
 )
 
 // =============================================================================
@@ -763,9 +763,9 @@ const (
 type VerificationType int32
 
 const (
-	VerificationType_None        VerificationType = 0  // 未知
-	VerificationType_PicVerifyCode VerificationType = 1  // 图形验证码
-	VerificationType_SMSVerifyCode VerificationType = 2  // 短信验证码
+	VerificationType_None            VerificationType = 0 // 未知
+	VerificationType_PicVerifyCode   VerificationType = 1 // 图形验证码
+	VerificationType_SMSVerifyCode   VerificationType = 2 // 短信验证码
 	VerificationType_EmailVerifyCode VerificationType = 3 // 邮箱验证码
 )
 
@@ -790,8 +790,8 @@ const (
 type IndexOptionType int32
 
 const (
-	IndexOptionType_None   IndexOptionType = 0 // 所有
-	IndexOptionType_Standard IndexOptionType = 1 // 标准期权
+	IndexOptionType_None        IndexOptionType = 0 // 所有
+	IndexOptionType_Standard    IndexOptionType = 1 // 标准期权
 	IndexOptionType_NonStandard IndexOptionType = 2 // 非标准期权
 )
 
@@ -803,14 +803,14 @@ const (
 type CapitalFlowPeriodType int32
 
 const (
-	CapitalFlowPeriodType_None    CapitalFlowPeriodType = 0 // 未知
+	CapitalFlowPeriodType_None     CapitalFlowPeriodType = 0 // 未知
 	CapitalFlowPeriodType_Intraday CapitalFlowPeriodType = 1 // 当日
-	CapitalFlowPeriodType_Day5    CapitalFlowPeriodType = 2 // 5日
-	CapitalFlowPeriodType_Day10   CapitalFlowPeriodType = 3 // 10日
-	CapitalFlowPeriodType_Day20   CapitalFlowPeriodType = 4 // 20日
-	CapitalFlowPeriodType_Day30   CapitalFlowPeriodType = 5 // 30日
-	CapitalFlowPeriodType_Day60   CapitalFlowPeriodType = 6 // 60日
-	CapitalFlowPeriodType_Day90   CapitalFlowPeriodType = 7 // 90日
+	CapitalFlowPeriodType_Day5     CapitalFlowPeriodType = 2 // 5日
+	CapitalFlowPeriodType_Day10    CapitalFlowPeriodType = 3 // 10日
+	CapitalFlowPeriodType_Day20    CapitalFlowPeriodType = 4 // 20日
+	CapitalFlowPeriodType_Day30    CapitalFlowPeriodType = 5 // 30日
+	CapitalFlowPeriodType_Day60    CapitalFlowPeriodType = 6 // 60日
+	CapitalFlowPeriodType_Day90    CapitalFlowPeriodType = 7 // 90日
 )
 
 // =============================================================================
@@ -834,24 +834,24 @@ const (
 type WarrantSortField int32
 
 const (
-	WarrantSortField_None      WarrantSortField = 0  // 无排序
-	WarrantSortField_Code      WarrantSortField = 1  // 代码
-	WarrantSortField_LotSize   WarrantSortField = 2  // 每手
-	WarrantSortField_Name      WarrantSortField = 3  // 名称
-	WarrantSortField_Price     WarrantSortField = 4  // 当前价
-	WarrantSortField_PriceRatio WarrantSortField = 5  // 溢价率
-	WarrantSortField_EffectiveLeverage WarrantSortField = 6 // 有效杠杆
-	WarrantSortField_UpperStrikePrice WarrantSortField = 7 // 上限价
-	WarrantSortField_LowerStrikePrice WarrantSortField = 8 // 下限价
-	WarrantSortField_CurPrice  WarrantSortField = 9  // 街码量比
-	WarrantSortField_VolRatio  WarrantSortField = 10 // 成交量比
+	WarrantSortField_None              WarrantSortField = 0  // 无排序
+	WarrantSortField_Code              WarrantSortField = 1  // 代码
+	WarrantSortField_LotSize           WarrantSortField = 2  // 每手
+	WarrantSortField_Name              WarrantSortField = 3  // 名称
+	WarrantSortField_Price             WarrantSortField = 4  // 当前价
+	WarrantSortField_PriceRatio        WarrantSortField = 5  // 溢价率
+	WarrantSortField_EffectiveLeverage WarrantSortField = 6  // 有效杠杆
+	WarrantSortField_UpperStrikePrice  WarrantSortField = 7  // 上限价
+	WarrantSortField_LowerStrikePrice  WarrantSortField = 8  // 下限价
+	WarrantSortField_CurPrice          WarrantSortField = 9  // 街码量比
+	WarrantSortField_VolRatio          WarrantSortField = 10 // 成交量比
 	WarrantSortField_ImpliedVolatility WarrantSortField = 11 // 引伸波幅
-	WarrantSortField_Delta     WarrantSortField = 12 // Delta
-	WarrantSortField_ImplDelta WarrantSortField = 13 // 引伸delta
-	WarrantSortField_Vega      WarrantSortField = 14 // Vega
-	WarrantSortField_Gamma     WarrantSortField = 15 // Gamma
-	WarrantSortField_Theta     WarrantSortField = 16 // Theta
-	WarrantSortField_Rho       WarrantSortField = 17 // Rho
+	WarrantSortField_Delta             WarrantSortField = 12 // Delta
+	WarrantSortField_ImplDelta         WarrantSortField = 13 // 引伸delta
+	WarrantSortField_Vega              WarrantSortField = 14 // Vega
+	WarrantSortField_Gamma             WarrantSortField = 15 // Gamma
+	WarrantSortField_Theta             WarrantSortField = 16 // Theta
+	WarrantSortField_Rho               WarrantSortField = 17 // Rho
 )
 
 // =============================================================================
@@ -862,9 +862,9 @@ const (
 type WarrantStatus int32
 
 const (
-	WarrantStatus_None    WarrantStatus = 0 // 全部
-	WarrantStatus_Normal  WarrantStatus = 1 // 正常
-	WarrantStatus_Suspend  WarrantStatus = 2 // 停牌
+	WarrantStatus_None      WarrantStatus = 0 // 全部
+	WarrantStatus_Normal    WarrantStatus = 1 // 正常
+	WarrantStatus_Suspend   WarrantStatus = 2 // 停牌
 	WarrantStatus_StopTrade WarrantStatus = 3 // 停止交易
 )
 
@@ -876,14 +876,14 @@ const (
 type SecurityListStatus int32
 
 const (
-	SecurityListStatus_None     SecurityListStatus = 0  // 空
-	SecurityListStatus_Normal    SecurityListStatus = 1  // 正常
-	SecurityListStatus_Stop      SecurityListStatus = 2  // 停牌
-	SecurityListStatus_Delisted  SecurityListStatus = 3  // 已退市
-	SecurityListStatus_PreStart  SecurityListStatus = 4  // 预上市
-	SecurityListStatus_Suspend    SecurityListStatus = 5  // 停牌
-	SecurityListStatus_Cash      SecurityListStatus = 6  // 现金
-	SecurityListStatus_Invalid   SecurityListStatus = 7  // 失效
+	SecurityListStatus_None     SecurityListStatus = 0 // 空
+	SecurityListStatus_Normal   SecurityListStatus = 1 // 正常
+	SecurityListStatus_Stop     SecurityListStatus = 2 // 停牌
+	SecurityListStatus_Delisted SecurityListStatus = 3 // 已退市
+	SecurityListStatus_PreStart SecurityListStatus = 4 // 预上市
+	SecurityListStatus_Suspend  SecurityListStatus = 5 // 停牌
+	SecurityListStatus_Cash     SecurityListStatus = 6 // 现金
+	SecurityListStatus_Invalid  SecurityListStatus = 7 // 失效
 )
 
 // =============================================================================
@@ -894,23 +894,23 @@ const (
 type AcGrantRights int32
 
 const (
-	AcGrantRights_None          AcGrantRights = 0   // 无
-	AcGrantRights_HKStock        AcGrantRights = 1   // 港股
-	AcGrantRights_USStock        AcGrantRights = 2   // 美股
-	AcGrantRights_CNHK           AcGrantRights = 3   // 沪股通
-	AcGrantRights_SNHK           AcGrantRights = 4   // 深股通
-	AcGrantRights_HKFuture       AcGrantRights = 5   // 港股期货
-	AcGrantRights_HKOption        AcGrantRights = 6   // 港股期权
-	AcGrantRights_SGDFuture      AcGrantRights = 7   // 新加坡期货
-	AcGrantRights_USOption       AcGrantRights = 8   // 美股期权
-	AcGrantRights_JPFuture        AcGrantRights = 9   // 日本期货
-	AcGrantRights_MYFuture        AcGrantRights = 10  // 马来西亚期货
-	AcGrantRights_AUFuture         AcGrantRights = 11  // 澳大利亚期货
-	AcGrantRights_CNFuture        AcGrantRights = 12  // A股期货
-	AcGrantRights_SGDFutureMain   AcGrantRights = 13  // 新加坡期货主连
-	AcGrantRights_JPFutureMain    AcGrantRights = 14  // 日本期货主连
-	AcGrantRights_MYFutureMain     AcGrantRights = 15  // 马来西亚期货主连
-	AcGrantRights_AUFutureMain     AcGrantRights = 16  // 澳大利亚期货主连
+	AcGrantRights_None          AcGrantRights = 0  // 无
+	AcGrantRights_HKStock       AcGrantRights = 1  // 港股
+	AcGrantRights_USStock       AcGrantRights = 2  // 美股
+	AcGrantRights_CNHK          AcGrantRights = 3  // 沪股通
+	AcGrantRights_SNHK          AcGrantRights = 4  // 深股通
+	AcGrantRights_HKFuture      AcGrantRights = 5  // 港股期货
+	AcGrantRights_HKOption      AcGrantRights = 6  // 港股期权
+	AcGrantRights_SGDFuture     AcGrantRights = 7  // 新加坡期货
+	AcGrantRights_USOption      AcGrantRights = 8  // 美股期权
+	AcGrantRights_JPFuture      AcGrantRights = 9  // 日本期货
+	AcGrantRights_MYFuture      AcGrantRights = 10 // 马来西亚期货
+	AcGrantRights_AUFuture      AcGrantRights = 11 // 澳大利亚期货
+	AcGrantRights_CNFuture      AcGrantRights = 12 // A股期货
+	AcGrantRights_SGDFutureMain AcGrantRights = 13 // 新加坡期货主连
+	AcGrantRights_JPFutureMain  AcGrantRights = 14 // 日本期货主连
+	AcGrantRights_MYFutureMain  AcGrantRights = 15 // 马来西亚期货主连
+	AcGrantRights_AUFutureMain  AcGrantRights = 16 // 澳大利亚期货主连
 )
 
 // =============================================================================
@@ -921,24 +921,24 @@ const (
 type AccRight int32
 
 const (
-	AccRight_None       AccRight = 0  // 无
-	AccRight_HKStock    AccRight = 1  // 港股证券
-	AccRight_USStock    AccRight = 2  // 美股证券
-	AccRight_HKFuture   AccRight = 3  // 港股期货
-	AccRight_HKOption   AccRight = 4  // 港股期权
-	AccRight_USOption   AccRight = 5  // 美股期权
-	AccRight_SGDFuture  AccRight = 6  // 新加坡期货
-	AccRight_JPFuture   AccRight = 7  // 日本期货
-	AccRight_MYFuture   AccRight = 8  // 马来西亚期货
-	AccRight_AUFuture   AccRight = 9  // 澳大利亚期货
-	AccRight_CNFuture   AccRight = 10 // A股期货
-	AccRight_CNHK       AccRight = 11 // 沪股通
-	AccRight_SNHK       AccRight = 12 // 深股通
-	AccRight_HKFund     AccRight = 13 // 香港基金
-	AccRight_USFund     AccRight = 14 // 美国基金
-	AccRight_SGDFund    AccRight = 15 // 新加坡基金
-	AccRight_MYFund     AccRight = 16 // 马来西亚基金
-	AccRight_JPFund     AccRight = 17 // 日本基金
+	AccRight_None      AccRight = 0  // 无
+	AccRight_HKStock   AccRight = 1  // 港股证券
+	AccRight_USStock   AccRight = 2  // 美股证券
+	AccRight_HKFuture  AccRight = 3  // 港股期货
+	AccRight_HKOption  AccRight = 4  // 港股期权
+	AccRight_USOption  AccRight = 5  // 美股期权
+	AccRight_SGDFuture AccRight = 6  // 新加坡期货
+	AccRight_JPFuture  AccRight = 7  // 日本期货
+	AccRight_MYFuture  AccRight = 8  // 马来西亚期货
+	AccRight_AUFuture  AccRight = 9  // 澳大利亚期货
+	AccRight_CNFuture  AccRight = 10 // A股期货
+	AccRight_CNHK      AccRight = 11 // 沪股通
+	AccRight_SNHK      AccRight = 12 // 深股通
+	AccRight_HKFund    AccRight = 13 // 香港基金
+	AccRight_USFund    AccRight = 14 // 美国基金
+	AccRight_SGDFund   AccRight = 15 // 新加坡基金
+	AccRight_MYFund    AccRight = 16 // 马来西亚基金
+	AccRight_JPFund    AccRight = 17 // 日本基金
 )
 
 // =============================================================================
@@ -949,23 +949,23 @@ const (
 type AccMarket int32
 
 const (
-	AccMarket_None    AccMarket = 0   // 无
-	AccMarket_HK      AccMarket = 1   // 港股
-	AccMarket_US      AccMarket = 2   // 美股
-	AccMarket_CN      AccMarket = 3   // A股
-	AccMarket_HKFuture AccMarket = 4   // 港股期货
-	AccMarket_Future   AccMarket = 5   // 期货
-	AccMarket_SGDFuture AccMarket = 6   // 新加坡期货
-	AccMarket_JPFuture AccMarket = 7   // 日本期货
-	AccMarket_MYFuture AccMarket = 8   // 马来西亚期货
-	AccMarket_AUFuture AccMarket = 9   // 澳大利亚期货
-	AccMarket_CNFuture AccMarket = 10  // A股期货
-	AccMarket_HKCC     AccMarket = 11  // 港股通
-	AccMarket_HKFund   AccMarket = 12  // 香港基金
-	AccMarket_USFund   AccMarket = 13  // 美国基金
-	AccMarket_SGDFund  AccMarket = 14  // 新加坡基金
-	AccMarket_MYFund   AccMarket = 15  // 马来西亚基金
-	AccMarket_JPFund   AccMarket = 16  // 日本基金
+	AccMarket_None      AccMarket = 0  // 无
+	AccMarket_HK        AccMarket = 1  // 港股
+	AccMarket_US        AccMarket = 2  // 美股
+	AccMarket_CN        AccMarket = 3  // A股
+	AccMarket_HKFuture  AccMarket = 4  // 港股期货
+	AccMarket_Future    AccMarket = 5  // 期货
+	AccMarket_SGDFuture AccMarket = 6  // 新加坡期货
+	AccMarket_JPFuture  AccMarket = 7  // 日本期货
+	AccMarket_MYFuture  AccMarket = 8  // 马来西亚期货
+	AccMarket_AUFuture  AccMarket = 9  // 澳大利亚期货
+	AccMarket_CNFuture  AccMarket = 10 // A股期货
+	AccMarket_HKCC      AccMarket = 11 // 港股通
+	AccMarket_HKFund    AccMarket = 12 // 香港基金
+	AccMarket_USFund    AccMarket = 13 // 美国基金
+	AccMarket_SGDFund   AccMarket = 14 // 新加坡基金
+	AccMarket_MYFund    AccMarket = 15 // 马来西亚基金
+	AccMarket_JPFund    AccMarket = 16 // 日本基金
 )
 
 // =============================================================================
@@ -985,7 +985,7 @@ const (
 	AccTradingMarket_MYFuture  AccTradingMarket = 6  // 马来西亚期货
 	AccTradingMarket_AUFuture  AccTradingMarket = 7  // 澳大利亚期货
 	AccTradingMarket_CNHK      AccTradingMarket = 8  // 沪股通
-	AccTradingMarket_SNHK       AccTradingMarket = 9  // 深股通
+	AccTradingMarket_SNHK      AccTradingMarket = 9  // 深股通
 	AccTradingMarket_HKFund    AccTradingMarket = 10 // 香港基金
 	AccTradingMarket_USFund    AccTradingMarket = 11 // 美国基金
 	AccTradingMarket_SGDFund   AccTradingMarket = 12 // 新加坡基金
@@ -1001,12 +1001,12 @@ const (
 type AccAuthenStatus int32
 
 const (
-	AccAuthenStatus_None            AccAuthenStatus = 0  // 无
-	AccAuthenStatus_Normal           AccAuthenStatus = 1  // 正常
-	AccAuthenStatus_OnlyQuotation    AccAuthenStatus = 2  // 仅有行情权限
-	AccAuthenStatus_Pending          AccAuthenStatus = 3  // 认证中
-	AccAuthenStatus_Locked          AccAuthenStatus = 4  // 账户被锁定
-	AccAuthenStatus_Frozen          AccAuthenStatus = 5  // 账户被冻结
+	AccAuthenStatus_None          AccAuthenStatus = 0 // 无
+	AccAuthenStatus_Normal        AccAuthenStatus = 1 // 正常
+	AccAuthenStatus_OnlyQuotation AccAuthenStatus = 2 // 仅有行情权限
+	AccAuthenStatus_Pending       AccAuthenStatus = 3 // 认证中
+	AccAuthenStatus_Locked        AccAuthenStatus = 4 // 账户被锁定
+	AccAuthenStatus_Frozen        AccAuthenStatus = 5 // 账户被冻结
 )
 
 // =============================================================================
@@ -1017,10 +1017,10 @@ const (
 type RiskLevel int32
 
 const (
-	RiskLevel_None  RiskLevel = 0 // 未知
-	RiskLevel_Low   RiskLevel = 1 // 低风险
+	RiskLevel_None   RiskLevel = 0 // 未知
+	RiskLevel_Low    RiskLevel = 1 // 低风险
 	RiskLevel_Medium RiskLevel = 2 // 中风险
-	RiskLevel_High  RiskLevel = 3 // 高风险
+	RiskLevel_High   RiskLevel = 3 // 高风险
 )
 
 // =============================================================================
@@ -1032,8 +1032,8 @@ type PDTStatus int32
 
 const (
 	PDTStatus_None       PDTStatus = 0 // 无
-	PDTStatus_Warning     PDTStatus = 1 // 警告
-	PDTStatus_Restricted  PDTStatus = 2 // 限制
+	PDTStatus_Warning    PDTStatus = 1 // 警告
+	PDTStatus_Restricted PDTStatus = 2 // 限制
 	PDTStatus_Call       PDTStatus = 3 // 追缴
 )
 
@@ -1045,10 +1045,10 @@ const (
 type DelayStatisticsType int32
 
 const (
-	DelayStatisticsType_None        DelayStatisticsType = 0 // 未知
-	DelayStatisticsType_QotPush     DelayStatisticsType = 1 // 行情推送
-	DelayStatisticsType_ReqReply     DelayStatisticsType = 2 // 请求应答
-	DelayStatisticsType_PlaceOrder  DelayStatisticsType = 3 // 下单
+	DelayStatisticsType_None       DelayStatisticsType = 0 // 未知
+	DelayStatisticsType_QotPush    DelayStatisticsType = 1 // 行情推送
+	DelayStatisticsType_ReqReply   DelayStatisticsType = 2 // 请求应答
+	DelayStatisticsType_PlaceOrder DelayStatisticsType = 3 // 下单
 )
 
 // =============================================================================
@@ -1072,17 +1072,17 @@ const (
 type StockFilterField int32
 
 const (
-	StockFilterField_None          StockFilterField = 0  // 无
-	StockFilterField_ChangeRate    StockFilterField = 1  // 涨跌幅
-	StockFilterField_ChangeVal     StockFilterField = 2  // 涨跌额
-	StockFilterField_Volume        StockFilterField = 3  // 成交量
+	StockFilterField_None         StockFilterField = 0  // 无
+	StockFilterField_ChangeRate   StockFilterField = 1  // 涨跌幅
+	StockFilterField_ChangeVal    StockFilterField = 2  // 涨跌额
+	StockFilterField_Volume       StockFilterField = 3  // 成交量
 	StockFilterField_Turnover     StockFilterField = 4  // 成交额
-	StockFilterField_TurnoverRate  StockFilterField = 5  // 换手率
-	StockFilterField_VolumeRatio   StockFilterField = 6  // 量比
-	StockFilterField_BidAskRatio   StockFilterField = 7  // 委比
-	StockFilterField_DayAmplitude  StockFilterField = 8  // 日振幅
+	StockFilterField_TurnoverRate StockFilterField = 5  // 换手率
+	StockFilterField_VolumeRatio  StockFilterField = 6  // 量比
+	StockFilterField_BidAskRatio  StockFilterField = 7  // 委比
+	StockFilterField_DayAmplitude StockFilterField = 8  // 日振幅
 	StockFilterField_MarketVal    StockFilterField = 9  // 总市值
-	StockFilterField_CirculateVal  StockFilterField = 10 // 流通市值
+	StockFilterField_CirculateVal StockFilterField = 10 // 流通市值
 	StockFilterField_More         StockFilterField = 11 // 更多
 )
 
@@ -1106,17 +1106,17 @@ const (
 type AcUpdateFields int32
 
 const (
-	AcUpdateFields_None          AcUpdateFields = 0  // 无
-	AcUpdateFields_EnvStatus      AcUpdateFields = 1  // 环境状态
-	AcUpdateFields_AccInfo        AcUpdateFields = 2  // 账户信息
-	AcUpdateFields_RiskInfo       AcUpdateFields = 3  // 风控信息
-	AcUpdateFields_BP            AcUpdateFields = 4  // 购买力
-	AcUpdateFields_Funds         AcUpdateFields = 5  // 资金
-	AcUpdateFields_Position       AcUpdateFields = 6  // 持仓
-	AcUpdateFields_Order         AcUpdateFields = 7  // 订单
-	AcUpdateFields_Trade         AcUpdateFields = 8  // 成交
-	AcUpdateFields_Options       AcUpdateFields = 9  // 期权
-	AcUpdateFields_Report        AcUpdateFields = 10 // 对账单
+	AcUpdateFields_None      AcUpdateFields = 0  // 无
+	AcUpdateFields_EnvStatus AcUpdateFields = 1  // 环境状态
+	AcUpdateFields_AccInfo   AcUpdateFields = 2  // 账户信息
+	AcUpdateFields_RiskInfo  AcUpdateFields = 3  // 风控信息
+	AcUpdateFields_BP        AcUpdateFields = 4  // 购买力
+	AcUpdateFields_Funds     AcUpdateFields = 5  // 资金
+	AcUpdateFields_Position  AcUpdateFields = 6  // 持仓
+	AcUpdateFields_Order     AcUpdateFields = 7  // 订单
+	AcUpdateFields_Trade     AcUpdateFields = 8  // 成交
+	AcUpdateFields_Options   AcUpdateFields = 9  // 期权
+	AcUpdateFields_Report    AcUpdateFields = 10 // 对账单
 )
 
 // =============================================================================
@@ -1127,10 +1127,10 @@ const (
 type OrderFillNotifyType int32
 
 const (
-	OrderFillNotifyType_None     OrderFillNotifyType = 0 // 未知
-	OrderFillNotifyType_Fill     OrderFillNotifyType = 1 // 订单成交
-	OrderFillNotifyType_Cancel   OrderFillNotifyType = 2 // 订单取消
-	OrderFillNotifyType_Changed  OrderFillNotifyType = 3 // 订单修改
+	OrderFillNotifyType_None    OrderFillNotifyType = 0 // 未知
+	OrderFillNotifyType_Fill    OrderFillNotifyType = 1 // 订单成交
+	OrderFillNotifyType_Cancel  OrderFillNotifyType = 2 // 订单取消
+	OrderFillNotifyType_Changed OrderFillNotifyType = 3 // 订单修改
 )
 
 // =============================================================================
@@ -1141,8 +1141,8 @@ const (
 type TrdAccCertType int32
 
 const (
-	TrdAccCertType_None      TrdAccCertType = 0 // 未知
-	TrdAccCertType_HKID      TrdAccCertType = 1 // 香港身份证
+	TrdAccCertType_None       TrdAccCertType = 0 // 未知
+	TrdAccCertType_HKID       TrdAccCertType = 1 // 香港身份证
 	TrdAccCertType_Passport   TrdAccCertType = 2 // 护照
 	TrdAccCertType_License    TrdAccCertType = 3 // 商业执照
 	TrdAccCertType_CreditCard TrdAccCertType = 4 // 信用卡
@@ -1157,21 +1157,21 @@ const (
 type GtwEventType int32
 
 const (
-	GtwEventType_None                  GtwEventType = 0  // 未知
-	GtwEventType_LocalCfgLoadFailed    GtwEventType = 1  // 本地配置文件加载失败
-	GtwEventType_APISvrRunFailed       GtwEventType = 2  // 网关监听服务运行失败
-	GtwEventType_ForceUpdate           GtwEventType = 3  // 强制升级网关
-	GtwEventType_LoginFailed           GtwEventType = 4  // 登录牛牛服务器失败
-	GtwEventType_UnAgreeDisclaimer    GtwEventType = 5  // 未同意免责声明，无法运行
-	GtwEventType_NetCfgMissing         GtwEventType = 6  // 缺少网络连接配置
-	GtwEventType_KickedOut            GtwEventType = 7  // 登录被踢下线
-	GtwEventType_LoginPwdChanged      GtwEventType = 8  // 登陆密码变更
-	GtwEventType_BanLogin             GtwEventType = 9  // 牛牛后台不允许该账号登陆
-	GtwEventType_NeedPicVerifyCode    GtwEventType = 10 // 登录需要输入图形验证码
-	GtwEventType_NeedPhoneVerifyCode  GtwEventType = 11 // 登录需要输入手机验证码
-	GtwEventType_AppDataNotExist      GtwEventType = 12 // 程序打包数据丢失
-	GtwEventType_NessaryDataMissing   GtwEventType = 13 // 必要的数据没同步成功
-	GtwEventType_TradePwdChanged      GtwEventType = 14 // 交易密码变更通知
+	GtwEventType_None                GtwEventType = 0  // 未知
+	GtwEventType_LocalCfgLoadFailed  GtwEventType = 1  // 本地配置文件加载失败
+	GtwEventType_APISvrRunFailed     GtwEventType = 2  // 网关监听服务运行失败
+	GtwEventType_ForceUpdate         GtwEventType = 3  // 强制升级网关
+	GtwEventType_LoginFailed         GtwEventType = 4  // 登录牛牛服务器失败
+	GtwEventType_UnAgreeDisclaimer   GtwEventType = 5  // 未同意免责声明，无法运行
+	GtwEventType_NetCfgMissing       GtwEventType = 6  // 缺少网络连接配置
+	GtwEventType_KickedOut           GtwEventType = 7  // 登录被踢下线
+	GtwEventType_LoginPwdChanged     GtwEventType = 8  // 登陆密码变更
+	GtwEventType_BanLogin            GtwEventType = 9  // 牛牛后台不允许该账号登陆
+	GtwEventType_NeedPicVerifyCode   GtwEventType = 10 // 登录需要输入图形验证码
+	GtwEventType_NeedPhoneVerifyCode GtwEventType = 11 // 登录需要输入手机验证码
+	GtwEventType_AppDataNotExist     GtwEventType = 12 // 程序打包数据丢失
+	GtwEventType_NessaryDataMissing  GtwEventType = 13 // 必要的数据没同步成功
+	GtwEventType_TradePwdChanged     GtwEventType = 14 // 交易密码变更通知
 	GtwEventType_EnableDeviceLock    GtwEventType = 15 // 需启用设备锁
 )
 
@@ -1183,7 +1183,7 @@ const (
 type PriceReminderFreq int32
 
 const (
-	PriceReminderFreq_None     PriceReminderFreq = 0 // 未知
+	PriceReminderFreq_None      PriceReminderFreq = 0 // 未知
 	PriceReminderFreq_Once      PriceReminderFreq = 1 // 只提醒一次
 	PriceReminderFreq_OnceDaily PriceReminderFreq = 2 // 每天提醒一次
 	PriceReminderFreq_Always    PriceReminderFreq = 3 // 持续提醒
@@ -1257,17 +1257,17 @@ type ProgramStatusType int32
 
 const (
 	ProgramStatusType_None                 ProgramStatusType = 0  // 未知
-	ProgramStatusType_Loaded             ProgramStatusType = 1  // 已完成类似加载配置,启动服务器等操作,服务器启动之前的状态无需返回
-	ProgramStatusType_Loging             ProgramStatusType = 2  // 登录中
-	ProgramStatusType_NeedPicVerifyCode   ProgramStatusType = 3  // 需要图形验证码
-	ProgramStatusType_NeedPhoneVerifyCode ProgramStatusType = 4  // 需要手机验证码
-	ProgramStatusType_LoginFailed         ProgramStatusType = 5  // 登录失败,详细原因在描述返回
-	ProgramStatusType_ForceUpdate         ProgramStatusType = 6  // 客户端版本过低
+	ProgramStatusType_Loaded               ProgramStatusType = 1  // 已完成类似加载配置,启动服务器等操作,服务器启动之前的状态无需返回
+	ProgramStatusType_Loging               ProgramStatusType = 2  // 登录中
+	ProgramStatusType_NeedPicVerifyCode    ProgramStatusType = 3  // 需要图形验证码
+	ProgramStatusType_NeedPhoneVerifyCode  ProgramStatusType = 4  // 需要手机验证码
+	ProgramStatusType_LoginFailed          ProgramStatusType = 5  // 登录失败,详细原因在描述返回
+	ProgramStatusType_ForceUpdate          ProgramStatusType = 6  // 客户端版本过低
 	ProgramStatusType_NessaryDataPreparing ProgramStatusType = 7  // 正在拉取类似免责声明等一些必要信息
-	ProgramStatusType_NessaryDataMissing  ProgramStatusType = 8  // 缺少必要信息
+	ProgramStatusType_NessaryDataMissing   ProgramStatusType = 8  // 缺少必要信息
 	ProgramStatusType_UnAgreeDisclaimer    ProgramStatusType = 9  // 未同意免责声明
-	ProgramStatusType_Ready               ProgramStatusType = 10 // 可以接收业务协议收发,正常可用状态
-	ProgramStatusType_ForceLogout         ProgramStatusType = 11 // 被强制退出登录,例如修改了登录密码,中途打开设备锁等
+	ProgramStatusType_Ready                ProgramStatusType = 10 // 可以接收业务协议收发,正常可用状态
+	ProgramStatusType_ForceLogout          ProgramStatusType = 11 // 被强制退出登录,例如修改了登录密码,中途打开设备锁等
 	ProgramStatusType_DisclaimerPullFailed ProgramStatusType = 12 // 拉取免责声明标志失败
 )
 
@@ -1387,20 +1387,20 @@ const (
 type TrdSubAccType int32
 
 const (
-	TrdSubAccType_None               TrdSubAccType = 0  // 未知
-	TrdSubAccType_JP_GENERAL         TrdSubAccType = 1  // 日本-一般口座-long
-	TrdSubAccType_JP_TOKUTEI         TrdSubAccType = 2  // 日本-特定口座-long
-	TrdSubAccType_JP_NISA_GENERAL    TrdSubAccType = 3  // 日本-一般NISA
-	TrdSubAccType_JP_NISA_TSUMITATE  TrdSubAccType = 4  // 日本-累计NISA
-	TrdSubAccType_JP_GENERAL_SHORT    TrdSubAccType = 5  // 日本-一般口座-Short
-	TrdSubAccType_JP_TOKUTEI_SHORT    TrdSubAccType = 6  // 日本-特定口座-Short
-	TrdSubAccType_JP_HONPO_GENERAL    TrdSubAccType = 7  // 日本-本国信用交易抵押品-一般
-	TrdSubAccType_JP_GAIKOKU_GENERAL  TrdSubAccType = 8  // 日本-外国信用交易抵押品-一般
-	TrdSubAccType_JP_HONPO_TOKUTEI    TrdSubAccType = 9  // 日本-本国信用交易抵押品-特定
-	TrdSubAccType_JP_GAIKOKU_TOKUTEI  TrdSubAccType = 10 // 日本-外国信用交易抵押品-特定
-	TrdSubAccType_JP_DERIVATIVE_LONG           TrdSubAccType = 11 // 日本-衍生品-Long
-	TrdSubAccType_JP_DERIVATIVE_SHORT          TrdSubAccType = 12 // 日本-衍生品-Short
-	TrdSubAccType_JP_HONPO_DERIVATIVE_GENERAL  TrdSubAccType = 13 // 日本-本国衍生品证据金-一般
+	TrdSubAccType_None                          TrdSubAccType = 0  // 未知
+	TrdSubAccType_JP_GENERAL                    TrdSubAccType = 1  // 日本-一般口座-long
+	TrdSubAccType_JP_TOKUTEI                    TrdSubAccType = 2  // 日本-特定口座-long
+	TrdSubAccType_JP_NISA_GENERAL               TrdSubAccType = 3  // 日本-一般NISA
+	TrdSubAccType_JP_NISA_TSUMITATE             TrdSubAccType = 4  // 日本-累计NISA
+	TrdSubAccType_JP_GENERAL_SHORT              TrdSubAccType = 5  // 日本-一般口座-Short
+	TrdSubAccType_JP_TOKUTEI_SHORT              TrdSubAccType = 6  // 日本-特定口座-Short
+	TrdSubAccType_JP_HONPO_GENERAL              TrdSubAccType = 7  // 日本-本国信用交易抵押品-一般
+	TrdSubAccType_JP_GAIKOKU_GENERAL            TrdSubAccType = 8  // 日本-外国信用交易抵押品-一般
+	TrdSubAccType_JP_HONPO_TOKUTEI              TrdSubAccType = 9  // 日本-本国信用交易抵押品-特定
+	TrdSubAccType_JP_GAIKOKU_TOKUTEI            TrdSubAccType = 10 // 日本-外国信用交易抵押品-特定
+	TrdSubAccType_JP_DERIVATIVE_LONG            TrdSubAccType = 11 // 日本-衍生品-Long
+	TrdSubAccType_JP_DERIVATIVE_SHORT           TrdSubAccType = 12 // 日本-衍生品-Short
+	TrdSubAccType_JP_HONPO_DERIVATIVE_GENERAL   TrdSubAccType = 13 // 日本-本国衍生品证据金-一般
 	TrdSubAccType_JP_GAIKOKU_DERIVATIVE_GENERAL TrdSubAccType = 14 // 日本-外国衍生品证据金-一般
 	TrdSubAccType_JP_HONPO_DERIVATIVE_TOKUTEI   TrdSubAccType = 15 // 日本-本国衍生品证据金-特定
 	TrdSubAccType_JP_GAIKOKU_DERIVATIVE_TOKUTEI TrdSubAccType = 16 // 日本-外国衍生品证据金-特定
@@ -1415,6 +1415,6 @@ type TrdAssetCategory int32
 
 const (
 	TrdAssetCategory_Unknown TrdAssetCategory = 0 // 未知
-	TrdAssetCategory_JP     TrdAssetCategory = 1 // 本国
-	TrdAssetCategory_US     TrdAssetCategory = 2 // 外国
+	TrdAssetCategory_JP      TrdAssetCategory = 1 // 本国
+	TrdAssetCategory_US      TrdAssetCategory = 2 // 外国
 )

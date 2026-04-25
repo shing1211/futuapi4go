@@ -4,7 +4,7 @@ import "testing"
 
 func TestMarketString(t *testing.T) {
 	tests := []struct {
-		m   Market
+		m    Market
 		want string
 	}{
 		{Market_None, "Market_None"},
@@ -31,7 +31,7 @@ func TestMarketString(t *testing.T) {
 
 func TestMarketPrefix(t *testing.T) {
 	tests := []struct {
-		m   Market
+		m    Market
 		want string
 	}{
 		{Market_HK, "HK"},
@@ -57,7 +57,7 @@ func TestMarketPrefix(t *testing.T) {
 
 func TestTrdEnvString(t *testing.T) {
 	tests := []struct {
-		t   TrdEnv
+		t    TrdEnv
 		want string
 	}{
 		{TrdEnv_Simulate, "TrdEnv_Simulate"},
@@ -75,7 +75,7 @@ func TestTrdEnvString(t *testing.T) {
 
 func TestTrdSideString(t *testing.T) {
 	tests := []struct {
-		s   TrdSide
+		s    TrdSide
 		want string
 	}{
 		{TrdSide_Buy, "TrdSide_Buy"},
@@ -95,7 +95,7 @@ func TestTrdSideString(t *testing.T) {
 
 func TestOrderStatusString(t *testing.T) {
 	tests := []struct {
-		s   OrderStatus
+		s    OrderStatus
 		want string
 	}{
 		{OrderStatus_Submitted, "OrderStatus_Submitted"},
@@ -115,7 +115,7 @@ func TestOrderStatusString(t *testing.T) {
 
 func TestOrderTypeString(t *testing.T) {
 	tests := []struct {
-		o   OrderType
+		o    OrderType
 		want string
 	}{
 		{OrderType_Normal, "OrderType_Normal"},
@@ -135,7 +135,7 @@ func TestOrderTypeString(t *testing.T) {
 
 func TestCurrencyString(t *testing.T) {
 	tests := []struct {
-		c   Currency
+		c    Currency
 		want string
 	}{
 		{Currency_HKD, "Currency_HKD"},
@@ -156,7 +156,7 @@ func TestCurrencyString(t *testing.T) {
 
 func TestKLTypeString(t *testing.T) {
 	tests := []struct {
-		k   KLType
+		k    KLType
 		want string
 	}{
 		{KLType_K_Day, "KLType_K_Day"},
@@ -175,7 +175,7 @@ func TestKLTypeString(t *testing.T) {
 
 func TestOptionTypeString(t *testing.T) {
 	tests := []struct {
-		o   OptionType
+		o    OptionType
 		want string
 	}{
 		{OptionType_Call, "OptionType_Call"},
@@ -193,7 +193,7 @@ func TestOptionTypeString(t *testing.T) {
 
 func TestSubTypeString(t *testing.T) {
 	tests := []struct {
-		s   SubType
+		s    SubType
 		want string
 	}{
 		{SubType_Quote, "SubType_Quote"},
@@ -214,7 +214,7 @@ func TestSubTypeString(t *testing.T) {
 
 func TestRetTypeString(t *testing.T) {
 	tests := []struct {
-		r   RetType
+		r    RetType
 		want string
 	}{
 		{RetType_Succeed, "RetType_Succeed"},
@@ -233,7 +233,7 @@ func TestRetTypeString(t *testing.T) {
 
 func TestSecurityTypeString(t *testing.T) {
 	tests := []struct {
-		s   SecurityType
+		s    SecurityType
 		want string
 	}{
 		{SecurityType_Stock, "SecurityType_Stock"},
@@ -252,7 +252,7 @@ func TestSecurityTypeString(t *testing.T) {
 
 func TestModifyOrderOpString(t *testing.T) {
 	tests := []struct {
-		m   ModifyOrderOp
+		m    ModifyOrderOp
 		want string
 	}{
 		{ModifyOrderOp_Normal, "ModifyOrderOp_Normal"},
@@ -272,7 +272,7 @@ func TestModifyOrderOpString(t *testing.T) {
 
 func TestTimeInForceString(t *testing.T) {
 	tests := []struct {
-		t   TimeInForce
+		t    TimeInForce
 		want string
 	}{
 		{TimeInForce_Day, "TimeInForce_Day"},
@@ -291,7 +291,7 @@ func TestTimeInForceString(t *testing.T) {
 
 func TestTrdMarketString(t *testing.T) {
 	tests := []struct {
-		m   TrdMarket
+		m    TrdMarket
 		want string
 	}{
 		{TrdMarket_HK, "TrdMarket_HK"},
@@ -317,7 +317,7 @@ func TestTrdMarketString(t *testing.T) {
 
 func TestTrdSecMarketString(t *testing.T) {
 	tests := []struct {
-		m   TrdSecMarket
+		m    TrdSecMarket
 		want string
 	}{
 		{TrdSecMarket_HK, "TrdSecMarket_HK"},
@@ -338,7 +338,7 @@ func TestTrdSecMarketString(t *testing.T) {
 
 func TestRehabTypeString(t *testing.T) {
 	tests := []struct {
-		r   RehabType
+		r    RehabType
 		want string
 	}{
 		{RehabType_Forward, "RehabType_Forward"},

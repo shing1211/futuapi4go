@@ -246,7 +246,7 @@ func TestBreakerDoubleTransition(t *testing.T) {
 
 func TestStateString(t *testing.T) {
 	tests := []struct {
-		s   State
+		s    State
 		want string
 	}{
 		{StateClosed, "closed"},

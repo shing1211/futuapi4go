@@ -75,7 +75,7 @@ var codeToCategory = map[ErrorCode]ErrorCategory{
 	CodePoolClosed:       CategoryPool,
 	CodeMarshalFailed:    CategoryProtocol,
 	CodeUnmarshalFailed:  CategoryProtocol,
-	CodeTryAgain:       CategoryPool,
+	CodeTryAgain:         CategoryPool,
 }
 
 var codeToRecovery = map[ErrorCode]string{
@@ -97,7 +97,7 @@ var codeToRecovery = map[ErrorCode]string{
 	CodePoolClosed:       "Pool closed. Create a new pool with NewClientPool().",
 	CodeMarshalFailed:    "Failed to serialize request. Check proto message fields.",
 	CodeUnmarshalFailed:  "Failed to deserialize response. Server may have returned unexpected format.",
-	CodeTryAgain:      "Pool is busy. Retry the operation.",
+	CodeTryAgain:         "Pool is busy. Retry the operation.",
 }
 
 var (

@@ -8,9 +8,9 @@ import (
 
 func TestDetectMarketAdvanced(t *testing.T) {
 	tests := []struct {
-		name    string
-		code   string
-		want   int32
+		name string
+		code string
+		want int32
 	}{
 		{"warrant", "#12345", constant.Market_HK},
 		{"CBBC", "12345", constant.Market_HK},

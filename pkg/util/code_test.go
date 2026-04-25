@@ -8,7 +8,7 @@ import (
 
 func TestParseCode(t *testing.T) {
 	tests := []struct {
-		input    string
+		input   string
 		wantMkt int32
 		wantSym string
 	}{
@@ -99,7 +99,7 @@ func TestParseCodeRoundtrip(t *testing.T) {
 
 func TestDetectMarket(t *testing.T) {
 	tests := []struct {
-		code  string
+		code string
 		want int32
 	}{
 		{"HK.00700", constant.Market_HK},
@@ -127,7 +127,7 @@ func TestDetectMarket(t *testing.T) {
 func TestMarketToTrdMarket(t *testing.T) {
 	tests := []struct {
 		qotMkt int32
-		want    constant.TrdSecMarket
+		want   constant.TrdSecMarket
 	}{
 		{constant.Market_HK, constant.TrdSecMarket_HK},
 		{constant.Market_US, constant.TrdSecMarket_US},
@@ -153,7 +153,7 @@ func TestMarketToTrdMarket(t *testing.T) {
 func TestTrdMarketToQotMarket(t *testing.T) {
 	tests := []struct {
 		trdMkt constant.TrdSecMarket
-		want    int32
+		want   int32
 	}{
 		{constant.TrdSecMarket_HK, constant.Market_HK},
 		{constant.TrdSecMarket_US, constant.Market_US},
