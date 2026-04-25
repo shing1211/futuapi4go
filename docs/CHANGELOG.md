@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **All API functions now accept `context.Context` as first parameter** — enables request cancellation, timeouts, and deadline propagation across all `pkg/qot`, `pkg/trd`, and `pkg/sys` functions
+- **`AGENTS.md` completely rewritten** — comprehensive operational guide with session workflow, phase gates, code review checklist, and troubleshooting
+- **`IMPLEMENTATION_PLAN.md` updated with 24-item roadmap** — full-spectrum quality enhancement plan across 5 phases
 
 ### Added
 
