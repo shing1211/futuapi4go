@@ -279,11 +279,11 @@ func QuerySubscription(c *Client) (*qot.GetSubInfoResponse, error) {
 }
 
 // RegQotPush registers or unregisters real-time push notifications for a security.
-func RegQotPush(c *Client, market int32, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
+func RegQotPush(ctx context.Context, c *Client, market int32, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	_, err := qot.RegQotPush(c.inner, &qot.RegQotPushRequest{
+	_, err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
 		SecurityList:  []*qotcommon.Security{sec},
 		SubTypeList:   subTypes,
 		RehabTypeList: rehabTypes,
@@ -1107,11 +1107,11 @@ func GetTradeDate(ctx context.Context, c *Client, market int32, startDate, endDa
 }
 
 // GetFutureInfo retrieves futures information.
-func GetFutureInfo(c *Client, code string) ([]FutureInfo, error) {
+func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, error) {
 	marketPtr := int32(2) // HK Future
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetFutureInfo(c.inner, &qot.GetFutureInfoRequest{
+	resp, err := qot.GetFutureInfo(ctx, c.inner, &qot.GetFutureInfoRequest{
 		SecurityList: []*qotcommon.Security{sec},
 	})
 	if err != nil {
@@ -1169,8 +1169,8 @@ func GetPlateSet(ctx context.Context, c *Client, market int32) ([]Plate, error) 
 }
 
 // GetIpoList retrieves IPO list.
-func GetIpoList(c *Client, market int32) ([]IpoData, error) {
-	resp, err := qot.GetIpoList(c.inner, &qot.GetIpoListRequest{Market: market})
+func GetIpoList(ctx context.Context, c *Client, market int32) ([]IpoData, error) {
+	resp, err := qot.GetIpoList(ctx, c.inner, &qot.GetIpoListRequest{Market: market})
 	if err != nil {
 		return nil, err
 	}
@@ -1195,8 +1195,8 @@ func GetIpoList(c *Client, market int32) ([]IpoData, error) {
 }
 
 // GetUserSecurityGroup retrieves user security group list.
-func GetUserSecurityGroup(c *Client) ([]UserSecurityGroup, error) {
-	resp, err := qot.GetUserSecurityGroup(c.inner, &qot.GetUserSecurityGroupRequest{})
+func GetUserSecurityGroup(ctx context.Context, c *Client) ([]UserSecurityGroup, error) {
+	resp, err := qot.GetUserSecurityGroup(ctx, c.inner, &qot.GetUserSecurityGroupRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -1529,13 +1529,13 @@ func GetOptionExpirationDate(ctx context.Context, c *Client, market int32, code 
 }
 
 // ModifyUserSecurity adds/removes securities from user group.
-func ModifyUserSecurity(c *Client, groupName string, op int32, market int32, codes []string) error {
+func ModifyUserSecurity(ctx context.Context, c *Client, groupName string, op int32, market int32, codes []string) error {
 	securities := make([]*qotcommon.Security, len(codes))
 	for i, code := range codes {
 		securities[i] = &qotcommon.Security{Market: &market, Code: &code}
 	}
 
-	_, err := qot.ModifyUserSecurity(c.inner, &qot.ModifyUserSecurityRequest{
+	_, err := qot.ModifyUserSecurity(ctx, c.inner, &qot.ModifyUserSecurityRequest{
 		GroupName:    groupName,
 		Op:           op,
 		SecurityList: securities,
@@ -1630,8 +1630,8 @@ type StockFilterResult struct {
 }
 
 // StockFilter filters stocks based on basic criteria.
-func StockFilter(c *Client, market int32, begin, num int32) ([]*StockFilterResult, error) {
-	resp, err := qot.StockFilter(c.inner, &qot.StockFilterRequest{
+func StockFilter(ctx context.Context, c *Client, market int32, begin, num int32) ([]*StockFilterResult, error) {
+	resp, err := qot.StockFilter(ctx, c.inner, &qot.StockFilterRequest{
 		Market: market,
 		Begin:  begin,
 		Num:    num,
@@ -1767,11 +1767,11 @@ type WarrantData struct {
 }
 
 // GetWarrant returns the list of warrants for the given underlying security.
-func GetWarrant(c *Client, market int32, code string, begin, num int32, sortField int32, ascend bool, optType, issuer, status int32) ([]*WarrantData, error) {
+func GetWarrant(ctx context.Context, c *Client, market int32, code string, begin, num int32, sortField int32, ascend bool, optType, issuer, status int32) ([]*WarrantData, error) {
 	marketPtr := market
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetWarrant(c.inner, &qot.GetWarrantRequest{
+	resp, err := qot.GetWarrant(ctx, c.inner, &qot.GetWarrantRequest{
 		Begin:     begin,
 		Num:       num,
 		SortField: sortField,
@@ -1997,8 +1997,8 @@ type CodeChangeInfo struct {
 }
 
 // GetCodeChange returns code change information for the given securities.
-func GetCodeChange(c *Client, securities []*qotcommon.Security) ([]*CodeChangeInfo, error) {
-	resp, err := qot.GetCodeChange(c.inner, &qot.GetCodeChangeRequest{
+func GetCodeChange(ctx context.Context, c *Client, securities []*qotcommon.Security) ([]*CodeChangeInfo, error) {
+	resp, err := qot.GetCodeChange(ctx, c.inner, &qot.GetCodeChangeRequest{
 		SecurityList: securities,
 	})
 	if err != nil {
@@ -2204,8 +2204,8 @@ type SuspendInfo struct {
 }
 
 // GetSuspend retrieves suspension information for securities.
-func GetSuspend(c *Client, securities []*qotcommon.Security, beginTime, endTime string) ([]*SuspendInfo, error) {
-	resp, err := qot.GetSuspend(c.inner, &qot.GetSuspendRequest{
+func GetSuspend(ctx context.Context, c *Client, securities []*qotcommon.Security, beginTime, endTime string) ([]*SuspendInfo, error) {
+	resp, err := qot.GetSuspend(ctx, c.inner, &qot.GetSuspendRequest{
 		SecurityList: securities,
 		BeginTime:    beginTime,
 		EndTime:      endTime,
@@ -2240,10 +2240,10 @@ const (
 )
 
 // SetPriceReminder creates/updates/deletes a price reminder.
-func SetPriceReminder(c *Client, market int32, code string, op, reminderType, freq int32, value float64, note string) (int64, error) {
+func SetPriceReminder(ctx context.Context, c *Client, market int32, code string, op, reminderType, freq int32, value float64, note string) (int64, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.SetPriceReminder(c.inner, &qot.SetPriceReminderRequest{
+	resp, err := qot.SetPriceReminder(ctx, c.inner, &qot.SetPriceReminderRequest{
 		Security: sec,
 		Op:       op,
 		Type:     reminderType,
@@ -2367,10 +2367,10 @@ type HoldingChangeInfo struct {
 }
 
 // GetHoldingChangeList retrieves holding change list.
-func GetHoldingChangeList(c *Client, market int32, code string, holderCategory int32, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
+func GetHoldingChangeList(ctx context.Context, c *Client, market int32, code string, holderCategory int32, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.GetHoldingChangeList(c.inner, &qot.GetHoldingChangeListRequest{
+	resp, err := qot.GetHoldingChangeList(ctx, c.inner, &qot.GetHoldingChangeListRequest{
 		Security:       sec,
 		HolderCategory: holderCategory,
 		BeginTime:      beginTime,
@@ -2417,10 +2417,10 @@ type RehabInfo struct {
 }
 
 // RequestRehab requests rehabilitation (复权) data.
-func RequestRehab(c *Client, market int32, code string) ([]*RehabInfo, error) {
+func RequestRehab(ctx context.Context, c *Client, market int32, code string) ([]*RehabInfo, error) {
 	marketPtr := market
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.RequestRehab(c.inner, &qot.RequestRehabRequest{
+	resp, err := qot.RequestRehab(ctx, c.inner, &qot.RequestRehabRequest{
 		Security: sec,
 	})
 	if err != nil {
@@ -2467,8 +2467,8 @@ type HistoryKLQuotaDetail struct {
 }
 
 // RequestHistoryKLQuota queries historical K-line quota.
-func RequestHistoryKLQuota(c *Client) (*HistoryKLQuotaInfo, error) {
-	resp, err := qot.RequestHistoryKLQuota(c.inner, &qot.RequestHistoryKLQuotaRequest{
+func RequestHistoryKLQuota(ctx context.Context, c *Client) (*HistoryKLQuotaInfo, error) {
+	resp, err := qot.RequestHistoryKLQuota(ctx, c.inner, &qot.RequestHistoryKLQuotaRequest{
 		GetDetail: true,
 	})
 	if err != nil {

@@ -1525,10 +1525,15 @@ type StockFilterResponse struct {
 }
 
 // StockFilter filters stocks based on various criteria (选股).
-func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func StockFilter(ctx context.Context, c *futuapi.Client, req *StockFilterRequest) (*StockFilterResponse, error) {
+	// Input validation
+	if req.Market == 0 {
+		return nil, fmt.Errorf("invalid market: must be non-zero")
 	}
+	if req.Num <= 0 || req.Num > 100 {
+		return nil, fmt.Errorf("invalid num: must be between 1 and 100")
+	}
+
 	c2s := &qotstockfilter.C2S{
 		Begin:                     &req.Begin,
 		Num:                       &req.Num,
@@ -1542,33 +1547,14 @@ func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterRespon
 	}
 
 	pkt := &qotstockfilter.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_StockFilter, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotstockfilter.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_StockFilter, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("StockFilter failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("StockFilter", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1583,6 +1569,9 @@ func StockFilter(c *futuapi.Client, req *StockFilterRequest) (*StockFilterRespon
 	}
 
 	for _, d := range s2c.GetDataList() {
+		if d == nil {
+			continue
+		}
 		result.DataList = append(result.DataList, &StockFilterData{
 			Security:                d.GetSecurity(),
 			Name:                    d.GetName(),
@@ -1691,10 +1680,12 @@ type GetWarrantResponse struct {
 }
 
 // GetWarrant returns warrant data filtered by the given criteria.
-func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetWarrant(ctx context.Context, c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse, error) {
+	// Input validation
+	if req.Num <= 0 || req.Num > 100 {
+		return nil, fmt.Errorf("invalid num: must be between 1 and 100")
 	}
+
 	c2s := &qotgetwarrant.C2S{
 		Begin:     &req.Begin,
 		Num:       &req.Num,
@@ -1786,33 +1777,14 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 	}
 
 	pkt := &qotgetwarrant.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetWarrant, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetwarrant.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetWarrant, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetWarrant failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetWarrant", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1827,6 +1799,9 @@ func GetWarrant(c *futuapi.Client, req *GetWarrantRequest) (*GetWarrantResponse,
 	}
 
 	for _, w := range s2c.GetWarrantDataList() {
+		if w == nil {
+			continue
+		}
 		result.WarrantDataList = append(result.WarrantDataList, &WarrantData{
 			Stock:              w.GetStock(),
 			Owner:              w.GetOwner(),
@@ -1904,10 +1879,12 @@ type GetSuspendResponse struct {
 }
 
 // GetSuspend returns suspension (停牌) information for the given securities.
-func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetSuspend(ctx context.Context, c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetsuspend.C2S{
 		SecurityList: req.SecurityList,
 		BeginTime:    &req.BeginTime,
@@ -1915,33 +1892,14 @@ func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse,
 	}
 
 	pkt := &qotgetsuspend.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetSuspend, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetsuspend.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetSuspend, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetSuspend failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetSuspend", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -1954,11 +1912,17 @@ func GetSuspend(c *futuapi.Client, req *GetSuspendRequest) (*GetSuspendResponse,
 	}
 
 	for _, ss := range s2c.GetSecuritySuspendList() {
+		if ss == nil {
+			continue
+		}
 		info := &SecuritySuspendInfo{
 			Security:    ss.GetSecurity(),
 			SuspendList: make([]*SuspendInfo, 0, len(ss.GetSuspendList())),
 		}
 		for _, s := range ss.GetSuspendList() {
+			if s == nil {
+				continue
+			}
 			info.SuspendList = append(info.SuspendList, &SuspendInfo{
 				Time:      s.GetTime(),
 				Timestamp: s.GetTimestamp(),
@@ -2003,42 +1967,26 @@ type GetFutureInfoResponse struct {
 }
 
 // GetFutureInfo returns futures contract information for the given securities.
-func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfoResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+// GetFutureInfo returns detailed information about futures contracts.
+func GetFutureInfo(ctx context.Context, c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfoResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetfutureinfo.C2S{
 		SecurityList: req.SecurityList,
 	}
 
 	pkt := &qotgetfutureinfo.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetFutureInfo, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetfutureinfo.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetFutureInfo, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetFutureInfo failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetFutureInfo", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2051,6 +1999,9 @@ func GetFutureInfo(c *futuapi.Client, req *GetFutureInfoRequest) (*GetFutureInfo
 	}
 
 	for _, fi := range s2c.GetFutureInfoList() {
+		if fi == nil {
+			continue
+		}
 		result.FutureInfoList = append(result.FutureInfoList, &FutureInfo{
 			Name:               fi.GetName(),
 			Security:           fi.GetSecurity(),
@@ -2102,10 +2053,12 @@ type GetCodeChangeResponse struct {
 }
 
 // GetCodeChange returns code change (股份代号变动) information for the given securities.
-func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChangeResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetCodeChange(ctx context.Context, c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChangeResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+
 	c2s := &qotgetcodechange.C2S{
 		SecurityList:   req.SecurityList,
 		TimeFilterList: req.TimeFilterList,
@@ -2113,33 +2066,14 @@ func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChange
 	}
 
 	pkt := &qotgetcodechange.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetCodeChange, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetcodechange.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetCodeChange, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetCodeChange failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetCodeChange", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2152,6 +2086,9 @@ func GetCodeChange(c *futuapi.Client, req *GetCodeChangeRequest) (*GetCodeChange
 	}
 
 	for _, cc := range s2c.GetCodeChangeList() {
+		if cc == nil {
+			continue
+		}
 		result.CodeChangeList = append(result.CodeChangeList, &CodeChangeInfo{
 			Type:               cc.GetType(),
 			Security:           cc.GetSecurity(),
@@ -2235,42 +2172,25 @@ type GetIpoListResponse struct {
 }
 
 // GetIpoList returns the list of upcoming and recently listed IPOs for the given market.
-func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetIpoList(ctx context.Context, c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse, error) {
+	// Input validation
+	if req.Market == 0 {
+		return nil, fmt.Errorf("invalid market: must be non-zero")
 	}
+
 	c2s := &qotgetipolist.C2S{
 		Market: &req.Market,
 	}
 
 	pkt := &qotgetipolist.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetIpoList, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetipolist.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetIpoList, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetIpoList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetIpoList", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2283,6 +2203,9 @@ func GetIpoList(c *futuapi.Client, req *GetIpoListRequest) (*GetIpoListResponse,
 	}
 
 	for _, ipo := range s2c.GetIpoList() {
+		if ipo == nil {
+			continue
+		}
 		ipoData := &IpoData{}
 
 		if basic := ipo.GetBasic(); basic != nil {
@@ -2358,10 +2281,12 @@ type GetHoldingChangeListResponse struct {
 }
 
 // GetHoldingChangeList returns the holding change list for the given security.
-func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (*GetHoldingChangeListResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetHoldingChangeList(ctx context.Context, c *futuapi.Client, req *GetHoldingChangeListRequest) (*GetHoldingChangeListResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotgetholdingchangelist.C2S{
 		Security:       req.Security,
 		HolderCategory: &req.HolderCategory,
@@ -2370,33 +2295,14 @@ func GetHoldingChangeList(c *futuapi.Client, req *GetHoldingChangeListRequest) (
 	}
 
 	pkt := &qotgetholdingchangelist.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetHoldingChangeList, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetholdingchangelist.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetHoldingChangeList, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetHoldingChangeList failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetHoldingChangeList", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2427,42 +2333,20 @@ type GetUserSecurityGroupResponse struct {
 }
 
 // GetUserSecurityGroup returns the list of user-defined security groups.
-func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (*GetUserSecurityGroupResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func GetUserSecurityGroup(ctx context.Context, c *futuapi.Client, req *GetUserSecurityGroupRequest) (*GetUserSecurityGroupResponse, error) {
 	c2s := &qotgetusersecuritygroup.C2S{
 		GroupType: &req.GroupType,
 	}
 
 	pkt := &qotgetusersecuritygroup.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_GetUserSecurityGroup, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotgetusersecuritygroup.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_GetUserSecurityGroup, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetUserSecurityGroup failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetUserSecurityGroup", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2475,6 +2359,9 @@ func GetUserSecurityGroup(c *futuapi.Client, req *GetUserSecurityGroupRequest) (
 	}
 
 	for _, g := range s2c.GetGroupList() {
+		if g == nil {
+			continue
+		}
 		result.GroupList = append(result.GroupList, &UserSecurityGroupData{
 			GroupName: g.GetGroupName(),
 			GroupType: g.GetGroupType(),
@@ -2498,10 +2385,15 @@ type ModifyUserSecurityResponse struct {
 }
 
 // ModifyUserSecurity adds or removes securities from a user-defined group.
-func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*ModifyUserSecurityResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func ModifyUserSecurity(ctx context.Context, c *futuapi.Client, req *ModifyUserSecurityRequest) (*ModifyUserSecurityResponse, error) {
+	// Input validation
+	if req.GroupName == "" {
+		return nil, fmt.Errorf("group name is required")
 	}
+	if req.Op == 0 {
+		return nil, fmt.Errorf("operation is required")
+	}
+
 	c2s := &qotmodifyusersecurity.C2S{
 		GroupName:    &req.GroupName,
 		Op:           &req.Op,
@@ -2509,33 +2401,14 @@ func ModifyUserSecurity(c *futuapi.Client, req *ModifyUserSecurityRequest) (*Mod
 	}
 
 	pkt := &qotmodifyusersecurity.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_ModifyUserSecurity, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotmodifyusersecurity.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_ModifyUserSecurity, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("ModifyUserSecurity failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("ModifyUserSecurity", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	return &ModifyUserSecurityResponse{
@@ -2562,10 +2435,15 @@ type SetPriceReminderResponse struct {
 }
 
 // SetPriceReminder creates, updates, or deletes a price reminder.
-func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPriceReminderResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func SetPriceReminder(ctx context.Context, c *futuapi.Client, req *SetPriceReminderRequest) (*SetPriceReminderResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+	if req.Op == 0 {
+		return nil, fmt.Errorf("operation is required")
+	}
+
 	c2s := &qotsetpricereminder.C2S{
 		Security:           req.Security,
 		Op:                 &req.Op,
@@ -2590,33 +2468,14 @@ func SetPriceReminder(c *futuapi.Client, req *SetPriceReminderRequest) (*SetPric
 	}
 
 	pkt := &qotsetpricereminder.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_SetPriceReminder, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotsetpricereminder.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_SetPriceReminder, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("SetPriceReminder failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("SetPriceReminder", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2645,10 +2504,15 @@ type RegQotPushResponse struct {
 }
 
 // RegQotPush registers or unregisters for real-time push notifications.
-func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
+	// Input validation
+	if len(req.SecurityList) == 0 {
+		return nil, fmt.Errorf("security list is empty")
 	}
+	if len(req.SubTypeList) == 0 {
+		return nil, fmt.Errorf("subtype list is empty")
+	}
+
 	c2s := &qotregqotpush.C2S{
 		SecurityList:  req.SecurityList,
 		SubTypeList:   req.SubTypeList,
@@ -2659,39 +2523,20 @@ func RegQotPush(c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse,
 	c2s.IsFirstPush = &req.IsFirstPush
 
 	pkt := &qotregqotpush.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_RegQotPush, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotregqotpush.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_RegQotPush, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("RegQotPush failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("RegQotPush", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	return &RegQotPushResponse{
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),
-	}, nil
+}, nil
 }
 
 // RequestRehabRequest defines parameters for RequestRehab.
@@ -2705,42 +2550,25 @@ type RequestRehabResponse struct {
 }
 
 // RequestRehab requests rehabilitation (复权) data for the given security.
-func RequestRehab(c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func RequestRehab(ctx context.Context, c *futuapi.Client, req *RequestRehabRequest) (*RequestRehabResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotrequestrehab.C2S{
 		Security: req.Security,
 	}
 
 	pkt := &qotrequestrehab.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_RequestRehab, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotrequestrehab.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_RequestRehab, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("RequestRehab failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("RequestRehab", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2766,42 +2594,20 @@ type RequestHistoryKLQuotaResponse struct {
 }
 
 // RequestHistoryKLQuota returns the quota usage for historical K-line requests.
-func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest) (*RequestHistoryKLQuotaResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
-	}
+func RequestHistoryKLQuota(ctx context.Context, c *futuapi.Client, req *RequestHistoryKLQuotaRequest) (*RequestHistoryKLQuotaResponse, error) {
 	c2s := &qotrequesthistoryklquota.C2S{
 		BGetDetail: &req.GetDetail,
 	}
 
 	pkt := &qotrequesthistoryklquota.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_RequestHistoryKLQuota, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotrequesthistoryklquota.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_RequestHistoryKLQuota, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("RequestHistoryKLQuota failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("RequestHistoryKLQuota", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
@@ -2809,11 +2615,20 @@ func RequestHistoryKLQuota(c *futuapi.Client, req *RequestHistoryKLQuotaRequest)
 		return nil, fmt.Errorf("RequestHistoryKLQuota: s2c is nil")
 	}
 
-	return &RequestHistoryKLQuotaResponse{
+	result := &RequestHistoryKLQuotaResponse{
 		UsedQuota:   s2c.GetUsedQuota(),
 		RemainQuota: s2c.GetRemainQuota(),
-		DetailList:  s2c.GetDetailList(),
-	}, nil
+		DetailList:  make([]*qotrequesthistoryklquota.DetailItem, 0, len(s2c.GetDetailList())),
+	}
+
+	for _, d := range s2c.GetDetailList() {
+		if d == nil {
+			continue
+		}
+		result.DetailList = append(result.DetailList, d)
+	}
+
+	return result, nil
 }
 
 // GetRehabRequest defines parameters for GetRehab.
@@ -2827,42 +2642,25 @@ type GetRehabResponse struct {
 }
 
 // GetRehab returns rehabilitation (复权) data for the given security.
-func GetRehab(c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
-	if err := c.EnsureConnected(); err != nil {
-		return nil, err
+func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
+	// Input validation
+	if req.Security == nil {
+		return nil, fmt.Errorf("security is required")
 	}
+
 	c2s := &qotrequestrehab.C2S{
 		Security: req.Security,
 	}
 
 	pkt := &qotrequestrehab.Request{C2S: c2s}
-
-	body, err := proto.Marshal(pkt)
-	if err != nil {
-		return nil, err
-	}
-
-	serialNo := c.NextSerialNo()
-	if err := c.Conn().WritePacket(ProtoID_RequestRehab, serialNo, body); err != nil {
-		return nil, err
-	}
-
-	apiTimeout := c.Conn().APITimeout()
-	if apiTimeout == 0 {
-		apiTimeout = 30 * time.Second
-	}
-	pktResp, err := c.Conn().ReadResponse(serialNo, apiTimeout)
-	if err != nil {
-		return nil, err
-	}
-
 	var rsp qotrequestrehab.Response
-	if err := proto.Unmarshal(pktResp.Body, &rsp); err != nil {
+
+	if err := c.RequestContext(ctx, ProtoID_RequestRehab, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetRehab failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetRehab", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
