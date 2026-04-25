@@ -108,7 +108,19 @@ type GetAccListResponse struct {
 
 // wrapError standardizes error messages for proto response failures
 func wrapError(funcName string, retType int32, retMsg string) error {
-	return fmt.Errorf("%s failed: retType=%d, retMsg=%s", funcName, retType, retMsg)
+	code := constant.ErrorCode(retType)
+	if retType == 0 {
+		code = constant.ErrCodeSuccess
+	} else if retType < 0 {
+		code = constant.ErrorCode(retType)
+	} else {
+		code = constant.ErrCodeUnknown
+	}
+	return &constant.FutuError{
+		Code:    code,
+		Message: retMsg,
+		Func:   funcName,
+	}
 }
 
 // GetAccList retrieves the list of trading accounts, optionally including general security account info.

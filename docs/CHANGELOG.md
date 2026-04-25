@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-04-25
+
+### Added (Phase 3 Infrastructure)
+
+- **P3-1: FutuError type** (`pkg/constant/errors.go`) — programmatic error handling:
+  ```go
+  if constant.IsTimeout(err) { /* handle timeout */ }
+  fe, ok := constant.AsFutuError(err)
+  ```
+  Error codes: `ErrCodeSuccess`, `ErrCodeInvalidParams`, `ErrCodeTimeout`, `ErrCodeDisconnected`, `ErrCodeUnknown`
+- Helper predicates: `IsTimeout()`, `IsDisconnected()`, `IsInvalidParams()`, `IsSuccess()`, `AsFutuError()`
+
 ## [0.2.1] - 2026-04-25
 
 ### Added (Phase 2 Ease of Use)

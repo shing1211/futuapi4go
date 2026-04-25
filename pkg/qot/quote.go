@@ -45,6 +45,7 @@ import (
 	"fmt"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
@@ -83,7 +84,19 @@ import (
 
 // wrapError standardizes error messages for proto response failures
 func wrapError(funcName string, retType int32, retMsg string) error {
-	return fmt.Errorf("%s failed: retType=%d, retMsg=%s", funcName, retType, retMsg)
+	code := constant.ErrorCode(retType)
+	if retType == 0 {
+		code = constant.ErrCodeSuccess
+	} else if retType < 0 {
+		code = constant.ErrorCode(retType)
+	} else {
+		code = constant.ErrCodeUnknown
+	}
+	return &constant.FutuError{
+		Code:    code,
+		Message: retMsg,
+		Func:   funcName,
+	}
 }
 
 const (

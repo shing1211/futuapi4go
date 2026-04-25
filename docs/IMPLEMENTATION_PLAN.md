@@ -639,7 +639,7 @@ orderID, err := trd.PlaceOrder(ctx, client,
 ---
 
 ### P3-1: Error Chain Preservation with FutuError
-**Severity:** MEDIUM | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** MEDIUM | **Status:** ✅ Done | **Assignee:** opencode
 
 **Issue:**
 - Current `wrapError` doesn't preserve original error chain
@@ -695,11 +695,13 @@ func IsDisconnected(err error) bool { /* ... */ }
 ---
 
 ### P3-2: Generic Request Handler (Reduce Boilerplate)
-**Severity:** MEDIUM | **Status:** ⚪ Pending | **Assignee:** TBD
+**Severity:** MEDIUM | **Status:** ⚪ Pending | **Assignee:** TBD (Deferred)
 
 **Issue:**
 - 23+ API functions all duplicate the same pattern: validate -> build proto -> send -> check response -> map fields
 - This is ~80% duplicate code across all API functions
+
+**Note:** Deferred due to complexity - requires significant refactoring and could introduce subtle bugs
 
 **Fix Location:**
 ```go
