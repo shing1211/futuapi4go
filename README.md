@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.3.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.3.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -20,10 +20,10 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.3.0
+go get github.com/shing1211/futuapi4go@v0.3.1
 ```
 
-## v0.3.0 Breaking Changes
+## v0.3.1 Breaking Changes
 
 If upgrading from v0.2.x, note these changes:
 
