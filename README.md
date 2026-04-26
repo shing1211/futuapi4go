@@ -314,7 +314,7 @@ fmt.Printf("NVDA: %.2f (open=%.2f high=%.2f low=%.2f vol=%d)\n",
 #### GetKLines — latest K-line bars
 
 ```go
-klines, err := client.GetKLines(cli, constant.Market_HK, "00700",
+klines, err := client.GetKLines(context.Background(), cli, constant.Market_HK, "00700",
     constant.KLType_K_Day, 100)
 for _, kl := range klines {
     fmt.Printf("%s O=%.2f H=%.2f L=%.2f C=%.2f\n",
@@ -325,7 +325,7 @@ for _, kl := range klines {
 #### GetOrderBook — bid/ask depth
 
 ```go
-book, err := client.GetOrderBook(cli, constant.Market_HK, "00700", 10)
+book, err := client.GetOrderBook(context.Background(), cli, constant.Market_HK, "00700", 10)
 for i, b := range book.Bids {
     fmt.Printf("Bid[%d]: %.2f x %d\n", i, b.Price, b.Volume)
 }
@@ -341,7 +341,7 @@ securities := []*qotcommon.Security{
     {Market: ptrInt32(constant.Market_HK), Code: ptrStr("00700")},
     {Market: ptrInt32(constant.Market_HK), Code: ptrStr("09988")},
 }
-snapshots, err := client.GetSecuritySnapshot(cli, securities)
+snapshots, err := client.GetSecuritySnapshot(context.Background(), cli, securities)
 for _, s := range snapshots {
     fmt.Printf("%s: %.2f\n", s.Security.GetCode(), s.CurPrice)
 }
@@ -350,12 +350,12 @@ for _, s := range snapshots {
 #### GetCapitalFlow / GetCapitalDistribution
 
 ```go
-flows, err := client.GetCapitalFlow(cli, constant.Market_HK, "00700")
+flows, err := client.GetCapitalFlow(context.Background(), cli, constant.Market_HK, "00700")
 for _, f := range flows {
     fmt.Printf("InFlow=%.2f MainInFlow=%.2f\n", f.InFlow, f.MainInFlow)
 }
 
-dist, err := client.GetCapitalDistribution(cli, constant.Market_HK, "00700")
+dist, err := client.GetCapitalDistribution(context.Background(), cli, constant.Market_HK, "00700")
 if dist != nil {
     fmt.Printf("MainInflow=%.2f BigInflow=%.2f\n", dist.MainInflow, dist.BigInflow)
 }
@@ -364,31 +364,31 @@ if dist != nil {
 | Function | Signature | Description |
 |---|---|---|
 | `GetQuote` | `GetQuote(ctx, c, market, code) (*Quote, error)` | Real-time quote for one security |
-| `GetKLines` | `GetKLines(c, market, code, klType, num) ([]KLine, error)` | Latest K-line bars (up to `num`) |
-| `GetOrderBook` | `GetOrderBook(c, market, code, num) (*OrderBook, error)` | Bid/ask depth, `num` levels per side |
-| `GetTicker` | `GetTicker(c, market, code, num) ([]Ticker, error)` | Tick-by-tick trades, last `num` |
-| `GetRT` | `GetRT(c, market, code) ([]RT, error)` | Intraday time-share data |
-| `GetBroker` | `GetBroker(c, market, code, num) ([]Broker, []Broker, error)` | Broker queue (bid, ask) |
-| `GetStaticInfo` | `GetStaticInfo(c, market, code) ([]StaticInfo, error)` | Static security info (name, type, lot size) |
-| `GetSecuritySnapshot` | `GetSecuritySnapshot(c, securities) ([]*Snapshot, error)` | Full snapshot for multiple securities |
-| `GetMarketState` | `GetMarketState(c, market, code) (int32, error)` | Trading status (open/closed/auction...) |
-| `GetCapitalFlow` | `GetCapitalFlow(c, market, code) ([]CapitalFlow, error)` | Capital flow (inflow/outflow) |
-| `GetCapitalDistribution` | `GetCapitalDistribution(c, market, code) (*CapitalDistribution, error)` | Capital distribution (super/big/mid/small) |
-| `GetOwnerPlate` | `GetOwnerPlate(c, market, code) ([]string, error)` | Plates the security belongs to |
-| `GetPlateSet` | `GetPlateSet(c, market) ([]Plate, error)` | List plates (industry/region/concept) |
-| `GetPlateSecurity` | `GetPlateSecurity(c, market, plateCode) ([]StaticInfo, error)` | Securities in a plate |
-| `GetReference` | `GetReference(c, market, code, refType) ([]StaticInfo, error)` | Related securities (warrants, etc.) |
-| `GetIpoList` | `GetIpoList(c, market) ([]IpoData, error)` | Upcoming/ongoing IPOs |
-| `GetFutureInfo` | `GetFutureInfo(c, code) ([]FutureInfo, error)` | Futures contract info |
-| `GetSuspend` | `GetSuspend(c, securities, begin, end) ([]*SuspendInfo, error)` | Suspension dates |
-| `GetCodeChange` | `GetCodeChange(c, securities) ([]*CodeChangeInfo, error)` | Code change history |
-| `GetHoldingChangeList` | `GetHoldingChangeList(c, market, code, category, begin, end) ([]*HoldingChangeInfo, error)` | Director/holder changes |
-| `GetOptionExpirationDate` | `GetOptionExpirationDate(c, market, code) ([]OptionExpiration, error)` | Option expiry dates |
-| `GetOptionChain` | `GetOptionChain(c, market, code, indexType, optType, cond, begin, end) ([]*OptChain, error)` | Full option chain |
-| `GetWarrant` | `GetWarrant(c, market, code, begin, num, sort, asc, optType, issuer, status) ([]*WarrantData, error)` | Warrant list |
-| `StockFilter` | `StockFilter(c, market, begin, num) ([]*StockFilterResult, error)` | Filter stocks by criteria |
-| `GetPriceReminder` | `GetPriceReminder(c, market, code) ([]*PriceReminderInfo, error)` | Get price alerts |
-| `SetPriceReminder` | `SetPriceReminder(c, market, code, op, type, freq, value, note) (int64, error)` | Add/update/delete price alert |
+| `GetKLines` | `GetKLines(ctx, c, market, code, klType, num) ([]KLine, error)` | Latest K-line bars (up to `num`) |
+| `GetOrderBook` | `GetOrderBook(ctx, c, market, code, num) (*OrderBook, error)` | Bid/ask depth, `num` levels per side |
+| `GetTicker` | `GetTicker(ctx, c, market, code, num) ([]Ticker, error)` | Tick-by-tick trades, last `num` |
+| `GetRT` | `GetRT(ctx, c, market, code) ([]RT, error)` | Intraday time-share data |
+| `GetBroker` | `GetBroker(ctx, c, market, code, num) ([]Broker, []Broker, error)` | Broker queue (bid, ask) |
+| `GetStaticInfo` | `GetStaticInfo(ctx, c, market, code) ([]StaticInfo, error)` | Static security info (name, type, lot size) |
+| `GetSecuritySnapshot` | `GetSecuritySnapshot(ctx, c, securities) ([]*Snapshot, error)` | Full snapshot for multiple securities |
+| `GetMarketState` | `GetMarketState(ctx, c, market, code) (int32, error)` | Trading status (open/closed/auction...) |
+| `GetCapitalFlow` | `GetCapitalFlow(ctx, c, market, code) ([]CapitalFlow, error)` | Capital flow (inflow/outflow) |
+| `GetCapitalDistribution` | `GetCapitalDistribution(ctx, c, market, code) (*CapitalDistribution, error)` | Capital distribution (super/big/mid/small) |
+| `GetOwnerPlate` | `GetOwnerPlate(ctx, c, market, code) ([]string, error)` | Plates the security belongs to |
+| `GetPlateSet` | `GetPlateSet(ctx, c, market) ([]Plate, error)` | List plates (industry/region/concept) |
+| `GetPlateSecurity` | `GetPlateSecurity(ctx, c, market, plateCode) ([]StaticInfo, error)` | Securities in a plate |
+| `GetReference` | `GetReference(ctx, c, market, code, refType) ([]StaticInfo, error)` | Related securities (warrants, etc.) |
+| `GetIpoList` | `GetIpoList(ctx, c, market) ([]IpoData, error)` | Upcoming/ongoing IPOs |
+| `GetFutureInfo` | `GetFutureInfo(ctx, c, code) ([]FutureInfo, error)` | Futures contract info |
+| `GetSuspend` | `GetSuspend(ctx, c, securities, begin, end) ([]*SuspendInfo, error)` | Suspension dates |
+| `GetCodeChange` | `GetCodeChange(ctx, c, securities) ([]*CodeChangeInfo, error)` | Code change history |
+| `GetHoldingChangeList` | `GetHoldingChangeList(ctx, c, market, code, category, begin, end) ([]*HoldingChangeInfo, error)` | Director/holder changes |
+| `GetOptionExpirationDate` | `GetOptionExpirationDate(ctx, c, market, code) ([]OptionExpiration, error)` | Option expiry dates |
+| `GetOptionChain` | `GetOptionChain(ctx, c, market, code, indexType, optType, cond, begin, end) ([]*OptChain, error)` | Full option chain |
+| `GetWarrant` | `GetWarrant(ctx, c, market, code, begin, num, sort, asc, optType, issuer, status) ([]*WarrantData, error)` | Warrant list |
+| `StockFilter` | `StockFilter(ctx, c, market, begin, num) ([]*StockFilterResult, error)` | Filter stocks by criteria |
+| `GetPriceReminder` | `GetPriceReminder(ctx, c, market, code) ([]*PriceReminderInfo, error)` | Get price alerts |
+| `SetPriceReminder` | `SetPriceReminder(ctx, c, market, code, op, type, freq, value, note) (int64, error)` | Add/update/delete price alert |
 
 ---
 
@@ -396,7 +396,7 @@ if dist != nil {
 
 ```go
 // Fetch all daily K-lines for a date range (auto-paginated)
-klines, err := client.RequestHistoryKL(cli,
+klines, err := client.RequestHistoryKL(context.Background(), cli,
     constant.Market_HK, "00700",
     constant.KLType_K_Day,
     "2024-01-01", "2025-01-01",
@@ -404,7 +404,7 @@ klines, err := client.RequestHistoryKL(cli,
 
 // Fetch with custom page size (max 1000 per page)
 client.HistoryKLPaginationDelay = 500 * time.Millisecond
-klines, err = client.RequestHistoryKLWithLimit(cli,
+klines, err = client.RequestHistoryKLWithLimit(context.Background(), cli,
     constant.Market_HK, "00700",
     constant.KLType_K_Day,
     "2024-01-01", "2025-01-01",
@@ -412,21 +412,21 @@ klines, err = client.RequestHistoryKLWithLimit(cli,
 )
 
 // Check quota usage
-quota, err := client.RequestHistoryKLQuota(cli)
+quota, err := client.RequestHistoryKLQuota(context.Background(), cli)
 fmt.Printf("Used=%d Remain=%d\n", quota.UsedQuota, quota.RemainQuota)
 
 // Get rehab (split/dividend) factors
-rehab, err := client.RequestRehab(cli, constant.Market_HK, "00700")
+rehab, err := client.RequestRehab(context.Background(), cli, constant.Market_HK, "00700")
 ```
 
 | Function | Signature | Description |
 |---|---|---|
-| `RequestHistoryKL` | `RequestHistoryKL(c, mkt, code, klType, start, end) ([]KLine, error)` | Auto-paginated historical K-lines |
-| `RequestHistoryKLWithLimit` | `RequestHistoryKLWithLimit(c, mkt, code, klType, start, end, maxPerPage) ([]KLine, error)` | With configurable page size |
-| `RequestHistoryKLQuota` | `RequestHistoryKLQuota(c) (*HistoryKLQuotaInfo, error)` | API quota usage |
-| `RequestRehab` | `RequestRehab(c, market, code) ([]*RehabInfo, error)` | Rehabilitation (split/dividend) factors |
-| `GetTradeDate` | `GetTradeDate(c, market, start, end) ([]string, error)` | Market trade dates |
-| `RequestTradeDate` | `RequestTradeDate(c, market, start, end, code) ([]string, error)` | Trade dates for a specific security |
+| `RequestHistoryKL` | `RequestHistoryKL(ctx, c, mkt, code, klType, start, end) ([]KLine, error)` | Auto-paginated historical K-lines |
+| `RequestHistoryKLWithLimit` | `RequestHistoryKLWithLimit(ctx, c, mkt, code, klType, start, end, maxPerPage) ([]KLine, error)` | With configurable page size |
+| `RequestHistoryKLQuota` | `RequestHistoryKLQuota(ctx, c) (*HistoryKLQuotaInfo, error)` | API quota usage |
+| `RequestRehab` | `RequestRehab(ctx, c, market, code) ([]*RehabInfo, error)` | Rehabilitation (split/dividend) factors |
+| `GetTradeDate` | `GetTradeDate(ctx, c, market, start, end) ([]string, error)` | Market trade dates |
+| `RequestTradeDate` | `RequestTradeDate(ctx, c, market, start, end, code) ([]string, error)` | Trade dates for a specific security |
 
 ---
 
@@ -437,7 +437,7 @@ rehab, err := client.RequestRehab(cli, constant.Market_HK, "00700")
 ```go
 // Subscribe to multiple data types at once
 // Note: US stocks require subscription before GetQuote works
-err := client.Subscribe(cli, constant.Market_US, "NVDA", []constant.SubType{
+err := client.Subscribe(context.Background(), cli, constant.Market_US, "NVDA", []constant.SubType{
     constant.SubType_Quote,
     constant.SubType_Ticker,
     constant.SubType_K_1Min,
@@ -547,11 +547,11 @@ fmt.Println("Shutting down...")
 
 | Function | Signature | Description |
 |---|---|---|
-| `Subscribe` | `Subscribe(c, market, code, []SubType) error` | Subscribe to one or more push types |
-| `Unsubscribe` | `Unsubscribe(c, market, code, []int32) error` | Unsubscribe specific types |
-| `UnsubscribeAll` | `UnsubscribeAll(c) error` | Unsubscribe everything |
-| `QuerySubscription` | `QuerySubscription(c) (*GetSubInfoResponse, error)` | Current subscription status |
-| `RegQotPush` | `RegQotPush(c, market, code, subtypes, rehabTypes, isReg, isFirst) error` | Register/unregister push |
+| `Subscribe` | `Subscribe(ctx, c, market, code, []SubType) error` | Subscribe to one or more push types |
+| `Unsubscribe` | `Unsubscribe(ctx, c, market, code, []int32) error` | Unsubscribe specific types |
+| `UnsubscribeAll` | `UnsubscribeAll(ctx, c) error` | Unsubscribe everything |
+| `QuerySubscription` | `QuerySubscription(ctx, c) (*GetSubInfoResponse, error)` | Current subscription status |
+| `RegQotPush` | `RegQotPush(ctx, c, market, code, subtypes, rehabTypes, isReg, isFirst) error` | Register/unregister push |
 | `chanpkg.SubscribeQuote` | `(cli, market, code, ch) stopFunc` | Quote push via channel |
 | `chanpkg.SubscribeKLine` | `(cli, market, code, KLType, ch) stopFunc` | K-line push via channel |
 | `chanpkg.SubscribeTicker` | `(cli, market, code, ch) stopFunc` | Ticker push via channel |
@@ -559,7 +559,7 @@ fmt.Println("Shutting down...")
 | `chanpkg.SubscribeRT` | `(cli, market, code, ch) stopFunc` | RT push via channel |
 | `chanpkg.SubscribeBroker` | `(cli, market, code, ch) stopFunc` | Broker push via channel |
 | `chanpkg.SubscribePriceReminder` | `(cli, ch) stopFunc` | Price reminder push via channel |
-| `GetSubInfo` | `GetSubInfo(c) (*SubInfo, error)` | Subscription info (quota, types) |
+| `GetSubInfo` | `GetSubInfo(ctx, c) (*SubInfo, error)` | Subscription info (quota, types) |
 
 ---
 
@@ -611,51 +611,51 @@ cli.RegisterHandler(constant.ProtoID_Trd_UpdateOrder, func(pid uint32, body []by
 
 ```go
 // List all accounts
-accounts, err := client.GetAccountList(cli)
+accounts, err := client.GetAccountList(context.Background(), cli)
 for _, acc := range accounts {
     fmt.Printf("AccID=%d Env=%d Markets=%v\n",
         acc.AccID, acc.TrdEnv, acc.TrdMarketAuthList)
 }
 
 // Unlock trading (required before placing orders)
-if err := client.UnlockTrading(cli, "your_md5_password"); err != nil {
+if err := client.UnlockTrading(context.Background(), cli, "your_md5_password"); err != nil {
     log.Fatal(err)
 }
 
 // Quick funds for first account
-funds, err := client.GetFunds(cli, 0)
+funds, err := client.GetFunds(context.Background(), cli, 0)
 fmt.Printf("Power=%.2f Cash=%.2f Assets=%.2f\n",
     funds.Power, funds.Cash, funds.TotalAssets)
 
 // Full account info with per-currency and per-market breakdown
-funds, err = client.GetAccountInfo(cli, accID, constant.TrdMarket_HK)
+funds, err = client.GetAccountInfo(context.Background(), cli, accID, constant.TrdMarket_HK)
 for _, ci := range funds.CashInfoList {
     fmt.Printf("Currency=%d Cash=%.2f Available=%.2f\n",
         ci.Currency, ci.Cash, ci.AvailableBalance)
 }
 
 // Max tradable quantities before placing an order
-max, err := client.GetMaxTrdQtys(cli, accID, constant.TrdMarket_HK,
+max, err := client.GetMaxTrdQtys(context.Background(), cli, accID, constant.TrdMarket_HK,
     "00700", constant.OrderType_Normal, 350.0)
 fmt.Printf("MaxCashBuy=%.2f MaxSell=%.2f\n", max.MaxCashBuy, max.MaxPositionSell)
 
 // AccTradingInfo — includes initial margin requirements
-info, err := client.GetAccTradingInfo(cli, accID, constant.TrdMarket_HK,
+info, err := client.GetAccTradingInfo(context.Background(), cli, accID, constant.TrdMarket_HK,
     "00700", constant.OrderType_Normal, 350.0)
 fmt.Printf("MaxBuy=%.2f LongIM=%.2f\n", info.MaxCashBuy, info.LongRequiredIM)
 ```
 
 | Function | Signature | Description |
 |---|---|---|
-| `GetAccountList` | `GetAccountList(c) ([]Account, error)` | All trading accounts |
-| `UnlockTrading` | `UnlockTrading(c, pwdMD5) error` | Unlock trading with MD5-hashed password |
-| `GetFunds` | `GetFunds(c, accID) (*Funds, error)` | Quick funds for first account |
-| `GetAccountInfo` | `GetAccountInfo(c, accID, market) (*Funds, error)` | Full funds with multi-currency/multi-market breakdown |
-| `GetMaxTrdQtys` | `GetMaxTrdQtys(c, accID, market, code, orderType, price) (*MaxTrdQtysInfo, error)` | Maximum buy/sell quantities |
-| `GetAccTradingInfo` | `GetAccTradingInfo(c, accID, market, code, orderType, price) (*AccTradingInfo, error)` | Max quantities + initial margin |
-| `GetOrderFee` | `GetOrderFee(c, accID, market, orderIDExList) ([]*OrderFeeInfo, error)` | Fee breakdown per order |
-| `GetMarginRatio` | `GetMarginRatio(c, accID, market, securities) ([]*MarginRatioInfo, error)` | Margin ratios for securities |
-| `SubAccPush` | `SubAccPush(c, accIDList) error` | Subscribe to account push notifications |
+| `GetAccountList` | `GetAccountList(ctx, c) ([]Account, error)` | All trading accounts |
+| `UnlockTrading` | `UnlockTrading(ctx, c, pwdMD5) error` | Unlock trading with MD5-hashed password |
+| `GetFunds` | `GetFunds(ctx, c, accID) (*Funds, error)` | Quick funds for first account |
+| `GetAccountInfo` | `GetAccountInfo(ctx, c, accID, market) (*Funds, error)` | Full funds with multi-currency/multi-market breakdown |
+| `GetMaxTrdQtys` | `GetMaxTrdQtys(ctx, c, accID, market, code, orderType, price) (*MaxTrdQtysInfo, error)` | Maximum buy/sell quantities |
+| `GetAccTradingInfo` | `GetAccTradingInfo(ctx, c, accID, market, code, orderType, price) (*AccTradingInfo, error)` | Max quantities + initial margin |
+| `GetOrderFee` | `GetOrderFee(ctx, c, accID, market, orderIDExList) ([]*OrderFeeInfo, error)` | Fee breakdown per order |
+| `GetMarginRatio` | `GetMarginRatio(ctx, c, accID, market, securities) ([]*MarginRatioInfo, error)` | Margin ratios for securities |
+| `SubAccPush` | `SubAccPush(ctx, c, accIDList) error` | Subscribe to account push notifications |
 
 ---
 
@@ -663,7 +663,7 @@ fmt.Printf("MaxBuy=%.2f LongIM=%.2f\n", info.MaxCashBuy, info.LongRequiredIM)
 
 ```go
 // Place a buy limit order
-result, err := client.PlaceOrder(cli,
+result, err := client.PlaceOrder(context.Background(), cli,
     accID,
     constant.TrdMarket_HK, // trading market
     "00700",              // code
@@ -675,33 +675,33 @@ result, err := client.PlaceOrder(cli,
 fmt.Printf("OrderID=%d OrderIDEx=%s\n", result.OrderID, result.OrderIDEx)
 
 // Modify order price and quantity
-_, err = client.ModifyOrder(cli, accID, constant.TrdMarket_HK,
+_, err = client.ModifyOrder(context.Background(), cli, accID, constant.TrdMarket_HK,
     result.OrderID,             // order ID
     constant.ModifyOrderOp_Normal, // modify (not cancel)
     355.0, 200)                 // new price, new qty
 
 // Cancel all open orders
-err = client.CancelAllOrder(cli, accID, constant.TrdMarket_HK, constant.TrdEnv_Real)
+err = client.CancelAllOrder(context.Background(), cli, accID, constant.TrdMarket_HK, constant.TrdEnv_Real)
 
 // Active orders
-orders, err := client.GetOrderList(cli, accID)
+orders, err := client.GetOrderList(context.Background(), cli, accID)
 for _, o := range orders {
     fmt.Printf("Order %d: %s %s @ %.2f qty=%.0f status=%d\n",
         o.OrderID, o.Code, o.TrdSide, o.Price, o.Qty, o.OrderStatus)
 }
 
 // Historical orders
-hist, err := client.GetHistoryOrderList(cli, accID, constant.TrdMarket_HK,
+hist, err := client.GetHistoryOrderList(context.Background(), cli, accID, constant.TrdMarket_HK,
     "2024-01-01", "2025-12-31")
 
 // Order fills
-fills, err := client.GetOrderFillList(cli, accID)
+fills, err := client.GetOrderFillList(context.Background(), cli, accID)
 for _, f := range fills {
     fmt.Printf("Fill %d: %s @ %.2f x %.0f\n", f.FillID, f.Code, f.Price, f.Qty)
 }
 
 // Cash flow
-flows, err := client.GetFlowSummary(cli, accID, constant.TrdMarket_HK, "", 0)
+flows, err := client.GetFlowSummary(context.Background(), cli, accID, constant.TrdMarket_HK, "", 0)
 // date="" means today; direction 0=all, 1=in, 2=out
 for _, f := range flows {
     fmt.Printf("%s %s: %.2f\n", f.ClearingDate, f.CashFlowType, f.CashFlowAmount)
@@ -710,22 +710,22 @@ for _, f := range flows {
 
 | Function | Signature | Description |
 |---|---|---|
-| `PlaceOrder` | `PlaceOrder(c, accID, market, code, side, orderType, price, qty) (*PlaceOrderResult, error)` | Place a new order |
-| `ModifyOrder` | `ModifyOrder(c, accID, market, orderID, op, price, qty) (*ModifyOrderResponse, error)` | Modify price/qty or cancel |
-| `CancelAllOrder` | `CancelAllOrder(c, accID, market, trdEnv) error` | Cancel all open orders |
-| `ReconfirmOrder` | `ReconfirmOrder(c, accID, market, orderID, reason) (*ReconfirmOrderResult, error)` | Reconfirm order requiring verification |
-| `GetOrderList` | `GetOrderList(c, accID) ([]Order, error)` | Active (open) orders |
-| `GetHistoryOrderList` | `GetHistoryOrderList(c, accID, market, start, end) ([]Order, error)` | Historical orders |
-| `GetOrderFillList` | `GetOrderFillList(c, accID) ([]OrderFill, error)` | Today's order fills |
-| `GetHistoryOrderFillList` | `GetHistoryOrderFillList(c, accID, market) ([]OrderFill, error)` | Historical fills |
-| `GetFlowSummary` | `GetFlowSummary(c, accID, market, date, direction) ([]*FlowSummaryInfo, error)` | Cash flow entries |
+| `PlaceOrder` | `PlaceOrder(ctx, c, accID, market, code, side, orderType, price, qty) (*PlaceOrderResult, error)` | Place a new order |
+| `ModifyOrder` | `ModifyOrder(ctx, c, accID, market, orderID, op, price, qty) (*ModifyOrderResponse, error)` | Modify price/qty or cancel |
+| `CancelAllOrder` | `CancelAllOrder(ctx, c, accID, market, trdEnv) error` | Cancel all open orders |
+| `ReconfirmOrder` | `ReconfirmOrder(ctx, c, accID, market, orderID, reason) (*ReconfirmOrderResult, error)` | Reconfirm order requiring verification |
+| `GetOrderList` | `GetOrderList(ctx, c, accID) ([]Order, error)` | Active (open) orders |
+| `GetHistoryOrderList` | `GetHistoryOrderList(ctx, c, accID, market, start, end) ([]Order, error)` | Historical orders |
+| `GetOrderFillList` | `GetOrderFillList(ctx, c, accID) ([]OrderFill, error)` | Today's order fills |
+| `GetHistoryOrderFillList` | `GetHistoryOrderFillList(ctx, c, accID, market) ([]OrderFill, error)` | Historical fills |
+| `GetFlowSummary` | `GetFlowSummary(ctx, c, accID, market, date, direction) ([]*FlowSummaryInfo, error)` | Cash flow entries |
 
 ---
 
 ### Trading — Positions
 
 ```go
-positions, err := client.GetPositionList(cli, accID)
+positions, err := client.GetPositionList(context.Background(), cli, accID)
 for _, p := range positions {
     fmt.Printf("%s: qty=%.0f cost=%.2f cur=%.2f pnl=%.2f (%.2f%%)\n",
         p.Code, p.Quantity, p.CostPrice, p.CurPrice, p.PnL, p.PnLRate)
@@ -734,7 +734,7 @@ for _, p := range positions {
 
 | Function | Signature | Description |
 |---|---|---|
-| `GetPositionList` | `GetPositionList(c, accID) ([]Position, error)` | Current positions with P&L |
+| `GetPositionList` | `GetPositionList(ctx, c, accID) ([]Position, error)` | Current positions with P&L |
 
 ---
 
@@ -742,25 +742,25 @@ for _, p := range positions {
 
 ```go
 // List all watchlist groups
-groups, err := client.GetUserSecurityGroup(cli)
+groups, err := client.GetUserSecurityGroup(context.Background(), cli)
 for _, g := range groups {
     fmt.Printf("Group: %s (type=%d)\n", g.Name, g.GroupType)
 }
 
 // Get securities in a group
-infos, err := client.GetUserSecurity(cli, "My Watchlist")
+infos, err := client.GetUserSecurity(context.Background(), cli, "My Watchlist")
 
 // Add/remove securities from a group
-err = client.ModifyUserSecurity(cli, "My Watchlist",
+err = client.ModifyUserSecurity(context.Background(), cli, "My Watchlist",
     constant.ModifyUserSecurityOp_Add, // or _Del
     constant.Market_US, []string{"NVDA", "AAPL"})
 ```
 
 | Function | Signature | Description |
 |---|---|---|
-| `GetUserSecurityGroup` | `GetUserSecurityGroup(c) ([]UserSecurityGroup, error)` | All watchlist groups |
-| `GetUserSecurity` | `GetUserSecurity(c, groupName) ([]StaticInfo, error)` | Securities in a group |
-| `ModifyUserSecurity` | `ModifyUserSecurity(c, groupName, op, market, codes) error` | Add/delete securities from group |
+| `GetUserSecurityGroup` | `GetUserSecurityGroup(ctx, c) ([]UserSecurityGroup, error)` | All watchlist groups |
+| `GetUserSecurity` | `GetUserSecurity(ctx, c, groupName) ([]StaticInfo, error)` | Securities in a group |
+| `ModifyUserSecurity` | `ModifyUserSecurity(ctx, c, groupName, op, market, codes) error` | Add/delete securities from group |
 
 ---
 
@@ -768,20 +768,20 @@ err = client.ModifyUserSecurity(cli, "My Watchlist",
 
 ```go
 // Global connection state
-state, err := client.GetGlobalState(cli)
+state, err := client.GetGlobalState(context.Background(), cli)
 fmt.Printf("QotLogined=%v TrdLogined=%v ServerBuild=%d\n",
     state.QotLogined, state.TrdLogined, state.ServerBuildNo)
 
 // User info
-user, err := client.GetUserInfo(cli)
+user, err := client.GetUserInfo(context.Background(), cli)
 fmt.Printf("UserID=%d Nick=%s APILevel=%s\n", user.UserID, user.NickName, user.ApiLevel)
 ```
 
 | Function | Signature | Description |
 |---|---|---|
-| `GetGlobalState` | `GetGlobalState(c) (*GlobalState, error)` | OpenD connection and login state |
-| `GetUserInfo` | `GetUserInfo(c) (*UserInfo, error)` | Futu account user info |
-| `GetDelayStatistics` | `GetDelayStatistics(c) (*DelayStatistics, error)` | Latency stats (known proto2 issue with OpenD serverVer=1003) |
+| `GetGlobalState` | `GetGlobalState(ctx, c) (*GlobalState, error)` | OpenD connection and login state |
+| `GetUserInfo` | `GetUserInfo(ctx, c) (*UserInfo, error)` | Futu account user info |
+| `GetDelayStatistics` | `GetDelayStatistics(ctx, c) (*DelayStatistics, error)` | Latency stats |
 
 ---
 
@@ -993,8 +993,10 @@ See the full [Python Migration Guide](PYTHON_MIGRATION_GUIDE.md) for side-by-sid
 
 ## Known Issues
 
-- **`GetDelayStatistics`** / **`GetTradeDate`** — proto2 wire-format incompatibility with OpenD serverVer=1003. Workaround: these calls are skipped gracefully in the demo.
-- Both issues are in the SDK's protobuf marshaling layer and will be fixed in a future release.
+- **`GetDelayStatistics`** — known proto2 wire-format incompatibility with certain OpenD versions. Calls are skipped gracefully in the demo if unsupported.
+- **`GetTradeDate`** — may require specific OpenD versions for full compatibility.
+
+> **Note:** OpenD v10.4.6408 is the latest stable release.
 
 ## License
 
