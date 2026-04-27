@@ -341,16 +341,25 @@ func QuerySubscription(ctx context.Context, c *Client) (*qot.GetSubInfoResponse,
 }
 
 // RegQotPush registers or unregisters real-time push notifications for a security.
-func RegQotPush(ctx context.Context, c *Client, market constant.Market, code string, subTypes []int32, rehabTypes []int32, isReg bool, isFirstPush bool) error {
+func RegQotPush(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType, rehabTypes []constant.RehabType, isReg bool, isFirstPush bool) error {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
+	subTypesConverted := make([]int32, len(subTypes))
+	for i, st := range subTypes {
+		subTypesConverted[i] = int32(st)
+	}
+	rehabTypesConverted := make([]int32, len(rehabTypes))
+	for i, rt := range rehabTypes {
+		rehabTypesConverted[i] = int32(rt)
+	}
+
 	_, err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
-		SecurityList:  []*qotcommon.Security{sec},
-		SubTypeList:   subTypes,
-		RehabTypeList: rehabTypes,
-		IsRegOrUnReg:  isReg,
-		IsFirstPush:   isFirstPush,
+		SecurityList:   []*qotcommon.Security{sec},
+		SubTypeList:    subTypesConverted,
+		RehabTypeList:  rehabTypesConverted,
+		IsRegOrUnReg:   isReg,
+		IsFirstPush:    isFirstPush,
 	})
 	return err
 }
