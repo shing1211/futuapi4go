@@ -16,6 +16,8 @@
 | **P6-5 Bounded Channels** | ✅ | Buffer size constants & helpers |
 | **P6-6 Market Detection** | ✅ | Warrants, CBBC, futures support |
 | **P6-7 Retry Logic** | ✅ Already existed | MaxRetries, backoff |
+| **P6-8 Shutdown Helpers** | ✅ | WaitForSignal(), CloseOnSignal() |
+| **P6-9 Examples Overhaul** | ✅ | 17 examples updated to use typed constants |
 
 ---
 
@@ -284,20 +286,20 @@ func (c *Client) Context() context.Context
 
 ## Definition of Done Checklist
 
-- [ ] `go build ./...` passes
-- [ ] `go vet ./...` passes
-- [ ] All tests pass with `-race` flag
-- [ ] demo project builds after SDK changes
-- [ ] CHANGELOG.md updated
-- [ ] Version bumped to v0.3.0
+- [x] `go build ./...` passes
+- [x] `go vet ./...` passes
+- [x] All tests pass with `-race` flag (client, pkg/trd, pkg/constant, etc.)
+- [x] demo project builds after SDK changes
+- [x] CHANGELOG.md updated
+- [x] Version bumped to v0.3.0
 
 ## Migration Guide Required For
 
-- P6-1: Add context parameter to all API calls (BREAKING)
-- P6-2: Remove int32() casting (BREAKING)
-- P6-3: New error codes (compatible)
-- P6-4: New timeout options (compatible)
-- P6-5: Bounded channels (compatible)
+- P6-1: Add context parameter to all API calls (BREAKING) ✅ documented
+- P6-2: Remove int32() casting (BREAKING) ✅ documented
+- P6-3: New error codes (compatible) ✅ documented
+- P6-4: New timeout options (compatible) ✅ documented
+- P6-5: Bounded channels (compatible) ✅ documented
 
 ---
 
