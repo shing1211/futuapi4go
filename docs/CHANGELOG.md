@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **P6-8: Graceful Shutdown Helpers** — `WaitForSignal()`, `CloseOnSignal()` for signal handling
+
+### Changed
+
+- **P2-1: Type Safety** — 21+ wrapper functions now use typed constants (Market, KLType, WarrantSortField, WarrantType, OptionType, IndexOptionType, HolderCategory, PriceReminderType, PriceReminderFreq, PriceReminderOp, TrdMarket)
+  - `GetPlateSet`, `GetIpoList`, `GetFlowSummary`, `GetCapitalFlow`, `GetCapitalDistribution`
+  - `RequestHistoryKL`, `RequestHistoryKLWithLimit`, `GetReference`, `GetOwnerPlate`
+  - `GetPlateSecurity`, `GetOptionExpirationDate`, `ModifyUserSecurity`, `RequestTradeDate`
+  - `GetOptionChain`, `StockFilter`, `GetWarrant`, `Unsubscribe`
+  - `SetPriceReminder`, `GetPriceReminder`, `ReconfirmOrder`
+  - `GetHoldingChangeList`, `RequestRehab`
+
 ## [0.3.1] - 2026-04-26
 
 ### Added

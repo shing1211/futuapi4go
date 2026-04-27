@@ -19,6 +19,9 @@ package client
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
@@ -120,6 +123,37 @@ func (c *Client) ConnectAddr(addr string) error {
 // Close closes the connection to OpenD.
 func (c *Client) Close() {
 	c.inner.Close()
+}
+
+// WaitForSignal blocks until a termination signal is received.
+// It calls cleanup() upon receiving the signal and returns the signal.
+// Common signals handled: SIGINT (Ctrl+C), SIGTERM.
+func (c *Client) WaitForSignal(cleanup func()) os.Signal {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-sigChan
+	if cleanup != nil {
+		cleanup()
+	}
+	return sig
+}
+
+// CloseOnSignal registers cleanup to be called when the process receives
+// termination signals (SIGINT, SIGTERM). Returns a function to unregister
+// the handler. The client is automatically closed when the signal is received.
+func (c *Client) CloseOnSignal() (unregister func()) {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		sig := <-sigChan
+		_ = sig // ignore signal for logging
+		c.Close()
+	}()
+
+	return func() {
+		signal.Stop(sigChan)
+	}
 }
 
 // GetConnID returns the connection ID assigned by OpenD.
@@ -273,7 +307,7 @@ func Subscribe(ctx context.Context, c *Client, market constant.Market, code stri
 }
 
 // Unsubscribe unsubscribes from real-time market data.
-func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []int32) error {
+func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -869,13 +903,14 @@ type FlowSummaryInfo struct {
 // GetFlowSummary retrieves account cash flow entries.
 // clearingDate: clearing date in "YYYY-MM-DD" format, empty means today.
 // direction: 0=none, 1=in, 2=out. Maps to Python's CashFlowDirection.
-func GetFlowSummary(c *Client, accID uint64, market int32, clearingDate string, direction int32) ([]*FlowSummaryInfo, error) {
+func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction int32) ([]*FlowSummaryInfo, error) {
 	if clearingDate == "" {
 		clearingDate = time.Now().Format("2006-01-02")
 	}
+	marketPtr := int32(market)
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
-		TrdMarket: &market,
+		TrdMarket: &marketPtr,
 		TrdEnv:    &c.trdEnv,
 	}
 	resp, err := trd.GetFlowSummary(c.inner.Context(), c.inner, &trd.GetFlowSummaryRequest{
@@ -1179,8 +1214,9 @@ func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, e
 }
 
 // GetPlateSet retrieves plate set (板块) list.
-func GetPlateSet(ctx context.Context, c *Client, market int32) ([]Plate, error) {
-	resp, err := qot.GetPlateSet(ctx, c.inner, &qot.GetPlateSetRequest{Market: market})
+func GetPlateSet(ctx context.Context, c *Client, market constant.Market) ([]Plate, error) {
+	marketPtr := int32(market)
+	resp, err := qot.GetPlateSet(ctx, c.inner, &qot.GetPlateSetRequest{Market: marketPtr})
 	if err != nil {
 		return nil, err
 	}
@@ -1197,8 +1233,9 @@ func GetPlateSet(ctx context.Context, c *Client, market int32) ([]Plate, error) 
 }
 
 // GetIpoList retrieves IPO list.
-func GetIpoList(ctx context.Context, c *Client, market int32) ([]IpoData, error) {
-	resp, err := qot.GetIpoList(ctx, c.inner, &qot.GetIpoListRequest{Market: market})
+func GetIpoList(ctx context.Context, c *Client, market constant.Market) ([]IpoData, error) {
+	marketPtr := int32(market)
+	resp, err := qot.GetIpoList(ctx, c.inner, &qot.GetIpoListRequest{Market: marketPtr})
 	if err != nil {
 		return nil, err
 	}
@@ -1301,8 +1338,8 @@ type CapitalFlow struct {
 }
 
 // GetCapitalFlow retrieves capital flow data.
-func GetCapitalFlow(ctx context.Context, c *Client, market int32, code string, periodType ...int32) ([]CapitalFlow, error) {
-	marketPtr := market
+func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...int32) ([]CapitalFlow, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	period := int32(0)
@@ -1335,8 +1372,8 @@ func GetCapitalFlow(ctx context.Context, c *Client, market int32, code string, p
 }
 
 // GetCapitalDistribution retrieves capital distribution.
-func GetCapitalDistribution(ctx context.Context, c *Client, market int32, code string) (*CapitalDistribution, error) {
-	marketPtr := market
+func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Market, code string) (*CapitalDistribution, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetCapitalDistribution(ctx, c.inner, sec)
@@ -1364,8 +1401,8 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market int32, code s
 }
 
 // GetOwnerPlate retrieves owner plates.
-func GetOwnerPlate(c *Client, market int32, code string) ([]string, error) {
-	marketPtr := market
+func GetOwnerPlate(c *Client, market constant.Market, code string) ([]string, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetOwnerPlate(c.inner.Context(), c.inner, &qot.GetOwnerPlateRequest{
@@ -1399,7 +1436,7 @@ var HistoryKLPaginationDelay = DefaultHistoryKLDelay
 // RequestHistoryKL requests historical K-line data with automatic pagination.
 // It fetches all available K-lines between startDate and endDate (inclusive),
 // automatically handling page boundaries via NextReqKey.
-func RequestHistoryKL(ctx context.Context, c *Client, market int32, code string, klType int32, startDate, endDate string) ([]KLine, error) {
+func RequestHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string) ([]KLine, error) {
 	return RequestHistoryKLWithLimit(ctx, c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
 }
 
@@ -1407,8 +1444,9 @@ func RequestHistoryKL(ctx context.Context, c *Client, market int32, code string,
 // page size. It automatically paginates until all data is retrieved.
 // maxPerPage controls how many K-lines are requested per API call (max 1000).
 // Uses HistoryKLPaginationDelay between pages.
-func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market int32, code string, klType int32, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
-	marketPtr := market
+func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
+	marketPtr := int32(market)
+	klTypePtr := int32(klType)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	var allKLines []KLine
@@ -1417,7 +1455,7 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market int32, cod
 	for {
 		resp, err := qot.RequestHistoryKL(ctx, c.inner, &qot.RequestHistoryKLRequest{
 			Security:    sec,
-			KlType:      klType,
+			KlType:      klTypePtr,
 			BeginTime:   startDate,
 			EndTime:     endDate,
 			MaxAckKLNum: maxPerPage,
@@ -1456,8 +1494,8 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market int32, cod
 }
 
 // GetReference retrieves related/reference securities.
-func GetReference(c *Client, market int32, code string, refType int32) ([]StaticInfo, error) {
-	marketPtr := market
+func GetReference(c *Client, market constant.Market, code string, refType int32) ([]StaticInfo, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetReference(c.inner.Context(), c.inner, &qot.GetReferenceRequest{
@@ -1495,8 +1533,8 @@ func GetReference(c *Client, market int32, code string, refType int32) ([]Static
 }
 
 // GetPlateSecurity retrieves securities in a plate.
-func GetPlateSecurity(ctx context.Context, c *Client, market int32, plateCode string) ([]StaticInfo, error) {
-	marketPtr := market
+func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, plateCode string) ([]StaticInfo, error) {
+	marketPtr := int32(market)
 	plate := &qotcommon.Security{Market: &marketPtr, Code: &plateCode}
 
 	resp, err := qot.GetPlateSecurity(ctx, c.inner, &qot.GetPlateSecurityRequest{Plate: plate})
@@ -1531,8 +1569,8 @@ func GetPlateSecurity(ctx context.Context, c *Client, market int32, plateCode st
 }
 
 // GetOptionExpirationDate retrieves option expiration dates.
-func GetOptionExpirationDate(ctx context.Context, c *Client, market int32, code string) ([]OptionExpiration, error) {
-	marketPtr := market
+func GetOptionExpirationDate(ctx context.Context, c *Client, market constant.Market, code string) ([]OptionExpiration, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetOptionExpirationDate(ctx, c.inner, &qot.GetOptionExpirationDateRequest{
@@ -1557,10 +1595,11 @@ func GetOptionExpirationDate(ctx context.Context, c *Client, market int32, code 
 }
 
 // ModifyUserSecurity adds/removes securities from user group.
-func ModifyUserSecurity(ctx context.Context, c *Client, groupName string, op int32, market int32, codes []string) error {
+func ModifyUserSecurity(ctx context.Context, c *Client, groupName string, op int32, market constant.Market, codes []string) error {
+	marketPtr := int32(market)
 	securities := make([]*qotcommon.Security, len(codes))
 	for i, code := range codes {
-		securities[i] = &qotcommon.Security{Market: &market, Code: &code}
+		securities[i] = &qotcommon.Security{Market: &marketPtr, Code: &code}
 	}
 
 	_, err := qot.ModifyUserSecurity(ctx, c.inner, &qot.ModifyUserSecurityRequest{
@@ -1606,12 +1645,12 @@ func GetSubInfo(c *Client) (*SubInfo, error) {
 }
 
 // RequestTradeDate requests trade dates for a specific security.
-func RequestTradeDate(ctx context.Context, c *Client, market int32, startDate, endDate string, code string) ([]string, error) {
-	marketPtr := market
+func RequestTradeDate(ctx context.Context, c *Client, market constant.Market, startDate, endDate string, code string) ([]string, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
-		Market:    market,
+		Market:    marketPtr,
 		BeginTime: startDate,
 		EndTime:   endDate,
 		Security:  sec,
@@ -1658,9 +1697,10 @@ type StockFilterResult struct {
 }
 
 // StockFilter filters stocks based on basic criteria.
-func StockFilter(ctx context.Context, c *Client, market int32, begin, num int32) ([]*StockFilterResult, error) {
+func StockFilter(ctx context.Context, c *Client, market constant.Market, begin, num int32) ([]*StockFilterResult, error) {
+	marketPtr := int32(market)
 	resp, err := qot.StockFilter(ctx, c.inner, &qot.StockFilterRequest{
-		Market: market,
+		Market: marketPtr,
 		Begin:  begin,
 		Num:    num,
 	})
@@ -1698,20 +1738,22 @@ func StockFilter(ctx context.Context, c *Client, market int32, begin, num int32)
 }
 
 // GetOptionChain returns the option chain for the given underlying security.
-func GetOptionChain(ctx context.Context, c *Client, market int32, code string, indexOptionType, optType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
+func GetOptionChain(ctx context.Context, c *Client, market constant.Market, code string, indexOptionType constant.IndexOptionType, optType constant.OptionType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
 	if beginTime == "" {
 		beginTime = time.Now().Format("2006-01-02")
 	}
 	if endTime == "" {
 		endTime = time.Now().AddDate(0, 1, 0).Format("2006-01-02")
 	}
-	marketPtr := market
+	marketPtr := int32(market)
+	indexOptPtr := int32(indexOptionType)
+	optTypePtr := int32(optType)
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetOptionChain(ctx, c.inner, &qot.GetOptionChainRequest{
 		Owner:           owner,
-		IndexOptionType: indexOptionType,
-		Type:            optType,
+		IndexOptionType: indexOptPtr,
+		Type:            optTypePtr,
 		Condition:       condition,
 		BeginTime:       beginTime,
 		EndTime:         endTime,
@@ -1795,17 +1837,19 @@ type WarrantData struct {
 }
 
 // GetWarrant returns the list of warrants for the given underlying security.
-func GetWarrant(ctx context.Context, c *Client, market int32, code string, begin, num int32, sortField int32, ascend bool, optType, issuer, status int32) ([]*WarrantData, error) {
-	marketPtr := market
+func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer int32, status int32) ([]*WarrantData, error) {
+	marketPtr := int32(market)
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	optTypePtr := int32(optType)
+	sortFieldPtr := int32(sortField)
 
 	resp, err := qot.GetWarrant(ctx, c.inner, &qot.GetWarrantRequest{
 		Begin:     begin,
 		Num:       num,
-		SortField: sortField,
+		SortField: sortFieldPtr,
 		Ascend:    ascend,
 		Owner:     owner,
-		TypeList:  []int32{optType},
+		TypeList:  []int32{optTypePtr},
 		Status:    status,
 	})
 	if err != nil {
@@ -2268,14 +2312,16 @@ const (
 )
 
 // SetPriceReminder creates/updates/deletes a price reminder.
-func SetPriceReminder(ctx context.Context, c *Client, market int32, code string, op, reminderType, freq int32, value float64, note string) (int64, error) {
-	marketPtr := market
+func SetPriceReminder(ctx context.Context, c *Client, market constant.Market, code string, op constant.PriceReminderOp, reminderType constant.PriceReminderType, freq constant.PriceReminderFreq, value float64, note string) (int64, error) {
+	marketPtr := int32(market)
+	reminderTypePtr := int32(reminderType)
+	freqPtr := int32(freq)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.SetPriceReminder(ctx, c.inner, &qot.SetPriceReminderRequest{
 		Security: sec,
-		Op:       op,
-		Type:     reminderType,
-		Freq:     freq,
+		Op:       int32(op),
+		Type:     reminderTypePtr,
+		Freq:     freqPtr,
 		Value:    value,
 		Note:     note,
 	})
@@ -2304,10 +2350,10 @@ type PriceReminderItemInfo struct {
 }
 
 // GetPriceReminder retrieves price reminders for a security.
-func GetPriceReminder(ctx context.Context, c *Client, market int32, code string) ([]*PriceReminderInfo, error) {
-	marketPtr := market
+func GetPriceReminder(ctx context.Context, c *Client, market constant.Market, code string) ([]*PriceReminderInfo, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.GetPriceReminder(ctx, c.inner, sec, market)
+	resp, err := qot.GetPriceReminder(ctx, c.inner, sec, marketPtr)
 	if err != nil {
 		return nil, err
 	}
@@ -2348,10 +2394,11 @@ func SubAccPush(c *Client, accIDList []uint64) error {
 }
 
 // ReconfirmOrder reconfirms an order requiring additional verification.
-func ReconfirmOrder(c *Client, accID uint64, market int32, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
+func ReconfirmOrder(c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
+	marketPtr := int32(market)
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
-		TrdMarket: &market,
+		TrdMarket: &marketPtr,
 		TrdEnv:    &c.trdEnv,
 	}
 	connID := c.inner.GetConnID()
@@ -2395,12 +2442,13 @@ type HoldingChangeInfo struct {
 }
 
 // GetHoldingChangeList retrieves holding change list.
-func GetHoldingChangeList(ctx context.Context, c *Client, market int32, code string, holderCategory int32, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
-	marketPtr := market
+func GetHoldingChangeList(ctx context.Context, c *Client, market constant.Market, code string, holderCategory constant.HolderCategory, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
+	marketPtr := int32(market)
+	holderCatPtr := int32(holderCategory)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.GetHoldingChangeList(ctx, c.inner, &qot.GetHoldingChangeListRequest{
 		Security:       sec,
-		HolderCategory: holderCategory,
+		HolderCategory: holderCatPtr,
 		BeginTime:      beginTime,
 		EndTime:        endTime,
 	})
@@ -2445,8 +2493,8 @@ type RehabInfo struct {
 }
 
 // RequestRehab requests rehabilitation (复权) data.
-func RequestRehab(ctx context.Context, c *Client, market int32, code string) ([]*RehabInfo, error) {
-	marketPtr := market
+func RequestRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
+	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.RequestRehab(ctx, c.inner, &qot.RequestRehabRequest{
 		Security: sec,
