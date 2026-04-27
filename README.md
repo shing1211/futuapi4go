@@ -3,27 +3,19 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.3.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.0-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for Futu OpenAPI — market data, trading, real-time push, and more.
 
-## Why futuapi4go?
-
-- **Compile-time safety** — structs over DataFrames, no runtime surprises
-- **Go concurrency** — goroutines, channels, context cancellation baked in
-- **No Python dependency** — pure Go, deploy anywhere with `go build`
-- **More protos** — 78 protos vs Python's ~50, including futures, flow summaries, and all push types
-- **Modern infrastructure** — circuit breaker, structured logging, channel-based push delivery, connection pool with health checks
-
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.3.1
+go get github.com/shing1211/futuapi4go@v0.5.0
 ```
 
-## v0.3.1 Breaking Changes
+## v0.5.0 Breaking Changes
 
 If upgrading from v0.2.x, note these changes:
 
@@ -31,10 +23,12 @@ If upgrading from v0.2.x, note these changes:
 // v0.2.x (DEPRECATED)
 client.QuerySubscription(cli)
 client.UnlockTrading(cli, pwd)
+client.GetQuote(cli, int32(constant.Market_US), "NVDA")
 
-// v0.3.0 (NEW)
+// v0.5.0 (NEW)
 client.QuerySubscription(ctx, cli)
 client.UnlockTrading(ctx, cli, pwd)
+client.GetQuote(ctx, cli, constant.Market_US, "NVDA")  // no cast needed!
 
 // For timeout control:
 ctx, cancel := cli.WithTimeout(5 * time.Second)

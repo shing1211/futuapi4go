@@ -968,13 +968,48 @@ func PlaceOrder(...) {
 
 ---
 
+## Phase 6: World-Class SDK (Week 6) ✅ **COMPLETE**
+**Version Target:** v0.5.0 | **Effort:** ~3 hrs | **Breaking Changes:** Partial
+
+### Summary:
+- P6-1 ✅ Context-aware API (all functions require ctx)
+- P6-2 ✅ Typed Market constants (no int32() casts)
+- P6-3 ✅ Enhanced error codes with predicates
+- P6-4 ✅ Configurable timeouts (existed)
+- P6-5 ✅ Bounded push channels
+- P6-6 ✅ Market detection helpers
+- P6-7 ✅ Retry logic (existed)
+- P6-8 ✅ Graceful shutdown helpers (WaitForSignal, CloseOnSignal)
+- P6-9 ✅ Examples overhaul (17 demos updated to typed constants)
+
+### P6-8: Graceful Shutdown Helpers
+**Severity:** LOW | **Status:** ✅ Done | **Assignee:** LLM Agent (2026-04-27)
+
+```go
+// WaitForSignal blocks until termination signal received
+sig := cli.WaitForSignal(func() { cli.Close() })
+
+// CloseOnSignal automatically closes client on SIGINT/SIGTERM
+unregister := cli.CloseOnSignal()
+defer unregister()
+```
+
+### P6-9: Comprehensive Examples Overhaul
+**Severity:** LOW | **Status:** ✅ Done | **Assignee:** LLM Agent (2026-04-27)
+
+Updated 17 examples in futuapi4go-demo to use typed constants instead of `int32(constant.Market_XXX)`.
+
+---
+
 ## How to Use This Plan
 
-1. **Start next session**: Look at Progress Dashboard, pick the next item in Phase 1
-2. **Update status**: Change `⚪ Pending` to `🔄 In Progress` when starting
-3. **Mark complete**: Change to `✅ Done` and add your name to Assignee
-4. **Update CHANGELOG.md** when items are complete
-5. **Increment version numbers** at each phase boundary
+> **Status: COMPLETE** — All phases implemented. For future enhancements, see `docs/ENHANCEMENT_PLAN.md`.
+
+1. ~~Look at Progress Dashboard, pick the next item~~
+2. ~~Update status: Change `⚪ Pending` to `🔄 In Progress` when starting~~
+3. ~~Mark complete: Change to `✅ Done` and add your name to Assignee~~
+4. ~~Update CHANGELOG.md when items are complete~~
+5. ~~Increment version numbers at each phase boundary~~
 
 ---
 

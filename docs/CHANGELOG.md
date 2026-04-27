@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+*Nothing yet — all changes are in v0.5.0*
+
+## [0.5.0] - 2026-04-27
+
 ### Added
 
 - **P6-8: Graceful Shutdown Helpers** — `WaitForSignal()`, `CloseOnSignal()` for signal handling
@@ -20,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GetOptionChain`, `StockFilter`, `GetWarrant`, `Unsubscribe`, `RegQotPush`
   - `SetPriceReminder`, `GetPriceReminder`, `ReconfirmOrder`
   - `GetHoldingChangeList`, `RequestRehab`
+
+### Documentation
+
+- **P6-9: Examples Overhaul** — Updated 17 demo examples to use typed constants
+- Updated MIGRATION_GUIDE.md with typed enum examples
 
 ## [0.3.1] - 2026-04-26
 

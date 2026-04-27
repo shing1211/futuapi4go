@@ -73,8 +73,9 @@ Go requires pointer to struct:
 
 ```go
 import "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+import "github.com/shing1211/futuapi4go/pkg/constant"
 
-hk := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+hk := int32(constant.Market_HK)
 code := "00700"
 security := &qotcommon.Security{
     Market: &hk,
@@ -85,15 +86,16 @@ security := &qotcommon.Security{
 Helper function for cleaner code:
 
 ```go
-func security(market int32, code string) *qotcommon.Security {
+func security(market constant.Market, code string) *qotcommon.Security {
+    m := int32(market)
     return &qotcommon.Security{
-        Market: &market,
+        Market: &m,
         Code:   &code,
     }
 }
 
-// Usage
-sec := security(int32(qotcommon.QotMarket_QotMarket_HK_Security), "00700")
+// Usage - no cast needed!
+sec := security(constant.Market_HK, "00700")
 ```
 
 ---
