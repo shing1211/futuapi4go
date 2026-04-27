@@ -28,8 +28,10 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
 	"github.com/shing1211/futuapi4go/pkg/push"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
@@ -911,8 +913,7 @@ type FlowSummaryInfo struct {
 
 // GetFlowSummary retrieves account cash flow entries.
 // clearingDate: clearing date in "YYYY-MM-DD" format, empty means today.
-// direction: 0=none, 1=in, 2=out. Maps to Python's CashFlowDirection.
-func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction int32) ([]*FlowSummaryInfo, error) {
+func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction trdflowsummary.TrdCashFlowDirection) ([]*FlowSummaryInfo, error) {
 	if clearingDate == "" {
 		clearingDate = time.Now().Format("2006-01-02")
 	}
@@ -925,7 +926,7 @@ func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearing
 	resp, err := trd.GetFlowSummary(c.inner.Context(), c.inner, &trd.GetFlowSummaryRequest{
 		Header:            header,
 		ClearingDate:      clearingDate,
-		CashFlowDirection: direction,
+		CashFlowDirection: int32(direction),
 	})
 	if err != nil {
 		return nil, err
@@ -1347,13 +1348,13 @@ type CapitalFlow struct {
 }
 
 // GetCapitalFlow retrieves capital flow data.
-func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...int32) ([]CapitalFlow, error) {
+func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...constant.CapitalFlowPeriodType) ([]CapitalFlow, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	period := int32(0)
 	if len(periodType) > 0 {
-		period = periodType[0]
+		period = int32(periodType[0])
 	}
 
 	resp, err := qot.GetCapitalFlow(ctx, c.inner, &qot.GetCapitalFlowRequest{
@@ -1503,13 +1504,13 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 }
 
 // GetReference retrieves related/reference securities.
-func GetReference(c *Client, market constant.Market, code string, refType int32) ([]StaticInfo, error) {
+func GetReference(c *Client, market constant.Market, code string, refType qotgetreference.ReferenceType) ([]StaticInfo, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	resp, err := qot.GetReference(c.inner.Context(), c.inner, &qot.GetReferenceRequest{
 		Security:      sec,
-		ReferenceType: refType,
+		ReferenceType: int32(refType),
 	})
 	if err != nil {
 		return nil, err
@@ -1846,20 +1847,23 @@ type WarrantData struct {
 }
 
 // GetWarrant returns the list of warrants for the given underlying security.
-func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer int32, status int32) ([]*WarrantData, error) {
+func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer qotcommon.Issuer, status constant.WarrantStatus) ([]*WarrantData, error) {
 	marketPtr := int32(market)
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	optTypePtr := int32(optType)
 	sortFieldPtr := int32(sortField)
+	issuerPtr := int32(issuer)
+	statusPtr := int32(status)
 
 	resp, err := qot.GetWarrant(ctx, c.inner, &qot.GetWarrantRequest{
-		Begin:     begin,
-		Num:       num,
-		SortField: sortFieldPtr,
-		Ascend:    ascend,
-		Owner:     owner,
-		TypeList:  []int32{optTypePtr},
-		Status:    status,
+		Begin:      begin,
+		Num:        num,
+		SortField:  sortFieldPtr,
+		Ascend:     ascend,
+		Owner:      owner,
+		TypeList:   []int32{optTypePtr},
+		IssuerList: []int32{issuerPtr},
+		Status:     statusPtr,
 	})
 	if err != nil {
 		return nil, err

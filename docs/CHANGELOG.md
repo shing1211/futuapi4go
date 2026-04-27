@@ -13,11 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **P2-1: Type Safety** — 21+ wrapper functions now use typed constants (Market, KLType, WarrantSortField, WarrantType, OptionType, IndexOptionType, HolderCategory, PriceReminderType, PriceReminderFreq, PriceReminderOp, TrdMarket)
+- **P2-1: Type Safety** — 26+ wrapper functions now use typed constants (Market, KLType, WarrantSortField, WarrantType, OptionType, IndexOptionType, HolderCategory, PriceReminderType, PriceReminderFreq, PriceReminderOp, TrdMarket, SubType, RehabType, CapitalFlowPeriodType, ReferenceType, Issuer, WarrantStatus, TrdCashFlowDirection)
   - `GetPlateSet`, `GetIpoList`, `GetFlowSummary`, `GetCapitalFlow`, `GetCapitalDistribution`
   - `RequestHistoryKL`, `RequestHistoryKLWithLimit`, `GetReference`, `GetOwnerPlate`
   - `GetPlateSecurity`, `GetOptionExpirationDate`, `ModifyUserSecurity`, `RequestTradeDate`
-  - `GetOptionChain`, `StockFilter`, `GetWarrant`, `Unsubscribe`
+  - `GetOptionChain`, `StockFilter`, `GetWarrant`, `Unsubscribe`, `RegQotPush`
   - `SetPriceReminder`, `GetPriceReminder`, `ReconfirmOrder`
   - `GetHoldingChangeList`, `RequestRehab`
 
