@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,10 +12,10 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.0
+go get github.com/shing1211/futuapi4go@v0.5.1
 ```
 
-## v0.5.0 Breaking Changes
+## v0.5.1 Breaking Changes
 
 If upgrading from v0.2.x, note these changes:
 
@@ -25,7 +25,7 @@ client.QuerySubscription(cli)
 client.UnlockTrading(cli, pwd)
 client.GetQuote(cli, int32(constant.Market_US), "NVDA")
 
-// v0.5.0 (NEW)
+// v0.5.1 (NEW)
 client.QuerySubscription(ctx, cli)
 client.UnlockTrading(ctx, cli, pwd)
 client.GetQuote(ctx, cli, constant.Market_US, "NVDA")  // no cast needed!
@@ -276,8 +276,8 @@ fmt.Println(cli.IsEncrypt())      // AES encryption enabled?
 | `New` | `New(opts ...Option) *Client` | Create client; defaults to simulate trading |
 | `Connect` | `Connect(addr string) error` | Connect to OpenD |
 | `Close` | `Close()` | Disconnect |
-| `WithTradeEnv` | `WithTradeEnv(trdEnv int32) *Client` | Set real (`0`) or simulate (`1`) |
-| `WithTradeMarket` | `WithTradeMarket(trdMkt int32) *Client` | Set default trading market |
+| `WithTradeEnv` | `WithTradeEnv(trdEnv constant.TrdEnv) *Client` | Set real (`TrdEnv_Real`) or simulate (`TrdEnv_Simulate`) |
+| `WithTradeMarket` | `WithTradeMarket(trdMkt constant.TrdMarket) *Client` | Set default trading market |
 | `RegisterHandler` | `RegisterHandler(protoID uint32, h func(uint32, []byte))` | Register push handler |
 | `GetConnID` | `GetConnID() uint64` | Connection ID from OpenD |
 | `GetServerVer` | `GetServerVer() int32` | OpenD server version |
