@@ -12,11 +12,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// CancelAllOrdersResult holds the result of cancelling all orders for an account.
 type CancelAllOrdersResult struct {
 	AccID     uint64
 	Cancelled int32
 }
 
+// CancelAllOrders cancels all open orders for the given account, market, and
+// environment.
 func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*CancelAllOrdersResult, error) {
 	trdMarket := int32(market)
 	trdEnv := int32(env)
@@ -46,6 +49,7 @@ func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, marke
 	}, nil
 }
 
+// QuickBuy places a limit buy order in a single call.
 func QuickBuy(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64, price float64) (*PlaceOrderResponse, error) {
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
@@ -59,6 +63,7 @@ func QuickBuy(ctx context.Context, c *futuapi.Client, accID uint64, market const
 	})
 }
 
+// QuickSell places a limit sell order in a single call.
 func QuickSell(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64, price float64) (*PlaceOrderResponse, error) {
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
@@ -72,6 +77,7 @@ func QuickSell(ctx context.Context, c *futuapi.Client, accID uint64, market cons
 	})
 }
 
+// QuickMarketBuy places a market buy order (no price) in a single call.
 func QuickMarketBuy(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64) (*PlaceOrderResponse, error) {
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
@@ -85,6 +91,7 @@ func QuickMarketBuy(ctx context.Context, c *futuapi.Client, accID uint64, market
 	})
 }
 
+// QuickMarketSell places a market sell order (no price) in a single call.
 func QuickMarketSell(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64) (*PlaceOrderResponse, error) {
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
@@ -98,6 +105,7 @@ func QuickMarketSell(ctx context.Context, c *futuapi.Client, accID uint64, marke
 	})
 }
 
+// PositionDetail is a simplified view of a single position.
 type PositionDetail struct {
 	Code        string
 	Name        string
@@ -107,6 +115,7 @@ type PositionDetail struct {
 	Market      constant.TrdMarket
 }
 
+// GetPositions returns a simplified list of all positions for the given account.
 func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]PositionDetail, error) {
 	req := &GetPositionListRequest{
 		AccID:     accID,
@@ -134,6 +143,8 @@ func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]Posit
 	return positions, nil
 }
 
+// GetTodayFills returns today's order fills for the given account, market, and
+// environment.
 func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderFillListResponse, error) {
 	req := &GetOrderFillListRequest{
 		AccID:     accID,
@@ -143,6 +154,8 @@ func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64, market 
 	return GetOrderFillList(ctx, c, req)
 }
 
+// GetTodayOrders returns today's orders for the given account, market, and
+// environment.
 func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderListResponse, error) {
 	req := &GetOrderListRequest{
 		AccID:     accID,
@@ -152,6 +165,8 @@ func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market
 	return GetOrderList(ctx, c, req)
 }
 
+// GetAccountFunds returns the account funds (buying power, cash, etc.) for the
+// given account, market, and environment.
 func GetAccountFunds(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetFundsResponse, error) {
 	req := &GetFundsRequest{
 		AccID:     accID,

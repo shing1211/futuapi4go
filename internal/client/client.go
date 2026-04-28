@@ -213,14 +213,17 @@ func WithSlog(sl *SlogLogger) Option {
 	return func(o *ClientOptions) { o.SlogLogger = sl }
 }
 
+// WithBreaker returns an Option that sets the circuit breaker for the client.
 func WithBreaker(cb *breaker.Breaker) Option {
 	return func(o *ClientOptions) {}
 }
 
+// SetBreaker replaces the circuit breaker on the client.
 func (c *Client) SetBreaker(cb *breaker.Breaker) {
 	c.breaker = cb
 }
 
+// GetBreaker returns the current circuit breaker, or nil if none is set.
 func (c *Client) GetBreaker() *breaker.Breaker {
 	return c.breaker
 }
@@ -279,6 +282,7 @@ func (c *Client) GetMetrics() Metrics {
 	return *c.metrics
 }
 
+// GetReconnectCount returns the number of times the client has reconnected.
 func (c *Client) GetReconnectCount() uint64 {
 	c.metricsMu.RLock()
 	defer c.metricsMu.RUnlock()

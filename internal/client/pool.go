@@ -214,12 +214,14 @@ func (p *ClientPool) Available(poolType PoolType) int {
 	return count
 }
 
+// PoolStats holds connection pool statistics for a single pool type.
 type PoolStats struct {
-	Total  int
-	InUse  int
-	Idle   int
+	Total  int // Total connections in the pool
+	InUse  int // Connections currently in use
+	Idle   int // Connections available for use
 }
 
+// Stats returns a snapshot of pool statistics keyed by PoolType.
 func (p *ClientPool) Stats() map[PoolType]PoolStats {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
@@ -238,6 +240,8 @@ func (p *ClientPool) Stats() map[PoolType]PoolStats {
 	return result
 }
 
+// GetPoolType returns the PoolType of the given client. Returns (PoolTypeGeneral, false)
+// if the client is not in the pool.
 func (p *ClientPool) GetPoolType(client *Client) (PoolType, bool) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()

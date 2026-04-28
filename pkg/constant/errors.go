@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// ErrorCode represents a Futu API error code. Negative values indicate errors;
+// zero indicates success.
 type ErrorCode int32
 
 const (
@@ -37,6 +39,8 @@ const (
 	ErrCodeNotSubbed     ErrorCode = -402
 )
 
+// ErrorCategory classifies an error into a broad category such as connection,
+// timeout, API, account, trading, or subscribe.
 type ErrorCategory string
 
 const (
@@ -97,6 +101,7 @@ var codeToRecovery = map[ErrorCode]string{
 	ErrCodeNotSubbed:           "Subscribe to the data feed first.",
 }
 
+// errorCodeNames maps ErrorCode values to their symbolic names for display.
 var errorCodeNames = map[ErrorCode]string{
 	ErrCodeSuccess:             "ErrCodeSuccess",
 	ErrCodeInvalidParams:       "ErrCodeInvalidParams",
@@ -122,6 +127,9 @@ var errorCodeNames = map[ErrorCode]string{
 	ErrCodeNotSubbed:           "ErrCodeNotSubbed",
 }
 
+// FutuError is the structured error type for all Futu API errors. It carries
+// an error code, human-readable message, originating function name, optional
+// wrapped inner error, category, and recovery hint.
 type FutuError struct {
 	Code     ErrorCode
 	Message  string
@@ -142,6 +150,8 @@ func (e *FutuError) Unwrap() error {
 	return e.Err
 }
 
+// Is reports whether e matches target. Two FutuErrors match if they share the
+// same ErrorCode. It also delegates to errors.Is on the wrapped inner error.
 func (e *FutuError) Is(target error) bool {
 	if t, ok := target.(*FutuError); ok {
 		return t.Code == e.Code
@@ -152,6 +162,8 @@ func (e *FutuError) Is(target error) bool {
 	return false
 }
 
+// FullMessage returns a multi-line human-readable description of the error,
+// including the code name, category, recovery hint, and inner cause.
 func (e *FutuError) FullMessage() string {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("[%s] %s: %s (code=%d)\n", e.CodeString(), e.Func, e.Message, e.Code))
@@ -167,6 +179,8 @@ func (e *FutuError) FullMessage() string {
 	return sb.String()
 }
 
+// CodeString returns the symbolic name of the error code (e.g. "ErrCodeTimeout").
+// Falls back to "ErrCode_<number>" for unknown codes.
 func (e *FutuError) CodeString() string {
 	if name, ok := errorCodeNames[e.Code]; ok {
 		return name
@@ -179,6 +193,7 @@ func getFutuError(err error) (*FutuError, bool) {
 	return fe, ok
 }
 
+// IsTimeout reports whether err is a FutuError with code ErrCodeTimeout.
 func IsTimeout(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeTimeout
@@ -186,6 +201,7 @@ func IsTimeout(err error) bool {
 	return false
 }
 
+// IsDisconnected reports whether err is a FutuError with code ErrCodeDisconnected.
 func IsDisconnected(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeDisconnected
@@ -193,6 +209,7 @@ func IsDisconnected(err error) bool {
 	return false
 }
 
+// IsInvalidParams reports whether err is a FutuError with code ErrCodeInvalidParams.
 func IsInvalidParams(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeInvalidParams
@@ -200,6 +217,7 @@ func IsInvalidParams(err error) bool {
 	return false
 }
 
+// IsSuccess reports whether err is a FutuError with code ErrCodeSuccess.
 func IsSuccess(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeSuccess
@@ -207,6 +225,7 @@ func IsSuccess(err error) bool {
 	return false
 }
 
+// IsServerError reports whether err is a FutuError with code ErrCodeServerBusy or ErrCodeUnknown.
 func IsServerError(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeServerBusy || fe.Code == ErrCodeUnknown
@@ -214,10 +233,12 @@ func IsServerError(err error) bool {
 	return false
 }
 
+// IsAPIError reports whether err belongs to the CategoryAPI category.
 func IsAPIError(err error) bool {
 	return CategoryOf(err) == CategoryAPI
 }
 
+// IsNetworkError reports whether err is a FutuError with code ErrCodeNetworkError or ErrCodeProtocolErr.
 func IsNetworkError(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeNetworkError || fe.Code == ErrCodeProtocolErr
@@ -225,6 +246,7 @@ func IsNetworkError(err error) bool {
 	return false
 }
 
+// IsServerBusy reports whether err is a FutuError with code ErrCodeServerBusy.
 func IsServerBusy(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeServerBusy
@@ -232,6 +254,8 @@ func IsServerBusy(err error) bool {
 	return false
 }
 
+// IsAccountError reports whether err is a FutuError with an account-related code
+// (not found, disabled, locked, or auth failure).
 func IsAccountError(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		switch fe.Code {
@@ -242,6 +266,7 @@ func IsAccountError(err error) bool {
 	return false
 }
 
+// IsInsufficientBalance reports whether err is a FutuError with code ErrCodeInsufficientBalance.
 func IsInsufficientBalance(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeInsufficientBalance
@@ -249,6 +274,7 @@ func IsInsufficientBalance(err error) bool {
 	return false
 }
 
+// IsMarketClosed reports whether err is a FutuError with code ErrCodeMarketClosed.
 func IsMarketClosed(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeMarketClosed
@@ -256,6 +282,7 @@ func IsMarketClosed(err error) bool {
 	return false
 }
 
+// IsOrderRejected reports whether err is a FutuError with code ErrCodeOrderRejected.
 func IsOrderRejected(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeOrderRejected
@@ -263,6 +290,7 @@ func IsOrderRejected(err error) bool {
 	return false
 }
 
+// IsSubscriptionError reports whether err is a FutuError with code ErrCodeAlreadySubbed or ErrCodeNotSubbed.
 func IsSubscriptionError(err error) bool {
 	if fe, ok := getFutuError(err); ok {
 		return fe.Code == ErrCodeAlreadySubbed || fe.Code == ErrCodeNotSubbed
@@ -270,18 +298,24 @@ func IsSubscriptionError(err error) bool {
 	return false
 }
 
+// IsConnectionError reports whether err belongs to the CategoryConnection category.
 func IsConnectionError(err error) bool {
 	return CategoryOf(err) == CategoryConnection
 }
 
+// IsTimeoutError reports whether err belongs to the CategoryTimeout category.
 func IsTimeoutError(err error) bool {
 	return CategoryOf(err) == CategoryTimeout
 }
 
+// IsTradingError reports whether err belongs to the CategoryTrading category.
 func IsTradingError(err error) bool {
 	return CategoryOf(err) == CategoryTrading
 }
 
+// CategoryOf returns the ErrorCategory for err. It first checks the FutuError's
+// own Category field, then falls back to the codeToCategory map, and finally
+// recurses into the wrapped inner error. Returns CategoryUnknown if no match.
 func CategoryOf(err error) ErrorCategory {
 	if fe, ok := getFutuError(err); ok {
 		if fe.Category != "" {
@@ -297,6 +331,9 @@ func CategoryOf(err error) ErrorCategory {
 	return CategoryUnknown
 }
 
+// RecoveryHint returns a human-readable suggestion for how to recover from err.
+// It checks the FutuError's Recovery field, then the codeToRecovery map, and
+// finally recurses into the wrapped inner error.
 func RecoveryHint(err error) string {
 	if fe, ok := getFutuError(err); ok {
 		if fe.Recovery != "" {
@@ -312,6 +349,8 @@ func RecoveryHint(err error) string {
 	return "Check error details for more information."
 }
 
+// NewFutuError creates a FutuError with the given code, function name, and message.
+// Category and Recovery are derived automatically from the error code.
 func NewFutuError(code ErrorCode, funcName, msg string) *FutuError {
 	return &FutuError{
 		Code:     code,
@@ -322,6 +361,8 @@ func NewFutuError(code ErrorCode, funcName, msg string) *FutuError {
 	}
 }
 
+// NewFutuErrorWithWrap creates a FutuError that wraps an inner error. Category
+// and Recovery are derived automatically from the error code.
 func NewFutuErrorWithWrap(code ErrorCode, funcName, msg string, inner error) *FutuError {
 	return &FutuError{
 		Code:     code,
@@ -333,6 +374,8 @@ func NewFutuErrorWithWrap(code ErrorCode, funcName, msg string, inner error) *Fu
 	}
 }
 
+// AsFutuError attempts to cast err to *FutuError. Returns the FutuError and true
+// on success, or nil and false otherwise.
 func AsFutuError(err error) (*FutuError, bool) {
 	fe, ok := err.(*FutuError)
 	return fe, ok

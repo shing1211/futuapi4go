@@ -21,6 +21,8 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 )
 
+// HistoryKLineIterator paginates through historical K-line data using NextReqKey.
+// It is safe for concurrent use from multiple goroutines.
 type HistoryKLineIterator struct {
 	ctx         context.Context
 	client      *futuapi.Client
@@ -32,6 +34,7 @@ type HistoryKLineIterator struct {
 	pageCount   int
 }
 
+// NewHistoryKLineIterator creates a new iterator for paginated historical K-line requests.
 func NewHistoryKLineIterator(ctx context.Context, c *futuapi.Client, req *RequestHistoryKLRequest) *HistoryKLineIterator {
 	return &HistoryKLineIterator{
 		ctx:    ctx,
@@ -41,12 +44,15 @@ func NewHistoryKLineIterator(ctx context.Context, c *futuapi.Client, req *Reques
 	}
 }
 
+// HasNext reports whether more K-line pages are available.
 func (it *HistoryKLineIterator) HasNext() bool {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	return !it.atEnd && it.err == nil
 }
 
+// Next fetches the next page of K-lines. Returns (nil, nil) when iteration is
+// exhausted. Respects context cancellation.
 func (it *HistoryKLineIterator) Next() ([]*KLine, error) {
 	it.mu.Lock()
 	defer it.mu.Unlock()
@@ -83,18 +89,21 @@ func (it *HistoryKLineIterator) Next() ([]*KLine, error) {
 	return rsp.KLList, nil
 }
 
+// Err returns the error that stopped iteration, or nil.
 func (it *HistoryKLineIterator) Err() error {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	return it.err
 }
 
+// TotalFetched returns the cumulative number of K-lines fetched across all pages.
 func (it *HistoryKLineIterator) TotalFetched() int {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	return it.totalFetched
 }
 
+// PageCount returns the number of pages (API calls) fetched so far.
 func (it *HistoryKLineIterator) PageCount() int {
 	it.mu.Lock()
 	defer it.mu.Unlock()

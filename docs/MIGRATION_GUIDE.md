@@ -11,6 +11,7 @@ This guide helps developers migrate from other SDKs (primarily the Python `py-fu
 5. [Trading Migration](#trading-migration)
 6. [Push Notifications](#push-notifications)
 7. [Common Patterns](#common-patterns)
+8. [v0.6.0 Breaking Changes](#v060-breaking-changes)
 
 ---
 
@@ -468,6 +469,86 @@ ret, data = ctx.query(kline, timeout=5)
 cli := futuapi.New()
 cli.SetReadTimeout(5 * time.Second)
 cli.SetWriteTimeout(5 * time.Second)
+```
+
+---
+
+## v0.6.0 Breaking Changes
+
+### WithTradeEnv / GetTradeEnv Signature Change
+
+**Before:**
+```go
+cli := client.New()
+cli = cli.WithTradeEnv(1) // raw int32
+env := cli.GetTradeEnv()  // returns int32
+```
+
+**After:**
+```go
+cli := client.New()
+cli = cli.WithTradeEnv(constant.TrdEnv_Real)  // typed enum
+env := cli.GetTradeEnv()                       // returns constant.TrdEnv
+```
+
+### WithTradeMarket / GetTradeMarket Signature Change
+
+**Before:**
+```go
+cli = cli.WithTradeMarket(1) // raw int32
+```
+
+**After:**
+```go
+cli = cli.WithTradeMarket(constant.TrdMarket_HK) // typed enum
+mkt := cli.GetTradeMarket()                       // returns constant.TrdMarket
+```
+
+### OrderBuilder.Build() Now Returns Error
+
+**Before:**
+```go
+req := trd.NewOrder(accID, market, env).Buy("00700", 100).At(350.5).Build()
+```
+
+**After:**
+```go
+req, err := trd.NewOrder(accID, market, env).Buy("00700", 100).At(350.5).Build()
+if err != nil {
+    return err
+}
+```
+
+### FutuError Additional Fields
+
+FutuError now has `Category` and `Recovery` fields. Existing code accessing `FutuError{Code, Message, Func}` continues to work. New fields are auto-populated by `NewFutuError()` / `NewFutuErrorWithWrap()`.
+
+### New Error Predicates
+
+```go
+// Classify errors programmatically
+if constant.IsConnectionError(err) { /* reconnect */ }
+if constant.IsTradingError(err)    { /* handle trading error */ }
+cat := constant.CategoryOf(err)     // ErrorCategory: "connection", "trading", etc.
+hint := constant.RecoveryHint(err)  // human-readable recovery suggestion
+```
+
+### Circuit Breaker
+
+```go
+cb := breaker.New(breaker.WithFailureThreshold(5), breaker.WithCooldown(10*time.Second))
+cli := futuapi.New(futuapi.WithBreaker(cb))
+// Business API calls are now protected; InitConnect/KeepAlive bypass breaker
+```
+
+### OrderBuilder AutoDetectMarket
+
+```go
+req, err := trd.NewOrder(accID, 0, env).
+    Buy("00700.HK", 100).
+    At(350.5).
+    AutoDetectMarket(). // sets TrdMarket + SecMarket from code suffix
+    Build()
 ```
 
 ---
