@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"crypto/sha1"
+	"crypto/tls"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -61,13 +62,15 @@ type ConnInterface interface {
 	APITimeout() time.Duration
 	SetAPITimeout(time.Duration)
 	Dial(addr string) error
+	SetTLSConfig(cfg *tls.Config)
 	readOne() (*Packet, error)
 }
 
 type Conn struct {
-	conn   net.Conn
-	reader *bufio.Reader
-	mu     sync.Mutex
+	conn     net.Conn
+	reader   *bufio.Reader
+	mu       sync.Mutex
+	tlsConfig *tls.Config
 
 	dispMu   sync.Mutex
 	disp     map[uint32]chan *Packet
@@ -100,12 +103,24 @@ func (c *Conn) SetAPITimeout(timeout time.Duration) {
 }
 
 func (c *Conn) Dial(addr string) error {
-	conn, err := net.DialTimeout("tcp", addr, 30*time.Second)
-	if err != nil {
-		return err
+	if c.tlsConfig != nil {
+		conn, err := tls.DialWithDialer(&net.Dialer{Timeout: 30 * time.Second}, "tcp", addr, c.tlsConfig)
+		if err != nil {
+			return NewErrorWithWrap(CodeTLSHandshakeFailed, "TLS dial failed", err)
+		}
+		c.conn = conn
+	} else {
+		conn, err := net.DialTimeout("tcp", addr, 30*time.Second)
+		if err != nil {
+			return err
+		}
+		c.conn = conn
 	}
-	c.conn = conn
 	return nil
+}
+
+func (c *Conn) SetTLSConfig(cfg *tls.Config) {
+	c.tlsConfig = cfg
 }
 
 func (c *Conn) Close() error {

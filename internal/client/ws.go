@@ -17,6 +17,7 @@ package futuapi
 import (
 	"context"
 	"crypto/sha1"
+	"crypto/tls"
 	"encoding/binary"
 	"fmt"
 	"net"
@@ -202,6 +203,8 @@ func (c *wsConn) APITimeout() time.Duration {
 func (c *wsConn) SetAPITimeout(timeout time.Duration) {
 	c.apiTimeout = timeout
 }
+
+func (c *wsConn) SetTLSConfig(_ *tls.Config) {}
 
 func (c *wsConn) Close() error {
 	select {

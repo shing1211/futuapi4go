@@ -16,6 +16,7 @@ package futuapi
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
@@ -28,6 +29,8 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/shing1211/futuapi4go/pkg/breaker"
 	"github.com/shing1211/futuapi4go/pkg/metrics"
+	"github.com/shing1211/futuapi4go/pkg/ratelimit"
+	"github.com/shing1211/futuapi4go/pkg/retry"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
@@ -132,6 +135,8 @@ type ClientOptions struct {
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
+
+	TLSConfig *tls.Config // TLS configuration (nil = no TLS)
 }
 
 // NewOptions returns ClientOptions with sensible defaults.
@@ -213,6 +218,26 @@ func WithSlog(sl *SlogLogger) Option {
 	return func(o *ClientOptions) { o.SlogLogger = sl }
 }
 
+func WithTLS(cfg *tls.Config) Option {
+	return func(o *ClientOptions) { o.TLSConfig = cfg }
+}
+
+func WithRateLimiter(rl *ratelimit.ProtoLimiter) Option {
+	return func(o *ClientOptions) {}
+}
+
+func WithRetryConfig(rc retry.Config) Option {
+	return func(o *ClientOptions) {}
+}
+
+func (c *Client) SetRateLimiter(rl *ratelimit.ProtoLimiter) {
+	c.rateLimiter = rl
+}
+
+func (c *Client) SetRetryConfig(rc retry.Config) {
+	c.retryConfig = &rc
+}
+
 // WithBreaker returns an Option that sets the circuit breaker for the client.
 func WithBreaker(cb *breaker.Breaker) Option {
 	return func(o *ClientOptions) {}
@@ -258,7 +283,9 @@ type Client struct {
 	metrics   *Metrics
 	metricsMu sync.RWMutex
 
-	breaker *breaker.Breaker
+	breaker      *breaker.Breaker
+	rateLimiter  *ratelimit.ProtoLimiter
+	retryConfig  *retry.Config
 }
 
 // Metrics tracks client performance statistics.
@@ -498,7 +525,10 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.rsaKey = rsaPublicKeyPEM
 	c.mu.Unlock()
 
-	// Dial with configured timeout
+	if c.opts.TLSConfig != nil {
+		c.conn.SetTLSConfig(c.opts.TLSConfig)
+	}
+
 	if err := c.conn.Dial(addr); err != nil {
 		return fmt.Errorf("dial: %w", err)
 	}

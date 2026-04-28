@@ -54,6 +54,10 @@ const (
 	CodeMarshalFailed
 	CodeUnmarshalFailed
 	CodeTryAgain
+	CodeTLSHandshakeFailed
+	CodeRateLimited
+	CodeRetryExhausted
+	CodeConfigInvalid
 )
 
 var codeToCategory = map[ErrorCode]ErrorCategory{
@@ -76,6 +80,10 @@ var codeToCategory = map[ErrorCode]ErrorCategory{
 	CodeMarshalFailed:    CategoryProtocol,
 	CodeUnmarshalFailed:  CategoryProtocol,
 	CodeTryAgain:         CategoryPool,
+	CodeTLSHandshakeFailed: CategoryConnection,
+	CodeRateLimited:     CategoryAPI,
+	CodeRetryExhausted:  CategoryAPI,
+	CodeConfigInvalid:   CategoryAPI,
 }
 
 var codeToRecovery = map[ErrorCode]string{
@@ -98,6 +106,10 @@ var codeToRecovery = map[ErrorCode]string{
 	CodeMarshalFailed:    "Failed to serialize request. Check proto message fields.",
 	CodeUnmarshalFailed:  "Failed to deserialize response. Server may have returned unexpected format.",
 	CodeTryAgain:         "Pool is busy. Retry the operation.",
+	CodeTLSHandshakeFailed: "TLS handshake failed. Verify TLS certificate and server address.",
+	CodeRateLimited:     "API rate limit exceeded. Reduce request frequency or increase rate limit.",
+	CodeRetryExhausted:  "All retry attempts failed. Check server availability and network.",
+	CodeConfigInvalid:   "Invalid configuration. Check client options for correctness.",
 }
 
 var (

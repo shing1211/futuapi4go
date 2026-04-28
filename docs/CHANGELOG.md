@@ -31,6 +31,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Client Public API** — WithTradeEnv/GetTradeEnv now use constant.TrdEnv instead of int32; WithTradeMarket/GetTradeMarket use constant.TrdMarket
 - **Connection Pool** — Added Stats() returning map[PoolType]PoolStats and GetPoolType() for O(1) lookup
 - **Convenience Wrappers** — Added GetAccountFunds() combining GetFunds in one call
+- **sync.Cond Pool Wait** — Replaced time.Sleep(50ms) spin-wait in pool.Get() with sync.Cond for zero-CPU precise wake-up
+- **TLS Connection Support** — WithTLS() option, Conn.SetTLSConfig(), tls.DialWithDialer with mTLS support
+- **Rate Limiter** — pkg/ratelimit: token bucket limiter with ProtoLimiter (global + per-ProtoID), reject/wait modes
+- **Retry with Backoff** — pkg/retry: exponential backoff 2^n*base+jitter, ErrorCategory-based recoverability, context-aware
+- **Health Checker** — pkg/health: CheckFunc registry, /healthz+/readyz HTTP endpoints, healthy/degraded/unhealthy states
+- **New Error Codes** — CodeTLSHandshakeFailed, CodeRateLimited, CodeRetryExhausted, CodeConfigInvalid
+- **Client Rate Limiter/Retry** — SetRateLimiter(), SetRetryConfig(), WithRateLimiter(), WithRetryConfig() options
+- **Performance Benchmarks** — bench_test.go: BenchmarkNextSerialNo, BenchmarkRecordRequest, BenchmarkRecordPush, BenchmarkPoolGetPut
+- **Integration Test Framework** — //go:build integration tag, FUTU_OPEND_ADDR env var, skipWithoutOpenD() helper
 
 ## [0.5.0] - 2026-04-27
 

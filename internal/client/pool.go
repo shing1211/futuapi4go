@@ -76,31 +76,30 @@ type PoolConn struct {
 
 // ClientPool manages a pool of FutuAPI clients for different purposes.
 type ClientPool struct {
-	mu      sync.RWMutex
-	config  *PoolConfig
-	clients map[PoolType][]*PoolConn
-	clientIndex map[*Client]*PoolConn // O(1) lookup by client pointer
-	ctx     context.Context
-	cancel  context.CancelFunc
-	wg      sync.WaitGroup
-	closed  bool
+	mu          sync.RWMutex
+	config      *PoolConfig
+	clients     map[PoolType][]*PoolConn
+	clientIndex map[*Client]*PoolConn
+	ctx         context.Context
+	cancel      context.CancelFunc
+	wg          sync.WaitGroup
+	closed      bool
+	cond        *sync.Cond
 }
 
-// NewClientPool creates a new client pool with the given configuration.
 func NewClientPool(config *PoolConfig) *ClientPool {
 	ctx, cancel := context.WithCancel(context.Background())
-	return &ClientPool{
+	p := &ClientPool{
 		config:      config,
 		clients:     make(map[PoolType][]*PoolConn),
 		clientIndex: make(map[*Client]*PoolConn),
 		ctx:        ctx,
 		cancel:     cancel,
 	}
+	p.cond = sync.NewCond(&p.mu)
+	return p
 }
 
-// Get retrieves a client of the specified type from the pool.
-// If no idle client is available, it waits until a connection becomes available or context times out.
-// The context controls the maximum wait time.
 func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -109,9 +108,7 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 		return nil, NewError(CodePoolClosed, "pool is closed")
 	}
 
-	// Wait loop: retry until we get a connection or context expires
 	for {
-		// Check for context cancellation
 		select {
 		case <-ctx.Done():
 			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
@@ -120,7 +117,6 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 
 		conns := p.clients[poolType]
 
-		// Try to find an idle connection
 		for _, pc := range conns {
 			if !pc.InUse && time.Since(pc.LastUsed) < p.config.MaxIdleTime {
 				pc.InUse = true
@@ -129,7 +125,6 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 			}
 		}
 
-		// Create new connection if pool size permits
 		if len(conns) < p.config.MaxSize {
 			client, err := p.newClientLocked()
 			if err != nil {
@@ -139,34 +134,48 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 				Client:    client,
 				PoolType:  poolType,
 				CreatedAt: time.Now(),
-				LastUsed: time.Now(),
-				InUse:    true,
+				LastUsed:  time.Now(),
+				InUse:     true,
 			}
 			p.clients[poolType] = append(conns, pc)
-			p.clientIndex[client] = pc // O(1) lookup
+			p.clientIndex[client] = pc
 			return client, nil
 		}
 
-		// Pool is full, wait for a connection to be released
-		// Release lock briefly to allow other goroutines to Put() back
+		done := make(chan struct{})
+		go func() {
+			p.cond.Wait()
+			close(done)
+		}()
+
 		p.mu.Unlock()
-		time.Sleep(50 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			p.mu.Lock()
+			p.cond.Broadcast()
+			<-done
+			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
+		case <-done:
+		}
 		p.mu.Lock()
+
+		if p.closed {
+			return nil, NewError(CodePoolClosed, "pool is closed")
+		}
 	}
 }
 
-// Put returns a client to the pool after use.
 func (p *ClientPool) Put(client *Client) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	// O(1) lookup instead of O(n)
 	pc, ok := p.clientIndex[client]
 	if !ok {
 		return
 	}
 	pc.InUse = false
 	pc.LastUsed = time.Now()
+	p.cond.Signal()
 }
 
 // Remove removes a client from the pool (e.g., if it's broken).
@@ -252,7 +261,6 @@ func (p *ClientPool) GetPoolType(client *Client) (PoolType, bool) {
 	return pc.PoolType, true
 }
 
-// Close closes all connections in the pool and stops the health checker.
 func (p *ClientPool) Close() error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -262,6 +270,7 @@ func (p *ClientPool) Close() error {
 	}
 	p.closed = true
 	p.cancel()
+	p.cond.Broadcast()
 
 	for _, conns := range p.clients {
 		for _, pc := range conns {
