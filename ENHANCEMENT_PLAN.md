@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines a comprehensive plan to elevate the `futuapi4go` SDK from its current v0.3.1 state to a world-class Go SDK for the Futu OpenAPI. The plan covers bug fixes, missing implementations, API design improvements, performance optimizations, and documentation enhancements.
+This document outlines a comprehensive plan to elevate the `futuapi4go` SDK from its current v0.5.1 state to a world-class Go SDK for the Futu OpenAPI. The plan covers bug fixes, missing implementations, API design improvements, performance optimizations, and documentation enhancements.
 
 ---
 

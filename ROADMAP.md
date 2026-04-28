@@ -1,6 +1,6 @@
 # futuapi4go Roadmap
 
-> **Last updated: 2026-04-25 — v0.3.0 published** 🎉
+> **Last updated: 2026-04-28 — v0.5.1 published** 🎉
 
 ---
 

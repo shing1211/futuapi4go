@@ -122,7 +122,7 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 | **Phase 3** | Infrastructure Improvements | 4 | 15-20 hrs | v0.3.1 | No |
 | **Phase 4** | Testing & Validation | 4 | 15-20 hrs | v0.3.2 | No |
 | **Phase 5** | Polish & Documentation | 5 | 10-15 hrs | v0.4.0 | Partial |
-| **Phase 6** | World-Class SDK | 9 | 13-15 hrs | v0.3.0 | Partial |
+| **Phase 6** | World-Class SDK | 9 | 13-15 hrs | v0.5.1 | Partial |
 | **TOTAL** | | **24** | **75-100 hrs** | | |
 
 ### Phase Gates
@@ -307,7 +307,7 @@ Use these consistently in IMPLEMENTATION_PLAN.md:
 - **Migration Guide:** `docs/MIGRATION_GUIDE.md`
 - **API Reference:** `docs/API_REFERENCE.md`
 - **Proto Reference:** https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.3.0)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.5.1)
 
 ---
 
