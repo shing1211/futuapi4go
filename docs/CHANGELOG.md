@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **wrapError() enhanced** — Both pkg/trd and pkg/qot now map RetType to proper ErrorCode with category/recovery
 - **FutuError struct** — Added Category (ErrorCategory) and Recovery (string) fields
+- **Prometheus Metrics Integration** — recordRequest/recordReconnect/recordPush now also call metrics.RecordAPICall/RecordReconnect/RecordPushMessage; Connect/Close call RecordConnection/RecordDisconnect/RecordOpenDUp
+- **Push handler enhanced** — Records Prometheus push message with ProtoID label
+- **Client Public API** — WithTradeEnv/GetTradeEnv now use constant.TrdEnv instead of int32; WithTradeMarket/GetTradeMarket use constant.TrdMarket
+- **Connection Pool** — Added Stats() returning map[PoolType]PoolStats and GetPoolType() for O(1) lookup
+- **Convenience Wrappers** — Added GetAccountFunds() combining GetFunds in one call
 
 ## [0.5.0] - 2026-04-27
 

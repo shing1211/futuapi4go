@@ -42,11 +42,10 @@ import (
 // It wraps the internal client to provide a public API.
 type Client struct {
 	inner  *futuapi.Client
-	trdEnv int32 // trading environment: 0=simulate, 1=real (default)
-	trdMkt int32 // default trading market (0 = auto-detect per request)
+	trdEnv constant.TrdEnv
+	trdMkt constant.TrdMarket
 }
 
-// New creates a new client with optional configuration.
 func New(opts ...Option) *Client {
 	futuOpts := make([]futuapi.Option, len(opts))
 	for i, o := range opts {
@@ -54,29 +53,35 @@ func New(opts ...Option) *Client {
 	}
 	return &Client{
 		inner:  futuapi.New(futuOpts...),
-		trdEnv: 0, // default to simulate for safety
+		trdEnv: constant.TrdEnv_Simulate,
 	}
 }
 
-// GetTradeEnv returns the current trading environment (0=real, 1=simulate).
-func (c *Client) GetTradeEnv() int32 {
+func (c *Client) GetTradeEnv() constant.TrdEnv {
 	return c.trdEnv
 }
 
-// WithTradeEnv returns a Client that uses the given trading environment.
-// trdEnv: 0 = real trading, 1 = simulate trading.
-// This is a client-scoped setting so all trading calls inherit it.
-func (c *Client) WithTradeEnv(trdEnv int32) *Client {
+func (c *Client) WithTradeEnv(trdEnv constant.TrdEnv) *Client {
 	clone := *c
 	clone.trdEnv = trdEnv
 	return &clone
+}
+
+func (c *Client) WithTradeMarket(market constant.TrdMarket) *Client {
+	clone := *c
+	clone.trdMkt = market
+	return &clone
+}
+
+func (c *Client) GetTradeMarket() constant.TrdMarket {
+	return c.trdMkt
 }
 
 // FindAccount returns the first account matching the client's trdEnv.
 // Falls back to the first account if none match.
 func (c *Client) FindAccount(accounts []Account) *Account {
 	for _, acc := range accounts {
-		if acc.TrdEnv == c.trdEnv {
+		if acc.TrdEnv == int32(c.trdEnv) {
 			return &acc
 		}
 	}
@@ -86,15 +91,6 @@ func (c *Client) FindAccount(accounts []Account) *Account {
 	return nil
 }
 
-// WithTradeMarket returns a Client that uses the given default trading market.
-// When 0, the market is auto-detected per request (current behavior).
-func (c *Client) WithTradeMarket(trdMkt int32) *Client {
-	clone := *c
-	clone.trdMkt = trdMkt
-	return &clone
-}
-
-// Connect connects to the Futu OpenD server at the given address.
 func (c *Client) Connect(addr string) error {
 	return c.inner.Connect(addr)
 }
@@ -440,7 +436,7 @@ func PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.Tr
 	resp, err := trd.PlaceOrder(ctx, c.inner, &trd.PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 		Code:      code,
 		TrdSide:   side,
 		OrderType: orderType,
@@ -459,7 +455,7 @@ func ModifyOrder(ctx context.Context, c *Client, accID uint64, market constant.T
 	return trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        constant.TrdEnv(c.trdEnv),
+		TrdEnv:        c.trdEnv,
 		OrderID:       orderID,
 		ModifyOrderOp: modifyOp,
 		Price:         price,
@@ -488,7 +484,7 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 	resp, err := trd.GetPositionList(ctx, c.inner, &trd.GetPositionListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -531,7 +527,7 @@ func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constan
 	resp, err := trd.GetFunds(ctx, c.inner, &trd.GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -617,7 +613,7 @@ func GetMaxTrdQtys(c *Client, accID uint64, market constant.TrdMarket, code stri
 	resp, err := trd.GetMaxTrdQtys(c.inner.Context(), c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 		Code:      code,
 		OrderType: orderType,
 		Price:     price,
@@ -653,7 +649,7 @@ func GetOrderFee(c *Client, accID uint64, market constant.TrdMarket, orderIDExLi
 	resp, err := trd.GetOrderFee(c.inner.Context(), c.inner, &trd.GetOrderFeeRequest{
 		AccID:         accID,
 		TrdMarket:     market,
-		TrdEnv:        constant.TrdEnv(c.trdEnv),
+		TrdEnv:        c.trdEnv,
 		OrderIDExList: orderIDExList,
 	})
 	if err != nil {
@@ -693,7 +689,7 @@ func GetMarginRatio(c *Client, accID uint64, market constant.TrdMarket, securiti
 	resp, err := trd.GetMarginRatio(c.inner.Context(), c.inner, &trd.GetMarginRatioRequest{
 		AccID:        accID,
 		TrdMarket:    market,
-		TrdEnv:       constant.TrdEnv(c.trdEnv),
+		TrdEnv:       c.trdEnv,
 		SecurityList: securities,
 	})
 	if err != nil {
@@ -722,7 +718,7 @@ func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error)
 	resp, err := trd.GetOrderList(ctx, c.inner, &trd.GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -775,7 +771,7 @@ func GetHistoryOrderList(c *Client, accID uint64, market constant.TrdMarket, sta
 	resp, err := trd.GetHistoryOrderList(c.inner.Context(), c.inner, &trd.GetHistoryOrderListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
-		TrdEnv:           constant.TrdEnv(c.trdEnv),
+		TrdEnv:           c.trdEnv,
 		FilterConditions: fc,
 	})
 	if err != nil {
@@ -825,7 +821,7 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 	resp, err := trd.GetOrderFillList(c.inner.Context(), c.inner, &trd.GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 	})
 	if err != nil {
 		return nil, err
@@ -862,7 +858,7 @@ func GetHistoryOrderFillList(c *Client, accID uint64, market constant.TrdMarket)
 	resp, err := trd.GetHistoryOrderFillList(c.inner.Context(), c.inner, &trd.GetHistoryOrderFillListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
-		TrdEnv:           constant.TrdEnv(c.trdEnv),
+		TrdEnv:           c.trdEnv,
 		FilterConditions: &trdcommon.TrdFilterConditions{},
 	})
 	if err != nil {
@@ -918,10 +914,11 @@ func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearing
 		clearingDate = time.Now().Format("2006-01-02")
 	}
 	marketPtr := int32(market)
+	trdEnvInt := int32(c.trdEnv)
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
 		TrdMarket: &marketPtr,
-		TrdEnv:    &c.trdEnv,
+		TrdEnv:    &trdEnvInt,
 	}
 	resp, err := trd.GetFlowSummary(c.inner.Context(), c.inner, &trd.GetFlowSummaryRequest{
 		Header:            header,
@@ -973,7 +970,7 @@ func GetAccTradingInfo(c *Client, accID uint64, market constant.TrdMarket, code 
 	resp, err := trd.GetMaxTrdQtys(c.inner.Context(), c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
-		TrdEnv:    constant.TrdEnv(c.trdEnv),
+		TrdEnv:    c.trdEnv,
 		OrderType: orderType,
 		Code:      code,
 		Price:     price,
@@ -2409,10 +2406,11 @@ func SubAccPush(c *Client, accIDList []uint64) error {
 // ReconfirmOrder reconfirms an order requiring additional verification.
 func ReconfirmOrder(c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
 	marketPtr := int32(market)
+	trdEnvInt := int32(c.trdEnv)
 	header := &trdcommon.TrdHeader{
 		AccID:     &accID,
 		TrdMarket: &marketPtr,
-		TrdEnv:    &c.trdEnv,
+		TrdEnv:    &trdEnvInt,
 	}
 	connID := c.inner.GetConnID()
 	serialNo := c.inner.NextSerialNo()

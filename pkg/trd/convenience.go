@@ -151,3 +151,12 @@ func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market
 	}
 	return GetOrderList(ctx, c, req)
 }
+
+func GetAccountFunds(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetFundsResponse, error) {
+	req := &GetFundsRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    env,
+	}
+	return GetFunds(ctx, c, req)
+}

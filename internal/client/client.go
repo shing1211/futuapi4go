@@ -27,6 +27,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/shing1211/futuapi4go/pkg/breaker"
+	"github.com/shing1211/futuapi4go/pkg/metrics"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
@@ -297,18 +298,26 @@ func (c *Client) recordRequest(protoID uint32, duration time.Duration, err error
 	} else {
 		c.metrics.SuccessfulReqs++
 	}
+	protoStr := fmt.Sprintf("%d", protoID)
+	status := "success"
+	if err != nil {
+		status = "error"
+	}
+	metrics.RecordAPICall(protoStr, status, duration)
 }
 
 func (c *Client) recordReconnect() {
 	c.metricsMu.Lock()
 	defer c.metricsMu.Unlock()
 	c.metrics.ReconnectCount++
+	metrics.RecordReconnect("connection_lost")
 }
 
 func (c *Client) recordPush() {
 	c.metricsMu.Lock()
 	defer c.metricsMu.Unlock()
 	c.metrics.PushReceived++
+	metrics.RecordPushMessage("default")
 }
 
 type Handler func(protoID uint32, body []byte)
@@ -591,8 +600,13 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
 
+	metrics.RecordConnection("tcp")
+	metrics.RecordOpenDUp(true)
+
 	c.conn.SetPushHandler(func(pkt *Packet) {
 		c.recordPush()
+		protoStr := fmt.Sprintf("%d", pkt.Header.ProtoID)
+		metrics.RecordPushMessage(protoStr)
 		c.handlersMu.RLock()
 		handler, ok := c.handlers[pkt.Header.ProtoID]
 		c.handlersMu.RUnlock()
@@ -786,6 +800,8 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 
 func (c *Client) Close() error {
 	atomic.StoreInt32(&c.connActive, 0)
+	metrics.RecordDisconnect("tcp")
+	metrics.RecordOpenDUp(false)
 	c.cancel()
 	if c.conn != nil {
 		c.conn.Close()

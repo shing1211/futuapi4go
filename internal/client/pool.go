@@ -214,6 +214,40 @@ func (p *ClientPool) Available(poolType PoolType) int {
 	return count
 }
 
+type PoolStats struct {
+	Total  int
+	InUse  int
+	Idle   int
+}
+
+func (p *ClientPool) Stats() map[PoolType]PoolStats {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	result := make(map[PoolType]PoolStats)
+	for pt, conns := range p.clients {
+		s := PoolStats{Total: len(conns)}
+		for _, pc := range conns {
+			if pc.InUse {
+				s.InUse++
+			} else {
+				s.Idle++
+			}
+		}
+		result[pt] = s
+	}
+	return result
+}
+
+func (p *ClientPool) GetPoolType(client *Client) (PoolType, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	pc, ok := p.clientIndex[client]
+	if !ok {
+		return PoolTypeGeneral, false
+	}
+	return pc.PoolType, true
+}
+
 // Close closes all connections in the pool and stops the health checker.
 func (p *ClientPool) Close() error {
 	p.mu.Lock()
