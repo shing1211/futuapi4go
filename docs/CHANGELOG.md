@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Nothing yet — all changes are in v0.5.0*
+### Added
+
+- **Enhanced Error System** — FutuError now includes Category, Recovery fields, FullMessage(), CodeString(), Is() for errors.Is() compatibility
+- **Error Predicates** — IsServerError(), IsAPIError(), IsConnectionError(), IsTimeoutError(), IsTradingError()
+- **Error Bridge Functions** — CategoryOf(), RecoveryHint() with unwrap traversal for both FutuError and internal/client.Error
+- **Circuit Breaker Integration** — Optional breaker on Client via SetBreaker()/GetBreaker(), auto-wraps Request/RequestContext for business protos
+- **Input Validation Standalones** — ValidateAccID(), ValidateCode(), ValidateQty(), ValidatePrice(), ValidateRemark() with boundary checks
+- **OrderBuilder AutoDetectMarket** — AutoDetectMarket() method using util.DetectTradingMarkets(), WithSecMarket() method
+- **OrderBuilder Build Validation** — Build() now returns (*PlaceOrderRequest, error) with code/qty/market validation
+- **Convenience Wrappers** — GetTodayFills(), GetTodayOrders() for today's fill/order queries
+- **HistoryKLine Iterator** — TotalFetched(), PageCount() methods, context cancellation check in Next()
+- **Typed Enum Int32()** — All typed enums now have Int32() method for implicit proto field conversion
+- **TrdMarket.Prefix()** — Returns short market codes ("HK", "US", "CN", "SG", etc.)
+- **Client.GetReconnectCount()** — Returns reconnect attempt count from metrics
+
+### Changed
+
+- **wrapError() enhanced** — Both pkg/trd and pkg/qot now map RetType to proper ErrorCode with category/recovery
+- **FutuError struct** — Added Category (ErrorCategory) and Recovery (string) fields
 
 ## [0.5.0] - 2026-04-27
 

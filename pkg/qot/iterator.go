@@ -22,12 +22,14 @@ import (
 )
 
 type HistoryKLineIterator struct {
-	ctx    context.Context
-	client *futuapi.Client
-	req    *RequestHistoryKLRequest
-	mu     sync.Mutex
-	err    error
-	atEnd  bool
+	ctx         context.Context
+	client      *futuapi.Client
+	req         *RequestHistoryKLRequest
+	mu          sync.Mutex
+	err         error
+	atEnd       bool
+	totalFetched int
+	pageCount   int
 }
 
 func NewHistoryKLineIterator(ctx context.Context, c *futuapi.Client, req *RequestHistoryKLRequest) *HistoryKLineIterator {
@@ -56,11 +58,21 @@ func (it *HistoryKLineIterator) Next() ([]*KLine, error) {
 		return nil, nil
 	}
 
+	select {
+	case <-it.ctx.Done():
+		it.err = it.ctx.Err()
+		return nil, it.err
+	default:
+	}
+
 	rsp, err := RequestHistoryKL(it.ctx, it.client, it.req)
+	it.pageCount++
 	if err != nil {
 		it.err = err
 		return nil, err
 	}
+
+	it.totalFetched += len(rsp.KLList)
 
 	if len(rsp.NextReqKey) == 0 {
 		it.atEnd = true
@@ -75,4 +87,16 @@ func (it *HistoryKLineIterator) Err() error {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	return it.err
+}
+
+func (it *HistoryKLineIterator) TotalFetched() int {
+	it.mu.Lock()
+	defer it.mu.Unlock()
+	return it.totalFetched
+}
+
+func (it *HistoryKLineIterator) PageCount() int {
+	it.mu.Lock()
+	defer it.mu.Unlock()
+	return it.pageCount
 }

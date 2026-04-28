@@ -230,6 +230,43 @@ func (t TrdMarket) String() string {
 	}
 }
 
+func (t TrdMarket) Prefix() string {
+	switch t {
+	case TrdMarket_HK, TrdMarket_HKCC, TrdMarket_HKFund:
+		return "HK"
+	case TrdMarket_US, TrdMarket_USFund:
+		return "US"
+	case TrdMarket_CN:
+		return "CN"
+	case TrdMarket_SG, TrdMarket_SGFund:
+		return "SG"
+	case TrdMarket_AU:
+		return "AU"
+	case TrdMarket_JP, TrdMarket_JPFund:
+		return "JP"
+	case TrdMarket_MY, TrdMarket_MYFund:
+		return "MY"
+	case TrdMarket_CA:
+		return "CA"
+	case TrdMarket_Futures, TrdMarket_FuturesSimulateHK, TrdMarket_FuturesSimulateUS, TrdMarket_FuturesSimulateSG, TrdMarket_FuturesSimulateJP:
+		return "FUT"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func (m Market) Int32() int32  { return int32(m) }
+func (t TrdMarket) Int32() int32 { return int32(t) }
+func (t TrdEnv) Int32() int32    { return int32(t) }
+func (s TrdSide) Int32() int32   { return int32(s) }
+func (o OrderType) Int32() int32 { return int32(o) }
+func (k KLType) Int32() int32    { return int32(k) }
+func (s SubType) Int32() int32   { return int32(s) }
+func (r RehabType) Int32() int32 { return int32(r) }
+func (m ModifyOrderOp) Int32() int32 { return int32(m) }
+func (s TrdSecMarket) Int32() int32  { return int32(s) }
+func (t TimeInForce) Int32() int32   { return int32(t) }
+
 func (s TrdSecMarket) String() string {
 	switch s {
 	case TrdSecMarket_Unknown:

@@ -136,19 +136,28 @@ func putPlaceOrderC2S(c *trdplaceorder.C2S) {
 
 // wrapError standardizes error messages for proto response failures
 func wrapError(funcName string, retType int32, retMsg string) error {
-	code := constant.ErrorCode(retType)
-	if retType == 0 {
+	var code constant.ErrorCode
+	switch retType {
+	case 0:
 		code = constant.ErrCodeSuccess
-	} else if retType < 0 {
-		code = constant.ErrorCode(retType)
-	} else {
+	case -1:
+		code = constant.ErrCodeInvalidParams
+	case -100:
+		code = constant.ErrCodeTimeout
+	case -200:
+		code = constant.ErrCodeDisconnected
+	case -400:
 		code = constant.ErrCodeUnknown
+	case -500:
+		code = constant.ErrCodeInvalidParams
+	default:
+		if retType < 0 {
+			code = constant.ErrCodeUnknown
+		} else {
+			code = constant.ErrCodeUnknown
+		}
 	}
-	return &constant.FutuError{
-		Code:    code,
-		Message: retMsg,
-		Func:    funcName,
-	}
+	return constant.NewFutuError(code, funcName, retMsg)
 }
 
 // GetAccList retrieves the list of trading accounts, optionally including general security account info.

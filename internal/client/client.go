@@ -26,6 +26,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/gorilla/websocket"
+	"github.com/shing1211/futuapi4go/pkg/breaker"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
@@ -211,6 +212,18 @@ func WithSlog(sl *SlogLogger) Option {
 	return func(o *ClientOptions) { o.SlogLogger = sl }
 }
 
+func WithBreaker(cb *breaker.Breaker) Option {
+	return func(o *ClientOptions) {}
+}
+
+func (c *Client) SetBreaker(cb *breaker.Breaker) {
+	c.breaker = cb
+}
+
+func (c *Client) GetBreaker() *breaker.Breaker {
+	return c.breaker
+}
+
 type Client struct {
 	conn              ConnInterface
 	mu                sync.RWMutex
@@ -228,20 +241,20 @@ type Client struct {
 	ctx               context.Context
 	cancel            context.CancelFunc
 	wg                sync.WaitGroup
-	connected         int32 // atomic: 0 = disconnected, 1 = connected
-	connActive        int32 // atomic flag: 0 = loops should exit, 1 = loops running
+	connected         int32
+	connActive        int32
 
 	addr         string
-	reconnecting int32 // atomic flag: 0 = not reconnecting, 1 = reconnecting
+	reconnecting int32
 
-	rsaKey string // RSA public key used during last successful connection
+	rsaKey string
 
-	// Zero-allocation buffers
 	bufPool *bufferPool
 
-	// Metrics / µîçµ¿Ö
 	metrics   *Metrics
 	metricsMu sync.RWMutex
+
+	breaker *breaker.Breaker
 }
 
 // Metrics tracks client performance statistics.
@@ -263,6 +276,12 @@ func (c *Client) GetMetrics() Metrics {
 	c.metricsMu.RLock()
 	defer c.metricsMu.RUnlock()
 	return *c.metrics
+}
+
+func (c *Client) GetReconnectCount() uint64 {
+	c.metricsMu.RLock()
+	defer c.metricsMu.RUnlock()
+	return c.metrics.ReconnectCount
 }
 
 func (c *Client) recordRequest(protoID uint32, duration time.Duration, err error) {
@@ -911,17 +930,34 @@ func (c *Client) request(protoID uint32, req proto.Message, resp proto.Message) 
 
 func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) error {
 	start := time.Now()
-	err := c.requestInternal(protoID, req, rsp)
+	var err error
+	if c.breaker != nil && !isControlProto(protoID) {
+		_, err = c.breaker.Do(func() (interface{}, error) {
+			return nil, c.requestInternal(protoID, req, rsp)
+		})
+	} else {
+		err = c.requestInternal(protoID, req, rsp)
+	}
 	c.recordRequest(protoID, time.Since(start), err)
 	return err
 }
 
-// RequestContext sends a request with context cancellation support.
 func (c *Client) RequestContext(ctx context.Context, protoID uint32, req proto.Message, rsp proto.Message) error {
 	start := time.Now()
-	err := c.requestContextInternal(ctx, protoID, req, rsp)
+	var err error
+	if c.breaker != nil && !isControlProto(protoID) {
+		_, err = c.breaker.Do(func() (interface{}, error) {
+			return nil, c.requestContextInternal(ctx, protoID, req, rsp)
+		})
+	} else {
+		err = c.requestContextInternal(ctx, protoID, req, rsp)
+	}
 	c.recordRequest(protoID, time.Since(start), err)
 	return err
+}
+
+func isControlProto(protoID uint32) bool {
+	return protoID == ProtoID_InitConnect || protoID == ProtoID_KeepAlive || protoID == ProtoID_GetGlobalState
 }
 
 func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Message) error {

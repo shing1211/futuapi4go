@@ -2,10 +2,12 @@ package trd
 
 import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 type OrderBuilder struct {
-	req *PlaceOrderRequest
+	req           *PlaceOrderRequest
+	marketAutoSet bool
 }
 
 func NewOrder(accID uint64, market constant.TrdMarket, env constant.TrdEnv) *OrderBuilder {
@@ -49,8 +51,33 @@ func (b *OrderBuilder) WithRemark(remark string) *OrderBuilder {
 	return b
 }
 
-func (b *OrderBuilder) Build() *PlaceOrderRequest {
-	return b.req
+func (b *OrderBuilder) AutoDetectMarket() *OrderBuilder {
+	if b.req.Code == "" {
+		return b
+	}
+	trdMarket, secMarket := util.DetectTradingMarkets(b.req.Code)
+	b.req.TrdMarket = trdMarket
+	b.req.SecMarket = secMarket
+	b.marketAutoSet = true
+	return b
+}
+
+func (b *OrderBuilder) WithSecMarket(secMarket constant.TrdSecMarket) *OrderBuilder {
+	b.req.SecMarket = secMarket
+	return b
+}
+
+func (b *OrderBuilder) Build() (*PlaceOrderRequest, error) {
+	if b.req.Code == "" {
+		return nil, constant.NewFutuError(constant.ErrCodeInvalidParams, "OrderBuilder.Build", "stock code is required")
+	}
+	if b.req.Qty <= 0 {
+		return nil, constant.NewFutuError(constant.ErrCodeInvalidParams, "OrderBuilder.Build", "quantity must be positive")
+	}
+	if !b.marketAutoSet && b.req.TrdMarket == 0 {
+		return nil, constant.NewFutuError(constant.ErrCodeInvalidParams, "OrderBuilder.Build", "TrdMarket not set; call AutoDetectMarket() or set TrdMarket explicitly")
+	}
+	return b.req, nil
 }
 
 func (b *OrderBuilder) WithTimeInForce(tif constant.TimeInForce) *OrderBuilder {

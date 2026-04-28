@@ -12,11 +12,13 @@ func TestOrderBuilder(t *testing.T) {
 	env := constant.TrdEnv_Simulate
 
 	t.Run("BasicBuyOrder", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.AccID != accID {
 			t.Errorf("expected AccID %d, got %d", accID, req.AccID)
 		}
@@ -41,11 +43,13 @@ func TestOrderBuilder(t *testing.T) {
 	})
 
 	t.Run("SellOrder", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Sell("00700", 200).
 			At(360.0).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.TrdSide != constant.TrdSide_Sell {
 			t.Errorf("expected TrdSide Sell, got %v", req.TrdSide)
 		}
@@ -55,11 +59,13 @@ func TestOrderBuilder(t *testing.T) {
 	})
 
 	t.Run("MarketOrder", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			Market().
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.OrderType != constant.OrderType_Market {
 			t.Errorf("expected OrderType Market, got %v", req.OrderType)
 		}
@@ -69,62 +75,72 @@ func TestOrderBuilder(t *testing.T) {
 	})
 
 	t.Run("WithRemark", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			WithRemark("test order").
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.Remark != "test order" {
 			t.Errorf("expected remark 'test order', got %s", req.Remark)
 		}
 	})
 
 	t.Run("WithTimeInForce", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			WithTimeInForce(constant.TimeInForce_GTC).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.TimeInForce != int32(constant.TimeInForce_GTC) {
 			t.Errorf("expected TimeInForce GTD, got %d", req.TimeInForce)
 		}
 	})
 
 	t.Run("WithFillOutsideRTH", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			WithFillOutsideRTH(true).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if !req.FillOutsideRTH {
 			t.Error("expected FillOutsideRTH true")
 		}
 	})
 
 	t.Run("WithAuxPrice", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			WithAuxPrice(345.0).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.AuxPrice != 345.0 {
 			t.Errorf("expected auxPrice 345.0, got %f", req.AuxPrice)
 		}
 	})
 
 	t.Run("FluentInterface", func(t *testing.T) {
-		req := NewOrder(accID, market, env).
+		req, err := NewOrder(accID, market, env).
 			Buy("00700", 100).
 			At(350.5).
 			WithRemark("fluent test").
 			WithTimeInForce(constant.TimeInForce_GTC).
 			WithFillOutsideRTH(true).
 			Build()
-
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if req.TrdSide != constant.TrdSide_Buy ||
 			req.Code != "00700" ||
 			req.Qty != 100 ||
@@ -133,6 +149,50 @@ func TestOrderBuilder(t *testing.T) {
 			req.TimeInForce != int32(constant.TimeInForce_GTC) ||
 			!req.FillOutsideRTH {
 			t.Error("fluent interface chain failed")
+		}
+	})
+
+	t.Run("AutoDetectMarket", func(t *testing.T) {
+		req, err := NewOrder(accID, 0, env).
+			Buy("00700.HK", 100).
+			At(350.5).
+			AutoDetectMarket().
+			Build()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if req.TrdMarket != constant.TrdMarket_HK {
+			t.Errorf("expected TrdMarket HK, got %v", req.TrdMarket)
+		}
+	})
+
+	t.Run("BuildValidationEmptyCode", func(t *testing.T) {
+		_, err := NewOrder(accID, market, env).
+			Buy("", 100).
+			At(350.5).
+			Build()
+		if err == nil {
+			t.Error("expected error for empty code")
+		}
+	})
+
+	t.Run("BuildValidationZeroQty", func(t *testing.T) {
+		_, err := NewOrder(accID, market, env).
+			Buy("00700", 0).
+			At(350.5).
+			Build()
+		if err == nil {
+			t.Error("expected error for zero qty")
+		}
+	})
+
+	t.Run("BuildValidationNoMarket", func(t *testing.T) {
+		_, err := NewOrder(accID, 0, env).
+			Buy("00700", 100).
+			At(350.5).
+			Build()
+		if err == nil {
+			t.Error("expected error for no market set")
 		}
 	})
 }

@@ -133,3 +133,21 @@ func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]Posit
 	}
 	return positions, nil
 }
+
+func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderFillListResponse, error) {
+	req := &GetOrderFillListRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    env,
+	}
+	return GetOrderFillList(ctx, c, req)
+}
+
+func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderListResponse, error) {
+	req := &GetOrderListRequest{
+		AccID:     accID,
+		TrdMarket: market,
+		TrdEnv:    env,
+	}
+	return GetOrderList(ctx, c, req)
+}
