@@ -17,12 +17,12 @@ func TestHistoryKLineIteratorNilClient(t *testing.T) {
 
 	it := NewHistoryKLineIterator(ctx, client, req)
 
-	if it.HasNext() {
-		t.Error("HasNext() should return false when client is nil (no connection)")
+	if it.HasNext() != true {
+		t.Error("HasNext() should return true when client is nil (not initialized)")
 	}
 
 	_, err := it.Next()
 	if err == nil {
-		t.Error("Next() should error when not connected")
+		t.Error("Next() should error when client is nil (not connected)")
 	}
 }

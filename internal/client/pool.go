@@ -144,8 +144,8 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 
 		done := make(chan struct{})
 		go func() {
-			p.cond.Wait()
-			close(done)
+			defer close(done)
+			time.Sleep(50 * time.Millisecond)
 		}()
 
 		p.mu.Unlock()
