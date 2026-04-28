@@ -61,8 +61,9 @@ const (
 	ProtoID_GetUserInfo        = 1005 // 获取用户信息
 	ProtoID_Verification       = 1006 // 请求或输入验证码
 	ProtoID_GetDelayStatistics = 1007 // 获取延迟统计
-	ProtoID_TestCmd            = 1008
-	ProtoID_InitQuantMode      = 1009
+	ProtoID_TestCmd            = 1008 // 测试命令
+	ProtoID_InitQuantMode      = 1009 // 初始化量化模式
+	ProtoID_UsedQuota          = 1010 // 已使用额度
 
 	// Trading APIs
 	ProtoID_Trd_GetAccList              = 2001 // 获取业务账户列表
@@ -105,6 +106,7 @@ const (
 	ProtoID_Qot_RequestHistoryKL      = 3103 // 拉取历史K线
 	ProtoID_Qot_RequestHistoryKLQuota = 3104 // 拉取历史K线已经用掉的额度
 	ProtoID_Qot_RequestRehab          = 3105 // 获取除权信息
+	ProtoID_Qot_GetHistoryKLPoints     = 3106 // 获取历史K线数据点
 
 	// Other Qot APIs
 	ProtoID_Qot_GetSuspend              = 3201 // 获取股票停牌信息

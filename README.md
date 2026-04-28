@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.2-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,10 +12,26 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.1
+go get github.com/shing1211/futuapi4go@v0.5.2
 ```
 
-## v0.5.1 Breaking Changes
+## v0.5.2 New Features
+
+```go
+// Fluent API - cleaner access
+cli.Quote().GetBasicQot(ctx, securities)
+cli.Trade().PlaceOrder(ctx, req)
+cli.System().GetGlobalState(ctx)
+
+// Historical K-line at specific time points
+resp, err := cli.Quote().GetHistoryKLPoints(ctx, &qot.GetHistoryKLPointsRequest{
+    Securities: securities,
+    Times: []string{"2024-01-01 09:30:00"},
+})
+
+// Quota usage
+quota, _ := cli.System().GetUsedQuota(ctx)
+```
 
 If upgrading from v0.2.x, note these changes:
 

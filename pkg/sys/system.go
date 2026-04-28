@@ -42,6 +42,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
 	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/usedquota"
 	"github.com/shing1211/futuapi4go/pkg/pb/verification"
 )
 
@@ -63,10 +64,11 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 }
 
 const (
-	ProtoID_GetGlobalState     = 1002
+	ProtoID_GetGlobalState      = 1002
 	ProtoID_GetUserInfo        = 1005
 	ProtoID_Verification       = 1006
-	ProtoID_GetDelayStatistics = 1007
+	ProtoID_GetDelayStatistics  = 1007
+	ProtoID_UsedQuota        = 1010
 )
 
 // GetGlobalStateResponse represents the global connection state including server info, login status, and market availability.
@@ -329,3 +331,38 @@ func Verification(ctx context.Context, c *futuapi.Client, req *VerificationReque
 
 	return nil
 }
+
+// GetUsedQuotaResponse represents the quota usage information.
+type GetUsedQuotaResponse struct {
+	UsedSubQuota   int32 // 已使用订阅额度
+	UsedKLineQuota int32 // 已使用历史K线额度
+}
+
+// GetUsedQuota retrieves the current quota usage for subscriptions and historical K-line requests.
+// Returns the used quota information or an error if the request fails.
+func GetUsedQuota(ctx context.Context, c *futuapi.Client) (*GetUsedQuotaResponse, error) {
+	c2s := &usedquota.C2S{}
+	pkt := &usedquota.Request{C2S: c2s}
+	var rsp usedquota.Response
+
+	if err := c.RequestContext(ctx, ProtoID_UsedQuota, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetUsedQuota", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetUsedQuota: s2c is nil")
+	}
+
+	return &GetUsedQuotaResponse{
+		UsedSubQuota:   s2c.GetUsedSubQuota(),
+		UsedKLineQuota: s2c.GetUsedKLineQuota(),
+	}, nil
+}
+
+var _ proto.Message = (*usedquota.Request)(nil)
+var _ proto.Message = (*usedquota.Response)(nil)

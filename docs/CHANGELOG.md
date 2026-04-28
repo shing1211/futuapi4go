@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-04-28
+
+### Added
+
+- **GetHistoryKLPoints Wrapper** — `pkg/qot/history_kl_points.go` provides historical K-line data at specific time points using ProtoID 3106
+- **UsedQuota Wrapper** — `pkg/sys/system.go` GetUsedQuota() returns used subscription and historical K-line quota using ProtoID 1010
+- **NoDataMode Typed Enum** — pkg/qot: NoDataMode_Null, Forward, Backward constants
+- **DataStatus Typed Enum** — pkg/qot: DataStatus_Null, Current, Previous, Back constants
+- **Fluent API** — client.Quote(), client.Trade(), client.System() for cleaner API access
+
+### Changed
+
+- Updated README with v0.5.2 examples
+- Updated ENHANCEMENT_PLAN.md as completed
+
 ## [0.5.1] - 2026-04-28
 
 ### Added
