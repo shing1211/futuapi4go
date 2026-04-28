@@ -75,6 +75,21 @@ var (
 		Name: "futuapi_api_errors_total",
 		Help: "Total number of API errors",
 	}, []string{"proto", "error_code"})
+
+	rateLimitCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "futuapi_rate_limited_total",
+		Help: "Total number of rate-limited requests",
+	}, []string{"proto"})
+
+	retryCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "futuapi_retry_total",
+		Help: "Total number of retry attempts",
+	}, []string{"proto", "attempt"})
+
+	breakerState = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "futuapi_breaker_state",
+		Help: "Circuit breaker state (0=closed, 0.5=half-open, 1=open)",
+	}, []string{"name"})
 )
 
 func Init() {
@@ -152,4 +167,16 @@ func (t *APICallTracker) End(success bool) {
 	}
 	latency := time.Since(t.start)
 	RecordAPICall(t.protoID, status, latency)
+}
+
+func RecordRateLimited(proto string) {
+	rateLimitCounter.WithLabelValues(proto).Inc()
+}
+
+func RecordRetry(proto, attempt string) {
+	retryCounter.WithLabelValues(proto, attempt).Inc()
+}
+
+func RecordBreakerState(name string, state float64) {
+	breakerState.WithLabelValues(name).Set(state)
 }

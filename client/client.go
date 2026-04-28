@@ -606,11 +606,11 @@ type MaxTrdQtysInfo struct {
 }
 
 // GetMaxTrdQtys retrieves maximum tradable quantities.
-func GetMaxTrdQtys(c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64, secMarket constant.TrdSecMarket) (*MaxTrdQtysInfo, error) {
+func GetMaxTrdQtys(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64, secMarket constant.TrdSecMarket) (*MaxTrdQtysInfo, error) {
 	if secMarket == 0 {
 		secMarket = constant.TrdSecMarket(inferSecMarket(code))
 	}
-	resp, err := trd.GetMaxTrdQtys(c.inner.Context(), c.inner, &trd.GetMaxTrdQtysRequest{
+	resp, err := trd.GetMaxTrdQtys(ctx, c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
 		TrdEnv:    c.trdEnv,
@@ -645,8 +645,8 @@ type OrderFeeItemInfo struct {
 }
 
 // GetOrderFee retrieves order fee information.
-func GetOrderFee(c *Client, accID uint64, market constant.TrdMarket, orderIDExList []string) ([]*OrderFeeInfo, error) {
-	resp, err := trd.GetOrderFee(c.inner.Context(), c.inner, &trd.GetOrderFeeRequest{
+func GetOrderFee(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderIDExList []string) ([]*OrderFeeInfo, error) {
+	resp, err := trd.GetOrderFee(ctx, c.inner, &trd.GetOrderFeeRequest{
 		AccID:         accID,
 		TrdMarket:     market,
 		TrdEnv:        c.trdEnv,
@@ -685,8 +685,8 @@ type MarginRatioInfo struct {
 }
 
 // GetMarginRatio retrieves margin ratio for securities.
-func GetMarginRatio(c *Client, accID uint64, market constant.TrdMarket, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
-	resp, err := trd.GetMarginRatio(c.inner.Context(), c.inner, &trd.GetMarginRatioRequest{
+func GetMarginRatio(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
+	resp, err := trd.GetMarginRatio(ctx, c.inner, &trd.GetMarginRatioRequest{
 		AccID:        accID,
 		TrdMarket:    market,
 		TrdEnv:       c.trdEnv,
@@ -760,7 +760,7 @@ func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error)
 }
 
 // GetHistoryOrderList retrieves historical orders.
-func GetHistoryOrderList(c *Client, accID uint64, market constant.TrdMarket, startDate, endDate string) ([]Order, error) {
+func GetHistoryOrderList(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, startDate, endDate string) ([]Order, error) {
 	var fc *trdcommon.TrdFilterConditions
 	if startDate != "" || endDate != "" {
 		fc = &trdcommon.TrdFilterConditions{
@@ -768,7 +768,7 @@ func GetHistoryOrderList(c *Client, accID uint64, market constant.TrdMarket, sta
 			EndTime:   &endDate,
 		}
 	}
-	resp, err := trd.GetHistoryOrderList(c.inner.Context(), c.inner, &trd.GetHistoryOrderListRequest{
+	resp, err := trd.GetHistoryOrderList(ctx, c.inner, &trd.GetHistoryOrderListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
 		TrdEnv:           c.trdEnv,
@@ -817,8 +817,8 @@ func GetHistoryOrderList(c *Client, accID uint64, market constant.TrdMarket, sta
 }
 
 // GetOrderFillList retrieves order fills (executions).
-func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
-	resp, err := trd.GetOrderFillList(c.inner.Context(), c.inner, &trd.GetOrderFillListRequest{
+func GetOrderFillList(ctx context.Context, c *Client, accID uint64) ([]OrderFill, error) {
+	resp, err := trd.GetOrderFillList(ctx, c.inner, &trd.GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
 		TrdEnv:    c.trdEnv,
@@ -854,8 +854,8 @@ func GetOrderFillList(c *Client, accID uint64) ([]OrderFill, error) {
 }
 
 // GetHistoryOrderFillList retrieves historical order fills.
-func GetHistoryOrderFillList(c *Client, accID uint64, market constant.TrdMarket) ([]OrderFill, error) {
-	resp, err := trd.GetHistoryOrderFillList(c.inner.Context(), c.inner, &trd.GetHistoryOrderFillListRequest{
+func GetHistoryOrderFillList(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) ([]OrderFill, error) {
+	resp, err := trd.GetHistoryOrderFillList(ctx, c.inner, &trd.GetHistoryOrderFillListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
 		TrdEnv:           c.trdEnv,
@@ -909,7 +909,7 @@ type FlowSummaryInfo struct {
 
 // GetFlowSummary retrieves account cash flow entries.
 // clearingDate: clearing date in "YYYY-MM-DD" format, empty means today.
-func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction trdflowsummary.TrdCashFlowDirection) ([]*FlowSummaryInfo, error) {
+func GetFlowSummary(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction trdflowsummary.TrdCashFlowDirection) ([]*FlowSummaryInfo, error) {
 	if clearingDate == "" {
 		clearingDate = time.Now().Format("2006-01-02")
 	}
@@ -920,7 +920,7 @@ func GetFlowSummary(c *Client, accID uint64, market constant.TrdMarket, clearing
 		TrdMarket: &marketPtr,
 		TrdEnv:    &trdEnvInt,
 	}
-	resp, err := trd.GetFlowSummary(c.inner.Context(), c.inner, &trd.GetFlowSummaryRequest{
+	resp, err := trd.GetFlowSummary(ctx, c.inner, &trd.GetFlowSummaryRequest{
 		Header:            header,
 		ClearingDate:      clearingDate,
 		CashFlowDirection: int32(direction),
@@ -965,9 +965,9 @@ type AccTradingInfo struct {
 // price: quote price with 3 decimal precision.
 // Returns max buy/sell quantities and required initial margins.
 // Maps to Python's acctradinginfo_query.
-func GetAccTradingInfo(c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64) (*AccTradingInfo, error) {
+func GetAccTradingInfo(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64) (*AccTradingInfo, error) {
 	secMarket := constant.MarketToTrdSecMarket[int32(market)]
-	resp, err := trd.GetMaxTrdQtys(c.inner.Context(), c.inner, &trd.GetMaxTrdQtysRequest{
+	resp, err := trd.GetMaxTrdQtys(ctx, c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
 		TrdMarket: market,
 		TrdEnv:    c.trdEnv,
@@ -1314,11 +1314,11 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 }
 
 // GetMarketState retrieves market state (trading status).
-func GetMarketState(c *Client, market constant.Market, code string) (int32, error) {
+func GetMarketState(ctx context.Context, c *Client, market constant.Market, code string) (int32, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetMarketState(c.inner.Context(), c.inner, &qot.GetMarketStateRequest{
+	resp, err := qot.GetMarketState(ctx, c.inner, &qot.GetMarketStateRequest{
 		SecurityList: []*qotcommon.Security{sec},
 	})
 	if err != nil {
@@ -1408,11 +1408,11 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Mark
 }
 
 // GetOwnerPlate retrieves owner plates.
-func GetOwnerPlate(c *Client, market constant.Market, code string) ([]string, error) {
+func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) ([]string, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetOwnerPlate(c.inner.Context(), c.inner, &qot.GetOwnerPlateRequest{
+	resp, err := qot.GetOwnerPlate(ctx, c.inner, &qot.GetOwnerPlateRequest{
 		SecurityList: []*qotcommon.Security{sec},
 	})
 	if err != nil {
@@ -1501,11 +1501,11 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 }
 
 // GetReference retrieves related/reference securities.
-func GetReference(c *Client, market constant.Market, code string, refType qotgetreference.ReferenceType) ([]StaticInfo, error) {
+func GetReference(ctx context.Context, c *Client, market constant.Market, code string, refType qotgetreference.ReferenceType) ([]StaticInfo, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
-	resp, err := qot.GetReference(c.inner.Context(), c.inner, &qot.GetReferenceRequest{
+	resp, err := qot.GetReference(ctx, c.inner, &qot.GetReferenceRequest{
 		Security:      sec,
 		ReferenceType: int32(refType),
 	})
@@ -1618,8 +1618,8 @@ func ModifyUserSecurity(ctx context.Context, c *Client, groupName string, op int
 }
 
 // GetSubInfo retrieves subscription info.
-func GetSubInfo(c *Client) (*SubInfo, error) {
-	resp, err := qot.GetSubInfo(c.inner.Context(), c.inner)
+func GetSubInfo(ctx context.Context, c *Client) (*SubInfo, error) {
+	resp, err := qot.GetSubInfo(ctx, c.inner)
 	if err != nil {
 		return nil, err
 	}
@@ -1967,8 +1967,8 @@ type Snapshot struct {
 }
 
 // GetSecuritySnapshot returns snapshot data for the given securities.
-func GetSecuritySnapshot(c *Client, securities []*qotcommon.Security) ([]*Snapshot, error) {
-	resp, err := qot.GetSecuritySnapshot(c.inner.Context(), c.inner, &qot.GetSecuritySnapshotRequest{
+func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon.Security) ([]*Snapshot, error) {
+	resp, err := qot.GetSecuritySnapshot(ctx, c.inner, &qot.GetSecuritySnapshotRequest{
 		SecurityList: securities,
 	})
 	if err != nil {
@@ -2124,8 +2124,8 @@ type GlobalState struct {
 }
 
 // GetGlobalState retrieves global connection state.
-func GetGlobalState(c *Client) (*GlobalState, error) {
-	resp, err := sys.GetGlobalState(c.inner.Context(), c.inner)
+func GetGlobalState(ctx context.Context, c *Client) (*GlobalState, error) {
+	resp, err := sys.GetGlobalState(ctx, c.inner)
 	if err != nil {
 		return nil, err
 	}
@@ -2171,8 +2171,8 @@ type UserInfo struct {
 }
 
 // GetUserInfo retrieves user information.
-func GetUserInfo(c *Client) (*UserInfo, error) {
-	resp, err := sys.GetUserInfo(c.inner.Context(), c.inner)
+func GetUserInfo(ctx context.Context, c *Client) (*UserInfo, error) {
+	resp, err := sys.GetUserInfo(ctx, c.inner)
 	if err != nil {
 		return nil, err
 	}
@@ -2224,8 +2224,8 @@ type PlaceOrderStatisticsItem struct {
 }
 
 // GetDelayStatistics retrieves delay statistics.
-func GetDelayStatistics(c *Client) (*DelayStatistics, error) {
-	resp, err := sys.GetDelayStatistics(c.inner.Context(), c.inner)
+func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error) {
+	resp, err := sys.GetDelayStatistics(ctx, c.inner)
 	if err != nil {
 		return nil, err
 	}
@@ -2397,14 +2397,14 @@ func GetPriceReminder(ctx context.Context, c *Client, market constant.Market, co
 }
 
 // SubAccPush subscribes to account push notifications.
-func SubAccPush(c *Client, accIDList []uint64) error {
-	return trd.SubAccPush(c.inner.Context(), c.inner, &trd.SubAccPushRequest{
+func SubAccPush(ctx context.Context, c *Client, accIDList []uint64) error {
+	return trd.SubAccPush(ctx, c.inner, &trd.SubAccPushRequest{
 		AccIDList: accIDList,
 	})
 }
 
 // ReconfirmOrder reconfirms an order requiring additional verification.
-func ReconfirmOrder(c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
+func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
 	marketPtr := int32(market)
 	trdEnvInt := int32(c.trdEnv)
 	header := &trdcommon.TrdHeader{
@@ -2414,7 +2414,7 @@ func ReconfirmOrder(c *Client, accID uint64, market constant.TrdMarket, orderID 
 	}
 	connID := c.inner.GetConnID()
 	serialNo := c.inner.NextSerialNo()
-	resp, err := trd.ReconfirmOrder(c.inner.Context(), c.inner, &trd.ReconfirmOrderRequest{
+	resp, err := trd.ReconfirmOrder(ctx, c.inner, &trd.ReconfirmOrderRequest{
 		PacketID: &common.PacketID{
 			ConnID:   &connID,
 			SerialNo: &serialNo,

@@ -282,6 +282,100 @@ func (s TrdSecMarket) Int32() int32  { return int32(s) }
 // Int32 converts the enum value to int32 for use in protobuf request fields.
 func (t TimeInForce) Int32() int32   { return int32(t) }
 
+func (m Market) IsValid() bool {
+	switch m {
+	case Market_HK, Market_US, Market_SH, Market_SZ, Market_SG, Market_JP, Market_AU, Market_MY, Market_CA, Market_FX:
+		return true
+	default:
+		return false
+	}
+}
+
+func (t TrdMarket) IsValid() bool {
+	switch t {
+	case TrdMarket_HK, TrdMarket_US, TrdMarket_CN, TrdMarket_HKCC, TrdMarket_Futures, TrdMarket_SG, TrdMarket_AU, TrdMarket_JP:
+		return true
+	default:
+		return false
+	}
+}
+
+func (t TrdEnv) IsValid() bool {
+	return t == TrdEnv_Simulate || t == TrdEnv_Real
+}
+
+func (s TrdSide) IsValid() bool {
+	switch s {
+	case TrdSide_Buy, TrdSide_Sell, TrdSide_SellShort, TrdSide_BuyBack:
+		return true
+	default:
+		return false
+	}
+}
+
+func (o OrderType) IsValid() bool {
+	switch o {
+	case OrderType_Normal, OrderType_Market, OrderType_AbsoluteLimit, OrderType_Auction, OrderType_AuctionLimit, OrderType_SpecialLimit, OrderType_Stop, OrderType_StopLimit, OrderType_TrailingStop, OrderType_TrailingStopLimit:
+		return true
+	default:
+		return false
+	}
+}
+
+func (k KLType) IsValid() bool {
+	switch k {
+	case KLType_K_1Min, KLType_K_3Min, KLType_K_5Min, KLType_K_15Min, KLType_K_30Min, KLType_K_60Min, KLType_K_Day, KLType_K_Week, KLType_K_Month, KLType_K_Quarter, KLType_K_Year:
+		return true
+	default:
+		return false
+	}
+}
+
+func (s SubType) IsValid() bool {
+	switch s {
+	case SubType_Quote, SubType_OrderBook, SubType_Ticker, SubType_Broker, SubType_RT, SubType_K_1Min, SubType_K_3Min, SubType_K_5Min, SubType_K_15Min, SubType_K_30Min, SubType_K_60Min, SubType_K_Day, SubType_K_Week, SubType_K_Month, SubType_K_Quarter, SubType_K_Year:
+		return true
+	default:
+		return false
+	}
+}
+
+func (r RehabType) IsValid() bool {
+	switch r {
+	case RehabType_None, RehabType_Forward, RehabType_Backward:
+		return true
+	default:
+		return false
+	}
+}
+
+func (m ModifyOrderOp) IsValid() bool {
+	switch m {
+	case ModifyOrderOp_Normal, ModifyOrderOp_Cancel, ModifyOrderOp_Disable, ModifyOrderOp_Enable, ModifyOrderOp_Delete:
+		return true
+	default:
+		return false
+	}
+}
+
+func (s TrdSecMarket) IsValid() bool {
+	switch s {
+	case TrdSecMarket_HK, TrdSecMarket_US, TrdSecMarket_CN_SH, TrdSecMarket_CN_SZ, TrdSecMarket_SG, TrdSecMarket_JP, TrdSecMarket_AU, TrdSecMarket_MY, TrdSecMarket_CA, TrdSecMarket_FX:
+		return true
+	default:
+		return false
+	}
+}
+
+func (t TimeInForce) IsValid() bool {
+	switch t {
+	case TimeInForce_None, TimeInForce_Day, TimeInForce_GTC, TimeInForce_IOC, TimeInForce_FOK:
+		return true
+	default:
+		return false
+	}
+}
+
 func (s TrdSecMarket) String() string {
 	switch s {
 	case TrdSecMarket_Unknown:

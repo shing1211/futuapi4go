@@ -160,10 +160,18 @@ func (m *SlogMetrics) LogReconnect(count int, reason string) {
 }
 
 func (m *SlogMetrics) LogError(err error, ctx string) {
-	m.logger.Error("error",
-		slog.String("error", err.Error()),
-		slog.String("context", ctx),
-	)
+	attrs := []any{
+		"error", err.Error(),
+		"context", ctx,
+	}
+	if e, ok := err.(*Error); ok {
+		attrs = append(attrs, "category", string(e.Category))
+		attrs = append(attrs, "code", e.CodeString())
+		if e.Recovery != "" {
+			attrs = append(attrs, "recovery", e.Recovery)
+		}
+	}
+	m.logger.Error("error", attrs...)
 }
 
 type SlogAttributes struct {
