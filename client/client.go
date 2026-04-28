@@ -3307,8 +3307,8 @@ const (
 
 // Trading environment constants.
 const (
-	TrdEnv_Real     = int32(0) // Real trading
-	TrdEnv_Simulate = int32(1) // Simulate/paper trading (default)
+	TrdEnv_Real     = int32(1) // Real trading
+	TrdEnv_Simulate = int32(0) // Simulate/paper trading (default)
 )
 
 // QuoteAPI provides a fluent API for market data operations.
