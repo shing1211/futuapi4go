@@ -601,7 +601,7 @@ func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constan
 	}, nil
 }
 
-// GetFunds retrieves account funds.
+// GetFunds retrieves account funds for a specific account.
 func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
 	accounts, err := GetAccountList(ctx, c)
 	if err != nil {
@@ -610,7 +610,22 @@ func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
 	if len(accounts) == 0 {
 		return nil, fmt.Errorf("no accounts available")
 	}
-	acc := accounts[0]
+	// Find the account matching the requested accID
+	var acc Account
+	found := false
+	for _, a := range accounts {
+		if a.AccID == accID {
+			acc = a
+			found = true
+			break
+		}
+	}
+	if !found {
+		return nil, fmt.Errorf("account %d not found", accID)
+	}
+	if len(acc.TrdMarketAuthList) == 0 {
+		return nil, fmt.Errorf("account %d has no market authorization", accID)
+	}
 	return GetAccountInfo(ctx, c, acc.AccID, constant.TrdMarket(acc.TrdMarketAuthList[0]))
 }
 
