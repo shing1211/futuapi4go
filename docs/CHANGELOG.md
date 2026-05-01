@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **SubscribeSymbols / UnsubscribeSymbols** — `client/client.go` batch subscription wrappers for subscribing/unsubscribing to multiple symbols in a single API call
 
+### Documentation
+
+- Consolidated documentation: removed redundant `docs/API_REFERENCE.md`, `docs/DEVELOPER.md`, `docs/TESTING.md`, `ROADMAP.md`, `PYTHON_MIGRATION_GUIDE.md`
+- Merged API reference into README.md, testing guide into README.md, migration guide into separate file
+- Simplified SECURITY.md to essential information only
+
 ## [0.5.2] - 2026-04-28
 
 ### Added

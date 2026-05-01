@@ -143,13 +143,13 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 
 ## Official Documentation References
 
-- **API Reference:** `docs/API_REFERENCE.md`
+- **API Reference:** See README.md "Full API Reference" section
 - **Changelog:** `docs/CHANGELOG.md`
-- **Developer Guide:** `docs/DEVELOPER.md`
-- **Testing Guide:** `docs/TESTING.md`
+- **Developer Guide:** This file (AGENTS.md)
+- **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `ENHANCEMENT_PLAN.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.5.2)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.5.4)
 
 ---
 
@@ -184,4 +184,4 @@ Before ending a work session, confirm:
 
 ---
 
-*Last updated: 2026-05-01*
+*Last updated: 2026-05-02*

@@ -84,10 +84,9 @@ client: add CanSendProto connection state check
 
 ## Related Docs
 
-- [docs/DEVELOPER.md](docs/DEVELOPER.md) — Architecture and implementation patterns
-- [docs/TESTING.md](docs/TESTING.md) — Testing guide and fixtures
-- [docs/API_REFERENCE.md](docs/API_REFERENCE.md) — Complete API reference
-- [ROADMAP.md](ROADMAP.md) — What's coming next
+- [AGENTS.md](AGENTS.md) — Architecture and implementation patterns
+- [README.md](README.md) — Testing and API reference
+- [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md) — Future roadmap
 
 ## License
 

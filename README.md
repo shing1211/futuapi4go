@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.2-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.4-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.4.6408-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,10 +12,10 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.2
+go get github.com/shing1211/futuapi4go@v0.5.4
 ```
 
-## v0.5.2 New Features
+## v0.5.4 New Features
 
 ```go
 // Fluent API - cleaner access
@@ -990,23 +990,14 @@ futuapi4go/
 └── test/                 # Test suite with examples
 ```
 
-## Python Migration
+## Build & Test
 
-Coming from the Python `futu-api` SDK? The Python-style constants make the transition feel familiar:
-
-```go
-// Python: ft.Market.HK, ft.TrdSide.BUY, ft.KLType.K_DAY
-// Go:     constant.Market_HK, constant.TrdSide_Buy, constant.KLType_K_Day
+```bash
+go build ./...      # Compile everything
+go vet ./...        # Lint
+go test ./...       # Run the full test suite
+go test -race ./... # Race detector
 ```
-
-See the full [Python Migration Guide](PYTHON_MIGRATION_GUIDE.md) for side-by-side comparisons of every API.
-
-## Known Issues
-
-- **`GetDelayStatistics`** — known proto2 wire-format incompatibility with certain OpenD versions. Calls are skipped gracefully in the demo if unsupported.
-- **`GetTradeDate`** — may require specific OpenD versions for full compatibility.
-
-> **Note:** OpenD v10.4.6408 is the latest stable release.
 
 ## License
 

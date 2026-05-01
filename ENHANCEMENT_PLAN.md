@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK - Advanced Enhancement Plan
 
-> **Version**: v0.5.x | **Date**: 2026-05-01 | **Status**: ACTIVE
+> **Version**: v0.5.4 | **Date**: 2026-05-02 | **Status**: ACTIVE
 
 ---
 
@@ -8,7 +8,7 @@
 
 The `futuapi4go` SDK has reached **~99% API coverage** vs the Python SDK with all core trading and market data operations implemented. This document outlines the roadmap for transforming the SDK from a **Futu API wrapper** into a **complete professional trading SDK**.
 
-**Current state**: v0.5.2 — Core APIs complete, quick wins implemented.
+**Current state**: v0.5.4 — Core APIs complete, quick wins implemented.
 **Target state**: World-class professional trading SDK with execution algorithms, risk engine, and event-driven framework.
 
 ---
@@ -370,4 +370,4 @@ pkg/store/           — NEW: sqlite.go, redis.go, serializer.go
 
 ---
 
-*Last updated: 2026-05-01*
+*Last updated: 2026-05-02*
