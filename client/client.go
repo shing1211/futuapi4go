@@ -351,6 +351,60 @@ func UnsubscribeAll(ctx context.Context, c *Client) error {
 	return err
 }
 
+// SubscribeSymbols subscribes to real-time market data for multiple symbols in a single request.
+// This is more efficient than calling Subscribe() in a loop when subscribing to many symbols at once.
+func SubscribeSymbols(ctx context.Context, c *Client, market constant.Market, codes []string, subTypes []constant.SubType) error {
+	if len(codes) == 0 {
+		return fmt.Errorf("SubscribeSymbols: no codes provided")
+	}
+
+	securities := make([]*qotcommon.Security, len(codes))
+	marketPtr := int32(market)
+	for i, code := range codes {
+		securities[i] = &qotcommon.Security{Market: &marketPtr, Code: &code}
+	}
+
+	subTypesConverted := make([]qot.SubType, len(subTypes))
+	for i, st := range subTypes {
+		subTypesConverted[i] = qot.SubType(st)
+	}
+
+	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+		SecurityList:     securities,
+		SubTypeList:      subTypesConverted,
+		IsSubOrUnSub:     true,
+		IsRegOrUnRegPush: true,
+		IsFirstPush:      true,
+	})
+	return err
+}
+
+// UnsubscribeSymbols unsubscribes from real-time market data for multiple symbols.
+func UnsubscribeSymbols(ctx context.Context, c *Client, market constant.Market, codes []string, subTypes []constant.SubType) error {
+	if len(codes) == 0 {
+		return fmt.Errorf("UnsubscribeSymbols: no codes provided")
+	}
+
+	securities := make([]*qotcommon.Security, len(codes))
+	marketPtr := int32(market)
+	for i, code := range codes {
+		securities[i] = &qotcommon.Security{Market: &marketPtr, Code: &code}
+	}
+
+	subTypesConverted := make([]qot.SubType, len(subTypes))
+	for i, st := range subTypes {
+		subTypesConverted[i] = qot.SubType(st)
+	}
+
+	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+		SecurityList:     securities,
+		SubTypeList:      subTypesConverted,
+		IsSubOrUnSub:     false,
+		IsRegOrUnRegPush: false,
+	})
+	return err
+}
+
 // QuerySubscription queries the current subscription status.
 func QuerySubscription(ctx context.Context, c *Client) (*qot.GetSubInfoResponse, error) {
 	return qot.GetSubInfo(ctx, c.inner)

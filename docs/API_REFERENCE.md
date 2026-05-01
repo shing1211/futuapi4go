@@ -138,59 +138,75 @@ Retrieves suspended securities.
 
 ### Subscription Wrappers
 
-#### `client.Subscribe(c *Client, market int32, code string, subTypes []int32) error`
+#### `client.Subscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error`
 
-Subscribes to real-time data. `subTypes` values: `client.SubType_Basic`, `client.SubType_KL`, `client.SubType_Ticker`, `client.SubType_OrderBook`, `client.SubType_Broker`, `client.SubType_RT`.
+Subscribes to real-time data for a single security.
 
 ```go
-err := client.Subscribe(c, client.Market_HK_Security, "00700", []int32{client.SubType_Basic, client.SubType_KL})
+err := client.Subscribe(ctx, c, constant.Market_HK, "00700", []constant.SubType{constant.SubType_Quote, constant.SubType_K_1Min})
 ```
 
-#### `client.Unsubscribe(c *Client, market int32, code string, subTypes []int32) error`
+#### `client.SubscribeSymbols(ctx context.Context, c *Client, market constant.Market, codes []string, subTypes []constant.SubType) error`
 
-Unsubscribes from real-time data.
+Subscribes to real-time data for multiple symbols in a single request. More efficient than calling `Subscribe()` in a loop.
 
-#### `client.UnsubscribeAll(c *Client) error`
+```go
+err := client.SubscribeSymbols(ctx, c, constant.Market_HK, []string{"00700", "09988", "HSImain"}, []constant.SubType{constant.SubType_Quote, constant.SubType_K_1Min})
+```
+
+#### `client.Unsubscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error`
+
+Unsubscribes from real-time data for a single security.
+
+#### `client.UnsubscribeSymbols(ctx context.Context, c *Client, market constant.Market, codes []string, subTypes []constant.SubType) error`
+
+Unsubscribes from real-time data for multiple symbols in a single request.
+
+```go
+err := client.UnsubscribeSymbols(ctx, c, constant.Market_HK, []string{"00700", "09988"}, []constant.SubType{constant.SubType_Quote})
+```
+
+#### `client.UnsubscribeAll(ctx context.Context, c *Client) error`
 
 Unsubscribes from all real-time data.
 
-#### `client.QuerySubscription(c *Client) (*qot.GetSubInfoResponse, error)`
+#### `client.QuerySubscription(ctx context.Context, c *Client) (*qot.GetSubInfoResponse, error)`
 
 Returns current subscription quota usage and subscribed securities.
 
-#### `client.RegQotPush(c *Client, market int32, code string, ...) error`
+#### `client.RegQotPush(ctx context.Context, c *Client, market constant.Market, code string, ...) error`
 
 Registers for push notifications on specific data types.
 
 ### Trading Wrappers
 
-#### `client.GetAccountList(c *Client) ([]Account, error)`
+#### `client.GetAccountList(ctx context.Context, c *Client) ([]Account, error)`
 
 Lists all trading accounts. Returns `[]Account` with `AccID`, `AccType`, `TrdEnv`, etc.
 
 ```go
-accs, err := client.GetAccountList(c)
+accs, err := client.GetAccountList(ctx, c)
 accID := accs[0].AccID
 ```
 
-#### `client.UnlockTrading(c *Client, pwdMD5 string) error`
+#### `client.UnlockTrading(ctx context.Context, c *Client, pwdMD5 string) error`
 
 Unlocks trading with MD5-hashed password.
 
 ```go
-err := client.UnlockTrading(c, "md5hash")
+err := client.UnlockTrading(ctx, c, "md5hash")
 ```
 
-#### `client.PlaceOrder(c *Client, accID uint64, market int32, code string, side, orderType int32, price float64, qty float64) (*PlaceOrderResult, error)`
+#### `client.PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, side constant.TrdSide, orderType constant.OrderType, price float64, qty float64, secMarket constant.TrdSecMarket) (*PlaceOrderResult, error)`
 
 Places a buy or sell order. Returns `*PlaceOrderResult` with `OrderID` and `OrderIDEx`.
 
 ```go
-result, err := client.PlaceOrder(c, accID, client.Market_HK_Security, "00700",
-    client.Side_Buy, client.OrderType_Normal, 350.00, 100)
+result, err := client.PlaceOrder(ctx, c, accID, constant.TrdMarket_HK, "00700",
+    constant.TrdSide_Buy, constant.OrderType_Normal, 350.00, 100, constant.TrdSecMarket_HK)
 ```
 
-#### `client.ModifyOrder(c *Client, accID uint64, market int32, orderID uint64, modifyOp int32, price float64, qty float64) (*trd.ModifyOrderResponse, error)`
+#### `client.ModifyOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, modifyOp constant.ModifyOrderOp, price float64, qty float64) (*trd.ModifyOrderResponse, error)`
 
 Modifies or cancels an existing order. Returns `*trd.ModifyOrderResponse` with `Header`, `OrderID`, `OrderIDEx`.
 

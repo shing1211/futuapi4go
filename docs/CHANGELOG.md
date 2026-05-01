@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **SubscribeSymbols / UnsubscribeSymbols** — `client/client.go` batch subscription wrappers for subscribing/unsubscribing to multiple symbols in a single API call
+
 ## [0.5.2] - 2026-04-28
 
 ### Added
