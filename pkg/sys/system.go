@@ -42,6 +42,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
 	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/testcmd"
 	"github.com/shing1211/futuapi4go/pkg/pb/usedquota"
 	"github.com/shing1211/futuapi4go/pkg/pb/verification"
 )
@@ -67,6 +68,7 @@ const (
 	ProtoID_GetGlobalState      = 1002
 	ProtoID_GetUserInfo        = 1005
 	ProtoID_Verification       = 1006
+	ProtoID_TestCmd            = 1008
 	ProtoID_GetDelayStatistics  = 1007
 	ProtoID_UsedQuota        = 1010
 )
@@ -366,3 +368,51 @@ func GetUsedQuota(ctx context.Context, c *futuapi.Client) (*GetUsedQuotaResponse
 
 var _ proto.Message = (*usedquota.Request)(nil)
 var _ proto.Message = (*usedquota.Response)(nil)
+
+// TestCmdRequest is the request to send a test command to OpenD for internal diagnostics.
+type TestCmdRequest struct {
+	Cmd    string
+	Params string
+}
+
+// TestCmdResponse is the response containing the test command result.
+type TestCmdResponse struct {
+	Cmd    string
+	Result string
+}
+
+// TestCmd sends a test command to OpenD for internal diagnostics.
+// Returns the command result or an error if the request fails.
+func TestCmd(ctx context.Context, c *futuapi.Client, req *TestCmdRequest) (*TestCmdResponse, error) {
+	if req.Cmd == "" {
+		return nil, fmt.Errorf("TestCmd: cmd is required")
+	}
+
+	c2s := &testcmd.C2S{
+		Cmd: &req.Cmd,
+	}
+	if req.Params != "" {
+		c2s.Params = &req.Params
+	}
+
+	pkt := &testcmd.Request{C2S: c2s}
+	var rsp testcmd.Response
+
+	if err := c.RequestContext(ctx, ProtoID_TestCmd, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("TestCmd", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("TestCmd: s2c is nil")
+	}
+
+	return &TestCmdResponse{
+		Cmd:    s2c.GetCmd(),
+		Result: s2c.GetResult(),
+	}, nil
+}

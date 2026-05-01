@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **SubscribeSymbols / UnsubscribeSymbols** — `client/client.go` batch subscription wrappers for subscribing/unsubscribing to multiple symbols in a single API call
+- **GetHistoryKL** — `pkg/qot/quote.go` wrapper for ProtoID 3101 (deprecated by OpenD, use RequestHistoryKL for pagination)
+- **TestCmd** — `pkg/sys/system.go` TestCmd() for sending internal diagnostic commands to OpenD (ProtoID 1008)
+- **ParsePushPriceReminder** — `client/client.go` convenience parser for price reminder push notifications (ProtoID 3019)
+- **ParsePushTrdNotify** — `client/client.go` convenience parser for trading notification push (ProtoID 2207)
+- **PushProto constant** — `client/client.go` ProtoID_Qot_UpdatePriceReminder = 3019
+- Convenience wrappers in `client/client.go`: `GetHistoryKL()`, `TestCmd()`
 
 ### Documentation
 

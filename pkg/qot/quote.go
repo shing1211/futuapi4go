@@ -54,6 +54,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcodechange"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistorykl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
@@ -120,6 +121,7 @@ const (
 	ProtoID_GetCodeChange           = 3216
 	ProtoID_GetFutureInfo           = 3218
 	ProtoID_GetIpoList              = 3217
+	ProtoID_GetHistoryKL           = 3101
 	ProtoID_GetHoldingChangeList    = 3208
 	ProtoID_RequestRehab            = 3105
 	ProtoID_GetUserSecurityGroup    = 3222
@@ -2623,6 +2625,91 @@ func RequestHistoryKLQuota(ctx context.Context, c *futuapi.Client, req *RequestH
 			continue
 		}
 		result.DetailList = append(result.DetailList, d)
+	}
+
+	return result, nil
+}
+
+// GetHistoryKLRequest defines parameters for GetHistoryKL (deprecated, use RequestHistoryKL for pagination).
+type GetHistoryKLRequest struct {
+	RehabType        int32
+	KlType           int32
+	Security         *qotcommon.Security
+	BeginTime        string
+	EndTime          string
+	MaxAckKLNum      int32
+	NeedKLFieldsFlag int64
+}
+
+// GetHistoryKLResponse is the response type for GetHistoryKL.
+type GetHistoryKLResponse struct {
+	Security        *qotcommon.Security
+	KLList          []*KLine
+	NextKLTime      string
+	NextKLTimestamp float64
+}
+
+// GetHistoryKL returns historical K-line data for the given security.
+// Deprecated: Use RequestHistoryKL for paginated requests via NextReqKey.
+func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLRequest) (*GetHistoryKLResponse, error) {
+	if req.Security == nil {
+		return nil, fmt.Errorf("GetHistoryKL: security is required")
+	}
+
+	c2s := &qotgethistorykl.C2S{
+		RehabType: &req.RehabType,
+		KlType:    &req.KlType,
+		Security:  req.Security,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+	}
+	if req.MaxAckKLNum != 0 {
+		c2s.MaxAckKLNum = &req.MaxAckKLNum
+	}
+	if req.NeedKLFieldsFlag != 0 {
+		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
+	}
+
+	pkt := &qotgethistorykl.Request{C2S: c2s}
+	var rsp qotgethistorykl.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetHistoryKL, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHistoryKL", rsp.GetRetType(), rsp.GetRetMsg())
+	}
+
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, fmt.Errorf("GetHistoryKL: s2c is nil")
+	}
+
+	result := &GetHistoryKLResponse{
+		Security:        s2c.GetSecurity(),
+		NextKLTime:      s2c.GetNextKLTime(),
+		NextKLTimestamp: s2c.GetNextKLTimestamp(),
+		KLList:          make([]*KLine, 0, len(s2c.GetKlList())),
+	}
+
+	for _, kl := range s2c.GetKlList() {
+		if kl == nil {
+			continue
+		}
+		result.KLList = append(result.KLList, &KLine{
+			Time:           kl.GetTime(),
+			IsBlank:        kl.GetIsBlank(),
+			HighPrice:      kl.GetHighPrice(),
+			OpenPrice:      kl.GetOpenPrice(),
+			LowPrice:       kl.GetLowPrice(),
+			ClosePrice:     kl.GetClosePrice(),
+			LastClosePrice: kl.GetLastClosePrice(),
+			Volume:         kl.GetVolume(),
+			Turnover:       kl.GetTurnover(),
+			ChangeRate:     kl.GetChangeRate(),
+			Timestamp:      kl.GetTimestamp(),
+		})
 	}
 
 	return result, nil

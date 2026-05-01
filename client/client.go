@@ -1587,6 +1587,44 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 	return allKLines, nil
 }
 
+// GetHistoryKL requests historical K-line data (deprecated by OpenD, use RequestHistoryKL for pagination).
+// Returns K-lines between startDate and endDate (inclusive) without automatic pagination.
+func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, rehabType constant.RehabType, startDate, endDate string, maxNum int32) ([]KLine, error) {
+	marketPtr := int32(market)
+	klTypePtr := int32(klType)
+	rehabTypePtr := int32(rehabType)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+
+	resp, err := qot.GetHistoryKL(ctx, c.inner, &qot.GetHistoryKLRequest{
+		RehabType:   rehabTypePtr,
+		KlType:      klTypePtr,
+		Security:    sec,
+		BeginTime:   startDate,
+		EndTime:     endDate,
+		MaxAckKLNum: maxNum,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	klines := make([]KLine, len(resp.KLList))
+	for i, kl := range resp.KLList {
+		klines[i] = KLine{
+			Time:       kl.Time,
+			Open:       kl.OpenPrice,
+			High:       kl.HighPrice,
+			Low:        kl.LowPrice,
+			Close:      kl.ClosePrice,
+			Volume:     kl.Volume,
+			LastClose:  kl.LastClosePrice,
+			Turnover:   kl.Turnover,
+			ChangeRate: kl.ChangeRate,
+			Timestamp:  kl.Timestamp,
+		}
+	}
+	return klines, nil
+}
+
 // GetReference retrieves related/reference securities.
 func GetReference(ctx context.Context, c *Client, market constant.Market, code string, refType qotgetreference.ReferenceType) ([]StaticInfo, error) {
 	marketPtr := int32(market)
@@ -2363,6 +2401,31 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 		ItemList:       items,
 		ReqReplyList:   reqReplyList,
 		PlaceOrderList: placeOrderList,
+	}, nil
+}
+
+// TestCmdResult represents the result of a test command sent to OpenD.
+type TestCmdResult struct {
+	Cmd    string
+	Result string
+}
+
+// TestCmd sends a test command to OpenD for internal diagnostics.
+func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*TestCmdResult, error) {
+	p := ""
+	if len(params) > 0 {
+		p = params[0]
+	}
+	resp, err := sys.TestCmd(ctx, c.inner, &sys.TestCmdRequest{
+		Cmd:    cmd,
+		Params: p,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &TestCmdResult{
+		Cmd:    resp.Cmd,
+		Result: resp.Result,
 	}, nil
 }
 
@@ -3261,8 +3324,9 @@ const (
 	ProtoID_Qot_UpdateOrderBook = 3013
 	ProtoID_Qot_UpdateTicker    = 3011
 	ProtoID_Qot_UpdateRT        = 3009
-	ProtoID_Qot_UpdateBroker    = 3015
-	ProtoID_Trd_UpdateOrder     = 2208
+	ProtoID_Qot_UpdateBroker        = 3015
+	ProtoID_Qot_UpdatePriceReminder = 3019
+	ProtoID_Trd_UpdateOrder         = 2208
 	ProtoID_Trd_UpdateOrderFill = 2218
 	ProtoID_Trd_Notify          = 2207
 )
@@ -3328,6 +3392,66 @@ func ParsePushOrderFill(body []byte) (*PushOrderFill, error) {
 		FillID:         data.OrderFill.GetFillID(),
 		FillIDEx:       data.OrderFill.GetFillIDEx(),
 		FillCreateTime: data.OrderFill.GetCreateTime(),
+	}, nil
+}
+
+// PushPriceReminder represents a parsed price reminder push notification.
+type PushPriceReminder struct {
+	Market       int32
+	Code         string
+	Name         string
+	Price        float64
+	ChangeRate   float64
+	MarketStatus int32
+	Content      string
+	Note         string
+	Key          int64
+	Type         int32
+	SetValue     float64
+	CurValue     float64
+}
+
+// ParsePushPriceReminder parses a raw push body (ProtoID 3019) into PushPriceReminder.
+func ParsePushPriceReminder(body []byte) (*PushPriceReminder, error) {
+	data, err := push.ParseUpdatePriceReminder(body)
+	if err != nil || data == nil {
+		return nil, err
+	}
+	return &PushPriceReminder{
+		Market:       data.Security.GetMarket(),
+		Code:         data.Security.GetCode(),
+		Name:         data.Name,
+		Price:        data.Price,
+		ChangeRate:   data.ChangeRate,
+		MarketStatus: data.MarketStatus,
+		Content:      data.Content,
+		Note:         data.Note,
+		Key:          data.Key,
+		Type:         data.Type,
+		SetValue:     data.SetValue,
+		CurValue:     data.CurValue,
+	}, nil
+}
+
+// PushTrdNotify represents a parsed trading notification push.
+type PushTrdNotify struct {
+	AccID     uint64
+	TrdEnv    int32
+	TrdMarket int32
+	Type      int32
+}
+
+// ParsePushTrdNotify parses a raw push body (ProtoID 2207) into PushTrdNotify.
+func ParsePushTrdNotify(body []byte) (*PushTrdNotify, error) {
+	data, err := push.ParseTrdNotify(body)
+	if err != nil || data == nil {
+		return nil, err
+	}
+	return &PushTrdNotify{
+		AccID:     data.Header.GetAccID(),
+		TrdEnv:    data.Header.GetTrdEnv(),
+		TrdMarket: data.Header.GetTrdMarket(),
+		Type:      data.Type,
 	}, nil
 }
 
