@@ -1,0 +1,293 @@
+{
+  "communities": {
+    "0": [
+      "changelog_0_0_1_2026_04_12",
+      "changelog_0_0_2_2026_04_18",
+      "changelog_0_0_3_2026_04_18",
+      "changelog_0_0_4_2026_04_19",
+      "changelog_0_0_6_2026_04_24",
+      "changelog_0_2_0_2026_04_25",
+      "changelog_0_2_3_2026_04_25",
+      "changelog_0_2_6_2026_04_25",
+      "changelog_0_3_1_2026_04_26",
+      "changelog_0_5_2_2026_04_28",
+      "changelog_added_107",
+      "changelog_added_181",
+      "changelog_added_220",
+      "changelog_added_240",
+      "changelog_added_291",
+      "changelog_added_312",
+      "changelog_added_32",
+      "changelog_added_phase_5_polish",
+      "changelog_changed",
+      "changelog_changed_115",
+      "changelog_changed_213",
+      "changelog_changelog",
+      "changelog_completed_previously_existed",
+      "changelog_fixed_226",
+      "changelog_fixed_298",
+      "changelog_fixed_304",
+      "changelog_md",
+      "changelog_security"
+    ],
+    "1": [
+      "futu_api_python_reference_account_types",
+      "futu_api_python_reference_api_categories",
+      "futu_api_python_reference_api_frequency_limits",
+      "futu_api_python_reference_common_error_codes",
+      "futu_api_python_reference_error_categories",
+      "futu_api_python_reference_error_handling",
+      "futu_api_python_reference_features",
+      "futu_api_python_reference_functionality",
+      "futu_api_python_reference_futu_openapi_documentation_python",
+      "futu_api_python_reference_introduction",
+      "futu_api_python_reference_md",
+      "futu_api_python_reference_order_operations",
+      "futu_api_python_reference_overview",
+      "futu_api_python_reference_position_funds",
+      "futu_api_python_reference_rate_limits",
+      "futu_api_python_reference_subscription_quota",
+      "futu_api_python_reference_trade_api_trading",
+      "futu_api_python_reference_trading_environment"
+    ],
+    "2": [
+      "futu_api_proto_reference_codeblock_10",
+      "futu_api_proto_reference_codeblock_3",
+      "futu_api_proto_reference_codeblock_4",
+      "futu_api_proto_reference_codeblock_5",
+      "futu_api_proto_reference_codeblock_6",
+      "futu_api_proto_reference_codeblock_7",
+      "futu_api_proto_reference_codeblock_8",
+      "futu_api_proto_reference_codeblock_9",
+      "futu_api_proto_reference_general_definitions",
+      "futu_api_proto_reference_interface_result",
+      "futu_api_proto_reference_opend_event_notification_type",
+      "futu_api_proto_reference_package_unique_identifier",
+      "futu_api_proto_reference_packet_encryption_algorithm",
+      "futu_api_proto_reference_program_status",
+      "futu_api_proto_reference_program_status_type",
+      "futu_api_proto_reference_protocol_format",
+      "futu_api_proto_reference_system_notification_type"
+    ],
+    "3": [
+      "futu_api_proto_reference_aes_encryption",
+      "futu_api_proto_reference_basic_protocols",
+      "futu_api_proto_reference_encrypted_communication_process",
+      "futu_api_proto_reference_futu_openapi_protocol_reference_proto",
+      "futu_api_proto_reference_md",
+      "futu_api_proto_reference_proto_id_reference",
+      "futu_api_proto_reference_protocol_introduction",
+      "futu_api_proto_reference_protocol_request_process",
+      "futu_api_proto_reference_quote_protocols_3xxx",
+      "futu_api_proto_reference_rsa_encryption_rules",
+      "futu_api_proto_reference_trade_protocols_2xxx"
+    ],
+    "4": [
+      "futu_api_python_reference_capital_flow",
+      "futu_api_python_reference_k_line_data",
+      "futu_api_python_reference_market_snapshot",
+      "futu_api_python_reference_market_state",
+      "futu_api_python_reference_order_book",
+      "futu_api_python_reference_plates",
+      "futu_api_python_reference_quote_api_market_data",
+      "futu_api_python_reference_stock_filter",
+      "futu_api_python_reference_subscription",
+      "futu_api_python_reference_ticker",
+      "futu_api_python_reference_time_sharing"
+    ],
+    "5": [
+      "futu_api_proto_reference_basic_functions",
+      "futu_api_proto_reference_codeblock_1",
+      "futu_api_proto_reference_codeblock_2",
+      "futu_api_proto_reference_connection_encryption",
+      "futu_api_proto_reference_initconnect",
+      "futu_api_proto_reference_keepalive",
+      "futu_api_proto_reference_protocol_id_table",
+      "futu_api_proto_reference_push_protocol_format"
+    ],
+    "6": [
+      "futu_api_proto_reference_codeblock_11",
+      "futu_api_proto_reference_codeblock_12",
+      "futu_api_proto_reference_codeblock_13",
+      "futu_api_proto_reference_protobuf_request_structure",
+      "futu_api_proto_reference_protobuf_response_structure",
+      "futu_api_proto_reference_protocol_body",
+      "futu_api_proto_reference_protocol_design",
+      "futu_api_proto_reference_protocol_header"
+    ],
+    "7": [
+      "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "changelog_added_247",
+      "changelog_changed_266",
+      "changelog_fixed_262",
+      "changelog_tests"
+    ],
+    "8": [
+      "futu_api_python_reference_codeblock_1",
+      "futu_api_python_reference_configuration",
+      "futu_api_python_reference_connection",
+      "futu_api_python_reference_installation",
+      "futu_api_python_reference_opend"
+    ],
+    "9": [
+      "changelog_added",
+      "changelog_documentation",
+      "changelog_fixed",
+      "changelog_unreleased"
+    ],
+    "10": [
+      "changelog_0_5_1_2026_04_28",
+      "changelog_added_47",
+      "changelog_changed_62",
+      "changelog_fixed_80"
+    ],
+    "11": [
+      "changelog_0_5_0_2026_04_27",
+      "changelog_added_86",
+      "changelog_changed_90",
+      "changelog_documentation_100"
+    ],
+    "12": [
+      "changelog_0_3_0_2026_04_25",
+      "changelog_added_126",
+      "changelog_already_existed",
+      "changelog_breaking_changes_v0_3_0"
+    ],
+    "13": [
+      "changelog_0_2_5_2026_04_25",
+      "changelog_added_p4_4",
+      "changelog_changed_164",
+      "changelog_completed_previously_existed_154"
+    ],
+    "14": [
+      "changelog_0_2_4_2026_04_25",
+      "changelog_added_170",
+      "changelog_fixed_175"
+    ],
+    "15": [
+      "changelog_0_2_2_2026_04_25",
+      "changelog_added_phase_3_infrastructure",
+      "changelog_codeblock_1"
+    ],
+    "16": [
+      "changelog_0_2_1_2026_04_25",
+      "changelog_added_phase_2_ease_of_use",
+      "changelog_codeblock_2"
+    ],
+    "17": [
+      "changelog_0_0_5_2026_04_21",
+      "changelog_added_278",
+      "changelog_changed_284"
+    ]
+  },
+  "cohesion": {
+    "0": 0.07,
+    "1": 0.11,
+    "2": 0.12,
+    "3": 0.18,
+    "4": 0.18,
+    "5": 0.25,
+    "6": 0.25,
+    "7": 0.4,
+    "8": 0.4,
+    "9": 0.5,
+    "10": 0.5,
+    "11": 0.5,
+    "12": 0.5,
+    "13": 0.5,
+    "14": 0.67,
+    "15": 0.67,
+    "16": 0.67,
+    "17": 0.67
+  },
+  "gods": [
+    {
+      "id": "changelog_changelog",
+      "label": "Changelog",
+      "degree": 21
+    },
+    {
+      "id": "futu_api_python_reference_quote_api_market_data",
+      "label": "Quote API (Market Data)",
+      "degree": 11
+    },
+    {
+      "id": "futu_api_proto_reference_general_definitions",
+      "label": "General Definitions",
+      "degree": 9
+    },
+    {
+      "id": "changelog_0_2_0_2026_04_25",
+      "label": "[0.2.0] - 2026-04-25",
+      "degree": 5
+    },
+    {
+      "id": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "label": "[0.0.5] - 2026-04-23 \u2014 Feature Parity Achieved",
+      "degree": 5
+    },
+    {
+      "id": "futu_api_python_reference_introduction",
+      "label": "Introduction",
+      "degree": 5
+    },
+    {
+      "id": "changelog_unreleased",
+      "label": "[Unreleased]",
+      "degree": 4
+    },
+    {
+      "id": "changelog_0_5_1_2026_04_28",
+      "label": "[0.5.1] - 2026-04-28",
+      "degree": 4
+    },
+    {
+      "id": "changelog_0_5_0_2026_04_27",
+      "label": "[0.5.0] - 2026-04-27",
+      "degree": 4
+    },
+    {
+      "id": "changelog_0_3_0_2026_04_25",
+      "label": "[0.3.0] - 2026-04-25",
+      "degree": 4
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Changelog` connect `Community 0` to `Community 7`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 16`, `Community 17`?",
+      "why": "High betweenness centrality (0.194) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `General Definitions` connect `Community 2` to `Community 3`?",
+      "why": "High betweenness centrality (0.054) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Protocol Introduction` connect `Community 3` to `Community 6`?",
+      "why": "High betweenness centrality (0.041) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Fixed`, `Added`, `Documentation` to the rest of the system?",
+      "why": "89 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.11 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.12 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

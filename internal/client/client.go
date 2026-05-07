@@ -63,7 +63,7 @@ func logf(format string, v ...interface{}) {
 
 // logInfo logs at info level if log level allows.
 func (c *Client) logInfo(format string, v ...interface{}) {
-	if c.opts.LogLevel > 0 {
+	if c.opts.LogLevel > LogLevelInfo {
 		return
 	}
 	l := c.opts.Logger
@@ -75,7 +75,7 @@ func (c *Client) logInfo(format string, v ...interface{}) {
 
 // logWarn logs at warn level if log level allows.
 func (c *Client) logWarn(format string, v ...interface{}) {
-	if c.opts.LogLevel > 1 {
+	if c.opts.LogLevel > LogLevelWarn {
 		return
 	}
 	l := c.opts.Logger
@@ -87,7 +87,7 @@ func (c *Client) logWarn(format string, v ...interface{}) {
 
 // logError logs at error level if log level allows.
 func (c *Client) logError(format string, v ...interface{}) {
-	if c.opts.LogLevel > 2 {
+	if c.opts.LogLevel > LogLevelError {
 		return
 	}
 	l := c.opts.Logger
@@ -111,6 +111,16 @@ const (
 	DefaultDialTimeout       = 10 * time.Second
 )
 
+// LogLevel constants for clarity.
+// Higher values suppress more verbose logging.
+// LogLevelInfo (0) = all logs, LogLevelSilent (3) = no logs.
+const (
+	LogLevelInfo   int = 0 // Log info, warnings, and errors
+	LogLevelWarn   int = 1 // Log warnings and errors only
+	LogLevelError  int = 2 // Log errors only
+	LogLevelSilent int = 3 // Suppress all logs
+)
+
 // ClientOptions holds configuration options for the Client.
 // Use NewOptions() for sensible defaults, then modify as needed.
 type ClientOptions struct {
@@ -128,7 +138,7 @@ type ClientOptions struct {
 	// Logging
 	Logger   *log.Logger // Custom logger (nil = use default)
 	SlogLogger *SlogLogger // Structured logger (nil = use default)
-	LogLevel int           // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent
+	LogLevel int           // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent. Use LogLevel* constants.
 
 	// WebSocket
 	WSSecretKey string // Secret key for WebSocket authentication
@@ -193,7 +203,9 @@ func WithLogger(l *log.Logger) Option {
 	return func(o *ClientOptions) { o.Logger = l }
 }
 
-// WithLogLevel sets the log level (0=Info, 1=Warn, 2=Error, 3=Silent).
+// WithLogLevel sets the log level.
+// Use LogLevelInfo, LogLevelWarn, LogLevelError, or LogLevelSilent.
+// Example: WithLogLevel(LogLevelWarn) suppresses info logs.
 func WithLogLevel(level int) Option {
 	return func(o *ClientOptions) { o.LogLevel = level }
 }

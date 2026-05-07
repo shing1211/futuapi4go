@@ -1,0 +1,2698 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "id": "changelog_md",
+      "community": 0,
+      "norm_label": "changelog.md"
+    },
+    {
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "id": "changelog_changelog",
+      "community": 0,
+      "norm_label": "changelog"
+    },
+    {
+      "label": "[Unreleased]",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L8",
+      "id": "changelog_unreleased",
+      "community": 9,
+      "norm_label": "[unreleased]"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L10",
+      "id": "changelog_fixed",
+      "community": 9,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L14",
+      "id": "changelog_added",
+      "community": 9,
+      "norm_label": "added"
+    },
+    {
+      "label": "Documentation",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L24",
+      "id": "changelog_documentation",
+      "community": 9,
+      "norm_label": "documentation"
+    },
+    {
+      "label": "[0.5.2] - 2026-04-28",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L30",
+      "id": "changelog_0_5_2_2026_04_28",
+      "community": 0,
+      "norm_label": "[0.5.2] - 2026-04-28"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L32",
+      "id": "changelog_added_32",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L40",
+      "id": "changelog_changed",
+      "community": 0,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[0.5.1] - 2026-04-28",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L45",
+      "id": "changelog_0_5_1_2026_04_28",
+      "community": 10,
+      "norm_label": "[0.5.1] - 2026-04-28"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L47",
+      "id": "changelog_added_47",
+      "community": 10,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L62",
+      "id": "changelog_changed_62",
+      "community": 10,
+      "norm_label": "changed"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L80",
+      "id": "changelog_fixed_80",
+      "community": 10,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "[0.5.0] - 2026-04-27",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L84",
+      "id": "changelog_0_5_0_2026_04_27",
+      "community": 11,
+      "norm_label": "[0.5.0] - 2026-04-27"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L86",
+      "id": "changelog_added_86",
+      "community": 11,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L90",
+      "id": "changelog_changed_90",
+      "community": 11,
+      "norm_label": "changed"
+    },
+    {
+      "label": "Documentation",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L100",
+      "id": "changelog_documentation_100",
+      "community": 11,
+      "norm_label": "documentation"
+    },
+    {
+      "label": "[0.3.1] - 2026-04-26",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L105",
+      "id": "changelog_0_3_1_2026_04_26",
+      "community": 0,
+      "norm_label": "[0.3.1] - 2026-04-26"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L107",
+      "id": "changelog_added_107",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L115",
+      "id": "changelog_changed_115",
+      "community": 0,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[0.3.0] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L119",
+      "id": "changelog_0_3_0_2026_04_25",
+      "community": 12,
+      "norm_label": "[0.3.0] - 2026-04-25"
+    },
+    {
+      "label": "Breaking Changes (v0.3.0)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L121",
+      "id": "changelog_breaking_changes_v0_3_0",
+      "community": 12,
+      "norm_label": "breaking changes (v0.3.0)"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L126",
+      "id": "changelog_added_126",
+      "community": 12,
+      "norm_label": "added"
+    },
+    {
+      "label": "Already Existed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L134",
+      "id": "changelog_already_existed",
+      "community": 12,
+      "norm_label": "already existed"
+    },
+    {
+      "label": "[0.2.6] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L139",
+      "id": "changelog_0_2_6_2026_04_25",
+      "community": 0,
+      "norm_label": "[0.2.6] - 2026-04-25"
+    },
+    {
+      "label": "Added (Phase 5 Polish)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L141",
+      "id": "changelog_added_phase_5_polish",
+      "community": 0,
+      "norm_label": "added (phase 5 polish)"
+    },
+    {
+      "label": "Completed (Previously Existed)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L145",
+      "id": "changelog_completed_previously_existed",
+      "community": 0,
+      "norm_label": "completed (previously existed)"
+    },
+    {
+      "label": "[0.2.5] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L152",
+      "id": "changelog_0_2_5_2026_04_25",
+      "community": 13,
+      "norm_label": "[0.2.5] - 2026-04-25"
+    },
+    {
+      "label": "Completed (Previously Existed)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L154",
+      "id": "changelog_completed_previously_existed_154",
+      "community": 13,
+      "norm_label": "completed (previously existed)"
+    },
+    {
+      "label": "Added (P4-4)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L160",
+      "id": "changelog_added_p4_4",
+      "community": 13,
+      "norm_label": "added (p4-4)"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L164",
+      "id": "changelog_changed_164",
+      "community": 13,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[0.2.4] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L168",
+      "id": "changelog_0_2_4_2026_04_25",
+      "community": 14,
+      "norm_label": "[0.2.4] - 2026-04-25"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L170",
+      "id": "changelog_added_170",
+      "community": 14,
+      "norm_label": "added"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L175",
+      "id": "changelog_fixed_175",
+      "community": 14,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "[0.2.3] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L179",
+      "id": "changelog_0_2_3_2026_04_25",
+      "community": 0,
+      "norm_label": "[0.2.3] - 2026-04-25"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L181",
+      "id": "changelog_added_181",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "[0.2.2] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L186",
+      "id": "changelog_0_2_2_2026_04_25",
+      "community": 15,
+      "norm_label": "[0.2.2] - 2026-04-25"
+    },
+    {
+      "label": "Added (Phase 3 Infrastructure)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L188",
+      "id": "changelog_added_phase_3_infrastructure",
+      "community": 15,
+      "norm_label": "added (phase 3 infrastructure)"
+    },
+    {
+      "label": "code:go (if constant.IsTimeout(err) { /* handle timeout */ })",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L191",
+      "id": "changelog_codeblock_1",
+      "community": 15,
+      "norm_label": "code:go (if constant.istimeout(err) { /* handle timeout */ })"
+    },
+    {
+      "label": "[0.2.1] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L198",
+      "id": "changelog_0_2_1_2026_04_25",
+      "community": 16,
+      "norm_label": "[0.2.1] - 2026-04-25"
+    },
+    {
+      "label": "Added (Phase 2 Ease of Use)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L200",
+      "id": "changelog_added_phase_2_ease_of_use",
+      "community": 16,
+      "norm_label": "added (phase 2 ease of use)"
+    },
+    {
+      "label": "code:go (trd.NewOrder(accID, market, env).Buy(\"00700\", 100).At(350.5))",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L203",
+      "id": "changelog_codeblock_2",
+      "community": 16,
+      "norm_label": "code:go (trd.neworder(accid, market, env).buy(\"00700\", 100).at(350.5))"
+    },
+    {
+      "label": "[0.2.0] - 2026-04-25",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L211",
+      "id": "changelog_0_2_0_2026_04_25",
+      "community": 0,
+      "norm_label": "[0.2.0] - 2026-04-25"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L213",
+      "id": "changelog_changed_213",
+      "community": 0,
+      "norm_label": "changed"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L220",
+      "id": "changelog_added_220",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L226",
+      "id": "changelog_fixed_226",
+      "community": 0,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "Security",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L233",
+      "id": "changelog_security",
+      "community": 0,
+      "norm_label": "security"
+    },
+    {
+      "label": "[0.0.6] - 2026-04-24",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L238",
+      "id": "changelog_0_0_6_2026_04_24",
+      "community": 0,
+      "norm_label": "[0.0.6] - 2026-04-24"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L240",
+      "id": "changelog_added_240",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "[0.0.5] - 2026-04-23 \u2014 Feature Parity Achieved",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L245",
+      "id": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "community": 7,
+      "norm_label": "[0.0.5] - 2026-04-23 \u2014 feature parity achieved"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L247",
+      "id": "changelog_added_247",
+      "community": 7,
+      "norm_label": "added"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L262",
+      "id": "changelog_fixed_262",
+      "community": 7,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L266",
+      "id": "changelog_changed_266",
+      "community": 7,
+      "norm_label": "changed"
+    },
+    {
+      "label": "Tests",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L272",
+      "id": "changelog_tests",
+      "community": 7,
+      "norm_label": "tests"
+    },
+    {
+      "label": "[0.0.5] - 2026-04-21",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L276",
+      "id": "changelog_0_0_5_2026_04_21",
+      "community": 17,
+      "norm_label": "[0.0.5] - 2026-04-21"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L278",
+      "id": "changelog_added_278",
+      "community": 17,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L284",
+      "id": "changelog_changed_284",
+      "community": 17,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[0.0.4] - 2026-04-19",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L289",
+      "id": "changelog_0_0_4_2026_04_19",
+      "community": 0,
+      "norm_label": "[0.0.4] - 2026-04-19"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L291",
+      "id": "changelog_added_291",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "[0.0.3] - 2026-04-18",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L296",
+      "id": "changelog_0_0_3_2026_04_18",
+      "community": 0,
+      "norm_label": "[0.0.3] - 2026-04-18"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L298",
+      "id": "changelog_fixed_298",
+      "community": 0,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "[0.0.2] - 2026-04-18",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L302",
+      "id": "changelog_0_0_2_2026_04_18",
+      "community": 0,
+      "norm_label": "[0.0.2] - 2026-04-18"
+    },
+    {
+      "label": "Fixed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L304",
+      "id": "changelog_fixed_304",
+      "community": 0,
+      "norm_label": "fixed"
+    },
+    {
+      "label": "[0.0.1] - 2026-04-12",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L310",
+      "id": "changelog_0_0_1_2026_04_12",
+      "community": 0,
+      "norm_label": "[0.0.1] - 2026-04-12"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L312",
+      "id": "changelog_added_312",
+      "community": 0,
+      "norm_label": "added"
+    },
+    {
+      "label": "FUTU_API_PROTO_REFERENCE.md",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L1",
+      "id": "futu_api_proto_reference_md",
+      "community": 3,
+      "norm_label": "futu_api_proto_reference.md"
+    },
+    {
+      "label": "Futu OpenAPI Protocol Reference (Proto)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L1",
+      "id": "futu_api_proto_reference_futu_openapi_protocol_reference_proto",
+      "community": 3,
+      "norm_label": "futu openapi protocol reference (proto)"
+    },
+    {
+      "label": "Basic Functions",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L5",
+      "id": "futu_api_proto_reference_basic_functions",
+      "community": 5,
+      "norm_label": "basic functions"
+    },
+    {
+      "label": "Protocol ID Table",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L7",
+      "id": "futu_api_proto_reference_protocol_id_table",
+      "community": 5,
+      "norm_label": "protocol id table"
+    },
+    {
+      "label": "InitConnect",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L16",
+      "id": "futu_api_proto_reference_initconnect",
+      "community": 5,
+      "norm_label": "initconnect"
+    },
+    {
+      "label": "code:protobuf (message C2S)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L21",
+      "id": "futu_api_proto_reference_codeblock_1",
+      "community": 5,
+      "norm_label": "code:protobuf (message c2s)"
+    },
+    {
+      "label": "Connection Encryption",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L32",
+      "id": "futu_api_proto_reference_connection_encryption",
+      "community": 5,
+      "norm_label": "connection encryption"
+    },
+    {
+      "label": "Push Protocol Format",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L38",
+      "id": "futu_api_proto_reference_push_protocol_format",
+      "community": 5,
+      "norm_label": "push protocol format"
+    },
+    {
+      "label": "KeepAlive",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L43",
+      "id": "futu_api_proto_reference_keepalive",
+      "community": 5,
+      "norm_label": "keepalive"
+    },
+    {
+      "label": "code:protobuf (syntax = \"proto2\";)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L47",
+      "id": "futu_api_proto_reference_codeblock_2",
+      "community": 5,
+      "norm_label": "code:protobuf (syntax = \"proto2\";)"
+    },
+    {
+      "label": "General Definitions",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L83",
+      "id": "futu_api_proto_reference_general_definitions",
+      "community": 2,
+      "norm_label": "general definitions"
+    },
+    {
+      "label": "Interface Result",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L85",
+      "id": "futu_api_proto_reference_interface_result",
+      "community": 2,
+      "norm_label": "interface result"
+    },
+    {
+      "label": "code:protobuf (enum RetType)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L88",
+      "id": "futu_api_proto_reference_codeblock_3",
+      "community": 2,
+      "norm_label": "code:protobuf (enum rettype)"
+    },
+    {
+      "label": "Protocol Format",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L98",
+      "id": "futu_api_proto_reference_protocol_format",
+      "community": 2,
+      "norm_label": "protocol format"
+    },
+    {
+      "label": "code:protobuf (enum ProtoFmt)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L101",
+      "id": "futu_api_proto_reference_codeblock_4",
+      "community": 2,
+      "norm_label": "code:protobuf (enum protofmt)"
+    },
+    {
+      "label": "Packet Encryption Algorithm",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L109",
+      "id": "futu_api_proto_reference_packet_encryption_algorithm",
+      "community": 2,
+      "norm_label": "packet encryption algorithm"
+    },
+    {
+      "label": "code:protobuf (enum PacketEncAlgo)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L112",
+      "id": "futu_api_proto_reference_codeblock_5",
+      "community": 2,
+      "norm_label": "code:protobuf (enum packetencalgo)"
+    },
+    {
+      "label": "Program Status Type",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L122",
+      "id": "futu_api_proto_reference_program_status_type",
+      "community": 2,
+      "norm_label": "program status type"
+    },
+    {
+      "label": "code:protobuf (enum ProgramStatusType)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L125",
+      "id": "futu_api_proto_reference_codeblock_6",
+      "community": 2,
+      "norm_label": "code:protobuf (enum programstatustype)"
+    },
+    {
+      "label": "OpenD Event Notification Type",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L144",
+      "id": "futu_api_proto_reference_opend_event_notification_type",
+      "community": 2,
+      "norm_label": "opend event notification type"
+    },
+    {
+      "label": "code:protobuf (enum GtwEventType)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L147",
+      "id": "futu_api_proto_reference_codeblock_7",
+      "community": 2,
+      "norm_label": "code:protobuf (enum gtweventtype)"
+    },
+    {
+      "label": "System Notification Type",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L169",
+      "id": "futu_api_proto_reference_system_notification_type",
+      "community": 2,
+      "norm_label": "system notification type"
+    },
+    {
+      "label": "code:protobuf (enum NotifyType)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L172",
+      "id": "futu_api_proto_reference_codeblock_8",
+      "community": 2,
+      "norm_label": "code:protobuf (enum notifytype)"
+    },
+    {
+      "label": "Package Unique Identifier",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L185",
+      "id": "futu_api_proto_reference_package_unique_identifier",
+      "community": 2,
+      "norm_label": "package unique identifier"
+    },
+    {
+      "label": "code:protobuf (message PacketID)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L188",
+      "id": "futu_api_proto_reference_codeblock_9",
+      "community": 2,
+      "norm_label": "code:protobuf (message packetid)"
+    },
+    {
+      "label": "Program Status",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L196",
+      "id": "futu_api_proto_reference_program_status",
+      "community": 2,
+      "norm_label": "program status"
+    },
+    {
+      "label": "code:protobuf (message ProgramStatus)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L199",
+      "id": "futu_api_proto_reference_codeblock_10",
+      "community": 2,
+      "norm_label": "code:protobuf (message programstatus)"
+    },
+    {
+      "label": "Protocol Introduction",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L209",
+      "id": "futu_api_proto_reference_protocol_introduction",
+      "community": 3,
+      "norm_label": "protocol introduction"
+    },
+    {
+      "label": "Protocol Request Process",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L211",
+      "id": "futu_api_proto_reference_protocol_request_process",
+      "community": 3,
+      "norm_label": "protocol request process"
+    },
+    {
+      "label": "Protocol Design",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L218",
+      "id": "futu_api_proto_reference_protocol_design",
+      "community": 6,
+      "norm_label": "protocol design"
+    },
+    {
+      "label": "Protocol Header",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L222",
+      "id": "futu_api_proto_reference_protocol_header",
+      "community": 6,
+      "norm_label": "protocol header"
+    },
+    {
+      "label": "code:c (struct APIProtoHeader)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L224",
+      "id": "futu_api_proto_reference_codeblock_11",
+      "community": 6,
+      "norm_label": "code:c (struct apiprotoheader)"
+    },
+    {
+      "label": "Protocol Body",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L253",
+      "id": "futu_api_proto_reference_protocol_body",
+      "community": 6,
+      "norm_label": "protocol body"
+    },
+    {
+      "label": "Protobuf Request Structure",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L255",
+      "id": "futu_api_proto_reference_protobuf_request_structure",
+      "community": 6,
+      "norm_label": "protobuf request structure"
+    },
+    {
+      "label": "code:protobuf (message C2S)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L257",
+      "id": "futu_api_proto_reference_codeblock_12",
+      "community": 6,
+      "norm_label": "code:protobuf (message c2s)"
+    },
+    {
+      "label": "Protobuf Response Structure",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L269",
+      "id": "futu_api_proto_reference_protobuf_response_structure",
+      "community": 6,
+      "norm_label": "protobuf response structure"
+    },
+    {
+      "label": "code:protobuf (message S2C)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L271",
+      "id": "futu_api_proto_reference_codeblock_13",
+      "community": 6,
+      "norm_label": "code:protobuf (message s2c)"
+    },
+    {
+      "label": "Encrypted Communication Process",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L301",
+      "id": "futu_api_proto_reference_encrypted_communication_process",
+      "community": 3,
+      "norm_label": "encrypted communication process"
+    },
+    {
+      "label": "RSA Encryption Rules",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L307",
+      "id": "futu_api_proto_reference_rsa_encryption_rules",
+      "community": 3,
+      "norm_label": "rsa encryption rules"
+    },
+    {
+      "label": "AES Encryption",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L312",
+      "id": "futu_api_proto_reference_aes_encryption",
+      "community": 3,
+      "norm_label": "aes encryption"
+    },
+    {
+      "label": "Proto ID Reference",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L320",
+      "id": "futu_api_proto_reference_proto_id_reference",
+      "community": 3,
+      "norm_label": "proto id reference"
+    },
+    {
+      "label": "Basic Protocols",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L322",
+      "id": "futu_api_proto_reference_basic_protocols",
+      "community": 3,
+      "norm_label": "basic protocols"
+    },
+    {
+      "label": "Quote Protocols (3xxx)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L331",
+      "id": "futu_api_proto_reference_quote_protocols_3xxx",
+      "community": 3,
+      "norm_label": "quote protocols (3xxx)"
+    },
+    {
+      "label": "Trade Protocols (2xxx)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L358",
+      "id": "futu_api_proto_reference_trade_protocols_2xxx",
+      "community": 3,
+      "norm_label": "trade protocols (2xxx)"
+    },
+    {
+      "label": "FUTU_API_PYTHON_REFERENCE.md",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L1",
+      "id": "futu_api_python_reference_md",
+      "community": 1,
+      "norm_label": "futu_api_python_reference.md"
+    },
+    {
+      "label": "Futu OpenAPI Documentation (Python)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L1",
+      "id": "futu_api_python_reference_futu_openapi_documentation_python",
+      "community": 1,
+      "norm_label": "futu openapi documentation (python)"
+    },
+    {
+      "label": "Introduction",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L4",
+      "id": "futu_api_python_reference_introduction",
+      "community": 1,
+      "norm_label": "introduction"
+    },
+    {
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L6",
+      "id": "futu_api_python_reference_overview",
+      "community": 1,
+      "norm_label": "overview"
+    },
+    {
+      "label": "Account Types",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L14",
+      "id": "futu_api_python_reference_account_types",
+      "community": 1,
+      "norm_label": "account types"
+    },
+    {
+      "label": "Functionality",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L18",
+      "id": "futu_api_python_reference_functionality",
+      "community": 1,
+      "norm_label": "functionality"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L22",
+      "id": "futu_api_python_reference_features",
+      "community": 1,
+      "norm_label": "features"
+    },
+    {
+      "label": "API Categories",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L30",
+      "id": "futu_api_python_reference_api_categories",
+      "community": 1,
+      "norm_label": "api categories"
+    },
+    {
+      "label": "Quote API (Market Data)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L32",
+      "id": "futu_api_python_reference_quote_api_market_data",
+      "community": 4,
+      "norm_label": "quote api (market data)"
+    },
+    {
+      "label": "Market Snapshot",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L34",
+      "id": "futu_api_python_reference_market_snapshot",
+      "community": 4,
+      "norm_label": "market snapshot"
+    },
+    {
+      "label": "K-line Data",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L38",
+      "id": "futu_api_python_reference_k_line_data",
+      "community": 4,
+      "norm_label": "k-line data"
+    },
+    {
+      "label": "Order Book",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L43",
+      "id": "futu_api_python_reference_order_book",
+      "community": 4,
+      "norm_label": "order book"
+    },
+    {
+      "label": "Ticker",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L46",
+      "id": "futu_api_python_reference_ticker",
+      "community": 4,
+      "norm_label": "ticker"
+    },
+    {
+      "label": "Time Sharing",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L49",
+      "id": "futu_api_python_reference_time_sharing",
+      "community": 4,
+      "norm_label": "time sharing"
+    },
+    {
+      "label": "Market State",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L52",
+      "id": "futu_api_python_reference_market_state",
+      "community": 4,
+      "norm_label": "market state"
+    },
+    {
+      "label": "Capital Flow",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L55",
+      "id": "futu_api_python_reference_capital_flow",
+      "community": 4,
+      "norm_label": "capital flow"
+    },
+    {
+      "label": "Plates",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L59",
+      "id": "futu_api_python_reference_plates",
+      "community": 4,
+      "norm_label": "plates"
+    },
+    {
+      "label": "Stock Filter",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L63",
+      "id": "futu_api_python_reference_stock_filter",
+      "community": 4,
+      "norm_label": "stock filter"
+    },
+    {
+      "label": "Subscription",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L66",
+      "id": "futu_api_python_reference_subscription",
+      "community": 4,
+      "norm_label": "subscription"
+    },
+    {
+      "label": "Trade API (Trading)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L70",
+      "id": "futu_api_python_reference_trade_api_trading",
+      "community": 1,
+      "norm_label": "trade api (trading)"
+    },
+    {
+      "label": "Order Operations",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L72",
+      "id": "futu_api_python_reference_order_operations",
+      "community": 1,
+      "norm_label": "order operations"
+    },
+    {
+      "label": "Position & Funds",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L79",
+      "id": "futu_api_python_reference_position_funds",
+      "community": 1,
+      "norm_label": "position & funds"
+    },
+    {
+      "label": "Trading Environment",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L83",
+      "id": "futu_api_python_reference_trading_environment",
+      "community": 1,
+      "norm_label": "trading environment"
+    },
+    {
+      "label": "OpenD",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L89",
+      "id": "futu_api_python_reference_opend",
+      "community": 8,
+      "norm_label": "opend"
+    },
+    {
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L91",
+      "id": "futu_api_python_reference_installation",
+      "community": 8,
+      "norm_label": "installation"
+    },
+    {
+      "label": "Configuration",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L95",
+      "id": "futu_api_python_reference_configuration",
+      "community": 8,
+      "norm_label": "configuration"
+    },
+    {
+      "label": "Connection",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L100",
+      "id": "futu_api_python_reference_connection",
+      "community": 8,
+      "norm_label": "connection"
+    },
+    {
+      "label": "code:python (from futu import OpenQuoteContext, OpenSecTradeContext)",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L101",
+      "id": "futu_api_python_reference_codeblock_1",
+      "community": 8,
+      "norm_label": "code:python (from futu import openquotecontext, opensectradecontext)"
+    },
+    {
+      "label": "Rate Limits",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L110",
+      "id": "futu_api_python_reference_rate_limits",
+      "community": 1,
+      "norm_label": "rate limits"
+    },
+    {
+      "label": "Subscription Quota",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L112",
+      "id": "futu_api_python_reference_subscription_quota",
+      "community": 1,
+      "norm_label": "subscription quota"
+    },
+    {
+      "label": "API Frequency Limits",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L116",
+      "id": "futu_api_python_reference_api_frequency_limits",
+      "community": 1,
+      "norm_label": "api frequency limits"
+    },
+    {
+      "label": "Error Handling",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L121",
+      "id": "futu_api_python_reference_error_handling",
+      "community": 1,
+      "norm_label": "error handling"
+    },
+    {
+      "label": "Common Error Codes",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L123",
+      "id": "futu_api_python_reference_common_error_codes",
+      "community": 1,
+      "norm_label": "common error codes"
+    },
+    {
+      "label": "Error Categories",
+      "file_type": "document",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L130",
+      "id": "futu_api_python_reference_error_categories",
+      "community": 1,
+      "norm_label": "error categories"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "changelog_changelog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_unreleased",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_5_2_2026_04_28",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_5_1_2026_04_28",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_5_0_2026_04_27",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L105",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_3_1_2026_04_26",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L119",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_3_0_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_6_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_5_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L168",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_4_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_3_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L186",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_2_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_1_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_2_0_2026_04_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L238",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_6_2026_04_24",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L245",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L276",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_5_2026_04_21",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L289",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_4_2026_04_19",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L296",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_3_2026_04_18",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L302",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_2_2026_04_18",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L310",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_0_0_1_2026_04_12",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "changelog_unreleased",
+      "target": "changelog_fixed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "changelog_unreleased",
+      "target": "changelog_added",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "changelog_unreleased",
+      "target": "changelog_documentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "changelog_0_5_2_2026_04_28",
+      "target": "changelog_added_32",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "changelog_0_5_2_2026_04_28",
+      "target": "changelog_changed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "changelog_0_5_1_2026_04_28",
+      "target": "changelog_added_47",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "changelog_0_5_1_2026_04_28",
+      "target": "changelog_changed_62",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "changelog_0_5_1_2026_04_28",
+      "target": "changelog_fixed_80",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "changelog_0_5_0_2026_04_27",
+      "target": "changelog_added_86",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "changelog_0_5_0_2026_04_27",
+      "target": "changelog_changed_90",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "changelog_0_5_0_2026_04_27",
+      "target": "changelog_documentation_100",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L107",
+      "weight": 1.0,
+      "source": "changelog_0_3_1_2026_04_26",
+      "target": "changelog_added_107",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "changelog_0_3_1_2026_04_26",
+      "target": "changelog_changed_115",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L121",
+      "weight": 1.0,
+      "source": "changelog_0_3_0_2026_04_25",
+      "target": "changelog_breaking_changes_v0_3_0",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "changelog_0_3_0_2026_04_25",
+      "target": "changelog_added_126",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "changelog_0_3_0_2026_04_25",
+      "target": "changelog_already_existed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "changelog_0_2_6_2026_04_25",
+      "target": "changelog_added_phase_5_polish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "changelog_0_2_6_2026_04_25",
+      "target": "changelog_completed_previously_existed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L154",
+      "weight": 1.0,
+      "source": "changelog_0_2_5_2026_04_25",
+      "target": "changelog_completed_previously_existed_154",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "changelog_0_2_5_2026_04_25",
+      "target": "changelog_added_p4_4",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L164",
+      "weight": 1.0,
+      "source": "changelog_0_2_5_2026_04_25",
+      "target": "changelog_changed_164",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L170",
+      "weight": 1.0,
+      "source": "changelog_0_2_4_2026_04_25",
+      "target": "changelog_added_170",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L175",
+      "weight": 1.0,
+      "source": "changelog_0_2_4_2026_04_25",
+      "target": "changelog_fixed_175",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L181",
+      "weight": 1.0,
+      "source": "changelog_0_2_3_2026_04_25",
+      "target": "changelog_added_181",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L188",
+      "weight": 1.0,
+      "source": "changelog_0_2_2_2026_04_25",
+      "target": "changelog_added_phase_3_infrastructure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "changelog_added_phase_3_infrastructure",
+      "target": "changelog_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L200",
+      "weight": 1.0,
+      "source": "changelog_0_2_1_2026_04_25",
+      "target": "changelog_added_phase_2_ease_of_use",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L203",
+      "weight": 1.0,
+      "source": "changelog_added_phase_2_ease_of_use",
+      "target": "changelog_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L213",
+      "weight": 1.0,
+      "source": "changelog_0_2_0_2026_04_25",
+      "target": "changelog_changed_213",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L220",
+      "weight": 1.0,
+      "source": "changelog_0_2_0_2026_04_25",
+      "target": "changelog_added_220",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L226",
+      "weight": 1.0,
+      "source": "changelog_0_2_0_2026_04_25",
+      "target": "changelog_fixed_226",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L233",
+      "weight": 1.0,
+      "source": "changelog_0_2_0_2026_04_25",
+      "target": "changelog_security",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L240",
+      "weight": 1.0,
+      "source": "changelog_0_0_6_2026_04_24",
+      "target": "changelog_added_240",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L247",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "target": "changelog_added_247",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L262",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "target": "changelog_fixed_262",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L266",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "target": "changelog_changed_266",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L272",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_23_feature_parity_achieved",
+      "target": "changelog_tests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L278",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_21",
+      "target": "changelog_added_278",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L284",
+      "weight": 1.0,
+      "source": "changelog_0_0_5_2026_04_21",
+      "target": "changelog_changed_284",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L291",
+      "weight": 1.0,
+      "source": "changelog_0_0_4_2026_04_19",
+      "target": "changelog_added_291",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L298",
+      "weight": 1.0,
+      "source": "changelog_0_0_3_2026_04_18",
+      "target": "changelog_fixed_298",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L304",
+      "weight": 1.0,
+      "source": "changelog_0_0_2_2026_04_18",
+      "target": "changelog_fixed_304",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L312",
+      "weight": 1.0,
+      "source": "changelog_0_0_1_2026_04_12",
+      "target": "changelog_added_312",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_md",
+      "target": "futu_api_proto_reference_futu_openapi_protocol_reference_proto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_md",
+      "target": "futu_api_proto_reference_basic_functions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_md",
+      "target": "futu_api_proto_reference_general_definitions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L209",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_md",
+      "target": "futu_api_proto_reference_protocol_introduction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L320",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_md",
+      "target": "futu_api_proto_reference_proto_id_reference",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_basic_functions",
+      "target": "futu_api_proto_reference_protocol_id_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_basic_functions",
+      "target": "futu_api_proto_reference_initconnect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_basic_functions",
+      "target": "futu_api_proto_reference_keepalive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_initconnect",
+      "target": "futu_api_proto_reference_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_initconnect",
+      "target": "futu_api_proto_reference_connection_encryption",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_initconnect",
+      "target": "futu_api_proto_reference_push_protocol_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_keepalive",
+      "target": "futu_api_proto_reference_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_interface_result",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_protocol_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_packet_encryption_algorithm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_program_status_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L144",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_opend_event_notification_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L169",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_system_notification_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L185",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_package_unique_identifier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L196",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_general_definitions",
+      "target": "futu_api_proto_reference_program_status",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_interface_result",
+      "target": "futu_api_proto_reference_codeblock_3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_format",
+      "target": "futu_api_proto_reference_codeblock_4",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_packet_encryption_algorithm",
+      "target": "futu_api_proto_reference_codeblock_5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_program_status_type",
+      "target": "futu_api_proto_reference_codeblock_6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_opend_event_notification_type",
+      "target": "futu_api_proto_reference_codeblock_7",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L172",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_system_notification_type",
+      "target": "futu_api_proto_reference_codeblock_8",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L188",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_package_unique_identifier",
+      "target": "futu_api_proto_reference_codeblock_9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L199",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_program_status",
+      "target": "futu_api_proto_reference_codeblock_10",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_introduction",
+      "target": "futu_api_proto_reference_protocol_request_process",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_introduction",
+      "target": "futu_api_proto_reference_protocol_design",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L301",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_introduction",
+      "target": "futu_api_proto_reference_encrypted_communication_process",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L222",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_design",
+      "target": "futu_api_proto_reference_protocol_header",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L253",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_design",
+      "target": "futu_api_proto_reference_protocol_body",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_header",
+      "target": "futu_api_proto_reference_codeblock_11",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L255",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_body",
+      "target": "futu_api_proto_reference_protobuf_request_structure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L269",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protocol_body",
+      "target": "futu_api_proto_reference_protobuf_response_structure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L257",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protobuf_request_structure",
+      "target": "futu_api_proto_reference_codeblock_12",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L271",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_protobuf_response_structure",
+      "target": "futu_api_proto_reference_codeblock_13",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L307",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_encrypted_communication_process",
+      "target": "futu_api_proto_reference_rsa_encryption_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L312",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_encrypted_communication_process",
+      "target": "futu_api_proto_reference_aes_encryption",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L322",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_proto_id_reference",
+      "target": "futu_api_proto_reference_basic_protocols",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L331",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_proto_id_reference",
+      "target": "futu_api_proto_reference_quote_protocols_3xxx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PROTO_REFERENCE.md",
+      "source_location": "L358",
+      "weight": 1.0,
+      "source": "futu_api_proto_reference_proto_id_reference",
+      "target": "futu_api_proto_reference_trade_protocols_2xxx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_futu_openapi_documentation_python",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_introduction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_api_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_opend",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_rate_limits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L121",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_md",
+      "target": "futu_api_python_reference_error_handling",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_introduction",
+      "target": "futu_api_python_reference_overview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_introduction",
+      "target": "futu_api_python_reference_account_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_introduction",
+      "target": "futu_api_python_reference_functionality",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_introduction",
+      "target": "futu_api_python_reference_features",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_api_categories",
+      "target": "futu_api_python_reference_quote_api_market_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_api_categories",
+      "target": "futu_api_python_reference_trade_api_trading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_market_snapshot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_k_line_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_order_book",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_ticker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_time_sharing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_market_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_capital_flow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_plates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_stock_filter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_quote_api_market_data",
+      "target": "futu_api_python_reference_subscription",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_trade_api_trading",
+      "target": "futu_api_python_reference_order_operations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_trade_api_trading",
+      "target": "futu_api_python_reference_position_funds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_trade_api_trading",
+      "target": "futu_api_python_reference_trading_environment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_opend",
+      "target": "futu_api_python_reference_installation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_opend",
+      "target": "futu_api_python_reference_configuration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_opend",
+      "target": "futu_api_python_reference_connection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_connection",
+      "target": "futu_api_python_reference_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_rate_limits",
+      "target": "futu_api_python_reference_subscription_quota",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L116",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_rate_limits",
+      "target": "futu_api_python_reference_api_frequency_limits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_error_handling",
+      "target": "futu_api_python_reference_common_error_codes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "FUTU_API_PYTHON_REFERENCE.md",
+      "source_location": "L130",
+      "weight": 1.0,
+      "source": "futu_api_python_reference_error_handling",
+      "target": "futu_api_python_reference_error_categories",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "d1643cfd5c6069e69c81cd6f5fc7b631e67165d5"
+}

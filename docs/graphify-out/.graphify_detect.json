@@ -1,0 +1,19 @@
+{
+  "files": {
+    "code": [],
+    "document": [
+      "D:\\github\\futuapi4go\\docs\\CHANGELOG.md",
+      "D:\\github\\futuapi4go\\docs\\FUTU_API_PROTO_REFERENCE.md",
+      "D:\\github\\futuapi4go\\docs\\FUTU_API_PYTHON_REFERENCE.md"
+    ],
+    "paper": [],
+    "image": [],
+    "video": []
+  },
+  "total_files": 3,
+  "total_words": 4030,
+  "needs_graph": false,
+  "warning": "Corpus is ~4,030 words - fits in a single context window. You may not need a graph.",
+  "skipped_sensitive": [],
+  "graphifyignore_patterns": 0
+}

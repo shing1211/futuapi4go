@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Log level constants** — `internal/client/client.go` added `LogLevelInfo`, `LogLevelWarn`, `LogLevelError`, `LogLevelSilent` constants for clarity and fixed log method comparisons to use them
+
 ### Added
 
 - **SubscribeSymbols / UnsubscribeSymbols** — `client/client.go` batch subscription wrappers for subscribing/unsubscribing to multiple symbols in a single API call
