@@ -1,0 +1,678 @@
+{
+  "D:\\github\\futuapi4go\\client\\client.go": {
+    "mtime": 1777856716.0251338,
+    "hash": "61ab8c5450e8121b28709f477bea82f8"
+  },
+  "D:\\github\\futuapi4go\\client\\client_test.go": {
+    "mtime": 1776649746.7351382,
+    "hash": "db31246c2aaabd3e319a1b50f886b883"
+  },
+  "D:\\github\\futuapi4go\\client\\push_test.go": {
+    "mtime": 1777252300.0735397,
+    "hash": "630d7f5f57111d913e82d54b9428ff6d"
+  },
+  "D:\\github\\futuapi4go\\client\\mock\\mock_server.go": {
+    "mtime": 1776316146.2155583,
+    "hash": "e4521938737f031a6175541903614f6e"
+  },
+  "D:\\github\\futuapi4go\\integration\\integration_test.go": {
+    "mtime": 1777373944.8329594,
+    "hash": "e8d6865fa0256a8367a08d1872c6eb05"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\alloc.go": {
+    "mtime": 1777252300.0771985,
+    "hash": "988abee4777804b91e662d76e84d995a"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\bench_test.go": {
+    "mtime": 1777373922.4106975,
+    "hash": "38e03043825b661a1cc1a727cba1ca46"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\client.go": {
+    "mtime": 1778129757.643966,
+    "hash": "ba22bd5e7833aa596769718e5de8deee"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\client_test.go": {
+    "mtime": 1776316146.2390738,
+    "hash": "bbecd9dfe39449183cbc3288751d0f22"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\conn.go": {
+    "mtime": 1777373981.6345866,
+    "hash": "dd3fd9d76fa672afeb43681f2d840e4a"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\conn_test.go": {
+    "mtime": 1777252300.079411,
+    "hash": "e64c163ea7ad5f7174d93f79073ef09f"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\errors.go": {
+    "mtime": 1777373467.575008,
+    "hash": "440ed4115b9a7c1ed0c5dceadc52fe0c"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\errors_test.go": {
+    "mtime": 1776316146.240074,
+    "hash": "7597800342002612645dcad97dd7e222"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\pool.go": {
+    "mtime": 1777426614.0018523,
+    "hash": "cbbf2521bc827ca4c9b58925cc4a9a97"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\pool_test.go": {
+    "mtime": 1777252300.0804162,
+    "hash": "aae8045a88d6c4a1ec0d009404abf711"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\rsa.go": {
+    "mtime": 1776316146.2410686,
+    "hash": "8e37e9e5a8e567a2c94c6cf05cd36093"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\slog.go": {
+    "mtime": 1777374436.054999,
+    "hash": "9a32d1bc04a853e93660f7796f950dae"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\version.go": {
+    "mtime": 1776316146.242069,
+    "hash": "56c1ae57bbfb3f982bc1d342234bb6b9"
+  },
+  "D:\\github\\futuapi4go\\internal\\client\\ws.go": {
+    "mtime": 1777374109.487225,
+    "hash": "3bedf3589934d47f379e4c1b1cf03c06"
+  },
+  "D:\\github\\futuapi4go\\pkg\\breaker\\breaker.go": {
+    "mtime": 1777252300.0822084,
+    "hash": "60a54844b0959fd70d1bea53c72e96f2"
+  },
+  "D:\\github\\futuapi4go\\pkg\\breaker\\breaker_test.go": {
+    "mtime": 1777252300.0826437,
+    "hash": "a78b90930c95e4b98ab3fd1ac403aee4"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\constant.go": {
+    "mtime": 1777426614.0029957,
+    "hash": "7ed9b9e5eeb57c185b1dccd6274c0023"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\errors.go": {
+    "mtime": 1777363682.4391255,
+    "hash": "3a426accfc8ed5057c07b7ad7cf145fc"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\errors_test.go": {
+    "mtime": 1777344069.881502,
+    "hash": "d3cdf499841b082d39f98c4eecd53190"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\sensitive.go": {
+    "mtime": 1777252300.084283,
+    "hash": "b7d109eb82793d03a189154853841d12"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\tostring.go": {
+    "mtime": 1777375050.2957861,
+    "hash": "0ff28e3e8771a45bf419ea0646f9739a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\tostring_test.go": {
+    "mtime": 1777252300.0852835,
+    "hash": "9fd7ebb1ce1b90444f28214ec218078a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\validation.go": {
+    "mtime": 1777363775.417075,
+    "hash": "2ac45c25ff5a00ea95e1ed3eef7ce281"
+  },
+  "D:\\github\\futuapi4go\\pkg\\constant\\validation_test.go": {
+    "mtime": 1777344374.4295697,
+    "hash": "e4742754b6c6302958285250b98c2d49"
+  },
+  "D:\\github\\futuapi4go\\pkg\\degradation\\degradation.go": {
+    "mtime": 1777374874.2692373,
+    "hash": "e7795c0aebcbc9c8d668858536569e75"
+  },
+  "D:\\github\\futuapi4go\\pkg\\health\\health.go": {
+    "mtime": 1777373901.2467842,
+    "hash": "882663cbbff66884ff93a3d577f36cda"
+  },
+  "D:\\github\\futuapi4go\\pkg\\history\\history.go": {
+    "mtime": 1777252300.0862832,
+    "hash": "53d9257143865121fddc5b8ad2bd922b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\logger\\logger.go": {
+    "mtime": 1777252300.0862832,
+    "hash": "3f68806764a94e06b9761dcc3aaba139"
+  },
+  "D:\\github\\futuapi4go\\pkg\\logger\\logger_test.go": {
+    "mtime": 1777252300.0872836,
+    "hash": "bbf7fcf0ba7cd69612774178b3f7781c"
+  },
+  "D:\\github\\futuapi4go\\pkg\\market\\hours.go": {
+    "mtime": 1777252300.0872836,
+    "hash": "0a4035b6408cd95c504266b12f87330e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\market\\hours_test.go": {
+    "mtime": 1777252300.0872836,
+    "hash": "41dfda1f31a994e804e1862043a54d00"
+  },
+  "D:\\github\\futuapi4go\\pkg\\metrics\\metrics.go": {
+    "mtime": 1777374932.7317383,
+    "hash": "18240c670352ac0a63f99809cbd7761b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\option\\option.go": {
+    "mtime": 1777252300.0882835,
+    "hash": "0b0eaed4826b27df85c70a9e20d98e29"
+  },
+  "D:\\github\\futuapi4go\\pkg\\option\\option_test.go": {
+    "mtime": 1777252300.0882835,
+    "hash": "4725eb4101bc754afbbb7c58168b6d59"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\common\\Common.pb.go": {
+    "mtime": 1777252300.0896485,
+    "hash": "b34af1cb3db5e312cbb38601b239c28d"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\getdelaystatistics\\GetDelayStatistics.pb.go": {
+    "mtime": 1775796845.1016805,
+    "hash": "777a752eda8bb1a37dd93ae88416000b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\getglobalstate\\GetGlobalState.pb.go": {
+    "mtime": 1776649746.7396967,
+    "hash": "abca40f2067585cd2dc94180434f73c0"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\getuserinfo\\GetUserInfo.pb.go": {
+    "mtime": 1777252300.0896485,
+    "hash": "d2c1a28a7d90531d19d464ff55bea4a8"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\initconnect\\InitConnect.pb.go": {
+    "mtime": 1775796845.1026804,
+    "hash": "5c92e266bda040e350d6d9b57bedaa09"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\keepalive\\KeepAlive.pb.go": {
+    "mtime": 1775796845.1026804,
+    "hash": "7db4a23826912b6ee0afa578d67b60f3"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\notify\\Notify.pb.go": {
+    "mtime": 1775796845.1026804,
+    "hash": "39244c61890018a8820280860b2f7e25"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotcommon\\Qot_Common.pb.go": {
+    "mtime": 1777252300.0916488,
+    "hash": "206178c93752b63774e36e14ae05bb42"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetbasicqot\\Qot_GetBasicQot.pb.go": {
+    "mtime": 1775796845.1036806,
+    "hash": "01dd88f31eaa60ff93658e93afdeb25a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetbroker\\Qot_GetBroker.pb.go": {
+    "mtime": 1775796845.1036806,
+    "hash": "9c62b077e89d7804aab5ab8afd9d238f"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetcapitaldistribution\\Qot_GetCapitalDistribution.pb.go": {
+    "mtime": 1777252300.092649,
+    "hash": "b8fc937588bc018ebfbcb4cc7f9fed68"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetcapitalflow\\Qot_GetCapitalFlow.pb.go": {
+    "mtime": 1775796845.1046815,
+    "hash": "7359c02f5522cf1a5952ec39cc14409e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetcodechange\\Qot_GetCodeChange.pb.go": {
+    "mtime": 1775796845.1046815,
+    "hash": "aef7b6635e0d8540a50ed07385a67e64"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetfutureinfo\\Qot_GetFutureInfo.pb.go": {
+    "mtime": 1775796845.1046815,
+    "hash": "17013a906d91b9b1b982b3d39f4e0f86"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgethistorykl\\Qot_GetHistoryKL.pb.go": {
+    "mtime": 1776649746.7426898,
+    "hash": "7ebfe397303906fa7a7c04b85749c4ed"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgethistoryklpoints\\Qot_GetHistoryKLPoints.pb.go": {
+    "mtime": 1776649746.74369,
+    "hash": "efc211b5f0d698af726cfea8beb189a3"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetholdingchangelist\\Qot_GetHoldingChangeList.pb.go": {
+    "mtime": 1775796845.1056807,
+    "hash": "a13284c20f4df47b0460907a968c9042"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetipolist\\Qot_GetIpoList.pb.go": {
+    "mtime": 1775796845.1056807,
+    "hash": "cc8dfcf92437617b56ba055c5704b9b1"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetkl\\Qot_GetKL.pb.go": {
+    "mtime": 1775796845.1056807,
+    "hash": "6056888b8789a8417fae82db37a126b2"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetmarketstate\\Qot_GetMarketState.pb.go": {
+    "mtime": 1775796845.1066809,
+    "hash": "0bbec2e1de9877d0c1648777f5d6eb21"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetoptionchain\\Qot_GetOptionChain.pb.go": {
+    "mtime": 1775796845.1066809,
+    "hash": "9d7cb025a2c9d0705604f87b787c25fb"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetoptionexpirationdate\\Qot_GetOptionExpirationDate.pb.go": {
+    "mtime": 1775796845.1066809,
+    "hash": "aff97022e0f9fd052666764c9a32a21a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetorderbook\\Qot_GetOrderBook.pb.go": {
+    "mtime": 1775796845.1066809,
+    "hash": "9fbe0227e1020b8b9d0d3f56903f9193"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetownerplate\\Qot_GetOwnerPlate.pb.go": {
+    "mtime": 1775796845.1076808,
+    "hash": "54062876351c47724ed78232bad4805b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetplatesecurity\\Qot_GetPlateSecurity.pb.go": {
+    "mtime": 1775796845.1076808,
+    "hash": "f93c413bd9ef6421fbff9f1c9a253278"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetplateset\\Qot_GetPlateSet.pb.go": {
+    "mtime": 1775796845.1076808,
+    "hash": "8238d84d753d1ea361b6aa8273a7fe98"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetpricereminder\\Qot_GetPriceReminder.pb.go": {
+    "mtime": 1775796845.1076808,
+    "hash": "db1e02edc9657a679e3cfdb9d0fa35f1"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetreference\\Qot_GetReference.pb.go": {
+    "mtime": 1775796845.1086805,
+    "hash": "8c59779241f0150b1d7cc4be6130d444"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetrehab\\Qot_GetRehab.pb.go": {
+    "mtime": 1776649746.74369,
+    "hash": "889e3d5244200560efb31196761a5ffc"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetrt\\Qot_GetRT.pb.go": {
+    "mtime": 1775796845.1086805,
+    "hash": "3bf2ecf801597a3b91d04d0569129296"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetsecuritysnapshot\\Qot_GetSecuritySnapshot.pb.go": {
+    "mtime": 1775796845.1086805,
+    "hash": "54a69c8b3245314a3f70739a5abe4371"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetstaticinfo\\Qot_GetStaticInfo.pb.go": {
+    "mtime": 1775796845.109681,
+    "hash": "187c23747f12e418dec1c0703980fa5a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetsubinfo\\Qot_GetSubInfo.pb.go": {
+    "mtime": 1775796845.109681,
+    "hash": "f973b7d6a542f34b399fafb4cf519ce5"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetsuspend\\Qot_GetSuspend.pb.go": {
+    "mtime": 1775796845.109681,
+    "hash": "71e935880d69722799b5232d8ff86f75"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetticker\\Qot_GetTicker.pb.go": {
+    "mtime": 1775796845.109681,
+    "hash": "87a9158da6a4992e832010a7c5b04bf0"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgettradedate\\Qot_GetTradeDate.pb.go": {
+    "mtime": 1775796845.1106808,
+    "hash": "591ec813d2d5b4d6d6840c7b228be5c1"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetusersecurity\\Qot_GetUserSecurity.pb.go": {
+    "mtime": 1775796845.1106808,
+    "hash": "73eb02bc52af8241def37487d64f483f"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetusersecuritygroup\\Qot_GetUserSecurityGroup.pb.go": {
+    "mtime": 1775796845.1106808,
+    "hash": "96048162e37d14b51876482834665356"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotgetwarrant\\Qot_GetWarrant.pb.go": {
+    "mtime": 1775796845.1106808,
+    "hash": "552844ab134b9f636ff379729de19c13"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotmodifyusersecurity\\Qot_ModifyUserSecurity.pb.go": {
+    "mtime": 1775796845.1116805,
+    "hash": "d58fc6832ef69122d5250899461a9239"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotregqotpush\\Qot_RegQotPush.pb.go": {
+    "mtime": 1775796845.1116805,
+    "hash": "c88735cfbe08c9d7fcf973d7746d9665"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotrequesthistorykl\\Qot_RequestHistoryKL.pb.go": {
+    "mtime": 1775796845.1116805,
+    "hash": "e30f1ecae79ff40ce67676cd76381b57"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotrequesthistoryklquota\\Qot_RequestHistoryKLQuota.pb.go": {
+    "mtime": 1775796845.1116805,
+    "hash": "60a6197217f8bedb422562ba3d0e9dbc"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotrequestrehab\\Qot_RequestRehab.pb.go": {
+    "mtime": 1775796845.112681,
+    "hash": "459c97304c67c02d836f4371bba94a7d"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotrequesttradedate\\Qot_RequestTradeDate.pb.go": {
+    "mtime": 1775796845.112681,
+    "hash": "2a7ab1ab74e1089ec9d4f2fa2412e0fb"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotsetpricereminder\\Qot_SetPriceReminder.pb.go": {
+    "mtime": 1775796845.112681,
+    "hash": "505eec25f7baaa3af262cc69d6380806"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotstockfilter\\Qot_StockFilter.pb.go": {
+    "mtime": 1775796845.112681,
+    "hash": "2cebea4986139abbef501c586c2087f7"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotsub\\Qot_Sub.pb.go": {
+    "mtime": 1777252300.092649,
+    "hash": "c9c16db7c19bdd8fedd9112e7a7d840c"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdatebasicqot\\Qot_UpdateBasicQot.pb.go": {
+    "mtime": 1775796845.1141846,
+    "hash": "39ad3d54006ef521c7d10fb619cf6918"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdatebroker\\Qot_UpdateBroker.pb.go": {
+    "mtime": 1775796845.1141846,
+    "hash": "b364ba7df2facf6e7f7439dbffcf0ba1"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdatekl\\Qot_UpdateKL.pb.go": {
+    "mtime": 1775796845.1141846,
+    "hash": "62e477499ecbe6dc9c5f7122fc491207"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdateorderbook\\Qot_UpdateOrderBook.pb.go": {
+    "mtime": 1775796845.1141846,
+    "hash": "79a968f0a4a0d953d41d1e2a8fb16d09"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdatepricereminder\\Qot_UpdatePriceReminder.pb.go": {
+    "mtime": 1775796845.1151893,
+    "hash": "aa92686781ba00ce948323d8f3b9dfa3"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdatert\\Qot_UpdateRT.pb.go": {
+    "mtime": 1775796845.1151893,
+    "hash": "d3ba52c96b6ba06393dac322790a7e86"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\qotupdateticker\\Qot_UpdateTicker.pb.go": {
+    "mtime": 1775796845.1151893,
+    "hash": "ca5029a30499ceb5bee8cb2dd044421a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\testcmd\\TestCmd.pb.go": {
+    "mtime": 1776649746.7451925,
+    "hash": "643107e3ca3a03afb6700850ee859740"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdcommon\\Trd_Common.pb.go": {
+    "mtime": 1775796845.1151893,
+    "hash": "d17c8e7f19edc35e1b46f8859df49c42"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdflowsummary\\Trd_FlowSummary.pb.go": {
+    "mtime": 1775796845.1161897,
+    "hash": "be9eaf19e38a66b4ccc33b62df08a915"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetacclist\\Trd_GetAccList.pb.go": {
+    "mtime": 1775796845.1161897,
+    "hash": "95f8d28bba95277536cfc2c06e1ba4bf"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetfunds\\Trd_GetFunds.pb.go": {
+    "mtime": 1775796845.1161897,
+    "hash": "72d5ab6225966388e772b5c265b03542"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgethistoryorderfilllist\\Trd_GetHistoryOrderFillList.pb.go": {
+    "mtime": 1775796845.1161897,
+    "hash": "0ebb067c312344b531598e475511eb21"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgethistoryorderlist\\Trd_GetHistoryOrderList.pb.go": {
+    "mtime": 1775796845.1172938,
+    "hash": "e5c1ccfd064da1a08acdbf37b8df3092"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetmarginratio\\Trd_GetMarginRatio.pb.go": {
+    "mtime": 1775796845.1172938,
+    "hash": "35015ef1856267964a8df0f92b9746e1"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetmaxtrdqtys\\Trd_GetMaxTrdQtys.pb.go": {
+    "mtime": 1775796845.1177979,
+    "hash": "7e395bfd0f52094ca69d7d64697bdb4e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetorderfee\\Trd_GetOrderFee.pb.go": {
+    "mtime": 1775796845.1177979,
+    "hash": "15f15efdd20e824eef692f2f446c21c9"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetorderfilllist\\Trd_GetOrderFillList.pb.go": {
+    "mtime": 1775796845.1177979,
+    "hash": "173473a48e43da08ccfbae48ad00a9d2"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetorderlist\\Trd_GetOrderList.pb.go": {
+    "mtime": 1775796845.1188028,
+    "hash": "2cd0395ca757d473fce62a25abf5d2fa"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdgetpositionlist\\Trd_GetPositionList.pb.go": {
+    "mtime": 1775796845.1188028,
+    "hash": "6e2832d735aacf4332ba63df0577b1b0"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdmodifyorder\\Trd_ModifyOrder.pb.go": {
+    "mtime": 1775796845.1188028,
+    "hash": "7f13574329569413e9fe572449f77f61"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdnotify\\Trd_Notify.pb.go": {
+    "mtime": 1775796845.1188028,
+    "hash": "f83a3a267f9435f3028640a0adf57de0"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdplaceorder\\Trd_PlaceOrder.pb.go": {
+    "mtime": 1775796845.1198027,
+    "hash": "ed93f56fa073235d4dbc77838420b91e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdreconfirmorder\\Trd_ReconfirmOrder.pb.go": {
+    "mtime": 1775796845.1198027,
+    "hash": "62bd8a26ea355ff50953221789601f41"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdsubaccpush\\Trd_SubAccPush.pb.go": {
+    "mtime": 1775796845.1198027,
+    "hash": "7e41cf46bd2de267761b463c1ab1e740"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdunlocktrade\\Trd_UnlockTrade.pb.go": {
+    "mtime": 1775796845.1198027,
+    "hash": "d12093d50218b860aa5c33f1b76c3db0"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdupdateorder\\Trd_UpdateOrder.pb.go": {
+    "mtime": 1775796845.1208029,
+    "hash": "cdc82bc20601416c850b42794210578b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\trdupdateorderfill\\Trd_UpdateOrderFill.pb.go": {
+    "mtime": 1775796845.1208029,
+    "hash": "fb9f029e320d75df8157ba1e1520448a"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\usedquota\\UsedQuota.pb.go": {
+    "mtime": 1777252300.0936491,
+    "hash": "b84fbaead8e1e162096a1efd5b87be5f"
+  },
+  "D:\\github\\futuapi4go\\pkg\\pb\\verification\\Verification.pb.go": {
+    "mtime": 1775796845.1208029,
+    "hash": "630b0e89eff5e5dad0e7251ff06e21b7"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\push.go": {
+    "mtime": 1777252300.0956495,
+    "hash": "f742505f886527502e96a669c0258602"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\push_test.go": {
+    "mtime": 1776649746.7461953,
+    "hash": "597b46070f573c2877208ece1a68192e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\qot_push.go": {
+    "mtime": 1777252300.0956495,
+    "hash": "20c5b89bfc2c05c94f5674b26a7756cc"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\trd_push.go": {
+    "mtime": 1776316146.2430718,
+    "hash": "e4fee1c59df909d76cd5f9d86267477f"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\chan\\chan.go": {
+    "mtime": 1777252300.09465,
+    "hash": "e687dc770811b0ec2aa69b2861d1e507"
+  },
+  "D:\\github\\futuapi4go\\pkg\\push\\chan\\chan_test.go": {
+    "mtime": 1777252300.09465,
+    "hash": "8495375a541a17391cfe0ffba423dc3d"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\history_kl_points.go": {
+    "mtime": 1777426614.0029957,
+    "hash": "57a11dd5d166501ada5b6f1404b3d611"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\iterator.go": {
+    "mtime": 1777364093.237379,
+    "hash": "c8bac8ccd5e5d540b82cb73f282acaa7"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\iterator_test.go": {
+    "mtime": 1777426614.0040011,
+    "hash": "b6cc9af5c2759e1a6f69b0f582ee768b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\market.go": {
+    "mtime": 1777252300.0966487,
+    "hash": "315a703258825921e1423e24bc49e064"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\market_test.go": {
+    "mtime": 1776316146.2440746,
+    "hash": "367d1742bc40c0a7bc25d6395e27eac8"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\quote.go": {
+    "mtime": 1777856716.0271337,
+    "hash": "d43b74a7d65e5c061050e0dc0e27879f"
+  },
+  "D:\\github\\futuapi4go\\pkg\\qot\\quote_test.go": {
+    "mtime": 1776931120.9748192,
+    "hash": "02e5efd85bee553c1b74997ca7a04568"
+  },
+  "D:\\github\\futuapi4go\\pkg\\ratelimit\\ratelimit.go": {
+    "mtime": 1777373596.6782696,
+    "hash": "34ae7e99e94bc90a8d6934958447c55c"
+  },
+  "D:\\github\\futuapi4go\\pkg\\retry\\retry.go": {
+    "mtime": 1777373562.6881719,
+    "hash": "6fe1f61dc3284898fcab63d8d3862178"
+  },
+  "D:\\github\\futuapi4go\\pkg\\sys\\system.go": {
+    "mtime": 1777856716.0281343,
+    "hash": "5ce0eeaf8cb70f5bc1dd70d9df6bd79c"
+  },
+  "D:\\github\\futuapi4go\\pkg\\sys\\system_test.go": {
+    "mtime": 1776930644.0205212,
+    "hash": "53be8b9205055455aab57f9825443ce8"
+  },
+  "D:\\github\\futuapi4go\\pkg\\tracing\\tracing.go": {
+    "mtime": 1777374406.10096,
+    "hash": "9ac0598661f3dfe84f8e1778b4158d0e"
+  },
+  "D:\\github\\futuapi4go\\pkg\\trd\\builder.go": {
+    "mtime": 1777363906.1658962,
+    "hash": "fd441ac4e0d95a14e29ff70516b44f72"
+  },
+  "D:\\github\\futuapi4go\\pkg\\trd\\builder_test.go": {
+    "mtime": 1777344782.9996853,
+    "hash": "b2c74b3b0a41ede06026853e64af73ed"
+  },
+  "D:\\github\\futuapi4go\\pkg\\trd\\convenience.go": {
+    "mtime": 1777364025.7869048,
+    "hash": "1211ca1edd0008d6c0fe02e00414b4ef"
+  },
+  "D:\\github\\futuapi4go\\pkg\\trd\\trade.go": {
+    "mtime": 1777343984.4089208,
+    "hash": "5e2ad222142d7a16948cb67ca6240984"
+  },
+  "D:\\github\\futuapi4go\\pkg\\trd\\trade_test.go": {
+    "mtime": 1777252300.1006486,
+    "hash": "456a414f7ff482c22935f616c000a0a5"
+  },
+  "D:\\github\\futuapi4go\\pkg\\util\\code.go": {
+    "mtime": 1777252300.1006486,
+    "hash": "3c71bf28fe01c0672342258e69703b15"
+  },
+  "D:\\github\\futuapi4go\\pkg\\util\\code_advanced_test.go": {
+    "mtime": 1777252300.10165,
+    "hash": "29b4f450132bb3a3d95132ed4ec6df5b"
+  },
+  "D:\\github\\futuapi4go\\pkg\\util\\code_test.go": {
+    "mtime": 1777252300.10165,
+    "hash": "ac47d70773d60c658282703b5e27b59e"
+  },
+  "D:\\github\\futuapi4go\\scripts\\add-conn-check.ps1": {
+    "mtime": 1775635162.316811,
+    "hash": "2f222b60ae0c470e1a12ef921c5a325a"
+  },
+  "D:\\github\\futuapi4go\\scripts\\organize-protos.ps1": {
+    "mtime": 1775635162.3176973,
+    "hash": "9d16fd4f1bee0583233b5d75cb762c79"
+  },
+  "D:\\github\\futuapi4go\\scripts\\regen-all-protos.ps1": {
+    "mtime": 1775796788.96531,
+    "hash": "c87a03c5d6ef04effb47f552fe346538"
+  },
+  "D:\\github\\futuapi4go\\test\\benchmark\\benchmark_test.go": {
+    "mtime": 1777252300.1046503,
+    "hash": "e5cccfb360e5acaf65d1966f0a104a55"
+  },
+  "D:\\github\\futuapi4go\\test\\benchmark\\pool_benchmark_test.go": {
+    "mtime": 1776822070.246394,
+    "hash": "51e294d8597a48def1e3223a4671f870"
+  },
+  "D:\\github\\futuapi4go\\test\\examples\\examples_test.go": {
+    "mtime": 1777252300.1046503,
+    "hash": "f4bc9fbba28775b859ccb893ced5b704"
+  },
+  "D:\\github\\futuapi4go\\test\\fixtures\\hsi_fixtures.go": {
+    "mtime": 1777252300.1056485,
+    "hash": "d36cbf471926c6630ca56111d0612a14"
+  },
+  "D:\\github\\futuapi4go\\test\\integration\\integration_hsi_test.go": {
+    "mtime": 1777252300.1056485,
+    "hash": "85564153ccb096979c1962b03b11b398"
+  },
+  "D:\\github\\futuapi4go\\test\\integration\\integration_test.go": {
+    "mtime": 1777252300.1056485,
+    "hash": "2f3386298eb0545c898acba6766558e4"
+  },
+  "D:\\github\\futuapi4go\\test\\qot_api\\qot_test.go": {
+    "mtime": 1777252300.1066487,
+    "hash": "4c35eeca03b8a3f7a6fe961439f6d35c"
+  },
+  "D:\\github\\futuapi4go\\test\\trd_api\\trd_test.go": {
+    "mtime": 1777252300.1076488,
+    "hash": "fa8cad20213cc2a376de6c371df3f6ca"
+  },
+  "D:\\github\\futuapi4go\\test\\util\\mock_server.go": {
+    "mtime": 1776316146.2511435,
+    "hash": "e7c472c95909ac338bc0f2695a3595ac"
+  },
+  "D:\\github\\futuapi4go\\test\\util\\mock_server_initconnect_test.go": {
+    "mtime": 1776316146.2511435,
+    "hash": "b9d653f29cb1a827bc554b0f1d6c8c6e"
+  },
+  "D:\\github\\futuapi4go\\test\\util\\mock_server_test.go": {
+    "mtime": 1776316146.2521431,
+    "hash": "057e1daf243095f0b747caae21234514"
+  },
+  "D:\\github\\futuapi4go\\AGENTS.md": {
+    "mtime": 1777856716.0201337,
+    "hash": "e2bdea657f618d8a631fcc9dbebc7cfc"
+  },
+  "D:\\github\\futuapi4go\\ARCHITECTURE.md": {
+    "mtime": 1778128216.1768844,
+    "hash": "fa4f118c479cacb1105810aa3730549a"
+  },
+  "D:\\github\\futuapi4go\\CODE_OF_CONDUCT.md": {
+    "mtime": 1776008497.749473,
+    "hash": "98fece9ea2cb5e02694c7e135e4b995e"
+  },
+  "D:\\github\\futuapi4go\\CONTRIBUTING.md": {
+    "mtime": 1777856716.0211341,
+    "hash": "a3bcc914c37d3521c7d01a21c4f78ff1"
+  },
+  "D:\\github\\futuapi4go\\DESIGN.md": {
+    "mtime": 1777856716.0221343,
+    "hash": "b0b571d967d1c7fdbfae191cf245fcdc"
+  },
+  "D:\\github\\futuapi4go\\ENHANCEMENT_PLAN.md": {
+    "mtime": 1777856716.0221343,
+    "hash": "8e4c2c833d1df75e17123ebca1908d24"
+  },
+  "D:\\github\\futuapi4go\\README.md": {
+    "mtime": 1777856716.0231342,
+    "hash": "4782bf2760cd6c6b3709601b9553fe8c"
+  },
+  "D:\\github\\futuapi4go\\REQUIREMENT.md": {
+    "mtime": 1777856716.0241342,
+    "hash": "4b4a6bd9e63ffc0bea7f4156d1118d78"
+  },
+  "D:\\github\\futuapi4go\\SECURITY.md": {
+    "mtime": 1777856716.0241342,
+    "hash": "73fceb105fcbd9ca262db0eb49756159"
+  },
+  "D:\\github\\futuapi4go\\TASK.md": {
+    "mtime": 1777856716.0251338,
+    "hash": "e555efa5d3d5dc21231642cc24ba471f"
+  },
+  "D:\\github\\futuapi4go\\docs\\CHANGELOG.md": {
+    "mtime": 1778129774.4718108,
+    "hash": "6ad5d9cf755a077eaaa9efc361131803"
+  },
+  "D:\\github\\futuapi4go\\docs\\FUTU_API_REFERENCE.md": {
+    "mtime": 1778129979.3010974,
+    "hash": "5bc86d3b24a4ffbd3298c7b8b6cfb5a3"
+  }
+}
