@@ -50,3 +50,4 @@ temp/
 # Protobuf tools (downloaded locally, not committed)
 download/
 .gitnexus
+futuapi4go
