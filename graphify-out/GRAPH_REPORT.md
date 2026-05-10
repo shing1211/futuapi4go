@@ -1,16 +1,16 @@
-# Graph Report - futuapi4go  (2026-05-07)
+# Graph Report - futuapi4go  (2026-05-08)
 
 ## Corpus Check
-- 169 files · ~223,602 words
+- 171 files · ~225,960 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 7707 nodes · 9118 edges · 469 communities (201 shown, 268 thin omitted)
+- 7798 nodes · 9208 edges · 476 communities (207 shown, 269 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 332 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d1643cfd`
+- Built from commit: `22801513`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -75,8 +75,8 @@
 - [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
 - [[_COMMUNITY_Community 60|Community 60]]
-- [[_COMMUNITY_Community 61|Community 61]]
 - [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
 - [[_COMMUNITY_Community 64|Community 64]]
 - [[_COMMUNITY_Community 65|Community 65]]
 - [[_COMMUNITY_Community 66|Community 66]]
@@ -141,7 +141,7 @@
 - [[_COMMUNITY_Community 125|Community 125]]
 - [[_COMMUNITY_Community 126|Community 126]]
 - [[_COMMUNITY_Community 127|Community 127]]
-- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
 - [[_COMMUNITY_Community 130|Community 130]]
 - [[_COMMUNITY_Community 131|Community 131]]
 - [[_COMMUNITY_Community 132|Community 132]]
@@ -227,7 +227,6 @@
 - [[_COMMUNITY_Community 212|Community 212]]
 - [[_COMMUNITY_Community 213|Community 213]]
 - [[_COMMUNITY_Community 214|Community 214]]
-- [[_COMMUNITY_Community 215|Community 215]]
 - [[_COMMUNITY_Community 216|Community 216]]
 - [[_COMMUNITY_Community 217|Community 217]]
 - [[_COMMUNITY_Community 218|Community 218]]
@@ -240,6 +239,7 @@
 - [[_COMMUNITY_Community 225|Community 225]]
 - [[_COMMUNITY_Community 226|Community 226]]
 - [[_COMMUNITY_Community 227|Community 227]]
+- [[_COMMUNITY_Community 228|Community 228]]
 - [[_COMMUNITY_Community 229|Community 229]]
 - [[_COMMUNITY_Community 230|Community 230]]
 - [[_COMMUNITY_Community 231|Community 231]]
@@ -404,9 +404,9 @@
 - [[_COMMUNITY_Community 390|Community 390]]
 - [[_COMMUNITY_Community 391|Community 391]]
 - [[_COMMUNITY_Community 392|Community 392]]
+- [[_COMMUNITY_Community 393|Community 393]]
 - [[_COMMUNITY_Community 394|Community 394]]
 - [[_COMMUNITY_Community 395|Community 395]]
-- [[_COMMUNITY_Community 396|Community 396]]
 - [[_COMMUNITY_Community 397|Community 397]]
 - [[_COMMUNITY_Community 398|Community 398]]
 - [[_COMMUNITY_Community 399|Community 399]]
@@ -460,6 +460,7 @@
 - [[_COMMUNITY_Community 447|Community 447]]
 - [[_COMMUNITY_Community 448|Community 448]]
 - [[_COMMUNITY_Community 449|Community 449]]
+- [[_COMMUNITY_Community 450|Community 450]]
 - [[_COMMUNITY_Community 451|Community 451]]
 - [[_COMMUNITY_Community 452|Community 452]]
 - [[_COMMUNITY_Community 453|Community 453]]
@@ -471,32 +472,38 @@
 - [[_COMMUNITY_Community 459|Community 459]]
 - [[_COMMUNITY_Community 460|Community 460]]
 - [[_COMMUNITY_Community 461|Community 461]]
+- [[_COMMUNITY_Community 462|Community 462]]
+- [[_COMMUNITY_Community 463|Community 463]]
+- [[_COMMUNITY_Community 464|Community 464]]
+- [[_COMMUNITY_Community 465|Community 465]]
+- [[_COMMUNITY_Community 466|Community 466]]
+- [[_COMMUNITY_Community 467|Community 467]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `client` - 200 edges
 2. `qot` - 127 edges
-3. `Client` - 59 edges
-4. `file_Qot_Common_proto_rawDescGZIP()` - 59 edges
+3. `file_Qot_Common_proto_rawDescGZIP()` - 59 edges
+4. `Client` - 59 edges
 5. `futuapi` - 58 edges
 6. `trd` - 58 edges
 7. `WarrantData` - 51 edges
 8. `SnapshotBasicData` - 48 edges
 9. `C2S` - 40 edges
-10. `S2C` - 39 edges
+10. `Funds` - 39 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `StockFilter()` --calls--> `StockField`  [INFERRED]
-  client/client.go → pkg/pb/qotstockfilter/Qot_StockFilter.pb.go
 - `ParsePushQuote()` --calls--> `ParseUpdateBasicQot()`  [INFERRED]
   client/client.go → pkg/push/qot_push.go
 - `ParsePushKLine()` --calls--> `ParseUpdateKL()`  [INFERRED]
   client/client.go → pkg/push/qot_push.go
-- `WithAPISetTimeout()` --calls--> `WithAPITimeout()`  [INFERRED]
-  client/client.go → internal/client/client.go
+- `StockFilter()` --calls--> `StockField`  [INFERRED]
+  client/client.go → pkg/pb/qotstockfilter/Qot_StockFilter.pb.go
 - `TestTradingWorkflow_Complete()` --calls--> `UnlockTrade()`  [INFERRED]
   test/trd_api/trd_test.go → pkg/trd/trade.go
+- `WithAPISetTimeout()` --calls--> `WithAPITimeout()`  [INFERRED]
+  client/client.go → internal/client/client.go
 
-## Communities (469 total, 268 thin omitted)
+## Communities (476 total, 269 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.01
@@ -512,19 +519,19 @@ Nodes (91): BasicIpoData, BasicQot, Broker, CapitalDistribution, CapitalFlowItem
 
 ### Community 3 - "Community 3"
 Cohesion: 0.02
-Nodes (71): AccCashInfo, AccMarketInfo, Account, AccTradingInfo, Broker, BrokerItem, CapitalDistribution, CapitalFlow (+63 more)
+Nodes (66): AccCashInfo, AccMarketInfo, Account, AccTradingInfo, Broker, BrokerItem, CapitalDistribution, CapitalFlow (+58 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.07
 Nodes (76): BenchmarkConcurrentRequests_Mock(), BenchmarkGetBasicQot_Mock(), BenchmarkGetKL_Mock(), BenchmarkGetOrderBook_Mock(), BenchmarkHSIFixtures_KLine(), BenchmarkHSIFixtures_OrderBook(), BenchmarkHSIFixtures_Quote(), BenchmarkMultipleSecurities_Mock() (+68 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.03
-Nodes (58): GetAccList, GetFlowSummary, GetFunds, GetHistoryOrderFillList, GetHistoryOrderList, GetMarginRatio, GetMaxTrdQtys, GetOrderFee (+50 more)
+Cohesion: 0.05
+Nodes (36): BenchmarkClientPoolGet_Concurrent(), BenchmarkClientPoolGet_Pooled(), BenchmarkClientPoolReuse(), BenchmarkPoolGetPut(), TestNewOptionsDefaults(), TestNewWithOptions(), TestWithContext(), ClientPool (+28 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.07
-Nodes (33): BenchmarkClientPoolGet_Concurrent(), BenchmarkClientPoolGet_Pooled(), BenchmarkClientPoolReuse(), BenchmarkPoolGetPut(), ClientPool, DefaultPoolConfig(), NewClientPool(), TestNewClientPool() (+25 more)
+Cohesion: 0.03
+Nodes (58): GetAccList, GetFlowSummary, GetFunds, GetHistoryOrderFillList, GetHistoryOrderList, GetMarginRatio, GetMaxTrdQtys, GetOrderFee (+50 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.04
@@ -542,7 +549,7 @@ Nodes (9): C2S, GroupData, GroupType, file_Qot_GetUserSecurityGroup_proto_init()
 Cohesion: 0.04
 Nodes (48): AccAuthenStatus, AccMarket, AccounterType, AccRight, AccTradingMarket, AcGrantRights, AcUpdateFields, CapitalFlowPeriodType (+40 more)
 
-### Community 13 - "Community 13"
+### Community 12 - "Community 12"
 Cohesion: 0.05
 Nodes (8): C2S, file_Qot_SetPriceReminder_proto_init(), file_Qot_SetPriceReminder_proto_rawDescGZIP(), init(), Request, Response, S2C, SetPriceReminderOp
 
@@ -552,11 +559,11 @@ Nodes (27): Breaker, TestBreakerBlocksInOpenState(), TestBreakerClosesOnSuccessI
 
 ### Community 15 - "Community 15"
 Cohesion: 0.05
-Nodes (6): AssetClass, Issuer, KLFields, PushDataType, TickerType, TradeDateMarket
+Nodes (6): OptionType, PriceReminderMarketStatus, PushDataType, QotRight, RehabType, TradeDateType
 
-### Community 17 - "Community 17"
+### Community 16 - "Community 16"
 Cohesion: 0.05
-Nodes (7): C2S, file_Qot_RequestHistoryKL_proto_init(), file_Qot_RequestHistoryKL_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (8): C2S, file_Qot_RequestTradeDate_proto_init(), file_Qot_RequestTradeDate_proto_rawDescGZIP(), init(), Request, Response, S2C, TradeDate
 
 ### Community 18 - "Community 18"
 Cohesion: 0.05
@@ -564,15 +571,15 @@ Nodes (8): C2S, DetailItem, file_Qot_RequestHistoryKLQuota_proto_init(), file_Qo
 
 ### Community 19 - "Community 19"
 Cohesion: 0.05
-Nodes (8): C2S, file_Qot_RequestTradeDate_proto_init(), file_Qot_RequestTradeDate_proto_rawDescGZIP(), init(), Request, Response, S2C, TradeDate
+Nodes (7): C2S, file_Qot_RequestHistoryKL_proto_init(), file_Qot_RequestHistoryKL_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 20 - "Community 20"
 Cohesion: 0.05
-Nodes (7): C2S, file_InitConnect_proto_init(), file_InitConnect_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (8): C2S, OptionExpirationDate, file_Qot_GetOptionExpirationDate_proto_init(), file_Qot_GetOptionExpirationDate_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 21 - "Community 21"
 Cohesion: 0.05
-Nodes (8): C2S, OptionExpirationDate, file_Qot_GetOptionExpirationDate_proto_init(), file_Qot_GetOptionExpirationDate_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (7): C2S, file_InitConnect_proto_init(), file_InitConnect_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 22 - "Community 22"
 Cohesion: 0.05
@@ -588,11 +595,11 @@ Nodes (40): Acc, AccCashInfo, AccMarketInfo, Funds, GetAccListResponse, GetFlowS
 
 ### Community 25 - "Community 25"
 Cohesion: 0.05
-Nodes (7): C2S, file_Qot_GetCapitalDistribution_proto_init(), file_Qot_GetCapitalDistribution_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (8): C2S, ModifyUserSecurityOp, file_Qot_ModifyUserSecurity_proto_init(), file_Qot_ModifyUserSecurity_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 26 - "Community 26"
 Cohesion: 0.05
-Nodes (7): C2S, file_Qot_GetHistoryKL_proto_init(), file_Qot_GetHistoryKL_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (7): C2S, file_Qot_GetCapitalDistribution_proto_init(), file_Qot_GetCapitalDistribution_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 27 - "Community 27"
 Cohesion: 0.05
@@ -600,79 +607,83 @@ Nodes (8): C2S, MarketInfo, file_Qot_GetMarketState_proto_init(), file_Qot_GetMa
 
 ### Community 28 - "Community 28"
 Cohesion: 0.05
-Nodes (8): C2S, file_Qot_GetOwnerPlate_proto_init(), file_Qot_GetOwnerPlate_proto_rawDescGZIP(), init(), Request, Response, S2C, SecurityOwnerPlate
+Nodes (8): C2S, file_Qot_GetReference_proto_init(), file_Qot_GetReference_proto_rawDescGZIP(), init(), ReferenceType, Request, Response, S2C
 
 ### Community 29 - "Community 29"
 Cohesion: 0.05
-Nodes (8): C2S, file_Qot_GetReference_proto_init(), file_Qot_GetReference_proto_rawDescGZIP(), init(), ReferenceType, Request, Response, S2C
+Nodes (8): C2S, file_Qot_GetOwnerPlate_proto_init(), file_Qot_GetOwnerPlate_proto_rawDescGZIP(), init(), Request, Response, S2C, SecurityOwnerPlate
 
 ### Community 30 - "Community 30"
 Cohesion: 0.05
-Nodes (8): C2S, ModifyUserSecurityOp, file_Qot_ModifyUserSecurity_proto_init(), file_Qot_ModifyUserSecurity_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (7): C2S, file_Qot_GetHistoryKL_proto_init(), file_Qot_GetHistoryKL_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 31 - "Community 31"
 Cohesion: 0.05
-Nodes (7): C2S, file_Qot_GetOrderBook_proto_init(), file_Qot_GetOrderBook_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (43): AES Encryption, Basic Functions, Basic Protocols, code:protobuf (message C2S), code:protobuf (message ProgramStatus), code:c (struct APIProtoHeader), code:protobuf (message C2S), code:protobuf (message S2C) (+35 more)
 
 ### Community 32 - "Community 32"
 Cohesion: 0.05
-Nodes (8): C2S, file_Qot_GetRehab_proto_init(), file_Qot_GetRehab_proto_rawDescGZIP(), init(), Request, Response, S2C, SecurityRehab
+Nodes (7): C2S, file_Qot_GetOrderBook_proto_init(), file_Qot_GetOrderBook_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 33 - "Community 33"
 Cohesion: 0.05
-Nodes (7): C2S, file_Qot_Sub_proto_init(), file_Qot_Sub_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (8): C2S, file_Qot_GetRehab_proto_init(), file_Qot_GetRehab_proto_rawDescGZIP(), init(), Request, Response, S2C, SecurityRehab
 
 ### Community 34 - "Community 34"
 Cohesion: 0.05
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetPositionList_proto_init(), file_Trd_GetPositionList_proto_rawDescGZIP(), init()
+Nodes (7): C2S, file_Qot_Sub_proto_init(), file_Qot_Sub_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 35 - "Community 35"
-Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetKL_proto_init(), file_Qot_GetKL_proto_rawDescGZIP(), init(), Request, Response, S2C
+Cohesion: 0.05
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetPositionList_proto_init(), file_Trd_GetPositionList_proto_rawDescGZIP(), init()
 
 ### Community 36 - "Community 36"
 Cohesion: 0.06
-Nodes (5): SecurityFirm, SimAccType, TrdAccStatus, TrdEnv, TrdMarket
+Nodes (7): C2S, file_Qot_GetKL_proto_init(), file_Qot_GetKL_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 37 - "Community 37"
-Cohesion: 0.07
-Nodes (37): ParsePushBroker(), ParsePushOrderBook(), ParsePushPriceReminder(), ParsePushRT(), ParsePushTicker(), TestParseSystemNotifyInvalidData(), TestParseSystemNotifyValidData(), TestParseUpdateBasicQotInvalidData() (+29 more)
+Cohesion: 0.06
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetFunds_proto_init(), file_Trd_GetFunds_proto_rawDescGZIP(), init()
+
+### Community 38 - "Community 38"
+Cohesion: 0.06
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetOrderList_proto_init(), file_Trd_GetOrderList_proto_rawDescGZIP(), init()
 
 ### Community 39 - "Community 39"
 Cohesion: 0.06
 Nodes (7): C2S, file_Qot_GetHoldingChangeList_proto_init(), file_Qot_GetHoldingChangeList_proto_rawDescGZIP(), init(), Request, Response, S2C
 
-### Community 41 - "Community 41"
-Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetFunds_proto_init(), file_Trd_GetFunds_proto_rawDescGZIP(), init()
-
-### Community 42 - "Community 42"
-Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetOrderList_proto_init(), file_Trd_GetOrderList_proto_rawDescGZIP(), init()
-
-### Community 43 - "Community 43"
+### Community 40 - "Community 40"
 Cohesion: 0.06
 Nodes (7): C2S, Request, Response, S2C, file_Trd_ReconfirmOrder_proto_init(), file_Trd_ReconfirmOrder_proto_rawDescGZIP(), init()
 
-### Community 45 - "Community 45"
-Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetBroker_proto_init(), file_Qot_GetBroker_proto_rawDescGZIP(), init(), Request, Response, S2C
+### Community 42 - "Community 42"
+Cohesion: 0.07
+Nodes (37): ParsePushBroker(), ParsePushOrderBook(), ParsePushPriceReminder(), ParsePushRT(), ParsePushTicker(), TestParseSystemNotifyInvalidData(), TestParseSystemNotifyValidData(), TestParseUpdateBasicQotInvalidData() (+29 more)
 
-### Community 46 - "Community 46"
-Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetTicker_proto_init(), file_Qot_GetTicker_proto_rawDescGZIP(), init(), Request, Response, S2C
-
-### Community 47 - "Community 47"
-Cohesion: 0.06
-Nodes (7): C2S, file_Qot_RegQotPush_proto_init(), file_Qot_RegQotPush_proto_rawDescGZIP(), init(), Request, Response, S2C
-
-### Community 49 - "Community 49"
+### Community 43 - "Community 43"
 Cohesion: 0.06
 Nodes (7): C2S, Request, Response, S2C, file_Trd_GetHistoryOrderList_proto_init(), file_Trd_GetHistoryOrderList_proto_rawDescGZIP(), init()
 
-### Community 50 - "Community 50"
+### Community 44 - "Community 44"
 Cohesion: 0.06
 Nodes (7): C2S, Request, Response, S2C, file_Trd_GetOrderFillList_proto_init(), file_Trd_GetOrderFillList_proto_rawDescGZIP(), init()
+
+### Community 45 - "Community 45"
+Cohesion: 0.06
+Nodes (7): C2S, file_Qot_GetTicker_proto_init(), file_Qot_GetTicker_proto_rawDescGZIP(), init(), Request, Response, S2C
+
+### Community 46 - "Community 46"
+Cohesion: 0.06
+Nodes (7): C2S, file_Qot_RegQotPush_proto_init(), file_Qot_RegQotPush_proto_rawDescGZIP(), init(), Request, Response, S2C
+
+### Community 47 - "Community 47"
+Cohesion: 0.06
+Nodes (7): C2S, file_Qot_GetBroker_proto_init(), file_Qot_GetBroker_proto_rawDescGZIP(), init(), Request, Response, S2C
+
+### Community 50 - "Community 50"
+Cohesion: 0.06
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetOrderFee_proto_init(), file_Trd_GetOrderFee_proto_rawDescGZIP(), init()
 
 ### Community 51 - "Community 51"
 Cohesion: 0.06
@@ -680,11 +691,11 @@ Nodes (7): C2S, file_Qot_GetPlateSecurity_proto_init(), file_Qot_GetPlateSecurit
 
 ### Community 52 - "Community 52"
 Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetRT_proto_init(), file_Qot_GetRT_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (7): C2S, Request, Response, S2C, file_TestCmd_proto_init(), file_TestCmd_proto_rawDescGZIP(), init()
 
 ### Community 53 - "Community 53"
 Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetStaticInfo_proto_init(), file_Qot_GetStaticInfo_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (7): C2S, file_Qot_GetRT_proto_init(), file_Qot_GetRT_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 54 - "Community 54"
 Cohesion: 0.06
@@ -692,139 +703,135 @@ Nodes (7): C2S, file_Qot_GetSubInfo_proto_init(), file_Qot_GetSubInfo_proto_rawD
 
 ### Community 55 - "Community 55"
 Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_TestCmd_proto_init(), file_TestCmd_proto_rawDescGZIP(), init()
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetHistoryOrderFillList_proto_init(), file_Trd_GetHistoryOrderFillList_proto_rawDescGZIP(), init()
 
 ### Community 56 - "Community 56"
 Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetAccList_proto_init(), file_Trd_GetAccList_proto_rawDescGZIP(), init()
+Nodes (7): C2S, file_Qot_GetStaticInfo_proto_init(), file_Qot_GetStaticInfo_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 57 - "Community 57"
 Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetHistoryOrderFillList_proto_init(), file_Trd_GetHistoryOrderFillList_proto_rawDescGZIP(), init()
+Nodes (7): C2S, Request, Response, S2C, file_Trd_GetAccList_proto_init(), file_Trd_GetAccList_proto_rawDescGZIP(), init()
 
 ### Community 58 - "Community 58"
 Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_GetOrderFee_proto_init(), file_Trd_GetOrderFee_proto_rawDescGZIP(), init()
+Nodes (7): C2S, file_Qot_GetPlateSet_proto_init(), file_Qot_GetPlateSet_proto_rawDescGZIP(), init(), Request, Response, S2C
 
 ### Community 59 - "Community 59"
 Cohesion: 0.06
-Nodes (19): GetCapitalFlow(), GetKLines(), GetOptionChain(), GetOrderBook(), GetPriceReminder(), GetQuote(), GetRT(), GetStaticInfo() (+11 more)
+Nodes (7): C2S, Request, Response, S2C, file_Trd_UnlockTrade_proto_init(), file_Trd_UnlockTrade_proto_rawDescGZIP(), init()
 
 ### Community 60 - "Community 60"
-Cohesion: 0.09
-Nodes (29): ErrorCategory, ErrorCode, CategoryOf(), getFutuError(), IsAccountError(), IsAPIError(), IsConnectionError(), IsDisconnected() (+21 more)
-
-### Community 61 - "Community 61"
 Cohesion: 0.06
-Nodes (7): C2S, file_Qot_GetPlateSet_proto_init(), file_Qot_GetPlateSet_proto_rawDescGZIP(), init(), Request, Response, S2C
+Nodes (19): GetCapitalFlow(), GetKLines(), GetOptionChain(), GetOrderBook(), GetPriceReminder(), GetQuote(), GetRT(), GetStaticInfo() (+11 more)
 
 ### Community 62 - "Community 62"
 Cohesion: 0.06
-Nodes (7): C2S, Request, Response, S2C, file_Trd_UnlockTrade_proto_init(), file_Trd_UnlockTrade_proto_rawDescGZIP(), init()
-
-### Community 64 - "Community 64"
-Cohesion: 0.06
 Nodes (35): A-1: Execution Algorithm Framework, A-2: Smart Order Router (SOR), B-1: Risk Calculation Engine, B-2: Pre-Trade Risk Checks, C-1: Strategy Plug-in Architecture, C-2: Backtesting Connector, C-3: Alert & Notification System, code:go (type AlgoExecutor interface {) (+27 more)
 
-### Community 65 - "Community 65"
+### Community 63 - "Community 63"
 Cohesion: 0.07
 Nodes (7): C2S, file_KeepAlive_proto_init(), file_KeepAlive_proto_rawDescGZIP(), init(), Request, Response, S2C
 
-### Community 66 - "Community 66"
+### Community 64 - "Community 64"
 Cohesion: 0.07
 Nodes (7): C2S, file_Qot_GetBasicQot_proto_init(), file_Qot_GetBasicQot_proto_rawDescGZIP(), init(), Request, Response, S2C
 
-### Community 67 - "Community 67"
-Cohesion: 0.07
-Nodes (7): C2S, file_Qot_GetUserSecurity_proto_init(), file_Qot_GetUserSecurity_proto_rawDescGZIP(), init(), Request, Response, S2C
-
-### Community 68 - "Community 68"
+### Community 65 - "Community 65"
 Cohesion: 0.07
 Nodes (7): C2S, file_Qot_RequestRehab_proto_init(), file_Qot_RequestRehab_proto_rawDescGZIP(), init(), Request, Response, S2C
 
-### Community 69 - "Community 69"
+### Community 66 - "Community 66"
+Cohesion: 0.07
+Nodes (7): C2S, file_Qot_GetUserSecurity_proto_init(), file_Qot_GetUserSecurity_proto_rawDescGZIP(), init(), Request, Response, S2C
+
+### Community 67 - "Community 67"
 Cohesion: 0.07
 Nodes (7): C2S, Request, Response, S2C, file_UsedQuota_proto_init(), file_UsedQuota_proto_rawDescGZIP(), init()
 
-### Community 70 - "Community 70"
+### Community 68 - "Community 68"
 Cohesion: 0.08
 Nodes (18): OrderBuilder, TestDetectMarketAdvanced(), detectCodePattern(), DetectMarket(), detectMarketPrefix(), DetectTradingMarkets(), FormatCode(), IsMarketValid() (+10 more)
 
-### Community 71 - "Community 71"
+### Community 69 - "Community 69"
 Cohesion: 0.07
 Nodes (7): C2S, Request, Response, S2C, file_Trd_SubAccPush_proto_init(), file_Trd_SubAccPush_proto_rawDescGZIP(), init()
 
-### Community 72 - "Community 72"
+### Community 70 - "Community 70"
 Cohesion: 0.06
 Nodes (33): Account Types, API Categories, API Frequency Limits, Capital Flow, code:python (from futu import OpenQuoteContext, OpenSecTradeContext), Common Error Codes, Configuration, Connection (+25 more)
 
-### Community 74 - "Community 74"
-Cohesion: 0.08
-Nodes (4): AccumulateField, RelativePosition, SortDir, StockField
+### Community 71 - "Community 71"
+Cohesion: 0.06
+Nodes (33): Account Types, API Categories, API Frequency Limits, Capital Flow, code:python (from futu import OpenQuoteContext, OpenSecTradeContext), Common Error Codes, Configuration, Connection (+25 more)
 
-### Community 75 - "Community 75"
+### Community 73 - "Community 73"
 Cohesion: 0.06
 Nodes (32): GetBroker(), GetCapitalDistribution(), GetCapitalFlow(), GetCodeChange(), GetFutureInfo(), GetHistoryKL(), GetHoldingChangeList(), GetIpoList() (+24 more)
+
+### Community 74 - "Community 74"
+Cohesion: 0.08
+Nodes (4): FinancialField, FinancialQuarter, RelativePosition, StockField
+
+### Community 75 - "Community 75"
+Cohesion: 0.08
+Nodes (4): SimAccType, TrdAccStatus, TrdAssetCategory, TrdSecMarket
 
 ### Community 77 - "Community 77"
 Cohesion: 0.07
 Nodes (5): file_Qot_UpdatePriceReminder_proto_init(), file_Qot_UpdatePriceReminder_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 78 - "Community 78"
+### Community 82 - "Community 82"
 Cohesion: 0.07
 Nodes (17): CancelAllOrder(), GetAccountInfo(), GetAccountList(), GetAccTradingInfo(), GetFlowSummary(), GetFunds(), GetHistoryOrderFillList(), GetMarginRatio() (+9 more)
 
-### Community 82 - "Community 82"
+### Community 83 - "Community 83"
+Cohesion: 0.07
+Nodes (28): Adding a New API, Always Do, Architecture, Build Failures After Changes, Build & Verify Commands, CLI, code:block1 (Application), code:bash (# Basic build (always run first)) (+20 more)
+
+### Community 84 - "Community 84"
 Cohesion: 0.09
 Nodes (16): ConcurrentDownloader, ConcurrentOption, ConcurrentResult, Downloader, DownloadProgress, DownloadStats, NewDownloader(), WithMaxRetries() (+8 more)
 
-### Community 83 - "Community 83"
+### Community 85 - "Community 85"
 Cohesion: 0.08
 Nodes (5): file_Qot_UpdateOrderBook_proto_init(), file_Qot_UpdateOrderBook_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 84 - "Community 84"
+### Community 86 - "Community 86"
 Cohesion: 0.07
 Nodes (27): Bug Fixes Backlog, Completed Tasks, Contribution Guidelines, Documentation Tasks, futuapi4go Task List, Future, High Priority, Immediate (+19 more)
 
-### Community 85 - "Community 85"
+### Community 87 - "Community 87"
 Cohesion: 0.07
 Nodes (28): AsFutuError, CategoryOf, CodeString, Error, FullMessage, IsAPIError, IsAccountError, IsConnectionError (+20 more)
 
-### Community 87 - "Community 87"
-Cohesion: 0.08
-Nodes (26): Add, DownloadKLine, DownloadMultiple, DownloadWithStats, NewConcurrentDownloader, NewDownloader, NewProgressTracker, NewStreamer (+18 more)
-
-### Community 88 - "Community 88"
-Cohesion: 0.13
-Nodes (10): Level, NewSlogLogger(), NewSlogLoggerDefault(), WithSlogDefault(), WithSlogLevel(), WithSlogWriter(), SlogAttributes, SlogHandler (+2 more)
-
 ### Community 89 - "Community 89"
-Cohesion: 0.09
-Nodes (5): file_Qot_UpdateKL_proto_init(), file_Qot_UpdateKL_proto_rawDescGZIP(), init(), Response, S2C
+Cohesion: 0.1
+Nodes (7): NewMockServer(), readFull(), readUint32LE(), writeUint32LE(), MockHandler, MockRequest, MockServer
 
 ### Community 90 - "Community 90"
 Cohesion: 0.08
 Nodes (24): 1. Public API (client/client.go), 2. Market Data (pkg/qot) - 127 edges, 3. Trading (pkg/trd) - 58 edges, 4. System APIs (pkg/sys), 5. Connection Management (internal/client), 6. Infrastructure, 7. Data Types & Utilities, Adding New APIs (+16 more)
 
 ### Community 91 - "Community 91"
-Cohesion: 0.1
-Nodes (13): newBufferPool(), New(), NewOptions(), NewWithOptions(), TestNewOptionsDefaults(), WithDialTimeout(), WithKeepAliveInterval(), WithLogLevel() (+5 more)
+Cohesion: 0.08
+Nodes (26): Add, DownloadKLine, DownloadMultiple, DownloadWithStats, NewConcurrentDownloader, NewDownloader, NewProgressTracker, NewStreamer (+18 more)
 
 ### Community 92 - "Community 92"
-Cohesion: 0.11
-Nodes (6): NewMockServer(), readUint32LE(), writeUint32LE(), MockHandler, MockRequest, MockServer
-
-### Community 95 - "Community 95"
 Cohesion: 0.09
-Nodes (5): file_Qot_UpdateBroker_proto_init(), file_Qot_UpdateBroker_proto_rawDescGZIP(), init(), Response, S2C
+Nodes (5): file_Qot_UpdateKL_proto_init(), file_Qot_UpdateKL_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 97 - "Community 97"
+### Community 93 - "Community 93"
+Cohesion: 0.13
+Nodes (10): Level, NewSlogLogger(), NewSlogLoggerDefault(), WithSlogDefault(), WithSlogLevel(), WithSlogWriter(), SlogAttributes, SlogHandler (+2 more)
+
+### Community 94 - "Community 94"
 Cohesion: 0.14
 Nodes (21): klTypeToSubType(), NewBrokerChannel(), NewKLChannel(), NewOrderBookChannel(), NewQuoteChannel(), NewRTChannel(), NewTickerChannel(), SubscribeBroker() (+13 more)
 
-### Community 98 - "Community 98"
-Cohesion: 0.08
-Nodes (23): Adding a New API, Architecture, Build Failures After Changes, Build & Verify Commands, code:block1 (Application), code:bash (# Basic build (always run first)), Concurrency & Thread Safety, Connection Lifecycle (+15 more)
+### Community 96 - "Community 96"
+Cohesion: 0.09
+Nodes (5): file_Qot_UpdateBroker_proto_init(), file_Qot_UpdateBroker_proto_rawDescGZIP(), init(), Response, S2C
 
 ### Community 99 - "Community 99"
 Cohesion: 0.08
@@ -834,93 +841,93 @@ Nodes (24): Debug, Error, Handle, Info, LogConnection, LogError, LogReconnect, L
 Cohesion: 0.11
 Nodes (17): AccIDRequest, OrderIDRequest, PlaceOrderRequest, LotSize(), PriceTick(), TestLotSize(), TestPriceTick(), TestValidateAccID() (+9 more)
 
-### Community 104 - "Community 104"
-Cohesion: 0.1
-Nodes (5): C2S, file_Qot_GetSecuritySnapshot_proto_init(), file_Qot_GetSecuritySnapshot_proto_rawDescGZIP(), init(), S2C
+### Community 101 - "Community 101"
+Cohesion: 0.12
+Nodes (20): NewFutuError(), NewFutuErrorWithWrap(), TestCategoryOf(), TestFullMessage(), TestFullMessageWithWrap(), TestIsAccountError(), TestIsAPIError(), TestIsConnectionError() (+12 more)
+
+### Community 102 - "Community 102"
+Cohesion: 0.16
+Nodes (21): ErrorCategory, ErrorCode, CategoryOf(), getFutuError(), IsAccountError(), IsAPIError(), IsConnectionError(), IsDisconnected() (+13 more)
 
 ### Community 105 - "Community 105"
 Cohesion: 0.1
-Nodes (5): file_Qot_UpdateRT_proto_init(), file_Qot_UpdateRT_proto_rawDescGZIP(), init(), Response, S2C
+Nodes (5): C2S, file_Qot_GetSecuritySnapshot_proto_init(), file_Qot_GetSecuritySnapshot_proto_rawDescGZIP(), init(), S2C
 
 ### Community 106 - "Community 106"
 Cohesion: 0.1
 Nodes (5): file_Qot_UpdateTicker_proto_init(), file_Qot_UpdateTicker_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 108 - "Community 108"
-Cohesion: 0.09
-Nodes (20): Circuit Breaker, code:go (// Fetch all daily K-lines for a date range (auto-paginated)), code:go (// Quote updates), code:go (// List all accounts), code:go (// Place a buy limit order), code:go (// List all watchlist groups), code:go (// Global connection state), code:go (import "github.com/shing1211/futuapi4go/pkg/breaker") (+12 more)
+### Community 107 - "Community 107"
+Cohesion: 0.1
+Nodes (5): file_Qot_UpdateRT_proto_init(), file_Qot_UpdateRT_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 109 - "Community 109"
+### Community 110 - "Community 110"
+Cohesion: 0.1
+Nodes (12): newBufferPool(), New(), NewOptions(), NewWithOptions(), WithDialTimeout(), WithKeepAliveInterval(), WithLogLevel(), WithMaxRetries() (+4 more)
+
+### Community 111 - "Community 111"
 Cohesion: 0.09
 Nodes (22): 1.1 Connection Management (FR1), 1.2 Market Data (FR2), 1.3 Trading (FR3), 1.4 System APIs (FR4), 1.5 Real-Time Push (FR5), 1.6 User Security / Watchlist (FR6), 1.7 Price Alerts (FR7), 1. Functional Requirements (+14 more)
 
-### Community 110 - "Community 110"
-Cohesion: 0.13
-Nodes (8): logf(), ReconfirmOrder(), Handler, RSAEncrypt(), DialWebSocket(), DialWebSocketSecure(), newWSConn(), RecordPushMessage()
-
 ### Community 112 - "Community 112"
-Cohesion: 0.1
-Nodes (5): Response, S2C, file_Trd_Notify_proto_init(), file_Trd_Notify_proto_rawDescGZIP(), init()
-
-### Community 113 - "Community 113"
-Cohesion: 0.1
-Nodes (5): Response, S2C, file_Trd_UpdateOrder_proto_init(), file_Trd_UpdateOrder_proto_rawDescGZIP(), init()
+Cohesion: 0.09
+Nodes (20): Circuit Breaker, code:go (// Fetch all daily K-lines for a date range (auto-paginated)), code:go (// Quote updates), code:go (// List all accounts), code:go (// Place a buy limit order), code:go (// List all watchlist groups), code:go (// Global connection state), code:go (import "github.com/shing1211/futuapi4go/pkg/breaker") (+12 more)
 
 ### Community 114 - "Community 114"
 Cohesion: 0.1
-Nodes (5): Response, S2C, file_Trd_UpdateOrderFill_proto_init(), file_Trd_UpdateOrderFill_proto_rawDescGZIP(), init()
+Nodes (5): Response, S2C, file_Trd_UpdateOrder_proto_init(), file_Trd_UpdateOrder_proto_rawDescGZIP(), init()
 
 ### Community 115 - "Community 115"
+Cohesion: 0.1
+Nodes (5): Response, S2C, file_Trd_UpdateOrderFill_proto_init(), file_Trd_UpdateOrderFill_proto_rawDescGZIP(), init()
+
+### Community 116 - "Community 116"
+Cohesion: 0.1
+Nodes (5): Response, S2C, file_Trd_Notify_proto_init(), file_Trd_Notify_proto_rawDescGZIP(), init()
+
+### Community 117 - "Community 117"
 Cohesion: 0.09
 Nodes (22): Allow, DoVoid, Do, Failures, New, RecordFailure, RecordSuccess, Reset (+14 more)
 
-### Community 117 - "Community 117"
+### Community 118 - "Community 118"
 Cohesion: 0.11
 Nodes (5): file_Qot_UpdateBasicQot_proto_init(), file_Qot_UpdateBasicQot_proto_rawDescGZIP(), init(), Response, S2C
 
-### Community 118 - "Community 118"
-Cohesion: 0.12
-Nodes (5): Conn, NewErrorWithWrap(), TestErrorUnwrap(), TestNewErrorWithWrap(), readFull()
-
-### Community 119 - "Community 119"
+### Community 120 - "Community 120"
 Cohesion: 0.13
 Nodes (3): GtwEventType, file_Notify_proto_rawDescGZIP(), NotifyType
 
-### Community 120 - "Community 120"
-Cohesion: 0.11
-Nodes (4): FutureStaticExData, file_Qot_Common_proto_init(), init(), Security
-
 ### Community 122 - "Community 122"
+Cohesion: 0.14
+Nodes (8): logf(), ReconfirmOrder(), Handler, RSAEncrypt(), DialWebSocket(), DialWebSocketSecure(), newWSConn(), RecordPushMessage()
+
+### Community 123 - "Community 123"
 Cohesion: 0.17
 Nodes (7): Config, Format, Level, logEntry, Logger, joinFields(), Option
 
-### Community 123 - "Community 123"
+### Community 124 - "Community 124"
 Cohesion: 0.11
-Nodes (3): PlateInfo, file_Qot_Common_proto_rawDescGZIP(), SubInfo
-
-### Community 125 - "Community 125"
-Cohesion: 0.11
-Nodes (17): Architecture, Build & Test, Build & Test, Client Options, code:bash (go get github.com/shing1211/futuapi4go@v0.5.4), code:go (// Fluent API - cleaner access), code:go (// v0.2.x (DEPRECATED)), code:bash (go build ./...      # Compile everything) (+9 more)
+Nodes (4): OrderBookDetail, PeriodType, file_Qot_Common_proto_init(), init()
 
 ### Community 126 - "Community 126"
 Cohesion: 0.11
 Nodes (19): APITimeout, Close, Dial, Dispatch, LocalAddr, NewConn, ReadResponseContext, ReadResponse (+11 more)
 
 ### Community 127 - "Community 127"
-Cohesion: 0.14
-Nodes (8): APICallTracker, Handler(), Init(), InitWithServer(), RecordAPICall(), RecordConnection(), RecordDisconnect(), RecordOpenDUp()
-
-### Community 128 - "Community 128"
-Cohesion: 0.17
-Nodes (15): NewFutuError(), NewFutuErrorWithWrap(), containsStr(), TestCategoryOf(), TestFullMessage(), TestFullMessageWithWrap(), TestFutuErrorFormatting(), TestIsAPIError() (+7 more)
-
-### Community 130 - "Community 130"
 Cohesion: 0.17
 Nodes (16): IsCNOpen(), IsHKOpen(), IsOpen(), IsUSOpen(), MarketHours(), NextOpen(), TestIsHKOpen(), TestMarketHours() (+8 more)
 
-### Community 132 - "Community 132"
+### Community 130 - "Community 130"
+Cohesion: 0.11
+Nodes (3): file_Qot_Common_proto_rawDescGZIP(), Security, SubInfo
+
+### Community 131 - "Community 131"
 Cohesion: 0.18
 Nodes (17): GetDelayStatisticsResponse, GetGlobalStateResponse, GetUsedQuotaResponse, GetUserInfoResponse, appendVarint(), GetDelayStatistics(), GetGlobalState(), GetUsedQuota() (+9 more)
+
+### Community 132 - "Community 132"
+Cohesion: 0.12
+Nodes (4): Conn, NewErrorWithWrap(), TestErrorUnwrap(), TestNewErrorWithWrap()
 
 ### Community 133 - "Community 133"
 Cohesion: 0.11
@@ -932,340 +939,364 @@ Nodes (18): Debug, Error, Fatal, Info, New, SetFormat, SetLevel, SetOutput (+10 
 
 ### Community 135 - "Community 135"
 Cohesion: 0.12
-Nodes (16): ParsePushOrderFill(), ParsePushOrderUpdate(), ParsePushTrdNotify(), TestParseTrdNotifyInvalidData(), TestParseTrdNotifyValidData(), TestParseUpdateOrderFillInvalidData(), TestParseUpdateOrderFillValidData(), TestParseUpdateOrderInvalidData() (+8 more)
+Nodes (7): Attribute, contextKey, noopSpan, NoopTracer, Span, Tracer, StartSpan()
 
 ### Community 136 - "Community 136"
+Cohesion: 0.31
+Nodes (15): TestExecuteFailureMessage(), contains(), containsStr(), TestFutuErrorFormatting(), TestLoggerFields(), TestLoggerInstance(), TestLoggerJSONFormat(), TestLoggerLevelFilter() (+7 more)
+
+### Community 140 - "Community 140"
+Cohesion: 0.12
+Nodes (16): ParsePushOrderFill(), ParsePushOrderUpdate(), ParsePushTrdNotify(), TestParseTrdNotifyInvalidData(), TestParseTrdNotifyValidData(), TestParseUpdateOrderFillInvalidData(), TestParseUpdateOrderFillValidData(), TestParseUpdateOrderInvalidData() (+8 more)
+
+### Community 141 - "Community 141"
 Cohesion: 0.15
 Nodes (6): NewMockConnector(), NewMockServer(), TestClient_ConcurrentAccess(), TestClient_ConnectionLifecycle(), MockConnector, MockServer
 
-### Community 138 - "Community 138"
+### Community 143 - "Community 143"
 Cohesion: 0.12
 Nodes (4): bufferPool, byteBuffer, packetBuffer, responseBuffer
 
 ### Community 144 - "Community 144"
 Cohesion: 0.12
-Nodes (7): Attribute, contextKey, noopSpan, NoopTracer, Span, Tracer, StartSpan()
+Nodes (16): [0.0.1] - 2026-04-12, [0.0.2] - 2026-04-18, [0.0.3] - 2026-04-18, [0.0.4] - 2026-04-19, [0.0.6] - 2026-04-24, [0.2.3] - 2026-04-25, [0.5.2] - 2026-04-28, Added (+8 more)
 
 ### Community 145 - "Community 145"
 Cohesion: 0.12
-Nodes (16): [0.0.1] - 2026-04-12, [0.0.2] - 2026-04-18, [0.0.3] - 2026-04-18, [0.0.4] - 2026-04-19, [0.0.6] - 2026-04-24, [0.2.3] - 2026-04-25, [0.2.6] - 2026-04-25, Added (+8 more)
+Nodes (17): ParseUpdateBasicQot, ParseUpdateBroker, ParseUpdateKL, ParseUpdateOrderBook, ParseUpdatePriceReminder, ParseUpdateRT, ParseUpdateTicker, push (+9 more)
 
 ### Community 146 - "Community 146"
 Cohesion: 0.12
-Nodes (17): GetMarketState, GetOwnerPlate, GetReference, GetSubInfo, qotgetmarketstate, qotgetownerplate, qotgetreference, qotgetsubinfo (+9 more)
+Nodes (17): Available, Close, DefaultPoolConfig, GetPoolType, Get, NewClientPool, Put, Remove (+9 more)
 
 ### Community 147 - "Community 147"
 Cohesion: 0.12
-Nodes (17): Available, Close, DefaultPoolConfig, GetPoolType, Get, NewClientPool, Put, Remove (+9 more)
+Nodes (17): End, Handler, InitWithServer, Init, RecordAPICall, RecordBreakerState, RecordConnection, RecordDisconnect (+9 more)
 
 ### Community 148 - "Community 148"
 Cohesion: 0.12
-Nodes (17): End, Handler, InitWithServer, Init, RecordAPICall, RecordBreakerState, RecordConnection, RecordDisconnect (+9 more)
+Nodes (17): CategoryOf, CategoryString, CodeString, Error, FullMessage, IsConnectionError, IsProtocolError, IsTimeoutError (+9 more)
 
 ### Community 149 - "Community 149"
 Cohesion: 0.12
-Nodes (17): CategoryOf, CategoryString, CodeString, Error, FullMessage, IsConnectionError, IsProtocolError, IsTimeoutError (+9 more)
-
-### Community 150 - "Community 150"
-Cohesion: 0.12
-Nodes (17): ParseUpdateBasicQot, ParseUpdateBroker, ParseUpdateKL, ParseUpdateOrderBook, ParseUpdatePriceReminder, ParseUpdateRT, ParseUpdateTicker, push (+9 more)
+Nodes (17): GetMarketState, GetOwnerPlate, GetReference, GetSubInfo, qotgetmarketstate, qotgetownerplate, qotgetreference, qotgetsubinfo (+9 more)
 
 ### Community 153 - "Community 153"
-Cohesion: 0.14
-Nodes (4): file_Qot_GetWarrant_proto_init(), file_Qot_GetWarrant_proto_rawDescGZIP(), init(), S2C
+Cohesion: 0.12
+Nodes (14): Architecture, Build & Test, Build & Test, Client Options, code:bash (go get github.com/shing1211/futuapi4go@v0.5.6), code:bash (go build ./...      # Compile everything), code:block31 (futuapi4go/), code:bash (go build ./...      # Compile everything) (+6 more)
 
 ### Community 154 - "Community 154"
 Cohesion: 0.12
 Nodes (16): APITimeout, Close, DialWebSocketSecure, DialWebSocket, Dial, Dispatch, IsWebSocketAddr, ReadPacket (+8 more)
 
 ### Community 155 - "Community 155"
-Cohesion: 0.2
-Nodes (13): ErrorCategory, ErrorCode, apiErrorCode(), apiErrorSuggestions(), CategoryOf(), IsConnectionError(), IsProtocolError(), IsTimeoutError() (+5 more)
-
-### Community 156 - "Community 156"
-Cohesion: 0.38
-Nodes (13): TestExecuteFailureMessage(), contains(), TestLoggerFields(), TestLoggerInstance(), TestLoggerJSONFormat(), TestLoggerLevelFilter(), TestLoggerLevels(), TestLoggerSetFormat() (+5 more)
-
-### Community 157 - "Community 157"
 Cohesion: 0.16
 Nodes (10): AtmsResult, FilterByExpiry(), FindAtm(), isNumeric(), ParseCode(), StrikeDistance(), TestFilterByExpiry(), TestFindAtm() (+2 more)
+
+### Community 158 - "Community 158"
+Cohesion: 0.15
+Nodes (4): file_Qot_GetWarrant_proto_init(), file_Qot_GetWarrant_proto_rawDescGZIP(), init(), Request
 
 ### Community 160 - "Community 160"
 Cohesion: 0.15
 Nodes (15): GetAccList(), GetFlowSummary(), GetHistoryOrderFillList(), GetHistoryOrderList(), GetMarginRatio(), GetMaxTrdQtys(), GetOrderFee(), GetOrderFillList() (+7 more)
 
 ### Community 161 - "Community 161"
-Cohesion: 0.13
-Nodes (14): Build, Lint & Test, Code of Conduct, Code Standards, code:bash (git clone https://github.com/shing1211/futuapi4go.git), code:bash (# Build everything), code:block3 (<type>: <short description>), code:block4 (fix: restore nil guard in ParseUpdateOrderBook), Commit Messages (+6 more)
+Cohesion: 0.2
+Nodes (13): ErrorCategory, ErrorCode, apiErrorCode(), apiErrorSuggestions(), CategoryOf(), IsConnectionError(), IsProtocolError(), IsTimeoutError() (+5 more)
 
 ### Community 162 - "Community 162"
 Cohesion: 0.13
+Nodes (14): Build, Lint & Test, Code of Conduct, Code Standards, code:bash (git clone https://github.com/shing1211/futuapi4go.git), code:bash (# Build everything), code:block3 (<type>: <short description>), code:block4 (fix: restore nil guard in ParseUpdateOrderBook), Commit Messages (+6 more)
+
+### Community 163 - "Community 163"
+Cohesion: 0.13
 Nodes (15): CancelAllOrders, GetAccountFunds, GetPositions, GetTodayFills, GetTodayOrders, QuickBuy, QuickMarketBuy, QuickMarketSell (+7 more)
 
-### Community 169 - "Community 169"
-Cohesion: 0.14
-Nodes (14): GetDelayStatistics, GetGlobalState, GetUsedQuota, GetUserInfo, TestCmd, Verification, sys, GetDelayStatisticsResponse (+6 more)
-
 ### Community 170 - "Community 170"
+Cohesion: 0.16
+Nodes (4): C2S, file_GetUserInfo_proto_init(), file_GetUserInfo_proto_rawDescGZIP(), init()
+
+### Community 171 - "Community 171"
+Cohesion: 0.18
+Nodes (6): Handler(), Init(), InitWithServer(), RecordConnection(), RecordDisconnect(), RecordOpenDUp()
+
+### Community 172 - "Community 172"
 Cohesion: 0.14
 Nodes (14): At, AutoDetectMarket, Build, Buy, Market, NewOrder, Sell, WithAuxPrice (+6 more)
 
-### Community 171 - "Community 171"
-Cohesion: 0.24
-Nodes (9): NewError(), TestCategoryOf(), TestErrorImplementsErrorInterface(), TestErrorIs(), TestIsConnectionError(), TestIsProtocolError(), TestIsTimeoutError(), TestNewError() (+1 more)
+### Community 173 - "Community 173"
+Cohesion: 0.14
+Nodes (14): GetDelayStatistics, GetGlobalState, GetUsedQuota, GetUserInfo, TestCmd, Verification, sys, GetDelayStatisticsResponse (+6 more)
 
-### Community 172 - "Community 172"
-Cohesion: 0.18
-Nodes (4): C2S, file_GetUserInfo_proto_init(), file_GetUserInfo_proto_rawDescGZIP(), init()
-
-### Community 180 - "Community 180"
-Cohesion: 0.15
-Nodes (8): GetMarketStateRequest, GetMarketStateResponse, GetOwnerPlateRequest, GetOwnerPlateResponse, GetReferenceRequest, GetReferenceResponse, GetSubInfoResponse, MarketStateInfo
-
-### Community 181 - "Community 181"
+### Community 174 - "Community 174"
 Cohesion: 0.19
 Nodes (6): Limiter, Mode, ProtoLimiter, NewLimiter(), NewProtoLimiter(), RateLimitError
 
-### Community 182 - "Community 182"
+### Community 175 - "Community 175"
+Cohesion: 0.15
+Nodes (8): GetMarketStateRequest, GetMarketStateResponse, GetOwnerPlateRequest, GetOwnerPlateResponse, GetReferenceRequest, GetReferenceResponse, GetSubInfoResponse, MarketStateInfo
+
+### Community 183 - "Community 183"
 Cohesion: 0.19
 Nodes (6): UnlockTrading(), SensitiveString, TestUnlockTrade(), TestSensitiveStringDoesNotLeakPassword(), TestUnlockTradeRequestFields(), UnlockTrade()
 
-### Community 183 - "Community 183"
+### Community 184 - "Community 184"
+Cohesion: 0.24
+Nodes (9): NewError(), TestCategoryOf(), TestErrorImplementsErrorInterface(), TestErrorIs(), TestIsConnectionError(), TestIsProtocolError(), TestIsTimeoutError(), TestNewError() (+1 more)
+
+### Community 185 - "Community 185"
 Cohesion: 0.15
 Nodes (12): 1. Correction, 2. Warning, 3. Temporary Ban, 4. Permanent Ban, Attribution, Contributor Covenant Code of Conduct, Enforcement, Enforcement Guidelines (+4 more)
 
-### Community 184 - "Community 184"
+### Community 186 - "Community 186"
 Cohesion: 0.15
 Nodes (12): 10. Version Compatibility, 11. Quick Reference, 1. Architecture Overview, 3. Connection Lifecycle, 5. Performance Optimizations, 6. Security Model, 7. Thread Safety, code:block1 (┌───────────────────────────────────────────────────────────) (+4 more)
 
-### Community 185 - "Community 185"
-Cohesion: 0.26
-Nodes (10): getBool(), getFloat64(), GetHistoryOrderList(), GetHoldingChangeList(), getInt32(), getInt64(), GetSecuritySnapshot(), getStr() (+2 more)
-
-### Community 186 - "Community 186"
-Cohesion: 0.17
-Nodes (3): RehabType, TimeInForce, TrdSecMarket
-
 ### Community 187 - "Community 187"
 Cohesion: 0.17
-Nodes (5): Component, Event, Level, Manager, Watcher
+Nodes (3): KLType, RehabType, TimeInForce
 
 ### Community 197 - "Community 197"
 Cohesion: 0.17
-Nodes (12): 2.1 Protocol Communication, 2.2 Package Structure, 2.3 Error Handling, 2.4 Context Usage, 2.5 Typed Enums, 2. Key Design Decisions, code:block2 (┌──────────┬─────────┬─────────┬──────────┬─────────────┐), code:go (type FutuError struct {) (+4 more)
+Nodes (5): Component, Event, Level, Manager, Watcher
 
 ### Community 198 - "Community 198"
+Cohesion: 0.26
+Nodes (10): getBool(), getFloat64(), GetHistoryOrderList(), GetHoldingChangeList(), getInt32(), getInt64(), GetSecuritySnapshot(), getStr() (+2 more)
+
+### Community 199 - "Community 199"
+Cohesion: 0.21
+Nodes (3): isControlProto(), APICallTracker, RecordAPICall()
+
+### Community 200 - "Community 200"
+Cohesion: 0.17
+Nodes (12): 2.1 Protocol Communication, 2.2 Package Structure, 2.3 Error Handling, 2.4 Context Usage, 2.5 Typed Enums, 2. Key Design Decisions, code:block2 (┌──────────┬─────────┬─────────┬──────────┬─────────────┐), code:go (type FutuError struct {) (+4 more)
+
+### Community 201 - "Community 201"
 Cohesion: 0.17
 Nodes (8): Channel-Based Real-Time Push, Circuit Breaker for Trading, Code Helpers, code:go (import "github.com/shing1211/futuapi4go/pkg/util"), Key Features in Depth, Multiple K-line types (callback-based with `SubscribeKLines`):, Single data type (channel-based):, Structured Logging
 
-### Community 199 - "Community 199"
+### Community 202 - "Community 202"
 Cohesion: 0.17
 Nodes (12): GetTracer, Int64Attr, IntAttr, SetTracer, SpanFromContext, StartSpan, StringAttr, tracing (+4 more)
 
-### Community 201 - "Community 201"
+### Community 203 - "Community 203"
 Cohesion: 0.25
 Nodes (4): Checker, CheckFunc, Result, Status
 
-### Community 206 - "Community 206"
+### Community 205 - "Community 205"
 Cohesion: 0.2
 Nodes (3): BaseData, file_Qot_StockFilter_proto_init(), init()
 
-### Community 207 - "Community 207"
+### Community 210 - "Community 210"
 Cohesion: 0.2
 Nodes (3): AccMarketInfo, file_Trd_Common_proto_init(), init()
 
-### Community 209 - "Community 209"
+### Community 212 - "Community 212"
 Cohesion: 0.18
 Nodes (10): 8.1 Custom Push Handlers, 8.2 Connection Pool, 8.3 Circuit Breaker, 8.4 Rate Limiter, 8.5 Custom Logger, 8. Extensibility Points, code:go (cli.RegisterHandler(constant.ProtoID_Qot_UpdateBasicQot,), code:go (pool := futuapi.NewClientPool(config)) (+2 more)
 
-### Community 210 - "Community 210"
+### Community 213 - "Community 213"
 Cohesion: 0.18
 Nodes (11): code:go (quote, err := client.GetQuote(context.Background(), cli, con), code:go (klines, err := client.GetKLines(context.Background(), cli, c), code:go (book, err := client.GetOrderBook(context.Background(), cli, ), code:go (securities := []*qotcommon.Security{), code:go (flows, err := client.GetCapitalFlow(context.Background(), cl), GetCapitalFlow / GetCapitalDistribution, GetKLines — latest K-line bars, GetOrderBook — bid/ask depth (+3 more)
 
-### Community 211 - "Community 211"
+### Community 214 - "Community 214"
 Cohesion: 0.18
 Nodes (11): GetMarshalBuf, GetPacketBuf, GetResponseBuf, PutMarshalBuf, PutPacketBuf, PutResponseBuf, futuapi, bufferPool (+3 more)
 
-### Community 212 - "Community 212"
-Cohesion: 0.22
-Nodes (3): file_GetDelayStatistics_proto_init(), init(), Request
-
 ### Community 216 - "Community 216"
-Cohesion: 0.22
-Nodes (3): file_Notify_proto_init(), init(), ProgramStatus
-
-### Community 221 - "Community 221"
-Cohesion: 0.22
-Nodes (3): file_Qot_GetOptionChain_proto_init(), init(), S2C
-
-### Community 227 - "Community 227"
 Cohesion: 0.22
 Nodes (3): HistoryKLineIterator, NewHistoryKLineIterator(), TestHistoryKLineIteratorNilClient()
 
-### Community 229 - "Community 229"
-Cohesion: 0.2
-Nodes (10): 4.1 Market Data APIs, 4.2 Trading APIs, 4.3 Push APIs, 4. API Design Patterns, code:go (resp, err := qot.GetBasicQot(ctx, cli, securities)), code:go (// Place order with typed constants), code:go (order := trd.NewOrder(accID, constant.TrdMarket_HK, constant), code:go (ch := make(chan *push.UpdateBasicQot, 100)) (+2 more)
+### Community 223 - "Community 223"
+Cohesion: 0.22
+Nodes (3): file_Qot_GetOptionChain_proto_init(), init(), S2C
+
+### Community 226 - "Community 226"
+Cohesion: 0.22
+Nodes (3): file_GetDelayStatistics_proto_init(), init(), Request
+
+### Community 227 - "Community 227"
+Cohesion: 0.22
+Nodes (3): APILevel, file_Notify_proto_init(), init()
 
 ### Community 230 - "Community 230"
 Cohesion: 0.2
-Nodes (10): Allow, Error, NewLimiter, NewProtoLimiter, SetProtoLimit, Wait, ratelimit, Limiter (+2 more)
+Nodes (10): 4.1 Market Data APIs, 4.2 Trading APIs, 4.3 Push APIs, 4. API Design Patterns, code:go (resp, err := qot.GetBasicQot(ctx, cli, securities)), code:go (// Place order with typed constants), code:go (order := trd.NewOrder(accID, constant.TrdMarket_HK, constant), code:go (ch := make(chan *push.UpdateBasicQot, 100)) (+2 more)
 
 ### Community 231 - "Community 231"
 Cohesion: 0.2
-Nodes (10): FilterByExpiry, FilterByStrikeRange, FindAtm, Format, ParseCode, StrikeDistance, option, option (+2 more)
+Nodes (10): Allow, Error, NewLimiter, NewProtoLimiter, SetProtoLimit, Wait, ratelimit, Limiter (+2 more)
 
 ### Community 232 - "Community 232"
 Cohesion: 0.2
-Nodes (10): IsCNOpen, IsHKOpen, IsOpen, IsUSOpen, MarketHours, NextOpen, UntilClose, market (+2 more)
+Nodes (10): FilterByExpiry, FilterByStrikeRange, FindAtm, Format, ParseCode, StrikeDistance, option, option (+2 more)
 
 ### Community 233 - "Community 233"
+Cohesion: 0.2
+Nodes (10): IsCNOpen, IsHKOpen, IsOpen, IsUSOpen, MarketHours, NextOpen, UntilClose, market (+2 more)
+
+### Community 270 - "Community 270"
 Cohesion: 0.31
 Nodes (7): ParsePushKLine(), ParsePushQuote(), TestParsePushKLine(), TestParsePushKLine_EmptyList(), TestParsePushKLine_InvalidBody(), TestParsePushQuote_EmptyList(), TestParsePushQuote_InvalidBody()
 
-### Community 234 - "Community 234"
+### Community 271 - "Community 271"
 Cohesion: 0.39
 Nodes (8): NewConn(), TestConnDispatchToChannel(), TestConnDispatchToWaitingReader(), TestConnNilConnection(), TestConnReadResponseTimeout(), TestConnSetPushHandler(), TestConnWritePacketBodyTooBig(), TestConnWritePacketEmptyBody()
 
-### Community 268 - "Community 268"
-Cohesion: 0.22
-Nodes (9): Err, HasNext, NewHistoryKLineIterator, Next, PageCount, TotalFetched, client, qot (+1 more)
-
-### Community 269 - "Community 269"
-Cohesion: 0.22
-Nodes (9): AddWatcher, AllStatus, GetStatus, IsDegraded, NewManager, SetStatus, degradation, Event (+1 more)
-
-### Community 270 - "Community 270"
-Cohesion: 0.22
-Nodes (9): Check, IsHealthy, IsReady, NewChecker, Register, ServeHTTP, health, Checker (+1 more)
-
-### Community 271 - "Community 271"
-Cohesion: 0.22
-Nodes (9): DefaultConfig, DoWithResult, Do, IsKLType, IsPushID, constant, constant, retry (+1 more)
-
-### Community 272 - "Community 272"
+### Community 273 - "Community 273"
 Cohesion: 0.22
 Nodes (9): DetectMarket, DetectTradingMarkets, FormatCode, IsMarketValid, MarketToTrdMarket, ParseCode, TrdMarketToQotMarket, util (+1 more)
 
-### Community 273 - "Community 273"
-Cohesion: 0.25
-Nodes (4): GetDelayStatistics(), GetGlobalState(), GetUserInfo(), SystemAPI
+### Community 274 - "Community 274"
+Cohesion: 0.22
+Nodes (9): DefaultConfig, DoWithResult, Do, IsKLType, IsPushID, constant, constant, retry (+1 more)
 
-### Community 350 - "Community 350"
+### Community 275 - "Community 275"
+Cohesion: 0.22
+Nodes (9): AddWatcher, AllStatus, GetStatus, IsDegraded, NewManager, SetStatus, degradation, Event (+1 more)
+
+### Community 276 - "Community 276"
+Cohesion: 0.22
+Nodes (9): Check, IsHealthy, IsReady, NewChecker, Register, ServeHTTP, health, Checker (+1 more)
+
+### Community 277 - "Community 277"
+Cohesion: 0.22
+Nodes (9): Err, HasNext, NewHistoryKLineIterator, Next, PageCount, TotalFetched, client, qot (+1 more)
+
+### Community 278 - "Community 278"
 Cohesion: 0.32
 Nodes (4): Config, Do(), DoWithResult(), RetryableFunc
 
-### Community 351 - "Community 351"
+### Community 355 - "Community 355"
+Cohesion: 0.25
+Nodes (4): GetDelayStatistics(), GetGlobalState(), GetUserInfo(), SystemAPI
+
+### Community 356 - "Community 356"
 Cohesion: 0.25
 Nodes (8): Channel-based subscription — `chanpkg` (recommended), code:go (// Subscribe to multiple data types at once), code:go (quoteCh   := make(chan *push.UpdateBasicQot, 100)), code:go (// Define handlers for different K-line periods), Multiple K-line types (callback-based with `SubscribeKLines`):, Real-Time Subscriptions, Single K-line type (channel-based):, Subscribe — receive push data for one or more types
 
-### Community 352 - "Community 352"
-Cohesion: 0.25
-Nodes (8): GetHistoryKLPoints, qotcommon, qot, qot, GetHistoryKLPointsRequest, GetHistoryKLPointsResponse, HistoryPointsKL, SecurityHistoryKLPoints
-
-### Community 353 - "Community 353"
+### Community 357 - "Community 357"
 Cohesion: 0.25
 Nodes (8): LotSize, PriceTick, ValidateAccID, ValidateCode, ValidatePrice, ValidateQty, ValidateRemark, constant
 
-### Community 390 - "Community 390"
-Cohesion: 0.33
-Nodes (5): GetHistoryKLPointsRequest, GetHistoryKLPointsResponse, GetHistoryKLPoints(), HistoryPointsKL, SecurityHistoryKLPoints
+### Community 358 - "Community 358"
+Cohesion: 0.25
+Nodes (8): GetHistoryKLPoints, qotcommon, qot, qot, GetHistoryKLPointsRequest, GetHistoryKLPointsResponse, HistoryPointsKL, SecurityHistoryKLPoints
 
 ### Community 394 - "Community 394"
 Cohesion: 0.33
+Nodes (5): GetHistoryKLPointsRequest, GetHistoryKLPointsResponse, GetHistoryKLPoints(), HistoryPointsKL, SecurityHistoryKLPoints
+
+### Community 397 - "Community 397"
+Cohesion: 0.33
+Nodes (5): Subscribe(), SubscribeSymbols(), Unsubscribe(), UnsubscribeAll(), UnsubscribeSymbols()
+
+### Community 399 - "Community 399"
+Cohesion: 0.33
+Nodes (5): Always Do, CLI, GitNexus — Code Intelligence, Never Do, Resources
+
+### Community 400 - "Community 400"
+Cohesion: 0.33
 Nodes (5): Best Practices, Option 1 — GitHub Security Advisories (Preferred), Option 2 — Email, Reporting a Vulnerability, Security Policy
 
-### Community 395 - "Community 395"
+### Community 401 - "Community 401"
 Cohesion: 0.33
 Nodes (6): Format, GoString, IsEmpty, Raw, String, constant
 
-### Community 397 - "Community 397"
+### Community 417 - "Community 417"
 Cohesion: 0.4
 Nodes (4): ConnInterface, Header, Packet, PacketHandler
 
-### Community 410 - "Community 410"
-Cohesion: 0.4
-Nodes (5): [0.2.0] - 2026-04-25, Added, Changed, Fixed, Security
-
-### Community 411 - "Community 411"
+### Community 418 - "Community 418"
 Cohesion: 0.4
 Nodes (5): [0.0.5] - 2026-04-23 — Feature Parity Achieved, Added, Changed, Fixed, Tests
 
-### Community 412 - "Community 412"
+### Community 419 - "Community 419"
+Cohesion: 0.4
+Nodes (5): [0.2.0] - 2026-04-25, Added, Changed, Fixed, Security
+
+### Community 420 - "Community 420"
 Cohesion: 0.4
 Nodes (5): Int32, IsValid, Prefix, String, constant
 
-### Community 423 - "Community 423"
+### Community 429 - "Community 429"
 Cohesion: 0.83
 Nodes (3): getExamplesDir(), TestAlgoExamplesCompile(), TestExamplesCompile()
 
-### Community 424 - "Community 424"
+### Community 430 - "Community 430"
 Cohesion: 0.5
 Nodes (4): 9. Dependencies, code:block22 (google.golang.org/protobuf v1.x.x), Direct (go.mod), Generated (pkg/pb/)
 
-### Community 425 - "Community 425"
-Cohesion: 0.5
-Nodes (4): [0.5.0] - 2026-04-27, Added, Changed, Documentation
-
-### Community 426 - "Community 426"
-Cohesion: 0.5
-Nodes (4): [0.2.5] - 2026-04-25, Added (P4-4), Changed, Completed (Previously Existed)
-
-### Community 427 - "Community 427"
-Cohesion: 0.5
-Nodes (4): Added, Documentation, Fixed, [Unreleased]
-
-### Community 428 - "Community 428"
-Cohesion: 0.5
-Nodes (4): [0.3.0] - 2026-04-25, Added, Already Existed, Breaking Changes (v0.3.0)
-
-### Community 429 - "Community 429"
+### Community 431 - "Community 431"
 Cohesion: 0.5
 Nodes (4): [0.5.1] - 2026-04-28, Added, Changed, Fixed
 
-### Community 443 - "Community 443"
+### Community 432 - "Community 432"
+Cohesion: 0.5
+Nodes (4): [0.5.0] - 2026-04-27, Added, Changed, Documentation
+
+### Community 433 - "Community 433"
+Cohesion: 0.5
+Nodes (4): Added, Documentation, Fixed, [Unreleased]
+
+### Community 434 - "Community 434"
+Cohesion: 0.5
+Nodes (4): [0.2.5] - 2026-04-25, Added (P4-4), Changed, Completed (Previously Existed)
+
+### Community 435 - "Community 435"
+Cohesion: 0.5
+Nodes (4): [0.3.0] - 2026-04-25, Added, Already Existed, Breaking Changes (v0.3.0)
+
+### Community 436 - "Community 436"
+Cohesion: 0.67
+Nodes (4): code:go (// Fluent API - cleaner access), code:go (// v0.2.x (DEPRECATED)), v0.5.4 New Features, v0.5.6 New Features
+
+### Community 450 - "Community 450"
 Cohesion: 0.67
 Nodes (3): accCashInfoListToGo(), accMarketInfoListToGo(), GetFunds()
 
-### Community 444 - "Community 444"
-Cohesion: 0.67
-Nodes (3): [0.2.4] - 2026-04-25, Added, Fixed
-
-### Community 445 - "Community 445"
-Cohesion: 0.67
-Nodes (3): [0.2.2] - 2026-04-25, Added (Phase 3 Infrastructure), code:go (if constant.IsTimeout(err) { /* handle timeout */ })
-
-### Community 446 - "Community 446"
-Cohesion: 0.67
-Nodes (3): [0.5.2] - 2026-04-28, Added, Changed
-
-### Community 447 - "Community 447"
-Cohesion: 0.67
-Nodes (3): [0.3.1] - 2026-04-26, Added, Changed
-
-### Community 448 - "Community 448"
+### Community 451 - "Community 451"
 Cohesion: 0.67
 Nodes (3): [0.0.5] - 2026-04-21, Added, Changed
 
-### Community 449 - "Community 449"
+### Community 452 - "Community 452"
 Cohesion: 0.67
 Nodes (3): [0.2.1] - 2026-04-25, Added (Phase 2 Ease of Use), code:go (trd.NewOrder(accID, market, env).Buy("00700", 100).At(350.5))
 
+### Community 453 - "Community 453"
+Cohesion: 0.67
+Nodes (3): [0.2.2] - 2026-04-25, Added (Phase 3 Infrastructure), code:go (if constant.IsTimeout(err) { /* handle timeout */ })
+
+### Community 454 - "Community 454"
+Cohesion: 0.67
+Nodes (3): [0.2.6] - 2026-04-25, Added (Phase 5 Polish), Completed (Previously Existed)
+
+### Community 455 - "Community 455"
+Cohesion: 0.67
+Nodes (3): [0.3.1] - 2026-04-26, Added, Changed
+
+### Community 456 - "Community 456"
+Cohesion: 0.67
+Nodes (3): [0.2.4] - 2026-04-25, Added, Fixed
+
 ## Knowledge Gaps
-- **1367 isolated node(s):** `MaxTrdQtysInfo`, `OrderFeeInfo`, `OrderFeeItemInfo`, `MarginRatioInfo`, `FlowSummaryInfo` (+1362 more)
+- **1421 isolated node(s):** `OptionType`, `AtmsResult`, `Config`, `Option`, `logEntry` (+1416 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **268 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **269 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `NewFutuError()` connect `Community 128` to `Community 160`, `Community 75`, `Community 60`, `Community 70`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **Why does `UnlockTrade()` connect `Community 182` to `Community 24`, `Community 4`, `Community 160`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
-- **Why does `wrapError()` connect `Community 160` to `Community 24`, `Community 443`, `Community 128`, `Community 182`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **What connects `MaxTrdQtysInfo`, `OrderFeeInfo`, `OrderFeeItemInfo` to the rest of the system?**
-  _1367 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `NewFutuError()` connect `Community 101` to `Community 160`, `Community 73`, `Community 68`, `Community 102`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `UnlockTrade()` connect `Community 183` to `Community 24`, `Community 4`, `Community 160`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `wrapError()` connect `Community 160` to `Community 24`, `Community 450`, `Community 101`, `Community 183`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **What connects `OptionType`, `AtmsResult`, `Config` to the rest of the system?**
+  _1421 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.01 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
