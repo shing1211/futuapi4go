@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Futu API v10.5.6508 upgrade** — Updated proto files, regenerated Go pb files, updated clientVer from 10100 to 1005, updated README badge
+
 ### Fixed
 
 - **Log level constants** — `internal/client/client.go` added `LogLevelInfo`, `LogLevelWarn`, `LogLevelError`, `LogLevelSilent` constants for clarity and fixed log method comparisons to use them
