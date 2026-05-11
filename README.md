@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.6-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.7-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,10 +12,12 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.6
+go get github.com/shing1211/futuapi4go@v0.5.7
 ```
 
-## v0.5.6 New Features
+## v0.5.7 New Features
+
+Upgrade Futu OpenD API to v10.5.6508 — clientVer fix, updated proto files, regenerated Go pb files.
 
 ```go
 // Fluent API - cleaner access
