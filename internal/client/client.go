@@ -146,7 +146,10 @@ type ClientOptions struct {
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
 
-	TLSConfig *tls.Config // TLS configuration (nil = no TLS)
+	TLSConfig *tls.Config	// TLS configuration (nil = no TLS)
+
+	// RSA
+	RSAPublicKey string // RSA public key in PEM format for InitConnect encryption
 }
 
 // NewOptions returns ClientOptions with sensible defaults.
@@ -218,6 +221,22 @@ func WithPushHandler(h PacketHandler) Option {
 // WithWSSecretKey sets the secret key for WebSocket authentication.
 func WithWSSecretKey(key string) Option {
 	return func(o *ClientOptions) { o.WSSecretKey = key }
+}
+
+// WithRSAPublicKey sets the RSA public key (PEM format) for encrypted InitConnect.
+// When set, Connect() will use RSA encryption during the handshake.
+// The PEM must be a PKIX/PKCS#8 format "PUBLIC KEY" — not a private key PEM.
+// Use this when connecting to a remote OpenD that has RSA encryption enabled.
+//
+// Example:
+//
+//	pubKey, err := os.ReadFile("/etc/futu/keys/opend_pubkey.pem")
+//	cli := client.New(client.WithRSAPublicKey(string(pubKey)))
+//	if err := cli.Connect("172.18.208.88:11111"); err != nil {
+//	    log.Fatal(err)
+//	}
+func WithRSAPublicKey(pem string) Option {
+	return func(o *ClientOptions) { o.RSAPublicKey = pem }
 }
 
 // SetWSSecretKey sets the WebSocket secret key on an existing client.
@@ -397,8 +416,9 @@ func NewWithOptions(addr string, maxRetries int, reconnectInterval time.Duration
 }
 
 // Connect connects to Futu OpenD via TCP (default).
+// If RSAPublicKey was set via WithRSAPublicKey, RSA encryption is used during InitConnect.
 func (c *Client) Connect(addr string) error {
-	return c.ConnectWithRSA(addr, "")
+	return c.ConnectWithRSA(addr, c.opts.RSAPublicKey)
 }
 
 // ConnectWS connects to Futu OpenD via WebSocket.

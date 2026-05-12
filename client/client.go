@@ -3489,6 +3489,15 @@ func WithLogLevel(level int) Option {
 	return futuapi.WithLogLevel(level)
 }
 
+// WithRSAPublicKey sets the RSA public key (PEM format) for encrypted InitConnect.
+// Use this when connecting to a remote OpenD with RSA encryption enabled.
+// The PEM must be a "PUBLIC KEY" (PKIX/PKCS#8) format — not a private key PEM.
+// To convert a private key PEM to public key PEM:
+//   openssl rsa -in private_key.pem -pubout -out public_key.pem
+func WithRSAPublicKey(pem string) Option {
+	return futuapi.WithRSAPublicKey(pem)
+}
+
 // Default timeouts and connection limits.
 const (
 	DefaultDialTimeout      = 10 * time.Second
