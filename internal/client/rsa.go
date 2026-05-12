@@ -22,7 +22,9 @@ import (
 	"fmt"
 )
 
-// RSAEncrypt encrypts data using RSA public key (PKCS1v15)
+// RSAEncrypt encrypts data using RSA public key (PKCS1v15).
+// Accepts either a "PUBLIC KEY" (PKIX) PEM or a "RSA PRIVATE KEY" (PKCS1) PEM.
+// When a private key PEM is passed, the public key is extracted from it.
 func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 	// Parse PEM block
 	block, _ := pem.Decode([]byte(publicKeyPEM))
@@ -30,15 +32,34 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to parse PEM block")
 	}
 
-	// Parse public key
-	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse public key: %w", err)
-	}
+	var rsaPub *rsa.PublicKey
 
-	rsaPub, ok := pub.(*rsa.PublicKey)
-	if !ok {
-		return nil, fmt.Errorf("not an RSA public key")
+	// Try PKIX public key first
+	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err == nil {
+		var ok bool
+		rsaPub, ok = pub.(*rsa.PublicKey)
+		if !ok {
+			return nil, fmt.Errorf("not an RSA public key")
+		}
+	} else {
+		// Not a public key PEM — try parsing as PKCS1 private key and extract public key
+		priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err != nil {
+			// Also handle PKCS8 private key format
+			privInterface, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse as public key or private key: %w", err)
+			}
+			var ok bool
+			priv, ok = privInterface.(*rsa.PrivateKey)
+			if !ok {
+				return nil, fmt.Errorf("not an RSA private key")
+			}
+			rsaPub = &priv.PublicKey
+		} else {
+			rsaPub = &priv.PublicKey
+		}
 	}
 
 	// Encrypt data
