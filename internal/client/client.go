@@ -333,6 +333,10 @@ type Metrics struct {
 	PushReceived     uint64
 }
 
+func (c *Client) ts() string {
+	return time.Now().Format("15:04:05.000")
+}
+
 // GetMetrics returns a copy of current metrics.
 func (c *Client) GetMetrics() Metrics {
 	c.metricsMu.RLock()
@@ -557,13 +561,19 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.rsaKey = rsaPublicKeyPEM
 	c.mu.Unlock()
 
+	c.logInfo("[%s] ConnectWithRSA: Start, addr=%s, rsaKeyLen=%d", c.ts(), addr, len(rsaPublicKeyPEM))
+
 	if c.opts.TLSConfig != nil {
 		c.conn.SetTLSConfig(c.opts.TLSConfig)
 	}
 
+	c.logInfo("[%s] ConnectWithRSA: Dialing...", c.ts())
+	dialStart := time.Now()
 	if err := c.conn.Dial(addr); err != nil {
+		c.logInfo("[%s] ConnectWithRSA: Dial FAILED: %v", c.ts(), err)
 		return fmt.Errorf("dial: %w", err)
 	}
+	c.logInfo("[%s] ConnectWithRSA: Dial OK (%v)", c.ts(), time.Since(dialStart))
 
 	clientVer := int32(1005)
 	clientID := "futuapi4go"
@@ -577,26 +587,34 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		RecvNotify:          &recvNotify,
 		PacketEncAlgo:       &packetEncAlgo,
 		ProgrammingLanguage: &programmingLanguage,
-		PushProtoFmt:        func() *int32 { v := int32(0); return &v }(), // Explicitly set Protobuf format
+		PushProtoFmt:        func() *int32 { v := int32(0); return &v }(),
 	}
 
 	pkt := &initconnect.Request{
 		C2S: c2s,
 	}
 
+	c.logInfo("[%s] ConnectWithRSA: Marshaling InitConnect request...", c.ts())
 	body, err := proto.Marshal(pkt)
 	if err != nil {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: Marshal FAILED: %v", c.ts(), err)
 		return fmt.Errorf("marshal request: %w", err)
 	}
+	c.logInfo("[%s] ConnectWithRSA: Marshal OK, body=%d bytes", c.ts(), len(body))
 
 	// If RSA public key is provided, encrypt the body
 	if rsaPublicKeyPEM != "" {
+		c.logInfo("[%s] ConnectWithRSA: RSA encrypting body...", c.ts())
+		cryptoStart := time.Now()
 		encryptedBody, err := RSAEncrypt(rsaPublicKeyPEM, body)
 		if err != nil {
 			c.conn.Close()
+			c.logInfo("[%s] ConnectWithRSA: RSA encrypt FAILED: %v", c.ts(), err)
 			return fmt.Errorf("RSA encrypt: %w", err)
 		}
+		c.logInfo("[%s] ConnectWithRSA: RSA encrypt OK (%v): %d bytes -> %d bytes", c.ts(), time.Since(cryptoStart), len(body), len(encryptedBody))
+
 		// Set encryption algorithm to FTAES_ECB (0) as per protocol spec
 		packetEncAlgo = 0
 		c2s.PacketEncAlgo = &packetEncAlgo
@@ -606,22 +624,28 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		body, err = proto.Marshal(pkt)
 		if err != nil {
 			c.conn.Close()
+			c.logInfo("[%s] ConnectWithRSA: Re-marshal FAILED: %v", c.ts(), err)
 			return fmt.Errorf("marshal request: %w", err)
 		}
 
 		// Replace body with encrypted version
 		body = encryptedBody
-		logf("InitConnect: Using RSA encryption")
+		c.logInfo("[%s] ConnectWithRSA: Using RSA encryption, final body=%d bytes", c.ts(), len(body))
 	} else {
-		logf("InitConnect: No encryption (packetEncAlgo=-1)")
+		c.logInfo("[%s] ConnectWithRSA: No encryption (packetEncAlgo=-1), body=%d bytes", c.ts(), len(body))
 	}
 
 	serialNo := c.nextSerialNo()
+	c.logInfo("[%s] ConnectWithRSA: Writing packet (protoID=1001, serialNo=%d, body=%d bytes)...", c.ts(), serialNo, len(body))
+	writeStart := time.Now()
 	if err := c.conn.WritePacket(ProtoID_InitConnect, serialNo, body); err != nil {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: WritePacket FAILED: %v", c.ts(), err)
 		return fmt.Errorf("write packet: %w", err)
 	}
+	c.logInfo("[%s] ConnectWithRSA: WritePacket OK (%v)", c.ts(), time.Since(writeStart))
 
+	c.logInfo("[%s] ConnectWithRSA: Starting readLoop goroutine...", c.ts())
 	c.wg.Add(1)
 	go c.readLoop()
 
@@ -629,26 +653,34 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	if apiTimeout == 0 {
 		apiTimeout = DefaultTimeout
 	}
+	c.logInfo("[%s] ConnectWithRSA: Waiting for response (serialNo=%d, timeout=%v)...", c.ts(), serialNo, apiTimeout)
+	respStart := time.Now()
 	respPkt, err := c.conn.ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: ReadResponse FAILED after %v: %v", c.ts(), time.Since(respStart), err)
 		return fmt.Errorf("read response: %w", err)
 	}
+	c.logInfo("[%s] ConnectWithRSA: ReadResponse OK (%v), body=%d bytes, protoID=%d", c.ts(), time.Since(respStart), len(respPkt.Body), respPkt.Header.ProtoID)
 
 	var rsp initconnect.Response
 	if err := proto.Unmarshal(respPkt.Body, &rsp); err != nil {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: Unmarshal response FAILED: %v", c.ts(), err)
 		return fmt.Errorf("unmarshal response: %w", err)
 	}
+	c.logInfo("[%s] ConnectWithRSA: Response unmarshaled, retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: Server returned error: retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
 		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
 		c.conn.Close()
+		c.logInfo("[%s] ConnectWithRSA: S2C is nil!", c.ts())
 		return errors.New("init connect: s2c is nil")
 	}
 
@@ -665,6 +697,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
+	c.logInfo("[%s] ConnectWithRSA: Connected! connID=%d, serverVer=%d, loginUID=%d, encrypt=%v", c.ts(), c.connID, c.serverVer, c.loginUserID, c.isEncrypt)
 
 	metrics.RecordConnection("tcp")
 	metrics.RecordOpenDUp(true)
@@ -763,10 +796,12 @@ func (c *Client) nextSerialNo() uint32 {
 
 func (c *Client) readLoop() {
 	defer c.wg.Done()
+	c.logInfo("[%s] readLoop: goroutine started", c.ts())
 
 	for {
 		select {
 		case <-c.ctx.Done():
+			c.logInfo("[%s] readLoop: context cancelled, exiting", c.ts())
 			return
 		default:
 		}
@@ -784,8 +819,10 @@ func (c *Client) readLoop() {
 
 		select {
 		case <-c.ctx.Done():
+			c.logInfo("[%s] readLoop: context cancelled during read, exiting", c.ts())
 			return
 		case pkt := <-resultCh:
+			c.logInfo("[%s] readLoop: got packet protoID=%d serialNo=%d bodyLen=%d dispatching...", c.ts(), pkt.Header.ProtoID, pkt.Header.SerialNo, pkt.Header.BodyLen)
 			c.conn.Dispatch(pkt)
 		case err := <-errCh:
 			c.mu.Lock()
