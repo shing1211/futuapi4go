@@ -20,13 +20,19 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"io"
+	"math/big"
 )
 
 // RSAEncrypt encrypts data using RSA public key (PKCS1v15).
 // Accepts either a "PUBLIC KEY" (PKIX) PEM or a "RSA PRIVATE KEY" (PKCS1) PEM.
 // When a private key PEM is passed, the public key is extracted from it.
+//
+// Data is encrypted in chunks compatible with Futu OpenD's protocol:
+// each input chunk is at most (keySize - 11) bytes, producing a
+// keySize-byte ciphertext block per chunk. This matches the chunked RSA
+// encryption used by the Futu Python/C++ SDKs.
 func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
-	// Parse PEM block
 	block, _ := pem.Decode([]byte(publicKeyPEM))
 	if block == nil {
 		return nil, fmt.Errorf("failed to parse PEM block")
@@ -34,7 +40,6 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 
 	var rsaPub *rsa.PublicKey
 
-	// Try PKIX public key first
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err == nil {
 		var ok bool
@@ -43,10 +48,8 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 			return nil, fmt.Errorf("not an RSA public key")
 		}
 	} else {
-		// Not a public key PEM — try parsing as PKCS1 private key and extract public key
 		priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 		if err != nil {
-			// Also handle PKCS8 private key format
 			privInterface, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse as public key or private key: %w", err)
@@ -62,13 +65,75 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 		}
 	}
 
-	// Encrypt data
-	encrypted, err := rsa.EncryptPKCS1v15(rand.Reader, rsaPub, data)
-	if err != nil {
-		return nil, fmt.Errorf("encryption failed: %w", err)
+	keySize := (rsaPub.N.BitLen() + 7) / 8 // key size in bytes
+	encChunkSize := keySize - 11
+	if encChunkSize <= 0 {
+		return nil, fmt.Errorf("RSA key size too small: %d bits", rsaPub.N.BitLen())
+	}
+	cipherChunkSize := keySize
+
+	// Pre-allocate output buffer
+	numBlocks := (len(data) + encChunkSize - 1) / encChunkSize
+	if numBlocks == 0 {
+		numBlocks = 1
+	}
+	result := make([]byte, numBlocks*cipherChunkSize)
+
+	for i, outOff := 0, 0; i < len(data); i += encChunkSize {
+		end := i + encChunkSize
+		if end > len(data) {
+			end = len(data)
+		}
+		chunk := data[i:end]
+
+		// Build EM = 0x00 || 0x02 || PS || 0x00 || M
+		em := make([]byte, cipherChunkSize)
+		em[0] = 0x00
+		em[1] = 0x02
+
+		// PS: random non-zero bytes
+		psLen := cipherChunkSize - len(chunk) - 3
+		ps := em[2 : 2+psLen]
+		if err := nonZeroRandomBytes(ps); err != nil {
+			return nil, fmt.Errorf("random padding: %w", err)
+		}
+
+		em[2+psLen] = 0x00
+		copy(em[2+psLen+1:], chunk)
+
+		// Raw RSA encryption: c = m^e mod n
+		e := big.NewInt(int64(rsaPub.E))
+		m := new(big.Int).SetBytes(em)
+		c := new(big.Int).Exp(m, e, rsaPub.N)
+		cipher := c.Bytes()
+
+		// Left-pad with zeros to keySize
+		offset := cipherChunkSize - len(cipher)
+		copy(result[outOff+offset:], cipher)
+
+		outOff += cipherChunkSize
 	}
 
-	return encrypted, nil
+	return result, nil
+}
+
+// nonZeroRandomBytes fills dst with random non-zero bytes.
+// This matches the padding generation used by PKCS1v15.
+func nonZeroRandomBytes(dst []byte) error {
+	n := len(dst)
+	for i := 0; i < n; {
+		rb := make([]byte, n)
+		if _, err := io.ReadFull(rand.Reader, rb); err != nil {
+			return err
+		}
+		for j := 0; j < n && i < n; j++ {
+			if rb[j] != 0 {
+				dst[i] = rb[j]
+				i++
+			}
+		}
+	}
+	return nil
 }
 
 // GenerateRSAKeys generates a new RSA key pair for testing
