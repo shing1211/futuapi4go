@@ -55,6 +55,7 @@ type PacketHandler func(pkt *Packet)
 type ConnInterface interface {
 	io.Closer
 	WritePacket(protoID uint32, serialNo uint32, body []byte) error
+	WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error
 	ReadResponse(serialNo uint32, timeout time.Duration) (*Packet, error)
 	ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error)
 	SetPushHandler(handler PacketHandler)
@@ -275,6 +276,14 @@ func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout t
 }
 
 func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
+	return c.writePacketCommon(protoID, serialNo, body, sha1.Sum(body))
+}
+
+func (c *Conn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error {
+	return c.writePacketCommon(protoID, serialNo, body, bodySHA1)
+}
+
+func (c *Conn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) error {
 	if c.conn == nil {
 		return fmt.Errorf("write packet: %w", ErrNotConnected)
 	}
@@ -294,7 +303,6 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 	header[7] = ProtoVersion
 	binary.LittleEndian.PutUint32(header[8:], serialNo)
 	binary.LittleEndian.PutUint32(header[12:], uint32(len(body)))
-	sha1Hash := sha1.Sum(body)
 	copy(header[16:36], sha1Hash[:])
 
 	if _, err := c.conn.Write(header); err != nil {

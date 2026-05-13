@@ -228,8 +228,37 @@ func (c *wsConn) WritePacket(protoID uint32, serialNo uint32, body []byte) error
 		return fmt.Errorf("empty body")
 	}
 
-	pkt := c.packPacket(protoID, serialNo, body)
+	pkt := c.writePacketCommon(protoID, serialNo, body, sha1.Sum(body))
 	return c.conn.WriteMessage(websocket.BinaryMessage, pkt)
+}
+
+func (c *wsConn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error {
+	if len(body) > MaxPacketSize {
+		return fmt.Errorf("body too large: %d", len(body))
+	}
+	if len(body) == 0 {
+		return fmt.Errorf("empty body")
+	}
+
+	pkt := c.writePacketCommon(protoID, serialNo, body, bodySHA1)
+	return c.conn.WriteMessage(websocket.BinaryMessage, pkt)
+}
+
+func (c *wsConn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) []byte {
+	header := make([]byte, HeaderLen)
+	header[0] = 'F'
+	header[1] = 'T'
+	binary.LittleEndian.PutUint32(header[2:], protoID)
+	header[6] = 0
+	header[7] = ProtoVersion
+	binary.LittleEndian.PutUint32(header[8:], serialNo)
+	binary.LittleEndian.PutUint32(header[12:], uint32(len(body)))
+	copy(header[16:36], sha1Hash[:])
+
+	pkt := make([]byte, HeaderLen+len(body))
+	copy(pkt, header)
+	copy(pkt[HeaderLen:], body)
+	return pkt
 }
 
 func (c *wsConn) ReadPacket() (*Packet, error) {
