@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.7-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.11-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,10 +12,24 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.7
+go get github.com/shing1211/futuapi4go@v0.5.11
 ```
 
-## v0.5.7 New Features
+## v0.5.11 Bug Fix — RSA InitConnect
+
+**Root Cause:** `WritePacket` computed `SHA1(ciphertext)` for the packet header, but the server decrypts first then verifies against `SHA1(plaintext)`. Since `SHA1(ciphertext) ≠ SHA1(plaintext)`, RSA authentication always failed with "packet body data SHA1 sign incorrect".
+
+**Fix:** Compute `SHA1(plaintext)` **before** RSA encryption — matching the Python SDK exactly. Also removed incorrect `packetEncAlgo=0` (FTAES_ECB) re-marshal. RSA mode is detected by the server from the encrypted body content itself.
+
+**Affected API:** `client.Connect(addr, futu.WithRSAPrivateKey(key))`
+
+**Changes:**
+- `WritePacketWithSHA1()` added to both `Conn` (TCP) and `wsConn` (WebSocket) — accepts external SHA1 for correct header computation
+- `ConnectWithRSA`: serialize → `SHA1(plaintext)` → encrypt → write
+
+**Acknowledgments:** @reporter — raw packet testing confirmed the root cause
+
+## v0.5.10
 
 Upgrade Futu OpenD API to v10.5.6508 — clientVer fix, updated proto files, regenerated Go pb files.
 
