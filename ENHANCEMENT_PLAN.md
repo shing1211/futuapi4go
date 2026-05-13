@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK - Advanced Enhancement Plan
 
-> **Version**: v0.5.4 | **Date**: 2026-05-02 | **Status**: ACTIVE
+> **Version**: v0.5.11 | **Date**: 2026-05-13 | **Status**: ACTIVE
 
 ---
 
@@ -370,4 +370,4 @@ pkg/store/           — NEW: sqlite.go, redis.go, serializer.go
 
 ---
 
-*Last updated: 2026-05-02*
+*Last updated: 2026-05-13*
