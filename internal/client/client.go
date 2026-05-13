@@ -16,6 +16,7 @@ package futuapi
 
 import (
 	"context"
+	"crypto/sha1"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -595,40 +596,38 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	}
 
 	c.logInfo("[%s] ConnectWithRSA: Marshaling InitConnect request...", c.ts())
-	body, err := proto.Marshal(pkt)
+	plainBody, err := proto.Marshal(pkt)
 	if err != nil {
 		c.conn.Close()
 		c.logInfo("[%s] ConnectWithRSA: Marshal FAILED: %v", c.ts(), err)
 		return fmt.Errorf("marshal request: %w", err)
 	}
-	c.logInfo("[%s] ConnectWithRSA: Marshal OK, body=%d bytes", c.ts(), len(body))
+	c.logInfo("[%s] ConnectWithRSA: Marshal OK, plainBody=%d bytes", c.ts(), len(plainBody))
 
-	// If RSA public key is provided, encrypt the body
+	// Compute SHA1 over the SERIALIZED PLAINTEXT blob.
+	// Server decrypts first, then verifies SHA1(plaintext) against this value.
+	// This matches the Python SDK behavior: sha1(SerializeToString()) BEFORE encryption.
+	plainSHA1 := sha1.Sum(plainBody)
+
+	body := plainBody
+
+	// If RSA public key is provided, encrypt the body AFTER SHA1 is captured
 	if rsaPublicKeyPEM != "" {
 		c.logInfo("[%s] ConnectWithRSA: RSA encrypting body...", c.ts())
 		cryptoStart := time.Now()
-		encryptedBody, err := RSAEncrypt(rsaPublicKeyPEM, body)
+		encryptedBody, err := RSAEncrypt(rsaPublicKeyPEM, plainBody)
 		if err != nil {
 			c.conn.Close()
 			c.logInfo("[%s] ConnectWithRSA: RSA encrypt FAILED: %v", c.ts(), err)
 			return fmt.Errorf("RSA encrypt: %w", err)
 		}
-		c.logInfo("[%s] ConnectWithRSA: RSA encrypt OK (%v): %d bytes -> %d bytes", c.ts(), time.Since(cryptoStart), len(body), len(encryptedBody))
+		c.logInfo("[%s] ConnectWithRSA: RSA encrypt OK (%v): %d bytes -> %d bytes", c.ts(), time.Since(cryptoStart), len(plainBody), len(encryptedBody))
 
-		// Set encryption algorithm to FTAES_ECB (0) as per protocol spec
-		packetEncAlgo = 0
-		c2s.PacketEncAlgo = &packetEncAlgo
+		// packetEncAlgo=0 (FTAES_ECB) is NOT the right flag for RSA.
+		// Leave packetEncAlgo at -1 (no encryption flag in header).
+		// The server detects RSA mode from the encrypted body itself.
+		// (No re-marshal: encrypt the already-serialized plaintext, matching Python SDK.)
 
-		// Re-marshal with encryption flag set
-		pkt = &initconnect.Request{C2S: c2s}
-		body, err = proto.Marshal(pkt)
-		if err != nil {
-			c.conn.Close()
-			c.logInfo("[%s] ConnectWithRSA: Re-marshal FAILED: %v", c.ts(), err)
-			return fmt.Errorf("marshal request: %w", err)
-		}
-
-		// Replace body with encrypted version
 		body = encryptedBody
 		c.logInfo("[%s] ConnectWithRSA: Using RSA encryption, final body=%d bytes", c.ts(), len(body))
 	} else {
@@ -638,7 +637,8 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	serialNo := c.nextSerialNo()
 	c.logInfo("[%s] ConnectWithRSA: Writing packet (protoID=1001, serialNo=%d, body=%d bytes)...", c.ts(), serialNo, len(body))
 	writeStart := time.Now()
-	if err := c.conn.WritePacket(ProtoID_InitConnect, serialNo, body); err != nil {
+	// Use SHA1(plaintext) in header — server verifies SHA1 of decrypted plaintext
+	if err := c.conn.WritePacketWithSHA1(ProtoID_InitConnect, serialNo, body, plainSHA1); err != nil {
 		c.conn.Close()
 		c.logInfo("[%s] ConnectWithRSA: WritePacket FAILED: %v", c.ts(), err)
 		return fmt.Errorf("write packet: %w", err)
