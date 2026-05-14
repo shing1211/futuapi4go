@@ -1154,12 +1154,12 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
-		plainSHA1 := sha1.Sum(body)
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
 			return fmt.Errorf("AES encrypt: %w", err)
 		}
-		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, plainSHA1); err != nil {
+		encSHA1 := sha1.Sum(encBody)
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, encSHA1); err != nil {
 			return fmt.Errorf("write packet: %w", err)
 		}
 	} else {
@@ -1206,12 +1206,12 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
-		plainSHA1 := sha1.Sum(body)
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
 			return fmt.Errorf("AES encrypt: %w", err)
 		}
-		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, plainSHA1); err != nil {
+		encSHA1 := sha1.Sum(encBody)
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, encSHA1); err != nil {
 			return fmt.Errorf("write packet: %w", err)
 		}
 	} else {

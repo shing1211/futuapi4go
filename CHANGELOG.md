@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.15] - 2026-05-15
+
+### Fixed
+
+- **AES request SHA1 mismatch** — When sending encrypted API requests (non-InitConnect), the packet header SHA1 was computed over the **plaintext** body, but Futu OpenD verifies it against the **encrypted** body. Every encrypted API call failed with "The packet body SHA1 signature is incorrect." Fix: compute `sha1.Sum(encBody)` instead of `sha1.Sum(body)`.
+
 ## [0.5.14] - 2026-05-15
 
 ### Fixed
