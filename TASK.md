@@ -1,6 +1,6 @@
 # futuapi4go Task List
 
-> **Last Updated:** 2026-05-13 | **Version:** v0.5.11
+> **Last Updated:** 2026-05-14 | **Version:** v0.5.12
 
 ---
 

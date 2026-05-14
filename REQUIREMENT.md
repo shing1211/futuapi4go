@@ -6,7 +6,7 @@
 |----------|-------|
 | **Project Name** | futuapi4go |
 | **Type** | Go SDK (Software Development Kit) |
-| **Version** | v0.5.11 |
+| **Version** | v0.5.12 |
 | **Purpose** | Type-safe, production-ready Go SDK for Futu OpenAPI — market data, trading, real-time push |
 | **Target Users** | Algo traders, quantitative developers, trading bot developers |
 | **Platform** | Go 1.26+ (Linux, macOS, Windows) |

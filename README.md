@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.11-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.12-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,8 +12,17 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.11
+go get github.com/shing1211/futuapi4go@v0.5.12
 ```
+
+## v0.5.12 FTAES Encryption & Bug Fixes
+
+**FTAES_ECB Encryption:** Implemented AES encryption for all API requests after `InitConnect` (commit `9f0a859`). Uses null-byte padding + 16-byte trailer (matching Python SDK), applied to requests when RSA-based connection is established. Also fixed padding from PKCS7 back to null-byte style (`f79771b`).
+
+**Bug Fixes:**
+- **Pool buffer dead code** (`6a548b6`): Removed pooled buffer in `requestInternal` — it fetched a buffer but then used a fresh `proto.Marshal` result, silently truncating oversized payloads.
+- **ClientPool.Get busy-wait** (`6a548b6`): Replaced `time.Sleep(50ms)` spin with `sync.Cond` wait, matching existing `Signal()` in `Put()`.
+- **Dead dispSize field** (`a127fe0`): Removed unused `dispSize` from `conn.go` and `ws.go`.
 
 ## v0.5.11 Bug Fix — RSA InitConnect
 

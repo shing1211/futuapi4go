@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK - Advanced Enhancement Plan
 
-> **Version**: v0.5.11 | **Date**: 2026-05-13 | **Status**: ACTIVE
+> **Version**: v0.5.12 | **Date**: 2026-05-14 | **Status**: ACTIVE
 
 ---
 
