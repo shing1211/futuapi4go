@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.5.14] - 2026-05-15
+
+### Fixed
+
+- **FTAES encrypt: empty payload produces invalid ciphertext** — `ftaesEncrypt` set `padLen=0` for empty plaintext (0%16=0 → padLen=16, then wrongly reset to 0), producing 16-byte ciphertext without a 16-byte trailer. Fix: only apply the "already aligned" shortcut when plaintext length > 0.
+- **FTAES decrypt: panic on unencrypted responses** — `DecryptResponseBody` tried to AES-decrypt all non-InitConnect responses when `isEncrypt=1`, but Futu OpenD does not encrypt response bodies even when RSA key exchange was used. A 59-byte unencrypted response caused `crypto/aes: input not full block`. Fix: validate FTAES ciphertext format (encrypted portion must be n*16 bytes) before decrypting; return plaintext if format is invalid.
+
 ## [0.5.13] - 2026-05-14
 
 ### Fixed

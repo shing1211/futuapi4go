@@ -121,6 +121,7 @@ var (
 	ErrInvalidPacket    = errors.New("invalid packet")
 	ErrEncryptionFailed = errors.New("encryption failed")
 	ErrDecryptionFailed = errors.New("decryption failed")
+	ErrNotEncrypted     = errors.New("not FTAES encrypted: treating as plaintext")
 	ErrChecksumMismatch = errors.New("response checksum mismatch: body integrity compromised")
 	ErrInvalidHeader    = errors.New("invalid packet header")
 	ErrInvalidMagic     = errors.New("invalid magic bytes")
@@ -273,7 +274,7 @@ func CategoryOf(err error) ErrorCategory {
 	if errors.Is(err, ErrRequestTimeout) {
 		return CategoryTimeout
 	}
-	if errors.Is(err, ErrEncryptionFailed) || errors.Is(err, ErrDecryptionFailed) {
+	if errors.Is(err, ErrEncryptionFailed) || errors.Is(err, ErrDecryptionFailed) || errors.Is(err, ErrNotEncrypted) {
 		return CategoryEncryption
 	}
 	if errors.Is(err, ErrInvalidPacket) || errors.Is(err, ErrInvalidResponse) {

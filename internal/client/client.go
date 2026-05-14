@@ -990,7 +990,11 @@ func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error
 	if atomic.LoadInt32(&c.isEncrypt) == 0 || protoID == ProtoID_InitConnect {
 		return body, nil
 	}
-	return ftaesDecrypt([]byte(c.getAESKey()), body)
+	plaintext, err := ftaesDecrypt([]byte(c.getAESKey()), body)
+	if errors.Is(err, ErrNotEncrypted) {
+		return body, nil
+	}
+	return plaintext, err
 }
 
 // CanSendProto reports whether a request for the given proto ID can be sent,
