@@ -75,7 +75,6 @@ type Conn struct {
 
 	dispMu   sync.Mutex
 	disp     map[uint32]chan *Packet
-	dispSize int
 
 	pushHandler PacketHandler
 	apiTimeout  time.Duration
@@ -157,7 +156,6 @@ func (c *Conn) Dispatch(pkt *Packet) {
 	c.dispMu.Lock()
 	ch, ok := c.disp[pkt.Header.SerialNo]
 	delete(c.disp, pkt.Header.SerialNo)
-	c.dispSize--
 	c.dispMu.Unlock()
 
 	if ok {
@@ -227,7 +225,6 @@ func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, erro
 
 	c.dispMu.Lock()
 	c.disp[serial] = ch
-	c.dispSize++
 	c.dispMu.Unlock()
 
 	defer func() {
@@ -253,14 +250,15 @@ func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout t
 
 	c.dispMu.Lock()
 	c.disp[serial] = ch
-	c.dispSize++
 	c.dispMu.Unlock()
+
 
 	defer func() {
 		c.dispMu.Lock()
 		delete(c.disp, serial)
 		c.dispMu.Unlock()
 	}()
+
 
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()

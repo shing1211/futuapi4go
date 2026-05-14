@@ -162,8 +162,7 @@ func (c *Client) CloseOnSignal() (unregister func()) {
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		sig := <-sigChan
-		_ = sig // ignore signal for logging
+		<-sigChan
 		c.Close()
 	}()
 

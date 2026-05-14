@@ -55,9 +55,8 @@ type wsConn struct {
 	conn   *websocket.Conn
 	apiTimeout time.Duration
 
-	dispMu   sync.Mutex
-	disp     map[uint32]chan *Packet
-	dispSize int
+	dispMu sync.Mutex
+	disp   map[uint32]chan *Packet
 
 	pushHandler PacketHandler
 
@@ -284,7 +283,6 @@ func (c *wsConn) ReadResponseContext(ctx context.Context, serialNo uint32, timeo
 
 	c.dispMu.Lock()
 	c.disp[serialNo] = ch
-	c.dispSize = len(c.disp)
 	c.dispMu.Unlock()
 
 	defer func() {
