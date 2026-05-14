@@ -75,6 +75,14 @@ func main() {
 
 > **Note:** US stocks require subscribing before `GetQuote` works. HK stocks do not.
 
+## Examples
+
+For more complete, runnable examples covering every API surface — including
+real-time push, trading workflows, historical data, and circuit breaker patterns
+— see the demo repository:
+
+**[futuapi4go-demo →](https://github.com/shing1211/futuapi4go-demo)**
+
 ## Key Features
 
 ### Real-Time Push via Channels
@@ -279,6 +287,7 @@ All communication is via Protocol Buffers over TCP. See [DESIGN.md](DESIGN.md) f
 - [CHANGELOG](CHANGELOG.md) — version history and release notes
 - [DESIGN](DESIGN.md) — architecture, design decisions, and API patterns
 - [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — upcoming features and roadmap
+- [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — runnable examples for every feature
 
 ## License
 
