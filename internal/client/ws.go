@@ -243,6 +243,20 @@ func (c *wsConn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byt
 	return c.conn.WriteMessage(websocket.BinaryMessage, pkt)
 }
 
+// WritePacketEncrypted writes a packet where the body is already AES-encrypted and
+// the sha1Hash is the SHA1 of the ORIGINAL PLAINTEXT. Used for encrypted API calls.
+func (c *wsConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, plaintextSHA1 [20]byte) error {
+	if len(encryptedBody) > MaxPacketSize {
+		return fmt.Errorf("body too large: %d", len(encryptedBody))
+	}
+	if len(encryptedBody) == 0 {
+		return fmt.Errorf("empty body")
+	}
+
+	pkt := c.writePacketCommon(protoID, serialNo, encryptedBody, plaintextSHA1)
+	return c.conn.WriteMessage(websocket.BinaryMessage, pkt)
+}
+
 func (c *wsConn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) []byte {
 	header := make([]byte, HeaderLen)
 	header[0] = 'F'

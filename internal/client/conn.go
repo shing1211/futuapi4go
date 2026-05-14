@@ -56,6 +56,7 @@ type ConnInterface interface {
 	io.Closer
 	WritePacket(protoID uint32, serialNo uint32, body []byte) error
 	WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error
+	WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, plaintextSHA1 [20]byte) error
 	ReadResponse(serialNo uint32, timeout time.Duration) (*Packet, error)
 	ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error)
 	SetPushHandler(handler PacketHandler)
@@ -279,6 +280,13 @@ func (c *Conn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
 
 func (c *Conn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error {
 	return c.writePacketCommon(protoID, serialNo, body, bodySHA1)
+}
+
+// WritePacketEncrypted writes a packet where the body is already AES-encrypted and
+// the sha1Hash is the SHA1 of the ORIGINAL PLAINTEXT (before encryption).
+// Used for all non-InitConnect API calls when the connection is encrypted.
+func (c *Conn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, plaintextSHA1 [20]byte) error {
+	return c.writePacketCommon(protoID, serialNo, encryptedBody, plaintextSHA1)
 }
 
 func (c *Conn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) error {

@@ -961,6 +961,27 @@ func (c *Client) IsEncrypt() bool {
 	return c.isEncrypt
 }
 
+// EncryptRequestBody encrypts the request body using FTAES_ECB when the
+// connection is in encrypted mode. Returns the encrypted body (or original if
+// not encrypted). InitConnect (protoID 1001) is NEVER encrypted — RSA handles
+// that in the handshake itself.
+func (c *Client) EncryptRequestBody(protoID uint32, body []byte) ([]byte, error) {
+	if !c.isEncrypt || protoID == ProtoID_InitConnect {
+		return body, nil
+	}
+	return ftaesEncrypt([]byte(c.aesKey), body)
+}
+
+// DecryptResponseBody decrypts the response body using FTAES_ECB when the
+// connection is in encrypted mode. Returns the plaintext (or original if not
+// encrypted). InitConnect responses are handled separately via RSA.
+func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error) {
+	if !c.isEncrypt || protoID == ProtoID_InitConnect {
+		return body, nil
+	}
+	return ftaesDecrypt([]byte(c.aesKey), body)
+}
+
 // CanSendProto reports whether a request for the given proto ID can be sent,
 // based on the current connection state. InitConnect can be sent when connected.
 // All other protos require the connection to be fully ready (connected + handshaken).
@@ -1112,9 +1133,21 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return fmt.Errorf("marshal request: %w", err)
 	}
 
+	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
-	if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
-		return fmt.Errorf("write packet: %w", err)
+	if c.isEncrypt && protoID != ProtoID_InitConnect {
+		plainSHA1 := sha1.Sum(body)
+		encBody, err := c.EncryptRequestBody(protoID, body)
+		if err != nil {
+			return fmt.Errorf("AES encrypt: %w", err)
+		}
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, plainSHA1); err != nil {
+			return fmt.Errorf("write packet: %w", err)
+		}
+	} else {
+		if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
+			return fmt.Errorf("write packet: %w", err)
+		}
 	}
 
 	apiTimeout := c.opts.APITimeout
@@ -1126,10 +1159,19 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return fmt.Errorf("read response: %w", err)
 	}
 
+	// Decrypt body if encrypted (skip InitConnect response — RSA handles that)
+	plaintext := pkt.Body
+	if c.isEncrypt && protoID != ProtoID_InitConnect {
+		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
+		if err != nil {
+			return fmt.Errorf("AES decrypt: %w", err)
+		}
+	}
+
 	respBuf := c.bufPool.GetResponseBuf()
 	defer c.bufPool.PutResponseBuf(respBuf)
 
-	respBuf.data = pkt.Body
+	respBuf.data = plaintext
 	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
@@ -1147,9 +1189,21 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		return err
 	}
 
+	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
-	if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
-		return err
+	if c.isEncrypt && protoID != ProtoID_InitConnect {
+		plainSHA1 := sha1.Sum(body)
+		encBody, err := c.EncryptRequestBody(protoID, body)
+		if err != nil {
+			return fmt.Errorf("AES encrypt: %w", err)
+		}
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, plainSHA1); err != nil {
+			return fmt.Errorf("write packet: %w", err)
+		}
+	} else {
+		if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
+			return err
+		}
 	}
 
 	apiTimeout := c.opts.APITimeout
@@ -1169,10 +1223,19 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		return fmt.Errorf("read response: %w", err)
 	}
 
+	// Decrypt body if encrypted (skip InitConnect response — RSA handles that)
+	plaintext := pkt.Body
+	if c.isEncrypt && protoID != ProtoID_InitConnect {
+		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
+		if err != nil {
+			return fmt.Errorf("AES decrypt: %w", err)
+		}
+	}
+
 	// Use pooled response buffer
 	respBuf := c.bufPool.GetResponseBuf()
 	defer c.bufPool.PutResponseBuf(respBuf)
-	respBuf.data = pkt.Body
+	respBuf.data = plaintext
 
 	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
