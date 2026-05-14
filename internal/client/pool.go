@@ -142,22 +142,8 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 			return client, nil
 		}
 
-		done := make(chan struct{})
-		go func() {
-			defer close(done)
-			time.Sleep(50 * time.Millisecond)
-		}()
-
-		p.mu.Unlock()
-		select {
-		case <-ctx.Done():
-			p.mu.Lock()
-			p.cond.Broadcast()
-			<-done
-			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
-		case <-done:
-		}
-		p.mu.Lock()
+		// Wait efficiently using sync.Cond — blocks without burning CPU
+		p.cond.Wait()
 
 		if p.closed {
 			return nil, NewError(CodePoolClosed, "pool is closed")

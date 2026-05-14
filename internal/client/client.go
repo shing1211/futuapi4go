@@ -151,6 +151,11 @@ type ClientOptions struct {
 
 	// RSA
 	RSAPublicKey string // RSA public key in PEM format for InitConnect encryption
+
+	// Resilience
+	RateLimiter  *ratelimit.ProtoLimiter // Rate limiter for API calls
+	RetryConfig  retry.Config           // Retry configuration
+	Breaker      *breaker.Breaker        // Circuit breaker
 }
 
 // NewOptions returns ClientOptions with sensible defaults.
@@ -255,11 +260,11 @@ func WithTLS(cfg *tls.Config) Option {
 }
 
 func WithRateLimiter(rl *ratelimit.ProtoLimiter) Option {
-	return func(o *ClientOptions) {}
+	return func(o *ClientOptions) { o.RateLimiter = rl }
 }
 
 func WithRetryConfig(rc retry.Config) Option {
-	return func(o *ClientOptions) {}
+	return func(o *ClientOptions) { o.RetryConfig = rc }
 }
 
 func (c *Client) SetRateLimiter(rl *ratelimit.ProtoLimiter) {
@@ -272,7 +277,7 @@ func (c *Client) SetRetryConfig(rc retry.Config) {
 
 // WithBreaker returns an Option that sets the circuit breaker for the client.
 func WithBreaker(cb *breaker.Breaker) Option {
-	return func(o *ClientOptions) {}
+	return func(o *ClientOptions) { o.Breaker = cb }
 }
 
 // SetBreaker replaces the circuit breaker on the client.
@@ -409,6 +414,17 @@ func New(opts ...Option) *Client {
 		bufPool:  newBufferPool(8192, 4096),
 	}
 	client.conn.SetAPITimeout(options.APITimeout)
+
+	if options.RateLimiter != nil {
+		client.rateLimiter = options.RateLimiter
+	}
+	if options.RetryConfig.MaxAttempts != 0 {
+		client.retryConfig = &options.RetryConfig
+	}
+	if options.Breaker != nil {
+		client.breaker = options.Breaker
+	}
+
 	return client
 }
 
@@ -991,11 +1007,18 @@ func (c *Client) Context() context.Context {
 
 // WithContext returns a new Client with the given context for cancellation support.
 // The original client remains usable. Operations will respect the context's deadline/cancellation.
+// Note: the returned Client shares the handler map with the original — handler registrations
+// on the returned Client will also affect the original. For isolated handler registries,
+// use client.New(...) with separate connections instead.
 func (c *Client) WithContext(ctx context.Context) *Client {
+	handlers := make(map[uint32]Handler, len(c.handlers))
+	for k, v := range c.handlers {
+		handlers[k] = v
+	}
 	newClient := &Client{
 		conn:     c.conn,
 		opts:     c.opts,
-		handlers: c.handlers,
+		handlers: handlers,
 		ctx:      ctx,
 		cancel:   func() {}, // Don't cancel parent context
 	}
@@ -1084,18 +1107,14 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return ErrNotConnected
 	}
 
-	// Use pooled marshal buffer
-	buf := c.bufPool.GetMarshalBuf()
 	body, err := proto.Marshal(req)
-	copy(buf.data, body)
-	c.bufPool.PutMarshalBuf(buf)
 	if err != nil {
-		return err
+		return fmt.Errorf("marshal request: %w", err)
 	}
 
 	serialNo := c.nextSerialNo()
 	if err := c.conn.WritePacket(protoID, serialNo, body); err != nil {
-		return err
+		return fmt.Errorf("write packet: %w", err)
 	}
 
 	apiTimeout := c.opts.APITimeout
@@ -1107,7 +1126,6 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return fmt.Errorf("read response: %w", err)
 	}
 
-	// Get pooled response buffer for unmarshal
 	respBuf := c.bufPool.GetResponseBuf()
 	defer c.bufPool.PutResponseBuf(respBuf)
 
