@@ -37,7 +37,7 @@ import (
 func TestGetAccList(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2001, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2001, func(req []byte) (proto.Message, error) {
 		accID := fixtures.TestAccID
 		accType := int32(1 /* TrdType_Security */)
 		accStatus := int32(trdcommon.TrdAccStatus_TrdAccStatus_Active)
@@ -53,7 +53,7 @@ func TestGetAccList(t *testing.T) {
 			},
 		}
 
-		return proto.Marshal(&trdgetacclist.Response{S2C: s2c})
+		return &trdgetacclist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -84,9 +84,9 @@ func TestGetAccList(t *testing.T) {
 func TestUnlockTrade(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2005, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2005, func(req []byte) (proto.Message, error) {
 		s2c := &trdunlocktrade.S2C{}
-		return proto.Marshal(&trdunlocktrade.Response{S2C: s2c})
+		return &trdunlocktrade.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -116,14 +116,22 @@ func TestUnlockTrade(t *testing.T) {
 func TestGetFunds_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2101, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2101, func(req []byte) (proto.Message, error) {
 		funds := fixtures.HSIFunds()
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdgetfunds.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			Funds: funds,
 		}
 
-		return proto.Marshal(&trdgetfunds.Response{S2C: s2c})
+		return &trdgetfunds.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -163,14 +171,22 @@ func TestGetFunds_HSI(t *testing.T) {
 func TestGetPositionList_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2102, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2102, func(req []byte) (proto.Message, error) {
 		position := fixtures.HSIPosition()
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdgetpositionlist.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			PositionList: []*trdcommon.Position{position},
 		}
 
-		return proto.Marshal(&trdgetpositionlist.Response{S2C: s2c})
+		return &trdgetpositionlist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -216,7 +232,7 @@ func TestGetPositionList_HSI(t *testing.T) {
 func TestPlaceOrder_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2202, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2202, func(req []byte) (proto.Message, error) {
 		var reqMsg trdplaceorder.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
@@ -232,12 +248,20 @@ func TestPlaceOrder_HSI(t *testing.T) {
 		}
 
 		orderID := uint64(9876543210)
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdplaceorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			OrderID: &orderID,
 		}
 
-		return proto.Marshal(&trdplaceorder.Response{S2C: s2c})
+		return &trdplaceorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -273,14 +297,22 @@ func TestPlaceOrder_HSI(t *testing.T) {
 func TestPlaceOrder_HSI_Sell(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2202, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2202, func(req []byte) (proto.Message, error) {
 		orderID := uint64(9876543211)
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdplaceorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			OrderID: &orderID,
 		}
 
-		return proto.Marshal(&trdplaceorder.Response{S2C: s2c})
+		return &trdplaceorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -316,15 +348,23 @@ func TestPlaceOrder_HSI_Sell(t *testing.T) {
 func TestGetOrderList(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2201, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2201, func(req []byte) (proto.Message, error) {
 		order1 := fixtures.HSIOrder(1001)
 		order2 := fixtures.HSIOrder(1002)
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdgetorderlist.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			OrderList: []*trdcommon.Order{order1, order2},
 		}
 
-		return proto.Marshal(&trdgetorderlist.Response{S2C: s2c})
+		return &trdgetorderlist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -370,14 +410,26 @@ func TestGetOrderList(t *testing.T) {
 func TestModifyOrder_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2205, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2205, func(req []byte) (proto.Message, error) {
 		var reqMsg trdmodifyorder.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
 		}
 
-		s2c := &trdmodifyorder.S2C{}
-		return proto.Marshal(&trdmodifyorder.Response{S2C: s2c})
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		orderID := uint64(1001)
+
+		s2c := &trdmodifyorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
+			OrderID: &orderID,
+		}
+		return &trdmodifyorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -409,9 +461,21 @@ func TestModifyOrder_HSI(t *testing.T) {
 func TestModifyOrder_Cancel(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2205, func(req []byte) ([]byte, error) {
-		s2c := &trdmodifyorder.S2C{}
-		return proto.Marshal(&trdmodifyorder.Response{S2C: s2c})
+	server.RegisterHandler(2205, func(req []byte) (proto.Message, error) {
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		orderID := uint64(1001)
+
+		s2c := &trdmodifyorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
+			OrderID: &orderID,
+		}
+		return &trdmodifyorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -443,15 +507,23 @@ func TestModifyOrder_Cancel(t *testing.T) {
 func TestGetOrderFillList_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(2211, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2211, func(req []byte) (proto.Message, error) {
 		fill1 := fixtures.HSIOrderFill(5001, 1001)
 		fill2 := fixtures.HSIOrderFill(5002, 1002)
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
 
 		s2c := &trdgetorderfilllist.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			OrderFillList: []*trdcommon.OrderFill{fill1, fill2},
 		}
 
-		return proto.Marshal(&trdgetorderfilllist.Response{S2C: s2c})
+		return &trdgetorderfilllist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -498,38 +570,69 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	// Register all handlers
-	server.RegisterHandler(2001, func(req []byte) ([]byte, error) {
+server.RegisterHandler(2001, func(req []byte) (proto.Message, error) {
 		accID := fixtures.TestAccID
 		s2c := &trdgetacclist.S2C{
 			AccList: []*trdcommon.TrdAcc{
 				{
-					AccID:  &accID,
-					TrdEnv: proto.Int32(fixtures.TestTrdEnv),
+					AccID:     &accID,
+					TrdEnv:    proto.Int32(fixtures.TestTrdEnv),
 				},
 			},
 		}
-		return proto.Marshal(&trdgetacclist.Response{S2C: s2c})
+		return &trdgetacclist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
-	server.RegisterHandler(2005, func(req []byte) ([]byte, error) {
-		return proto.Marshal(&trdunlocktrade.Response{S2C: &trdunlocktrade.S2C{}})
+	server.RegisterHandler(2005, func(req []byte) (proto.Message, error) {
+		return &trdunlocktrade.Response{S2C: &trdunlocktrade.S2C{}, RetType: proto.Int32(0)}, nil
 	})
 
-	server.RegisterHandler(2101, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2101, func(req []byte) (proto.Message, error) {
 		funds := fixtures.HSIFunds()
-		return proto.Marshal(&trdgetfunds.Response{S2C: &trdgetfunds.S2C{Funds: funds}})
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		s2c := &trdgetfunds.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
+			Funds: funds,
+		}
+		return &trdgetfunds.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
-	server.RegisterHandler(2202, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2202, func(req []byte) (proto.Message, error) {
 		orderID := uint64(9999)
-		return proto.Marshal(&trdplaceorder.Response{S2C: &trdplaceorder.S2C{OrderID: &orderID}})
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		s2c := &trdplaceorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
+			OrderID: &orderID,
+		}
+		return &trdplaceorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
-	server.RegisterHandler(2201, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(2201, func(req []byte) (proto.Message, error) {
 		order := fixtures.HSIOrder(9999)
-		return proto.Marshal(&trdgetorderlist.Response{S2C: &trdgetorderlist.S2C{
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		s2c := &trdgetorderlist.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
 			OrderList: []*trdcommon.Order{order},
-		}})
+		}
+		return &trdgetorderlist.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -539,6 +642,9 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 
 	cli, cleanup := testutil.NewTestClient(t, server)
 	defer cleanup()
+
+	// Clear requests from registration/setup phase
+	server.ClearRequests()
 
 	// Step 1: Get account list
 	trdCategory := constant.TrdCategory(1)
@@ -599,5 +705,8 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 
 	// Verify complete workflow
 	server.AssertRequestCount(t, 5)
+	if !server.HasProtoID(2001) || !server.HasProtoID(2101) || !server.HasProtoID(2202) || !server.HasProtoID(2201) {
+		t.Errorf("Missing expected proto IDs in workflow requests")
+	}
 	t.Logf("Complete trading workflow executed successfully with %d API calls", len(server.GetRequests()))
 }

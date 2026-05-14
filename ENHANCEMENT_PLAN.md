@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK - Advanced Enhancement Plan
 
-> **Version**: v0.5.12 | **Date**: 2026-05-14 | **Status**: ACTIVE
+> **Version**: v0.5.13 | **Date**: 2026-05-14 | **Status**: ACTIVE
 
 ---
 
@@ -10,6 +10,78 @@ The `futuapi4go` SDK has reached **~99% API coverage** vs the Python SDK with al
 
 **Current state**: v0.5.4 — Core APIs complete, quick wins implemented.
 **Target state**: World-class professional trading SDK with execution algorithms, risk engine, and event-driven framework.
+
+---
+
+## Phase 0: Core SDK Robustness (Priority P0 — Prerequisite)
+
+Before building advanced features, the SDK core must be hardened. All items in this phase are critical bugs, race conditions, or robustness gaps found during the v0.5.12 code audit.
+
+### 0-1: Critical Bugs
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-1a | **AES ECB encrypts only 16 bytes** — `block.Encrypt`/`Decrypt` processes exactly one AES block. Any protobuf body >16 bytes is silently corrupted. | `internal/client/aes.go:36,78` | ✅ Done |
+| 0-1b | **Operator precedence in `inferSecMarket`** — `&&` binds tighter than `||`. Code ≤3 chars with `.SZ` suffix panics with index-out-of-bounds. | `client/client.go:495` | ✅ Done |
+
+### 0-2: Race Conditions (Fixed)
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-2a | `isEncrypt` accessed without synchronization in 8 locations (hot paths + encrypt/decrypt helpers). | `internal/client/client.go:300` | ✅ Done — atomics |
+| 0-2b | `aesKey` read without mutex in `EncryptRequestBody`/`DecryptResponseBody`. | `internal/client/client.go:974,984` | ✅ Done |
+| 0-2c | `MockServer.running` shared between `Stop` (write) and `acceptLoop`/`handleConnection` (read). | `test/util/mock_server.go:54` | ✅ Done — atomics |
+| 0-2d | Test goroutines race on `conn.conn` and `serverConn` in 3 conn tests. | `internal/client/conn_test.go` | ✅ Done — channels |
+
+### 0-3: Nil Safety Gaps
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-3a | `GetOrderBook` iterates nil items — no nil check on `ob` or `d` from proto lists. | `pkg/qot/quote.go:350-380` | ✅ Done |
+| 0-3b | `GetFunds` — `s2c.GetFunds()` can be nil, panics on first field access. | `pkg/trd/trade.go:323` | ✅ Done |
+
+### 0-4: Buffer Pool & Alloc Cleanup
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-4a | `requestInternal` marshal buffer pool: `GetMarshalBuf` + `PutMarshalBuf` around `proto.Marshal` — pooled buf content is never used (body var retained separately). Remove the dead pool calls. | `internal/client/client.go:1088-1091` | ✅ Done (removed) |
+| 0-4b | `requestInternal`/`requestContextInternal` response buffer pool: `respBuf.data = plaintext` just reassigns slice header — no allocation saved. Removed in favor of direct `proto.Unmarshal`. | `internal/client/client.go:1171-1177,1235-1240` | ✅ Done |
+
+### 0-5: Push Handler Registry Races
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-5a | `subscribeOne`'s stop function calls `RegisterHandler(protoID, nil)` — writing nil to handler map races with concurrent push dispatch. Fixed: handler checks a closed stop channel instead. | `pkg/push/chan/chan.go:118-131` | ✅ Done |
+| 0-5b | All `Subscribe*` helpers use `context.Background()`. Changed to accept `ctx context.Context` as first parameter. | `pkg/push/chan/chan.go:133,138,143,198,203,208,213,218` | ✅ Done |
+
+### 0-6: SDK Library Race Conditions
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-6a | `WithContext` shares `opts` struct pointer — caller mutations affect the original. Fixed: deep-copy via `optsCopy := *c.opts`. | `internal/client/client.go:1041` | ✅ Done |
+| 0-6b | `GetAESKey()` (line 938) and `GetLoginUserID()` (line 953) are exported methods calling lock-protected reads. The `JoinGroup` pattern in `WithContext` accesses raw fields under RLock but shares `aesKey` string — this is safe because strings are immutable in Go, but fragile if `aesKey` is ever reassigned from another goroutine. | `internal/client/client.go:938,953,1047-1055` | ✅ Done — `getAESKey()` mutex accessor added |
+
+### 0-7: Error Handling Inconsistencies
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-7a | `wrapError` in `pkg/sys/system.go` returned `*constant.FutuError` directly (inconsistent with `pkg/qot/quote.go` which returns `error`). Fixed: uses `constant.NewFutuError()` like all other packages. | `pkg/sys/system.go:60-65` | ✅ Done |
+| 0-7b | Several `wrapError` calls in `pkg/qot/quote.go` are unused — some functions still use `fmt.Errorf` directly instead of the helper: `GetBasicQot` (line 175), `GetKL` (line 251), `GetOrderBook` (line 333). Inconsistent behavior. | `pkg/qot/quote.go:175,251,333` | ✅ Done |
+
+### 0-8: Test Infrastructure & Coverage
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-8a | **No AES tests** — zero test coverage. Added 19 tests: round-trip (0B to 10KB), trailer validation, edge cases, multi-block padding, public wrappers, benchmarks. | `internal/client/aes_test.go` | ✅ Done |
+| 0-8b | **No tests for** `pkg/metrics`, `pkg/ratelimit`, `pkg/retry`, `pkg/degradation`, `pkg/health`, `pkg/history`, `pkg/tracing`. | (multiple) | ✅ Done |
+| 0-8c | `test/util/mock_server.go` protocol gap — mock receives InitConnect but doesn't complete the handshake response cycle correctly, causing all `test/qot_api` and `test/trd_api` tests to time out. | `test/util/mock_server.go:152-155` | ✅ Done |
+
+### 0-9: Security & Data Protection
+
+| Item | Description | File | Status |
+|------|-------------|------|--------|
+| 0-9a | **RSA private key in public key field** — `RSAEncrypt` accepts a private key PEM and extracts the public key from it. This is convenient for testing but dangerous: if a caller passes a private key PEM unintentionally (e.g., from a config file), the private key material is loaded into memory. Document that this is for backward compat only, warn against production use. | `internal/client/rsa.go:29-66` | ✅ Done — runtime logf warning added |
+| 0-9b | `nonZeroRandomBytes` allocated a full `n`-byte buffer per iteration. Fixed: use `min(n, 64)` buffer for efficient random reads. | `internal/client/rsa.go:122-137` | ✅ Done |
 
 ---
 
@@ -317,13 +389,14 @@ Standard storage adapters for common use cases.
 
 | Phase | Name | Items | Priority | Status |
 |-------|------|-------|----------|--------|
+| **0** | Core SDK Robustness | 18 | P0 | 🟢 16 done, 2 pending |
 | **A** | Execution Algorithms | 8 | P1 | ⚪ Pending |
 | **B** | Real-Time Risk Engine | 7 | P1 | ⚪ Pending |
 | **C** | Event-Driven Framework | 11 | P1 | ⚪ Pending |
 | **D** | Advanced Data Features | 11 | P2 | ⚪ Pending |
 | **E** | Portfolio & Multi-Account | 8 | P2 | ⚪ Pending |
 | **F** | Persistence & Storage | 3 | P3 | ⚪ Pending |
-| **Total** | | **48** | | |
+| **Total** | | **66** | | |
 
 ---
 
@@ -344,6 +417,7 @@ Standard storage adapters for common use cases.
 
 | Version | Phase | Target |
 |---------|-------|--------|
+| v0.5.13 | 0 (Core Robustness) | All P0 bugs, races, and nil safety items |
 | v0.6.0 | A (Execution Algorithms) | TWAP/VWAP/IS as first-class SDK citizens |
 | v0.7.0 | B (Risk Engine) | VaR, Greeks, margin monitoring |
 | v0.8.0 | C (Event Framework) | Strategy plug-in, backtesting |
@@ -352,6 +426,33 @@ Standard storage adapters for common use cases.
 ---
 
 ## Files to Create/Modify
+
+### Phase 0 (Core Robustness) — MODIFY existing
+
+| File | Action |
+|------|--------|
+| `internal/client/aes.go` | ✅ Fix AES ECB block iteration, add tests |
+| `internal/client/client.go` | ✅ Fix isEncrypt race (atomics), add getAESKey(), fix buffer pool misuse |
+| `internal/client/conn_test.go` | ✅ Fix 3 data races (channels for accept sync) |
+| `pkg/qot/quote.go` | ✅ Add nil checks in GetOrderBook |
+| `pkg/trd/trade.go` | ✅ Add nil guard in GetFunds |
+| `client/client.go` | ✅ Fix inferSecMarket operator precedence |
+| `test/util/mock_server.go` | ✅ Fix running flag race (atomics) |
+| `pkg/push/chan/chan.go` | ✅ Fix handler deregistration race (stop channel), add ctx parameter |
+| `pkg/sys/system.go` | ✅ Fix wrapError return type to match other packages |
+| `internal/client/rsa.go` | ✅ Optimize nonZeroRandomBytes buffer allocation |
+| `test/util/mock_server.go` | ⚪ Fix protocol gap so integration tests pass |
+| `internal/client/aes_test.go` | ✅ NEW: AES encrypt/decrypt test suite (19 tests) |
+| `pkg/ratelimit/ratelimit_test.go` | ✅ NEW: token bucket, Allow/Wait, ProtoLimiter tests (14 tests) |
+| `pkg/retry/retry_test.go` | ✅ NEW: exponential backoff, jitter, recoverable classification tests (13 tests) |
+| `pkg/metrics/metrics_test.go` | ✅ NEW: concurrent recording, tracker, API call tests (10 tests) |
+| `pkg/degradation/degradation_test.go` | ✅ NEW: Manager status, watchers, concurrent access tests (10 tests) |
+| `pkg/health/health_test.go` | ✅ NEW: Register, Check, IsHealthy, ServeHTTP tests (12 tests) |
+| `pkg/tracing/tracing_test.go` | ✅ NEW: NoopTracer, SetTracer, StartSpan, SpanFromContext tests (9 tests) |
+| `pkg/history/history_test.go` | ✅ NEW: ProgressTracker, Downloader options, concurrent tests (11 tests) |
+| `internal/client/alloc_test.go` | ⚪ NEW: buffer pool unit tests |
+
+### Phase A+
 
 ```
 pkg/execution/       — NEW: twap.go, vwap.go, is.go, config.go

@@ -31,9 +31,12 @@ func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 	copy(padded, plaintext)
 	// \x00 bytes are already zeroed
 
-	// AES/ECB encrypt
+	// AES/ECB encrypt — iterate over all 16-byte blocks
 	ciphertext := make([]byte, len(padded))
-	block.Encrypt(ciphertext, padded)
+	bs := block.BlockSize()
+	for i := 0; i < len(padded); i += bs {
+		block.Encrypt(ciphertext[i:], padded[i:])
+	}
 
 	// Build 16-byte trailer: 15 null bytes + original remainder as last byte.
 	// If len(plaintext) % 16 == 0, trailer[15] = 0 (no padding was added).
@@ -73,9 +76,12 @@ func ftaesDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 		return nil, NewError(CodeDecryptionFailed, "create AES cipher: "+err.Error())
 	}
 
-	// AES/ECB decrypt
+	// AES/ECB decrypt — iterate over all 16-byte blocks
 	plaintext := make([]byte, len(ciphertext))
-	block.Decrypt(plaintext, ciphertext)
+	bs := block.BlockSize()
+	for i := 0; i < len(ciphertext); i += bs {
+		block.Decrypt(plaintext[i:], ciphertext[i:])
+	}
 
 	// Strip null-byte padding: remove last padLen bytes (which were all \x00)
 	if padLen > 0 && padLen <= 16 {

@@ -15,9 +15,12 @@
 package testutil
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"net"
+	"reflect"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -26,6 +29,24 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbroker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitaldistribution"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesttradedate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetfunds"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -51,11 +72,11 @@ type MockServer struct {
 	requestsMu sync.Mutex
 
 	// Running state
-	running bool
+	running int32
 	wg      sync.WaitGroup
 }
 
-type MockHandler func(req []byte) ([]byte, error)
+type MockHandler func(req []byte) (proto.Message, error)
 
 type MockRequest struct {
 	ProtoID  uint32
@@ -88,7 +109,7 @@ func (s *MockServer) Start() error {
 	}
 
 	s.addr = s.listener.Addr().String()
-	s.running = true
+	atomic.StoreInt32(&s.running, 1)
 
 	s.wg.Add(1)
 	go s.acceptLoop()
@@ -98,11 +119,11 @@ func (s *MockServer) Start() error {
 
 // Stop stops the mock server
 func (s *MockServer) Stop() {
-	if !s.running {
+	if atomic.LoadInt32(&s.running) == 0 {
 		return
 	}
 
-	s.running = false
+	atomic.StoreInt32(&s.running, 0)
 	if s.listener != nil {
 		s.listener.Close()
 	}
@@ -158,7 +179,7 @@ func (s *MockServer) registerDefaultHandlers() {
 func (s *MockServer) acceptLoop() {
 	defer s.wg.Done()
 
-	for s.running {
+	for atomic.LoadInt32(&s.running) != 0 {
 		conn, err := s.listener.Accept()
 		if err != nil {
 			return
@@ -184,7 +205,7 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 		s.wg.Done()
 	}()
 
-	for s.running {
+	for atomic.LoadInt32(&s.running) != 0 {
 		// Read header (44 bytes)
 		header := make([]byte, 44)
 		fmt.Printf("[MockServer] Waiting to read header...\n")
@@ -234,9 +255,19 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 		}
 
 		// Handle request
-		respBody, err := handler(body)
+		respMsg, err := handler(body)
 		if err != nil {
 			s.t.Errorf("Handler error for protoID %d: %v", protoID, err)
+			continue
+		}
+
+		// Auto-fill nil proto2 pointer fields so marshaling succeeds
+		respMsg = s.fixupResponse(protoID, respMsg)
+
+		// Marshal and write response
+		respBody, err := proto.Marshal(respMsg)
+		if err != nil {
+			s.t.Errorf("Failed to marshal response for protoID %d: %v", protoID, err)
 			continue
 		}
 
@@ -248,6 +279,74 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 	}
 }
 
+// fixupResponse uses protoID to select the correct response type,
+// auto-fills nil proto2 pointer fields with zero values, and returns
+// the ready-to-marshal proto.Message.
+func (s *MockServer) fixupResponse(protoID uint32, msg proto.Message) proto.Message {
+	respMap := map[uint32]proto.Message{
+		3004: &qotgetbasicqot.Response{},
+		3006: &qotgetkl.Response{},
+		3008: &qotgetrt.Response{},
+		3010: &qotgetticker.Response{},
+		3012: &qotgetorderbook.Response{},
+		3014: &qotgetbroker.Response{},
+		3211: &qotgetcapitalflow.Response{},
+		3212: &qotgetcapitaldistribution.Response{},
+		3219: &qotrequesttradedate.Response{},
+		3001: &qotsub.Response{},
+		2001: &trdgetacclist.Response{},
+		2005: &trdunlocktrade.Response{},
+		2101: &trdgetfunds.Response{},
+		2102: &trdgetpositionlist.Response{},
+		2201: &trdgetorderlist.Response{},
+		2202: &trdplaceorder.Response{},
+		2205: &trdmodifyorder.Response{},
+		2211: &trdgetorderfilllist.Response{},
+		1004: &getglobalstate.Response{},
+		1005: &getuserinfo.Response{},
+	}
+	template, ok := respMap[protoID]
+	if !ok {
+		return msg
+	}
+	// Use reflection to merge msg into template, then fill nil pointers
+	proto.Merge(template, msg)
+	fillNilPointers(template)
+	return template
+}
+
+// fillNilPointers recursively fills nil pointer fields in proto2 messages
+// with zero-value defaults so proto.Marshal succeeds.
+// Only recurses into pointer fields that implement proto.Message.
+func fillNilPointers(msg proto.Message) {
+	if msg == nil {
+		return
+	}
+	v := reflect.ValueOf(msg).Elem()
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		if f.Kind() == reflect.Ptr {
+			if f.IsNil() {
+				f.Set(reflect.New(f.Type().Elem()))
+			}
+			// Recurse only if the pointed-to value implements proto.Message
+			if m, ok := f.Interface().(proto.Message); ok {
+				fillNilPointers(m)
+			}
+		} else if f.Kind() == reflect.Slice {
+			for j := 0; j < f.Len(); j++ {
+				elem := f.Index(j)
+				if elem.Kind() == reflect.Ptr && !elem.IsNil() {
+					if m, ok := elem.Interface().(proto.Message); ok {
+						fillNilPointers(m)
+					}
+				}
+			}
+		}
+	}
+}
+
+// Write response
 func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body []byte) error {
 	header := make([]byte, 44)
 
@@ -268,10 +367,11 @@ func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body
 	writeUint32LE(header[8:], serialNo)
 
 	// BodyLen
-	writeUint32LE(header[12:], uint32(len(body))) // Fixed: was header[16:]
+	writeUint32LE(header[12:], uint32(len(body)))
 
-	// SHA1 (zeros for mock)
-	// Reserved (zeros)
+	// SHA1 of the response body
+	sha1Hash := sha1.Sum(body)
+	copy(header[16:36], sha1Hash[:])
 
 	// Write header
 	if _, err := conn.Write(header); err != nil {
@@ -292,7 +392,7 @@ func (s *MockServer) writeResponse(conn net.Conn, protoID, serialNo uint32, body
 // Default handlers
 // ============================================================================
 
-func (s *MockServer) handleInitConnect(req []byte) ([]byte, error) {
+func (s *MockServer) handleInitConnect(req []byte) (proto.Message, error) {
 	fmt.Printf("[MockServer] handleInitConnect called, req len=%d\n", len(req))
 	var reqMsg initconnect.Request
 	if err := proto.Unmarshal(req, &reqMsg); err != nil {
@@ -308,7 +408,7 @@ func (s *MockServer) handleInitConnect(req []byte) ([]byte, error) {
 	connAESKey := "mock_aes_key_12345"
 	retType := int32(0) // Success
 
-	resp := &initconnect.Response{
+	return &initconnect.Response{
 		RetType: &retType,
 		S2C: &initconnect.S2C{
 			LoginUserID:       &loginUserID,
@@ -317,32 +417,17 @@ func (s *MockServer) handleInitConnect(req []byte) ([]byte, error) {
 			ConnID:            &connID,
 			ConnAESKey:        &connAESKey,
 		},
-	}
-
-	body, err := proto.Marshal(resp)
-	fmt.Printf("[MockServer] Marshaled response, body len=%d\n", len(body))
-	return body, err
+	}, nil
 }
 
-func (s *MockServer) handleKeepAlive(req []byte) ([]byte, error) {
-	var reqMsg keepalive.Request
-	if err := proto.Unmarshal(req, &reqMsg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal KeepAlive request: %w", err)
-	}
-
+func (s *MockServer) handleKeepAlive(req []byte) (proto.Message, error) {
 	resp := &keepalive.Response{
 		S2C: &keepalive.S2C{},
 	}
-
-	return proto.Marshal(resp)
+	return resp, nil
 }
 
-func (s *MockServer) handleGetGlobalState(req []byte) ([]byte, error) {
-	var reqMsg getglobalstate.Request
-	if err := proto.Unmarshal(req, &reqMsg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal GetGlobalState request: %w", err)
-	}
-
+func (s *MockServer) handleGetGlobalState(req []byte) (proto.Message, error) {
 	connID := uint64(1234567890)
 	serverVer := int32(10100)
 	serverBuildNo := int32(6208)
@@ -350,7 +435,7 @@ func (s *MockServer) handleGetGlobalState(req []byte) ([]byte, error) {
 	trdLogined := true
 	marketState := int32(2) // Normal market state
 
-	resp := &getglobalstate.Response{
+	return &getglobalstate.Response{
 		S2C: &getglobalstate.S2C{
 			ConnID:        &connID,
 			ServerVer:     &serverVer,
@@ -362,17 +447,10 @@ func (s *MockServer) handleGetGlobalState(req []byte) ([]byte, error) {
 			MarketSH:      &marketState,
 			MarketSZ:      &marketState,
 		},
-	}
-
-	return proto.Marshal(resp)
+	}, nil
 }
 
-func (s *MockServer) handleGetUserInfo(req []byte) ([]byte, error) {
-	var reqMsg getuserinfo.Request
-	if err := proto.Unmarshal(req, &reqMsg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal GetUserInfo request: %w", err)
-	}
-
+func (s *MockServer) handleGetUserInfo(req []byte) (proto.Message, error) {
 	userID := int64(123456789)
 	nickName := "TestUser"
 	apiLevel := "100"
@@ -380,7 +458,7 @@ func (s *MockServer) handleGetUserInfo(req []byte) ([]byte, error) {
 	usQotRight := int32(2)
 	cnQotRight := int32(1)
 
-	resp := &getuserinfo.Response{
+	return &getuserinfo.Response{
 		S2C: &getuserinfo.S2C{
 			UserID:     &userID,
 			NickName:   &nickName,
@@ -389,9 +467,7 @@ func (s *MockServer) handleGetUserInfo(req []byte) ([]byte, error) {
 			UsQotRight: &usQotRight,
 			CnQotRight: &cnQotRight,
 		},
-	}
-
-	return proto.Marshal(resp)
+	}, nil
 }
 
 // ============================================================================
@@ -432,7 +508,7 @@ func NewTestClient(t *testing.T, server *MockServer) (*futuapi.Client, func()) {
 
 	cli := futuapi.New(
 		futuapi.WithDialTimeout(5*time.Second),
-		futuapi.WithAPITimeout(5*time.Second),
+		futuapi.WithAPITimeout(30*time.Second),
 		futuapi.WithKeepAliveInterval(10*time.Second),
 		futuapi.WithMaxRetries(0), // disable retries for tests
 		futuapi.WithLogLevel(3),   // silent

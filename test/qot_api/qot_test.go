@@ -40,20 +40,19 @@ func TestGetBasicQot_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	// Register GetBasicQot handler
-	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3004, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetbasicqot.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
 		}
 
-		// Build realistic HSI response
 		hsiQuote := fixtures.HSIQuote()
 
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
 		}
-
-		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+		retType := int32(0)
+		return &qotgetbasicqot.Response{S2C: s2c, RetType: &retType}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -90,7 +89,7 @@ func TestGetBasicQot_HSI(t *testing.T) {
 func TestGetKL_HSI_Day(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3006, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetkl.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
@@ -105,7 +104,8 @@ func TestGetKL_HSI_Day(t *testing.T) {
 			KlList:   klList,
 		}
 
-		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+		retType := int32(0)
+		return &qotgetkl.Response{S2C: s2c, RetType: &retType}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -149,7 +149,7 @@ func TestGetKL_HSI_Day(t *testing.T) {
 func TestGetKL_HSI_Min1(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+server.RegisterHandler(3006, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetkl.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
@@ -163,8 +163,8 @@ func TestGetKL_HSI_Min1(t *testing.T) {
 			Name:     proto.String(fixtures.HSIName),
 			KlList:   klList,
 		}
-
-		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+		retType := int32(0)
+		return &qotgetkl.Response{S2C: s2c, RetType: &retType}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -197,7 +197,7 @@ func TestGetKL_HSI_Min1(t *testing.T) {
 func TestGetOrderBook_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3012, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3012, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetorderbook.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
@@ -213,7 +213,7 @@ func TestGetOrderBook_HSI(t *testing.T) {
 			OrderBookBidList: bids,
 		}
 
-		return proto.Marshal(&qotgetorderbook.Response{S2C: s2c})
+		return &qotgetorderbook.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -257,7 +257,7 @@ func TestGetOrderBook_HSI(t *testing.T) {
 func TestGetTicker_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3010, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3010, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetticker.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
@@ -272,7 +272,7 @@ func TestGetTicker_HSI(t *testing.T) {
 			TickerList: tickers,
 		}
 
-		return proto.Marshal(&qotgetticker.Response{S2C: s2c})
+		return &qotgetticker.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -313,13 +313,12 @@ func TestGetTicker_HSI(t *testing.T) {
 func TestGetRT_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3008, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3008, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetrt.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err
 		}
 
-		// Return 240 minutes (full HK trading day)
 		rtList := fixtures.HSIRTDData(240)
 
 		s2c := &qotgetrt.S2C{
@@ -328,7 +327,7 @@ func TestGetRT_HSI(t *testing.T) {
 			RtList:   rtList,
 		}
 
-		return proto.Marshal(&qotgetrt.Response{S2C: s2c})
+		return &qotgetrt.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -358,7 +357,7 @@ func TestGetRT_HSI(t *testing.T) {
 func TestGetBroker_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3014, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3014, func(req []byte) (proto.Message, error) {
 		num := 10
 		askBrokers := make([]*qotcommon.Broker, 0, num)
 		bidBrokers := make([]*qotcommon.Broker, 0, num)
@@ -390,7 +389,7 @@ func TestGetBroker_HSI(t *testing.T) {
 			BrokerBidList: bidBrokers,
 		}
 
-		return proto.Marshal(&qotgetbroker.Response{S2C: s2c})
+		return &qotgetbroker.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -425,7 +424,7 @@ func TestGetBroker_HSI(t *testing.T) {
 func TestGetStaticInfo_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3202, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3202, func(req []byte) (proto.Message, error) {
 		sec := fixtures.HSISecurity()
 		id := int64(800100)
 		lotSize := int32(1)
@@ -448,7 +447,7 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 			},
 		}
 
-		return proto.Marshal(&qotgetstaticinfo.Response{S2C: s2c})
+		return &qotgetstaticinfo.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -483,7 +482,7 @@ func TestGetStaticInfo_HSI(t *testing.T) {
 func TestRequestTradeDate_HK(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3219, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3219, func(req []byte) (proto.Message, error) {
 		tradeDates := []*qotrequesttradedate.TradeDate{
 			{Time: proto.String("2026-04-01")},
 			{Time: proto.String("2026-04-02")},
@@ -496,7 +495,7 @@ func TestRequestTradeDate_HK(t *testing.T) {
 			TradeDateList: tradeDates,
 		}
 
-		return proto.Marshal(&qotrequesttradedate.Response{S2C: s2c})
+		return &qotrequesttradedate.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -526,9 +525,9 @@ func TestRequestTradeDate_HK(t *testing.T) {
 func TestSubscribe_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3001, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3001, func(req []byte) (proto.Message, error) {
 		s2c := &qotsub.S2C{}
-		return proto.Marshal(&qotsub.Response{S2C: s2c})
+		return &qotsub.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -556,7 +555,7 @@ func TestSubscribe_HSI(t *testing.T) {
 func TestGetCapitalFlow_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3211, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3211, func(req []byte) (proto.Message, error) {
 		inFlow := 12345678.90
 		mainInFlow := 12345678.90
 		bigInFlow := 23456789.01
@@ -577,7 +576,7 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 			},
 		}
 
-		return proto.Marshal(&qotgetcapitalflow.Response{S2C: s2c})
+		return &qotgetcapitalflow.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -607,7 +606,7 @@ func TestGetCapitalFlow_HSI(t *testing.T) {
 func TestGetCapitalDistribution_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-	server.RegisterHandler(3212, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3212, func(req []byte) (proto.Message, error) {
 		s2c := &qotgetcapitaldistribution.S2C{
 			CapitalInBig:    proto.Float64(100000000.0),
 			CapitalInMid:    proto.Float64(50000000.0),
@@ -617,7 +616,7 @@ func TestGetCapitalDistribution_HSI(t *testing.T) {
 			CapitalOutSmall: proto.Float64(20000000.0),
 		}
 
-		return proto.Marshal(&qotgetcapitaldistribution.Response{S2C: s2c})
+		return &qotgetcapitaldistribution.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
 	})
 
 	if err := server.Start(); err != nil {

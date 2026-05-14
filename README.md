@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.12-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.5.13-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,17 +12,28 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.12
+go get github.com/shing1211/futuapi4go@v0.5.13
 ```
 
-## v0.5.12 FTAES Encryption & Bug Fixes
+## v0.5.13 Phase 0 Robustness — Critical Bugs, Races & Test Infrastructure
 
-**FTAES_ECB Encryption:** Implemented AES encryption for all API requests after `InitConnect` (commit `9f0a859`). Uses null-byte padding + 16-byte trailer (matching Python SDK), applied to requests when RSA-based connection is established. Also fixed padding from PKCS7 back to null-byte style (`f79771b`).
+**Critical Bug Fixes:**
+- **AES ECB single-block corruption** (`internal/client/aes.go`): `block.Encrypt`/`Decrypt` only processed the first 16 bytes. Any protobuf body >16 bytes was silently corrupted. Fixed with a `for i := 0; i < len(padded); i += bs` loop.
+- **Operator precedence in `inferSecMarket`** (`client/client.go`): `.SH || .SZ` without parentheses — `&&` binds tighter than `||`. Codes ≤3 chars with `.SZ` suffix panicked with index-out-of-bounds. Fixed with explicit parentheses.
+- **Race: isEncrypt unprotected** (`internal/client/client.go`): 8 locations accessed `isEncrypt` (int32) without atomic operations. Fixed with `atomic.LoadInt32`/`StoreInt32`.
+- **Race: aesKey read without mutex** (`internal/client/client.go`): `EncryptRequestBody`/`DecryptResponseBody` read `c.aesKey` without lock. Fixed with new `getAESKey()` mutex accessor.
+- **Nil safety: GetOrderBook** (`pkg/qot/quote.go`): Iterated nil `ob` or `d` items from proto lists. Fixed with nil guards.
+- **Nil safety: GetFunds** (`pkg/trd/trade.go`): `s2c.GetFunds()` could be nil, panicked on first field access. Fixed with nil check.
+- **Race: Push handler deregistration** (`pkg/push/chan/chan.go`): `RegisterHandler(protoID, nil)` wrote nil to handler map while concurrent push dispatch read it. Fixed: handler checks a closed stop channel instead.
+- **wrapError inconsistency** (`pkg/qot/quote.go`): GetBasicQot, GetKL, GetOrderBook nil checks used `fmt.Errorf` instead of `wrapError`. Fixed.
+- **GetStaticInfo validation** (`pkg/qot/quote.go`): `req.Market == 0` rejected requests even when `securityList` was provided. Fixed to only require market when no securities provided.
+- **WithContext shared ClientOptions** (`internal/client/client.go`): Deep-copied `ClientOptions` to prevent caller mutations from affecting original client.
 
-**Bug Fixes:**
-- **Pool buffer dead code** (`6a548b6`): Removed pooled buffer in `requestInternal` — it fetched a buffer but then used a fresh `proto.Marshal` result, silently truncating oversized payloads.
-- **ClientPool.Get busy-wait** (`6a548b6`): Replaced `time.Sleep(50ms)` spin with `sync.Cond` wait, matching existing `Signal()` in `Put()`.
-- **Dead dispSize field** (`a127fe0`): Removed unused `dispSize` from `conn.go` and `ws.go`.
+**Race & Test Infrastructure:**
+- **MockServer protocol handshake**: `MockHandler` changed to `func(req []byte) (proto.Message, error)`. Server calls `fillNilPointers` + `proto.Marshal` on returned message — enables proto2 required-field auto-fill. 17 handler registrations updated across 3 test files.
+- **57 new unit tests**: AES ECB round-trip, pkg/metrics, pkg/ratelimit, pkg/retry, pkg/degradation, pkg/health, pkg/history, pkg/tracing, pkg/breaker.
+- **Test timeout**: `WithAPITimeout` increased from 5s to 30s to handle race detector overhead.
+- **All Subscribe helpers**: Now accept `ctx context.Context` as first parameter (previously used `context.Background()`).
 
 ## v0.5.11 Bug Fix — RSA InitConnect
 

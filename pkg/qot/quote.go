@@ -172,12 +172,12 @@ func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcomm
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetBasicQot failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetBasicQot", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetBasicQot: s2c is nil")
+		return nil, wrapError("GetBasicQot", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := make([]*BasicQot, 0, len(s2c.GetBasicQotList()))
@@ -248,12 +248,12 @@ func GetKL(ctx context.Context, c *futuapi.Client, req *GetKLRequest) (*GetKLRes
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetKL failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetKL", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetKL: s2c is nil")
+		return nil, wrapError("GetKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetKLResponse{
@@ -330,12 +330,12 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, fmt.Errorf("GetOrderBook failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return nil, wrapError("GetOrderBook", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOrderBook: s2c is nil")
+		return nil, wrapError("GetOrderBook", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderBookResponse{
@@ -348,8 +348,14 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 	}
 
 	for _, ob := range s2c.GetOrderBookAskList() {
+		if ob == nil {
+			continue
+		}
 		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
 		for _, d := range ob.GetDetailList() {
+			if d == nil {
+				continue
+			}
 			details = append(details, &OrderBookDetail{
 				OrderID: d.GetOrderID(),
 				Volume:  d.GetVolume(),
@@ -364,8 +370,14 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 	}
 
 	for _, ob := range s2c.GetOrderBookBidList() {
+		if ob == nil {
+			continue
+		}
 		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
 		for _, d := range ob.GetDetailList() {
+			if d == nil {
+				continue
+			}
 			details = append(details, &OrderBookDetail{
 				OrderID: d.GetOrderID(),
 				Volume:  d.GetVolume(),
@@ -625,11 +637,8 @@ type GetStaticInfoResponse struct {
 // GetStaticInfo returns static info for the given securities.
 func GetStaticInfo(ctx context.Context, c *futuapi.Client, req *GetStaticInfoRequest) (*GetStaticInfoResponse, error) {
 	// Input validation
-	if req.Market == 0 {
-		return nil, fmt.Errorf("invalid market: must be non-zero")
-	}
-	if len(req.SecurityList) == 0 {
-		return nil, fmt.Errorf("security list is empty")
+	if len(req.SecurityList) == 0 && req.Market == 0 {
+		return nil, fmt.Errorf("invalid market: must be non-zero when no securities provided")
 	}
 
 	c2s := &qotgetstaticinfo.C2S{

@@ -321,6 +321,9 @@ func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*Ge
 	}
 
 	f := s2c.GetFunds()
+	if f == nil {
+		return nil, fmt.Errorf("GetFunds: funds is nil")
+	}
 	return &GetFundsResponse{
 		Funds: &Funds{
 			Power:             f.GetPower(),

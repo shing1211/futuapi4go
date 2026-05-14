@@ -109,12 +109,10 @@ func TestConnDispatchToWaitingReader(t *testing.T) {
 	}
 	defer l.Close()
 
-	done := make(chan struct{})
-	var serverConn net.Conn
+	serverCh := make(chan net.Conn, 1)
 	go func() {
 		c, _ := l.Accept()
-		serverConn = c
-		<-done
+		serverCh <- c
 	}()
 
 	conn := NewConn(nil)
@@ -123,10 +121,10 @@ func TestConnDispatchToWaitingReader(t *testing.T) {
 		t.Fatal(err)
 	}
 	conn.conn = c
+	serverConn := <-serverCh
 	defer func() {
 		c.Close()
 		serverConn.Close()
-		close(done)
 	}()
 
 	go func() {
@@ -182,9 +180,10 @@ func TestConnWritePacketEmptyBody(t *testing.T) {
 	defer l.Close()
 
 	conn := NewConn(nil)
+	acceptCh := make(chan net.Conn, 1)
 	go func() {
 		c, _ := l.Accept()
-		conn.conn = c
+		acceptCh <- c
 	}()
 
 	c, err := net.Dial("tcp", l.Addr().String())
@@ -193,6 +192,7 @@ func TestConnWritePacketEmptyBody(t *testing.T) {
 	}
 	defer c.Close()
 	conn.conn = c
+	<-acceptCh
 
 	err = conn.WritePacket(1001, 1, []byte{})
 	if err == nil {
@@ -211,9 +211,10 @@ func TestConnWritePacketBodyTooBig(t *testing.T) {
 	defer l.Close()
 
 	conn := NewConn(nil)
+	acceptCh := make(chan net.Conn, 1)
 	go func() {
 		c, _ := l.Accept()
-		conn.conn = c
+		acceptCh <- c
 	}()
 
 	c, err := net.Dial("tcp", l.Addr().String())
@@ -222,6 +223,7 @@ func TestConnWritePacketBodyTooBig(t *testing.T) {
 	}
 	defer c.Close()
 	conn.conn = c
+	<-acceptCh
 
 	bigBody := make([]byte, MaxPacketSize+1)
 	err = conn.WritePacket(1001, 1, bigBody)

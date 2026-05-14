@@ -231,7 +231,10 @@ func WithWSSecretKey(key string) Option {
 
 // WithRSAPublicKey sets the RSA public key (PEM format) for encrypted InitConnect.
 // When set, Connect() will use RSA encryption during the handshake.
-// The PEM must be a PKIX/PKCS#8 format "PUBLIC KEY" — not a private key PEM.
+// The PEM MUST be a PKIX/PKCS#8 format "PUBLIC KEY" — not a private key PEM.
+// Passing a private key PEM will work (the public key is extracted), but logs a
+// warning and is NOT recommended in production.
+//
 // Use this when connecting to a remote OpenD that has RSA encryption enabled.
 //
 // Example:
@@ -297,7 +300,7 @@ type Client struct {
 	connID            uint64
 	loginUserID       uint64
 	aesKey            string
-	isEncrypt         bool
+	isEncrypt         int32 // atomic: 1 = encrypted, 0 = not
 	serverVer         int32
 	keepAliveInterval int32
 	serialNo          uint32
@@ -533,7 +536,7 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	c.connID = s2c.GetConnID()
 	c.loginUserID = s2c.GetLoginUserID()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
-	c.isEncrypt = false
+	atomic.StoreInt32(&c.isEncrypt, 0)
 	c.serverVer = s2c.GetServerVer()
 	atomic.StoreInt32(&c.connected, 1)
 	atomic.StoreInt32(&c.connActive, 1)
@@ -704,7 +707,11 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.connID = s2c.GetConnID()
 	c.loginUserID = s2c.GetLoginUserID()
 	c.aesKey = s2c.GetConnAESKey()
-	c.isEncrypt = rsaPublicKeyPEM != ""
+	isEnc := int32(0)
+	if rsaPublicKeyPEM != "" {
+		isEnc = 1
+	}
+	atomic.StoreInt32(&c.isEncrypt, isEnc)
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
 	atomic.StoreInt32(&c.connected, 1)
@@ -713,7 +720,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
-	c.logInfo("[%s] ConnectWithRSA: Connected! connID=%d, serverVer=%d, loginUID=%d, encrypt=%v", c.ts(), c.connID, c.serverVer, c.loginUserID, c.isEncrypt)
+	c.logInfo("[%s] ConnectWithRSA: Connected! connID=%d, serverVer=%d, loginUID=%d, encrypt=%v", c.ts(), c.connID, c.serverVer, c.loginUserID, atomic.LoadInt32(&c.isEncrypt) != 0)
 
 	metrics.RecordConnection("tcp")
 	metrics.RecordOpenDUp(true)
@@ -956,9 +963,13 @@ func (c *Client) GetLoginUserID() uint64 {
 
 // IsEncrypt returns true if the connection uses AES encryption.
 func (c *Client) IsEncrypt() bool {
+	return atomic.LoadInt32(&c.isEncrypt) != 0
+}
+
+func (c *Client) getAESKey() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.isEncrypt
+	return c.aesKey
 }
 
 // EncryptRequestBody encrypts the request body using FTAES_ECB when the
@@ -966,20 +977,20 @@ func (c *Client) IsEncrypt() bool {
 // not encrypted). InitConnect (protoID 1001) is NEVER encrypted — RSA handles
 // that in the handshake itself.
 func (c *Client) EncryptRequestBody(protoID uint32, body []byte) ([]byte, error) {
-	if !c.isEncrypt || protoID == ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) == 0 || protoID == ProtoID_InitConnect {
 		return body, nil
 	}
-	return ftaesEncrypt([]byte(c.aesKey), body)
+	return ftaesEncrypt([]byte(c.getAESKey()), body)
 }
 
 // DecryptResponseBody decrypts the response body using FTAES_ECB when the
 // connection is in encrypted mode. Returns the plaintext (or original if not
 // encrypted). InitConnect responses are handled separately via RSA.
 func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error) {
-	if !c.isEncrypt || protoID == ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) == 0 || protoID == ProtoID_InitConnect {
 		return body, nil
 	}
-	return ftaesDecrypt([]byte(c.aesKey), body)
+	return ftaesDecrypt([]byte(c.getAESKey()), body)
 }
 
 // CanSendProto reports whether a request for the given proto ID can be sent,
@@ -1043,11 +1054,14 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 		ctx:      ctx,
 		cancel:   func() {}, // Don't cancel parent context
 	}
+	// Deep-copy options so caller mutations don't affect the original
+	optsCopy := *c.opts
+	newClient.opts = &optsCopy
 	newClient.mu.RLock()
 	newClient.connID = c.connID
 	newClient.loginUserID = c.loginUserID
 	newClient.aesKey = c.aesKey
-	newClient.isEncrypt = c.isEncrypt
+	newClient.isEncrypt = atomic.LoadInt32(&c.isEncrypt)
 	newClient.serverVer = c.serverVer
 	newClient.keepAliveInterval = c.keepAliveInterval
 	newClient.connected = atomic.LoadInt32(&c.connected)
@@ -1135,7 +1149,7 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
-	if c.isEncrypt && protoID != ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		plainSHA1 := sha1.Sum(body)
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
@@ -1161,18 +1175,14 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 
 	// Decrypt body if encrypted (skip InitConnect response — RSA handles that)
 	plaintext := pkt.Body
-	if c.isEncrypt && protoID != ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
 		}
 	}
 
-	respBuf := c.bufPool.GetResponseBuf()
-	defer c.bufPool.PutResponseBuf(respBuf)
-
-	respBuf.data = plaintext
-	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
+	if err := proto.Unmarshal(plaintext, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
 
@@ -1191,7 +1201,7 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
 	serialNo := c.nextSerialNo()
-	if c.isEncrypt && protoID != ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		plainSHA1 := sha1.Sum(body)
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
@@ -1225,19 +1235,14 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 
 	// Decrypt body if encrypted (skip InitConnect response — RSA handles that)
 	plaintext := pkt.Body
-	if c.isEncrypt && protoID != ProtoID_InitConnect {
+	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
 		}
 	}
 
-	// Use pooled response buffer
-	respBuf := c.bufPool.GetResponseBuf()
-	defer c.bufPool.PutResponseBuf(respBuf)
-	respBuf.data = plaintext
-
-	if err := proto.Unmarshal(respBuf.data, rsp); err != nil {
+	if err := proto.Unmarshal(plaintext, rsp); err != nil {
 		return fmt.Errorf("unmarshal: %w", err)
 	}
 

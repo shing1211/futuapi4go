@@ -5,33 +5,40 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.13] - 2026-05-14
+
+### Fixed
+
+- **AES ECB encrypts/decrypts only 16 bytes** — `block.Encrypt`/`Decrypt` processes exactly one AES block. Any protobuf body >16 bytes is silently corrupted. Fixed with a loop: `for i := 0; i < len(padded); i += bs`.
+- **Operator precedence in `inferSecMarket`** — `&&` binds tighter than `||`. Code ≤3 chars with `.SZ` suffix panics with index-out-of-bounds. Fixed with parentheses.
+- **isEncrypt unprotected reads/writes** — 8 locations accessed `isEncrypt` (int32) without atomic operations. Fixed with `atomic.LoadInt32`/`StoreInt32`.
+- **aesKey read without mutex** — `EncryptRequestBody`/`DecryptResponseBody` read `c.aesKey` without lock protection. Fixed with new `getAESKey()` mutex accessor.
+- **Nil safety: GetOrderBook** — Iterated nil `ob` or `d` items from proto lists. Fixed with nil guards.
+- **Nil safety: GetFunds** — `s2c.GetFunds()` could be nil, panics on first field access. Fixed with nil check.
+- **Push handler deregistration race** — `RegisterHandler(protoID, nil)` writes nil to handler map while concurrent push dispatch may read it. Fixed: handler checks a closed stop channel instead.
+- **wrapError in pkg/qot/quote.go** — 3 functions used `fmt.Errorf` instead of `wrapError`: GetBasicQot, GetKL, GetOrderBook nil checks. Fixed.
+- **GetStaticInfo overly strict validation** — `req.Market == 0` rejected requests even when `securityList` was provided. Proto says `securityList` takes precedence. Fixed to only require market when no securities provided.
+- **RSA private key PEM warning** — `RSAEncrypt` accepted private key PEM (extracted public key internally). Added runtime `logf` warning that this is for testing/backward compat only.
+- **WithContext shared ClientOptions** — Deep-copied `ClientOptions` to prevent caller mutations from affecting original client.
+- **MockServer protocol handshake** — `MockHandler` signature changed to `func(req []byte) (proto.Message, error)`. Server now calls `fillNilPointers` + `proto.Marshal` on the returned message, enabling proto2 required-field auto-fill. 17 handler registrations updated across 3 test files.
+
+### Changed
+
+- **All Subscribe helpers accept context** — `Subscribe`, `SubscribeRehab`, `SubscribeNoData`, `Unsubscribe`, `UnsubscribeRehab`, `UnsubscribeAll`, `RegQotPush`, `UnregQotPush` now accept `ctx context.Context` as first parameter.
+- **Test infrastructure timeout** — `WithAPITimeout` in test client increased from 5s to 30s to handle race detector overhead.
+- **TestTradingWorkflow_Complete** — Added `ClearRequests()` before workflow to avoid counting registration-phase requests.
+
+### Added
+
+- **57 new unit tests** — Added tests for: AES ECB round-trip and edge cases (pkg/metrics, pkg/ratelimit, pkg/retry, pkg/degradation, pkg/health, pkg/history, pkg/tracing, pkg/breaker).
+- **Push handler test coverage** — Mock push handler race detection, goroutine leak tests.
+- **fillNilPointers helper** — Reflection-based auto-filler for nil proto2 pointer fields in mock server.
+
 ## [0.5.7] - 2026-05-11
 
 ### Changed
 
 - **Futu API v10.5.6508 upgrade** — Updated proto files, regenerated Go pb files, updated clientVer from 10100 to 1005, updated README badge
-
-## [Unreleased]
-
-### Fixed
-
-- **Log level constants** — `internal/client/client.go` added `LogLevelInfo`, `LogLevelWarn`, `LogLevelError`, `LogLevelSilent` constants for clarity and fixed log method comparisons to use them
-
-### Added
-
-- **SubscribeSymbols / UnsubscribeSymbols** — `client/client.go` batch subscription wrappers for subscribing/unsubscribing to multiple symbols in a single API call
-- **GetHistoryKL** — `pkg/qot/quote.go` wrapper for ProtoID 3101 (deprecated by OpenD, use RequestHistoryKL for pagination)
-- **TestCmd** — `pkg/sys/system.go` TestCmd() for sending internal diagnostic commands to OpenD (ProtoID 1008)
-- **ParsePushPriceReminder** — `client/client.go` convenience parser for price reminder push notifications (ProtoID 3019)
-- **ParsePushTrdNotify** — `client/client.go` convenience parser for trading notification push (ProtoID 2207)
-- **PushProto constant** — `client/client.go` ProtoID_Qot_UpdatePriceReminder = 3019
-- Convenience wrappers in `client/client.go`: `GetHistoryKL()`, `TestCmd()`
-
-### Documentation
-
-- Consolidated documentation: removed redundant `docs/API_REFERENCE.md`, `docs/DEVELOPER.md`, `docs/TESTING.md`, `ROADMAP.md`, `PYTHON_MIGRATION_GUIDE.md`
-- Merged API reference into README.md, testing guide into README.md, migration guide into separate file
-- Simplified SECURITY.md to essential information only
 
 ## [0.5.2] - 2026-04-28
 

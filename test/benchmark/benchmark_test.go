@@ -38,12 +38,12 @@ import (
 func BenchmarkGetBasicQot_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
-	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3004, func(req []byte) (proto.Message, error) {
 		hsiQuote := fixtures.HSIQuote()
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
 		}
-		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+		return &qotgetbasicqot.Response{S2C: s2c}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -69,14 +69,14 @@ func BenchmarkGetBasicQot_Mock(b *testing.B) {
 func BenchmarkGetKL_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
-	server.RegisterHandler(3006, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3006, func(req []byte) (proto.Message, error) {
 		klList := fixtures.HSIKLineData(100, int32(qotcommon.KLType_KLType_Day))
 		s2c := &qotgetkl.S2C{
 			Security: fixtures.HSISecurity(),
 			Name:     ptrStr(fixtures.HSIName),
 			KlList:   klList,
 		}
-		return proto.Marshal(&qotgetkl.Response{S2C: s2c})
+		return &qotgetkl.Response{S2C: s2c}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -109,7 +109,7 @@ func BenchmarkGetKL_Mock(b *testing.B) {
 func BenchmarkGetOrderBook_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
-	server.RegisterHandler(3012, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3012, func(req []byte) (proto.Message, error) {
 		asks, bids := fixtures.HSIOrderBookLevels(10)
 		s2c := &qotgetorderbook.S2C{
 			Security:         fixtures.HSISecurity(),
@@ -117,7 +117,7 @@ func BenchmarkGetOrderBook_Mock(b *testing.B) {
 			OrderBookAskList: asks,
 			OrderBookBidList: bids,
 		}
-		return proto.Marshal(&qotgetorderbook.Response{S2C: s2c})
+		return &qotgetorderbook.Response{S2C: s2c}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -194,7 +194,7 @@ func BenchmarkProtobufUnmarshal_HSIQuote(b *testing.B) {
 func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
-	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3004, func(req []byte) (proto.Message, error) {
 		// Return multiple quotes
 		quotes := make([]*qotcommon.BasicQot, 10)
 		for i := range quotes {
@@ -207,7 +207,7 @@ func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: quotes,
 		}
-		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+		return &qotgetbasicqot.Response{S2C: s2c}, nil
 	})
 
 	if err := server.Start(); err != nil {
@@ -240,12 +240,12 @@ func BenchmarkMultipleSecurities_Mock(b *testing.B) {
 func BenchmarkConcurrentRequests_Mock(b *testing.B) {
 	server := testutil.NewMockServer(&testing.T{})
 
-	server.RegisterHandler(3004, func(req []byte) ([]byte, error) {
+	server.RegisterHandler(3004, func(req []byte) (proto.Message, error) {
 		hsiQuote := fixtures.HSIQuote()
 		s2c := &qotgetbasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{hsiQuote},
 		}
-		return proto.Marshal(&qotgetbasicqot.Response{S2C: s2c})
+		return &qotgetbasicqot.Response{S2C: s2c}, nil
 	})
 
 	if err := server.Start(); err != nil {

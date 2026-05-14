@@ -25,8 +25,13 @@ import (
 )
 
 // RSAEncrypt encrypts data using RSA public key (PKCS1v15).
-// Accepts either a "PUBLIC KEY" (PKIX) PEM or a "RSA PRIVATE KEY" (PKCS1) PEM.
-// When a private key PEM is passed, the public key is extracted from it.
+// Accepts a "PUBLIC KEY" (PKIX) PEM. For convenience during testing, also
+// accepts an "RSA PRIVATE KEY" (PKCS1/PKCS8) PEM and extracts the public key.
+//
+// WARNING: Passing a private key PEM is NOT recommended in production.
+// The private key material is loaded into memory only to extract the public
+// key, which is unnecessary and introduces unnecessary risk. Always pass
+// the public key PEM from your OpenD deployment.
 //
 // Data is encrypted in chunks compatible with Futu OpenD's protocol:
 // each input chunk is at most (keySize - 11) bytes, producing a
@@ -48,6 +53,9 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 			return nil, fmt.Errorf("not an RSA public key")
 		}
 	} else {
+		logf("WARNING: RSAEncrypt received a private key PEM instead of a public key PEM. " +
+			"This is convenient for testing but NOT recommended in production. " +
+			"Use a PUBLIC KEY PEM from your OpenD deployment.")
 		priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 		if err != nil {
 			privInterface, err := x509.ParsePKCS8PrivateKey(block.Bytes)
@@ -121,14 +129,14 @@ func RSAEncrypt(publicKeyPEM string, data []byte) ([]byte, error) {
 // This matches the padding generation used by PKCS1v15.
 func nonZeroRandomBytes(dst []byte) error {
 	n := len(dst)
+	buf := make([]byte, min(n, 64))
 	for i := 0; i < n; {
-		rb := make([]byte, n)
-		if _, err := io.ReadFull(rand.Reader, rb); err != nil {
+		if _, err := io.ReadFull(rand.Reader, buf); err != nil {
 			return err
 		}
-		for j := 0; j < n && i < n; j++ {
-			if rb[j] != 0 {
-				dst[i] = rb[j]
+		for j := 0; j < len(buf) && i < n; j++ {
+			if buf[j] != 0 {
+				dst[i] = buf[j]
 				i++
 			}
 		}

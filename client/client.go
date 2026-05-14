@@ -492,7 +492,7 @@ func inferSecMarket(code string) int32 {
 	if len(code) > 3 && code[len(code)-3:] == ".US" {
 		return 2 // TrdMarket_US
 	}
-	if len(code) > 3 && code[len(code)-3:] == ".SH" || code[len(code)-3:] == ".SZ" {
+	if (len(code) > 3 && code[len(code)-3:] == ".SH") || (len(code) > 3 && code[len(code)-3:] == ".SZ") {
 		return 3 // TrdMarket_CN
 	}
 	return 0

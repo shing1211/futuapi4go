@@ -57,11 +57,7 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 	} else {
 		code = constant.ErrCodeUnknown
 	}
-	return &constant.FutuError{
-		Code:    code,
-		Message: retMsg,
-		Func:    funcName,
-	}
+	return constant.NewFutuError(code, funcName, retMsg)
 }
 
 const (

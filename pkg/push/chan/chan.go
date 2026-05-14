@@ -109,13 +109,22 @@ func NewBrokerChannel(bufferSize int) chan *push.UpdateBroker {
 	return make(chan *push.UpdateBroker, WithBufferSize(bufferSize))
 }
 
+// Register a push handler that checks a closed stop channel.
+// When stopCh is closed, the handler becomes a no-op.
+// This avoids writing nil to the handler map, which would race with concurrent dispatch.
 func subscribeOne[T any](
 	cli *client.Client,
 	protoID uint32,
 	parse func([]byte) (*T, error),
 	ch chan<- *T,
-) stopFunc {
+	stopCh <-chan struct{},
+) {
 	cli.RegisterHandler(protoID, func(pid uint32, body []byte) {
+		select {
+		case <-stopCh:
+			return
+		default:
+		}
 		data, err := parse(body)
 		if err != nil || data == nil {
 			return
@@ -125,22 +134,23 @@ func subscribeOne[T any](
 		default:
 		}
 	})
-	return func() {
-		cli.RegisterHandler(protoID, nil)
-	}
 }
 
-func SubscribeQuote(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBasicQot) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Quote})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateBasicQot, push.ParseUpdateBasicQot, ch)
+func SubscribeQuote(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBasicQot) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{constant.SubType_Quote})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateBasicQot, push.ParseUpdateBasicQot, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribeKLine(cli *client.Client, market constant.Market, code string, klType constant.KLType, ch chan<- *push.UpdateKL) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{klTypeToSubType(klType)})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch)
+func SubscribeKLine(ctx context.Context, cli *client.Client, market constant.Market, code string, klType constant.KLType, ch chan<- *push.UpdateKL) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{klTypeToSubType(klType)})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateKL, push.ParseUpdateKL, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribeKLines(cli *client.Client, market constant.Market, code string, handlers map[constant.KLType]func(*push.UpdateKL)) func() {
+func SubscribeKLines(ctx context.Context, cli *client.Client, market constant.Market, code string, handlers map[constant.KLType]func(*push.UpdateKL)) stopFunc {
 	if len(handlers) == 0 {
 		return func() {}
 	}
@@ -149,9 +159,15 @@ func SubscribeKLines(cli *client.Client, market constant.Market, code string, ha
 	for kt := range handlers {
 		subtypes = append(subtypes, klTypeToSubType(kt))
 	}
-	client.Subscribe(context.Background(), cli, market, code, subtypes)
+	client.Subscribe(ctx, cli, market, code, subtypes)
 
+	stopCh := make(chan struct{})
 	cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, func(pid uint32, body []byte) {
+		select {
+		case <-stopCh:
+			return
+		default:
+		}
 		data, err := push.ParseUpdateKL(body)
 		if err != nil || data == nil {
 			return
@@ -161,9 +177,7 @@ func SubscribeKLines(cli *client.Client, market constant.Market, code string, ha
 		}
 	})
 
-	return func() {
-		cli.RegisterHandler(push.ProtoID_Qot_UpdateKL, nil)
-	}
+	return func() { close(stopCh) }
 }
 
 func klTypeToSubType(k constant.KLType) constant.SubType {
@@ -195,26 +209,36 @@ func klTypeToSubType(k constant.KLType) constant.SubType {
 	}
 }
 
-func SubscribeTicker(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateTicker) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Ticker})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateTicker, push.ParseUpdateTicker, ch)
+func SubscribeTicker(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateTicker) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{constant.SubType_Ticker})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateTicker, push.ParseUpdateTicker, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribeOrderBook(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateOrderBook) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_OrderBook})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateOrderBook, push.ParseUpdateOrderBook, ch)
+func SubscribeOrderBook(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateOrderBook) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{constant.SubType_OrderBook})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateOrderBook, push.ParseUpdateOrderBook, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribeRT(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateRT) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_RT})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateRT, push.ParseUpdateRT, ch)
+func SubscribeRT(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateRT) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{constant.SubType_RT})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateRT, push.ParseUpdateRT, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribeBroker(cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBroker) stopFunc {
-	client.Subscribe(context.Background(), cli, market, code, []constant.SubType{constant.SubType_Broker})
-	return subscribeOne(cli, push.ProtoID_Qot_UpdateBroker, push.ParseUpdateBroker, ch)
+func SubscribeBroker(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateBroker) stopFunc {
+	client.Subscribe(ctx, cli, market, code, []constant.SubType{constant.SubType_Broker})
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdateBroker, push.ParseUpdateBroker, ch, stopCh)
+	return func() { close(stopCh) }
 }
 
-func SubscribePriceReminder(cli *client.Client, ch chan<- *push.UpdatePriceReminder) stopFunc {
-	return subscribeOne(cli, push.ProtoID_Qot_UpdatePriceReminder, push.ParseUpdatePriceReminder, ch)
+func SubscribePriceReminder(ctx context.Context, cli *client.Client, ch chan<- *push.UpdatePriceReminder) stopFunc {
+	stopCh := make(chan struct{})
+	subscribeOne(cli, push.ProtoID_Qot_UpdatePriceReminder, push.ParseUpdatePriceReminder, ch, stopCh)
+	return func() { close(stopCh) }
 }

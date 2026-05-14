@@ -56,7 +56,9 @@ func (m *Manager) SetStatus(component Component, level Level, msg string) {
 	if prev != level {
 		evt := Event{Component: component, Level: level, Message: msg}
 		for _, w := range m.watchers {
-			w(evt)
+			if w != nil {
+				w(evt)
+			}
 		}
 	}
 }
