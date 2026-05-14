@@ -452,3 +452,17 @@ All 34 test files compile and pass.
 ---
 
 *End of review. Prepared for futuapi4go project.*
+## Status
+
+All issues from this review have been addressed. Last update: 2026-05-14.
+
+| Priority | Issue | Status |
+|----------|-------|--------|
+| **Critical** | `requestInternal` pool buffer dead code | ✅ Fixed |
+| **Medium** | `WithRateLimiter/RetryConfig/Breaker` no-ops | ✅ Fixed |
+| **Medium** | `WithContext` shared `handlers` map | ✅ Fixed |
+| **Medium** | `ClientPool.Get` spinning with `time.Sleep` | ✅ Fixed |
+| **Low** | `dispSize` dead code | ✅ Removed |
+| **Low** | `CloseOnSignal` goroutine not tracked in `wg` | ✅ Documented (intentional) |
+| **Low** | `nonZeroRandomBytes` performance | Not a bug — keep as-is |
+| **Low** | Push parsers lack nil/empty body validation | Not a bug — `len(body)==0` already handled |
