@@ -42,13 +42,14 @@ dist/
 .env
 .env.local
 
+# Agent / AI tooling
+.claude/
+
 # Temp files
 tmp/
 temp/
-/.qwen
 
 # Protobuf tools (downloaded locally, not committed)
 download/
-.gitnexus
-futuapi4go
+.gitnexus/
 graphify-out/
