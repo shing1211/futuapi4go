@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.16] - 2026-05-15
+
+### Fixed
+
+- **Lost response when timer fires before packet arrival** — `ReadResponseContext` used a bare `select` where `timer.C` and `ctx.Done()` could fire before the packet arrived at the dispatch channel. When the timer won the race, the buffered packet was discarded. Fix: each "terminal" case (timeout, ctx-cancelled) now checks the channel with a non-blocking receive before returning.
+
 ## [0.5.15] - 2026-05-15
 
 ### Fixed

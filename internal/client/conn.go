@@ -253,13 +253,11 @@ func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout t
 	c.disp[serial] = ch
 	c.dispMu.Unlock()
 
-
 	defer func() {
 		c.dispMu.Lock()
 		delete(c.disp, serial)
 		c.dispMu.Unlock()
 	}()
-
 
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()
@@ -268,9 +266,19 @@ func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout t
 	case pkt := <-ch:
 		return pkt, nil
 	case <-ctx.Done():
-		return nil, fmt.Errorf("read response: %w", ctx.Err())
+		select {
+		case pkt := <-ch:
+			return pkt, nil
+		default:
+			return nil, fmt.Errorf("read response: %w", ctx.Err())
+		}
 	case <-timer.C:
-		return nil, fmt.Errorf("read response: i/o timeout")
+		select {
+		case pkt := <-ch:
+			return pkt, nil
+		default:
+			return nil, fmt.Errorf("read response: i/o timeout")
+		}
 	}
 }
 
