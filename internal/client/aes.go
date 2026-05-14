@@ -5,14 +5,12 @@ import (
 )
 
 // ftaesEncrypt encrypts data using the Futu FTAES_ECB variant.
-// This is NOT standard AES/ECB — it's a custom padding scheme:
+// Padding scheme: PKCS7-style (padding_len repeated padding_len times).
+// Trailer: 16-byte block where last byte = original padding_len (1-16, or 0 for 16-byte-aligned).
 //
-//   1. Pad data to 16-byte boundary with null bytes (\x00)
-//   2. AES/ECB encrypt the padded data
-//   3. Append a 16-byte trailer: 15 null bytes + original length mod 16
-//
-// The trailer's last byte records how many bytes of the last 16-byte block
-// were real data (0 means the data was already a multiple of 16).
+// Layout:
+//   encrypted = AES_ECB_encrypt(plaintext + padding_len_repeated * padding_len)
+//   result = encrypted + trailer(16 bytes: [0]*15 + [padding_len])
 func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 	if len(key) != 16 {
 		return nil, NewError(CodeEncryptionFailed, "FTAES key must be 16 bytes")
@@ -23,22 +21,29 @@ func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 		return nil, NewError(CodeEncryptionFailed, "create AES cipher: "+err.Error())
 	}
 
-	// Pad plaintext to 16-byte boundary with null bytes
+	// PKCS7-style padding: repeat padding_len value, padding_len times
 	padLen := 16 - (len(plaintext) % 16)
-	if padLen == 16 {
+	if padLen == 16 && len(plaintext) > 0 {
 		padLen = 0
+	}
+	if padLen == 0 && len(plaintext) == 0 {
+		padLen = 16
 	}
 	padded := make([]byte, len(plaintext)+padLen)
 	copy(padded, plaintext)
-	// null bytes already zeroed
+	if padLen > 0 {
+		for i := len(plaintext); i < len(padded); i++ {
+			padded[i] = byte(padLen)
+		}
+	}
 
 	// AES/ECB encrypt
 	ciphertext := make([]byte, len(padded))
 	block.Encrypt(ciphertext, padded)
 
-	// Build 16-byte trailer: 15 null bytes + original length mod 16 as last byte
+	// Build 16-byte trailer: 15 null bytes + padding_len as last byte
 	trailer := make([]byte, 16)
-	trailer[15] = byte(len(plaintext) % 16)
+	trailer[15] = byte(padLen)
 
 	// Append trailer
 	result := append(ciphertext, trailer...)
@@ -46,12 +51,12 @@ func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 }
 
 // ftaesDecrypt decrypts data using the Futu FTAES_ECB variant.
-// Reverse of ftaesEncrypt:
+// Trailer last byte = padding_len (1-16, or 0 means data was 16-byte aligned).
 //
-//   1. Read trailer's last byte (origLen % 16)
+//   1. Read trailer's last byte (padding_len)
 //   2. Remove the 16-byte trailer
 //   3. AES/ECB decrypt
-//   4. Remove null byte padding (if origLen%16 != 0, strip last partial block padding)
+//   4. Strip PKCS7-style padding: remove last padding_len bytes
 func ftaesDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	if len(key) != 16 {
 		return nil, NewError(CodeDecryptionFailed, "FTAES key must be 16 bytes")
@@ -63,7 +68,7 @@ func ftaesDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 
 	// Extract the trailer
 	trailer := ciphertext[len(ciphertext)-16:]
-	origRemainder := int(trailer[15]) // original data length mod 16
+	padLen := int(trailer[15]) // padding_len (1-16, or 0)
 
 	// Remove trailer
 	ciphertext = ciphertext[:len(ciphertext)-16]
@@ -77,13 +82,10 @@ func ftaesDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	plaintext := make([]byte, len(ciphertext))
 	block.Decrypt(plaintext, ciphertext)
 
-	// Remove null-byte padding
-	if origRemainder != 0 {
-		// Data was not a multiple of 16; strip the last partial block's padding
-		cutLen := 16 - origRemainder
-		plaintext = plaintext[:len(plaintext)-cutLen]
+	// Strip PKCS7-style padding
+	if padLen > 0 && padLen <= 16 {
+		plaintext = plaintext[:len(plaintext)-padLen]
 	}
-	// If origRemainder == 0, data was already a multiple of 16, no padding to strip
 
 	return plaintext, nil
 }
