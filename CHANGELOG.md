@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`WithEncryption(enable)` option** — opt-in FTAES_ECB encryption for all packets after InitConnect (matching Python SDK's `SysConfig.enable_proto_encrypt(True)`). When enabled, the InitConnect response is RSA-decrypted to extract the AES key, and all subsequent communication uses FTAES_ECB encryption with that key.
+- **`WithRSAPrivateKey(pem)` option** — sets the RSA private key PEM for decrypting InitConnect responses. Required when `WithEncryption(true)` is used. The public key is extracted automatically, so `WithRSAPublicKey` is optional when a private key PEM is provided.
+- **`RSADecrypt()` function** — RSA decryption using PKCS#1 v1.5 (matching the custom padding scheme used by `RSAEncrypt`). Decrypts the InitConnect response body when FTAES encryption is negotiated.
+
+### Fixed
+
+- **RSA connections default to no FTAES encryption** — The SDK previously forced `isEncrypt=1` whenever an RSA public key was configured, causing the server to receive undecryptable FTAES-encrypted GetGlobalState requests. The Python SDK defaults to `IS_PROTO_ENCRYPT = False` — encryption must be explicitly enabled via `WithEncryption(true)`. Now `isEncrypt=0` by default, matching Python SDK behavior. The `WithEncryption()` option provides the opt-in path for users who need encrypted communication.
+
 ## [0.5.16] - 2026-05-15
 
 ### Fixed

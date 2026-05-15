@@ -331,6 +331,21 @@ func (c *wsConn) Dispatch(pkt *Packet) {
 	}
 }
 
+func (c *wsConn) DrainDispatches() {
+	c.dispMu.Lock()
+	defer c.dispMu.Unlock()
+	for serial, ch := range c.disp {
+		select {
+		case pkt, ok := <-ch:
+			if ok && c.pushHandler != nil {
+				c.pushHandler(pkt)
+			}
+		default:
+		}
+		delete(c.disp, serial)
+	}
+}
+
 func (c *wsConn) Dial(addr string) error {
 	return fmt.Errorf("Dial not supported for WebSocket")
 }

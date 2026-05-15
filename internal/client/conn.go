@@ -61,6 +61,7 @@ type ConnInterface interface {
 	ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error)
 	SetPushHandler(handler PacketHandler)
 	Dispatch(pkt *Packet)
+	DrainDispatches()
 	APITimeout() time.Duration
 	SetAPITimeout(time.Duration)
 	Dial(addr string) error
@@ -167,6 +168,30 @@ func (c *Conn) Dispatch(pkt *Packet) {
 		return
 	}
 
+	c.mu.Lock()
+	h := c.pushHandler
+	c.mu.Unlock()
+	if h != nil {
+		h(pkt)
+	}
+}
+
+func (c *Conn) DrainDispatches() {
+	c.dispMu.Lock()
+	defer c.dispMu.Unlock()
+	for serial, ch := range c.disp {
+		select {
+		case pkt, ok := <-ch:
+			if ok {
+				c.dispatchToPushHandler(pkt)
+			}
+		default:
+		}
+		delete(c.disp, serial)
+	}
+}
+
+func (c *Conn) dispatchToPushHandler(pkt *Packet) {
 	c.mu.Lock()
 	h := c.pushHandler
 	c.mu.Unlock()

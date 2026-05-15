@@ -144,6 +144,75 @@ func nonZeroRandomBytes(dst []byte) error {
 	return nil
 }
 
+// RSADecrypt decrypts data using RSA private key (PKCS1v15).
+// Accepts an "RSA PRIVATE KEY" (PKCS1/PKCS8) PEM.
+// Uses the same padding scheme as RSAEncrypt: PKCS#1 v1.5 type 2.
+func RSADecrypt(privateKeyPEM string, ciphertext []byte) ([]byte, error) {
+	block, _ := pem.Decode([]byte(privateKeyPEM))
+	if block == nil {
+		return nil, fmt.Errorf("failed to parse PEM block")
+	}
+
+	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		privInterface, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse RSA private key: %w", err)
+		}
+		var ok bool
+		priv, ok = privInterface.(*rsa.PrivateKey)
+		if !ok {
+			return nil, fmt.Errorf("not an RSA private key")
+		}
+	}
+
+	keySize := (priv.N.BitLen() + 7) / 8
+	cipherChunkSize := keySize
+
+	if len(ciphertext)%cipherChunkSize != 0 {
+		return nil, fmt.Errorf("ciphertext length %d is not a multiple of key size %d", len(ciphertext), cipherChunkSize)
+	}
+
+	result := make([]byte, 0, len(ciphertext))
+
+	for i := 0; i < len(ciphertext); i += cipherChunkSize {
+		chunk := ciphertext[i : i+cipherChunkSize]
+
+		// Raw RSA decryption: m = c^d mod n
+		c := new(big.Int).SetBytes(chunk)
+		m := new(big.Int).Exp(c, priv.D, priv.N)
+		em := m.Bytes()
+
+		// Left-pad with zeros to keySize
+		if len(em) < cipherChunkSize {
+			padded := make([]byte, cipherChunkSize)
+			copy(padded[cipherChunkSize-len(em):], em)
+			em = padded
+		}
+
+		// Verify PKCS1v15 padding: 0x00 || 0x02 || PS || 0x00 || M
+		if len(em) < 11 || em[0] != 0x00 || em[1] != 0x02 {
+			return nil, fmt.Errorf("RSA decrypt: invalid padding")
+		}
+
+		// Find the 0x00 separator after PS
+		sep := -1
+		for j := 2; j < len(em); j++ {
+			if em[j] == 0x00 {
+				sep = j
+				break
+			}
+		}
+		if sep < 0 || sep == len(em)-1 {
+			return nil, fmt.Errorf("RSA decrypt: invalid padding (no separator)")
+		}
+
+		result = append(result, em[sep+1:]...)
+	}
+
+	return result, nil
+}
+
 // GenerateRSAKeys generates a new RSA key pair for testing
 func GenerateRSAKeys(bits int) (privateKeyPEM, publicKeyPEM string, err error) {
 	// Generate key

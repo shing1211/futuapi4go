@@ -17,6 +17,7 @@ package futuapi
 import (
 	"context"
 	"crypto/sha1"
+	"crypto/sha256"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -150,7 +151,11 @@ type ClientOptions struct {
 	TLSConfig *tls.Config	// TLS configuration (nil = no TLS)
 
 	// RSA
-	RSAPublicKey string // RSA public key in PEM format for InitConnect encryption
+	RSAPublicKey  string // RSA public key in PEM format for InitConnect encryption
+	RSAPrivateKey string // RSA private key in PEM format (required for encryption mode)
+
+	// Encryption
+	EncryptionEnabled bool // Enable FTAES encryption for all packets after InitConnect
 
 	// Resilience
 	RateLimiter  *ratelimit.ProtoLimiter // Rate limiter for API calls
@@ -248,6 +253,22 @@ func WithRSAPublicKey(pem string) Option {
 	return func(o *ClientOptions) { o.RSAPublicKey = pem }
 }
 
+// WithRSAPrivateKey sets the RSA private key (PEM) for decrypting InitConnect responses.
+// Required when WithEncryption is enabled. The public key is extracted automatically,
+// so WithRSAPublicKey is not needed when using a private key PEM.
+func WithRSAPrivateKey(pem string) Option {
+	return func(o *ClientOptions) { o.RSAPrivateKey = pem }
+}
+
+// WithEncryption enables FTAES encryption for all packets after InitConnect.
+// Requires WithRSAPrivateKey to be set for decrypting the InitConnect response.
+// When enabled, the InitConnect response is RSA-decrypted to extract the AES key,
+// and all subsequent communication uses FTAES_ECB encryption with that key.
+// Matches the Python SDK's SysConfig.enable_proto_encrypt(True) behavior.
+func WithEncryption(enable bool) Option {
+	return func(o *ClientOptions) { o.EncryptionEnabled = enable }
+}
+
 // SetWSSecretKey sets the WebSocket secret key on an existing client.
 func (c *Client) SetWSSecretKey(key string) {
 	c.opts.WSSecretKey = key
@@ -300,6 +321,7 @@ type Client struct {
 	connID            uint64
 	loginUserID       uint64
 	aesKey            string
+	aesCBCIV          string
 	isEncrypt         int32 // atomic: 1 = encrypted, 0 = not
 	serverVer         int32
 	keepAliveInterval int32
@@ -583,6 +605,18 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 
 	c.logInfo("[%s] ConnectWithRSA: Start, addr=%s, rsaKeyLen=%d", c.ts(), addr, len(rsaPublicKeyPEM))
 
+	// Determine encryption mode: use FTAES if EncryptionEnabled and private key is available
+	useEncryption := c.opts.EncryptionEnabled && c.opts.RSAPrivateKey != ""
+	if c.opts.EncryptionEnabled && c.opts.RSAPrivateKey == "" {
+		return fmt.Errorf("encryption enabled but no RSA private key provided: use WithRSAPrivateKey()")
+	}
+
+	// Determine which PEM to use for RSA encrypt
+	rsaEncryptPEM := rsaPublicKeyPEM
+	if useEncryption && rsaEncryptPEM == "" {
+		rsaEncryptPEM = c.opts.RSAPrivateKey // RSAEncrypt extracts public key from private key PEM
+	}
+
 	if c.opts.TLSConfig != nil {
 		c.conn.SetTLSConfig(c.opts.TLSConfig)
 	}
@@ -598,8 +632,12 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	clientVer := int32(1005)
 	clientID := "futuapi4go"
 	recvNotify := true
-	var packetEncAlgo int32 = -1 // Default: no encryption
 	programmingLanguage := "Go"
+
+	var packetEncAlgo int32 = -1 // Default: no encryption
+	if useEncryption {
+		packetEncAlgo = 0 // FTAES_ECB
+	}
 
 	c2s := &initconnect.C2S{
 		ClientVer:           &clientVer,
@@ -625,28 +663,21 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 
 	// Compute SHA1 over the SERIALIZED PLAINTEXT blob.
 	// Server decrypts first, then verifies SHA1(plaintext) against this value.
-	// This matches the Python SDK behavior: sha1(SerializeToString()) BEFORE encryption.
 	plainSHA1 := sha1.Sum(plainBody)
 
 	body := plainBody
 
-	// If RSA public key is provided, encrypt the body AFTER SHA1 is captured
-	if rsaPublicKeyPEM != "" {
+	// RSA encrypt the InitConnect body if a key is available
+	if rsaEncryptPEM != "" {
 		c.logInfo("[%s] ConnectWithRSA: RSA encrypting body...", c.ts())
 		cryptoStart := time.Now()
-		encryptedBody, err := RSAEncrypt(rsaPublicKeyPEM, plainBody)
+		encryptedBody, err := RSAEncrypt(rsaEncryptPEM, plainBody)
 		if err != nil {
 			c.conn.Close()
 			c.logInfo("[%s] ConnectWithRSA: RSA encrypt FAILED: %v", c.ts(), err)
 			return fmt.Errorf("RSA encrypt: %w", err)
 		}
 		c.logInfo("[%s] ConnectWithRSA: RSA encrypt OK (%v): %d bytes -> %d bytes", c.ts(), time.Since(cryptoStart), len(plainBody), len(encryptedBody))
-
-		// packetEncAlgo=0 (FTAES_ECB) is NOT the right flag for RSA.
-		// Leave packetEncAlgo at -1 (no encryption flag in header).
-		// The server detects RSA mode from the encrypted body itself.
-		// (No re-marshal: encrypt the already-serialized plaintext, matching Python SDK.)
-
 		body = encryptedBody
 		c.logInfo("[%s] ConnectWithRSA: Using RSA encryption, final body=%d bytes", c.ts(), len(body))
 	} else {
@@ -656,7 +687,6 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	serialNo := c.nextSerialNo()
 	c.logInfo("[%s] ConnectWithRSA: Writing packet (protoID=1001, serialNo=%d, body=%d bytes)...", c.ts(), serialNo, len(body))
 	writeStart := time.Now()
-	// Use SHA1(plaintext) in header — server verifies SHA1 of decrypted plaintext
 	if err := c.conn.WritePacketWithSHA1(ProtoID_InitConnect, serialNo, body, plainSHA1); err != nil {
 		c.conn.Close()
 		c.logInfo("[%s] ConnectWithRSA: WritePacket FAILED: %v", c.ts(), err)
@@ -682,8 +712,22 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	}
 	c.logInfo("[%s] ConnectWithRSA: ReadResponse OK (%v), body=%d bytes, protoID=%d", c.ts(), time.Since(respStart), len(respPkt.Body), respPkt.Header.ProtoID)
 
+	// Decrypt InitConnect response body if FTAES encryption is requested
+	rspBody := respPkt.Body
+	if useEncryption {
+		c.logInfo("[%s] ConnectWithRSA: RSA decrypting InitConnect response body (%d bytes)...", c.ts(), len(rspBody))
+		decryptedBody, err := RSADecrypt(c.opts.RSAPrivateKey, rspBody)
+		if err != nil {
+			c.conn.Close()
+			c.logInfo("[%s] ConnectWithRSA: RSA decrypt FAILED: %v", c.ts(), err)
+			return fmt.Errorf("RSA decrypt init connect response: %w", err)
+		}
+		rspBody = decryptedBody
+		c.logInfo("[%s] ConnectWithRSA: RSA decrypt OK: %d bytes -> %d bytes", c.ts(), len(respPkt.Body), len(rspBody))
+	}
+
 	var rsp initconnect.Response
-	if err := proto.Unmarshal(respPkt.Body, &rsp); err != nil {
+	if err := proto.Unmarshal(rspBody, &rsp); err != nil {
 		c.conn.Close()
 		c.logInfo("[%s] ConnectWithRSA: Unmarshal response FAILED: %v", c.ts(), err)
 		return fmt.Errorf("unmarshal response: %w", err)
@@ -707,8 +751,9 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.connID = s2c.GetConnID()
 	c.loginUserID = s2c.GetLoginUserID()
 	c.aesKey = s2c.GetConnAESKey()
+	c.aesCBCIV = s2c.GetAesCBCiv()
 	isEnc := int32(0)
-	if rsaPublicKeyPEM != "" {
+	if useEncryption {
 		isEnc = 1
 	}
 	atomic.StoreInt32(&c.isEncrypt, isEnc)
@@ -720,7 +765,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
 	c.mu.Unlock()
-	c.logInfo("[%s] ConnectWithRSA: Connected! connID=%d, serverVer=%d, loginUID=%d, encrypt=%v", c.ts(), c.connID, c.serverVer, c.loginUserID, atomic.LoadInt32(&c.isEncrypt) != 0)
+	c.logInfo("[%s] ConnectWithRSA: Connected! connID=%d, serverVer=%d, loginUID=%d, encrypt=%v", c.ts(), c.connID, c.serverVer, c.loginUserID, useEncryption)
 
 	metrics.RecordConnection("tcp")
 	metrics.RecordOpenDUp(true)
@@ -824,6 +869,7 @@ func (c *Client) readLoop() {
 	for {
 		select {
 		case <-c.ctx.Done():
+			c.drainPendingDispatches()
 			c.logInfo("[%s] readLoop: context cancelled, exiting", c.ts())
 			return
 		default:
@@ -842,7 +888,8 @@ func (c *Client) readLoop() {
 
 		select {
 		case <-c.ctx.Done():
-			c.logInfo("[%s] readLoop: context cancelled during read, exiting", c.ts())
+			c.drainPendingDispatches()
+			c.logInfo("[%s] readLoop: context cancelled, exiting", c.ts())
 			return
 		case pkt := <-resultCh:
 			c.logInfo("[%s] readLoop: got packet protoID=%d serialNo=%d bodyLen=%d dispatching...", c.ts(), pkt.Header.ProtoID, pkt.Header.SerialNo, pkt.Header.BodyLen)
@@ -860,6 +907,10 @@ func (c *Client) readLoop() {
 			return
 		}
 	}
+}
+
+func (c *Client) drainPendingDispatches() {
+	c.conn.DrainDispatches()
 }
 
 func (c *Client) reconnect() {
@@ -926,12 +977,14 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 
 func (c *Client) Close() error {
 	atomic.StoreInt32(&c.connActive, 0)
+	atomic.StoreInt32(&c.connected, 0)
 	metrics.RecordDisconnect("tcp")
 	metrics.RecordOpenDUp(false)
-	c.cancel()
 	if c.conn != nil {
+		c.conn.DrainDispatches()
 		c.conn.Close()
 	}
+	c.cancel()
 	c.wg.Wait()
 	return nil
 }
@@ -980,20 +1033,43 @@ func (c *Client) EncryptRequestBody(protoID uint32, body []byte) ([]byte, error)
 	if atomic.LoadInt32(&c.isEncrypt) == 0 || protoID == ProtoID_InitConnect {
 		return body, nil
 	}
-	return ftaesEncrypt([]byte(c.getAESKey()), body)
+	if c.aesCBCIV != "" {
+		return aesCBCEncrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
+	}
+	key256 := sha256.Sum256([]byte(c.getAESKey()))
+	return aes256Encrypt(key256[:], body)
 }
 
 // DecryptResponseBody decrypts the response body using FTAES_ECB when the
 // connection is in encrypted mode. Returns the plaintext (or original if not
 // encrypted). InitConnect responses are handled separately via RSA.
+// Tries multiple AES modes as fallback for compatibility with different OpenD configurations.
 func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error) {
 	if atomic.LoadInt32(&c.isEncrypt) == 0 || protoID == ProtoID_InitConnect {
 		return body, nil
 	}
+
 	plaintext, err := ftaesDecrypt([]byte(c.getAESKey()), body)
+	if err == nil {
+		return plaintext, nil
+	}
 	if errors.Is(err, ErrNotEncrypted) {
 		return body, nil
 	}
+
+	if c.aesCBCIV != "" && len(body) > 16 && len(body)%16 == 0 {
+		plaintext, err = aesCBCDecrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
+		if err == nil {
+			return plaintext, nil
+		}
+	}
+
+	key256 := sha256.Sum256([]byte(c.getAESKey()))
+	plaintext, err = aes256Decrypt(key256[:], body)
+	if err == nil {
+		return plaintext, nil
+	}
+
 	return plaintext, err
 }
 

@@ -2,6 +2,7 @@ package futuapi
 
 import (
 	"crypto/aes"
+	"crypto/cipher"
 )
 
 // ftaesEncrypt encrypts data using the Futu FTAES_ECB variant.
@@ -117,4 +118,94 @@ func AESEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 // Input should include the 16-byte trailer; plaintext is returned without padding.
 func AESDecrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	return ftaesDecrypt(key, ciphertext)
+}
+
+func aesCBCDecrypt(key []byte, iv []byte, ciphertext []byte) ([]byte, error) {
+	if len(key) != 16 {
+		return nil, NewError(CodeDecryptionFailed, "AES_CBC key must be 16 bytes")
+	}
+	if len(iv) != 16 {
+		return nil, NewError(CodeDecryptionFailed, "AES_CBC IV must be 16 bytes")
+	}
+	if len(ciphertext)%16 != 0 {
+		return nil, NewError(CodeDecryptionFailed, "AES_CBC ciphertext must be multiple of 16 bytes")
+	}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, NewError(CodeDecryptionFailed, "create AES cipher: "+err.Error())
+	}
+	mode := cipher.NewCBCDecrypter(block, iv)
+	plaintext := make([]byte, len(ciphertext))
+	mode.CryptBlocks(plaintext, ciphertext)
+	return plaintext, nil
+}
+
+func aesCBCEncrypt(key []byte, iv []byte, plaintext []byte) ([]byte, error) {
+	if len(key) != 16 {
+		return nil, NewError(CodeEncryptionFailed, "AES_CBC key must be 16 bytes")
+	}
+	if len(iv) != 16 {
+		return nil, NewError(CodeEncryptionFailed, "AES_CBC IV must be 16 bytes")
+	}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, NewError(CodeEncryptionFailed, "create AES cipher: "+err.Error())
+	}
+	padLen := 16 - (len(plaintext) % 16)
+	padded := make([]byte, len(plaintext)+padLen)
+	copy(padded, plaintext)
+	for i := len(plaintext); i < len(padded); i++ {
+		padded[i] = byte(padLen)
+	}
+	ciphertext := make([]byte, len(padded))
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext, padded)
+	return ciphertext, nil
+}
+
+func aes256Encrypt(key []byte, plaintext []byte) ([]byte, error) {
+	if len(key) != 32 {
+		return nil, NewError(CodeEncryptionFailed, "AES-256 key must be 32 bytes")
+	}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, NewError(CodeEncryptionFailed, "create AES-256 cipher: "+err.Error())
+	}
+	padLen := 16 - (len(plaintext) % 16)
+	if padLen == 16 && len(plaintext) > 0 {
+		padLen = 0
+	}
+	padded := make([]byte, len(plaintext)+padLen)
+	copy(padded, plaintext)
+	ciphertext := make([]byte, len(padded))
+	for i := 0; i < len(padded); i += 16 {
+		block.Encrypt(ciphertext[i:i+16], padded[i:i+16])
+	}
+	trailer := make([]byte, 16)
+	trailer[15] = byte(padLen)
+	return append(ciphertext, trailer...), nil
+}
+
+func aes256Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
+	if len(key) != 32 {
+		return nil, NewError(CodeDecryptionFailed, "AES-256 key must be 32 bytes")
+	}
+	encLen := len(ciphertext) - 16
+	if encLen <= 0 || encLen%16 != 0 {
+		return nil, ErrNotEncrypted
+	}
+	trailer := ciphertext[len(ciphertext)-16:]
+	padLen := int(trailer[15])
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, NewError(CodeDecryptionFailed, "create AES-256 cipher: "+err.Error())
+	}
+	plaintext := make([]byte, encLen)
+	for i := 0; i < encLen; i += 16 {
+		block.Decrypt(plaintext[i:i+16], ciphertext[i:i+16])
+	}
+	if padLen > 0 && padLen <= 16 {
+		plaintext = plaintext[:len(plaintext)-padLen]
+	}
+	return plaintext, nil
 }
