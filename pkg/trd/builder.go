@@ -112,3 +112,21 @@ func (b *OrderBuilder) WithAuxPrice(auxPrice float64) *OrderBuilder {
 	b.req.AuxPrice = auxPrice
 	return b
 }
+
+// WithTrailType sets the trailing stop type (ratio or amount).
+func (b *OrderBuilder) WithTrailType(t constant.TrailType) *OrderBuilder {
+	b.req.TrailType = t
+	return b
+}
+
+// WithTrailValue sets the trailing stop value (percentage or amount).
+func (b *OrderBuilder) WithTrailValue(v float64) *OrderBuilder {
+	b.req.TrailValue = v
+	return b
+}
+
+// WithSpread sets the trailing stop spread.
+func (b *OrderBuilder) WithSpread(s float64) *OrderBuilder {
+	b.req.TrailSpread = s
+	return b
+}
