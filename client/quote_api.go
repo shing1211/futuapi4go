@@ -51,6 +51,8 @@ func GetQuote(ctx context.Context, c *Client, market constant.Market, code strin
 		Turnover:     q.Turnover,
 		TurnoverRate: q.TurnoverRate,
 		Amplitude:    q.Amplitude,
+		IsSuspended:  q.IsSuspended,
+		SecStatus:   q.SecStatus,
 	}, nil
 }
 
@@ -73,6 +75,7 @@ func GetKLines(ctx context.Context, c *Client, market constant.Market, code stri
 	for i, kl := range resp.KLList {
 		klines[i] = KLine{
 			Time:       kl.Time,
+			IsBlank:    kl.IsBlank,
 			Open:       kl.OpenPrice,
 			High:       kl.HighPrice,
 			Low:        kl.LowPrice,
@@ -306,14 +309,17 @@ func GetRT(ctx context.Context, c *Client, market constant.Market, code string) 
 
 	rtData := make([]RT, len(resp.RTList))
 	for i, r := range resp.RTList {
-		rtData[i] = RT{
-			Time:      r.Time,
-			Price:     r.Price,
-			Volume:    r.Volume,
-			LastClose: r.LastClosePrice,
-			AvgPrice:  r.AvgPrice,
-			Turnover:  r.Turnover,
-		}
+	rtData[i] = RT{
+		Time:      r.Time,
+		Minute:    r.Minute,
+		IsBlank:   r.IsBlank,
+		Price:     r.Price,
+		Volume:    r.Volume,
+		LastClose: r.LastClosePrice,
+		AvgPrice:  r.AvgPrice,
+		Turnover:  r.Turnover,
+		Timestamp: r.Timestamp,
+	}
 	}
 	return rtData, nil
 }

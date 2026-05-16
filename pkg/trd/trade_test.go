@@ -85,13 +85,16 @@ func TestUnlockTradeRequestValidation(t *testing.T) {
 
 func TestFundsStructFields(t *testing.T) {
 	funds := &Funds{
-		Power:          100000.00,
-		TotalAssets:    500000.00,
-		Cash:           200000.00,
-		MarketVal:      300000.00,
-		FrozenCash:     50000.00,
-		DebtCash:       0.00,
-		AvailableFunds: 150000.00,
+		Power:             100000.00,
+		TotalAssets:       500000.00,
+		Cash:              200000.00,
+		MarketVal:         300000.00,
+		FrozenCash:        50000.00,
+		DebtCash:          0.00,
+		AvailableFunds:    150000.00,
+		SecuritiesAssets:   400000.00,
+		FundAssets:        50000.00,
+		BondAssets:        50000.00,
 	}
 
 	if funds.TotalAssets != 500000.00 {
@@ -100,18 +103,29 @@ func TestFundsStructFields(t *testing.T) {
 	if funds.Power != 100000.00 {
 		t.Errorf("expected Power 100000.00, got %f", funds.Power)
 	}
+	if funds.SecuritiesAssets != 400000.00 {
+		t.Errorf("expected SecuritiesAssets 400000.00, got %f", funds.SecuritiesAssets)
+	}
+	if funds.FundAssets != 50000.00 {
+		t.Errorf("expected FundAssets 50000.00, got %f", funds.FundAssets)
+	}
+	if funds.BondAssets != 50000.00 {
+		t.Errorf("expected BondAssets 50000.00, got %f", funds.BondAssets)
+	}
 }
 
 func TestPositionStructFields(t *testing.T) {
 	pos := &Position{
-		Code:       "00700",
-		Name:       "Tencent",
-		Qty:        1000.0,
-		CanSellQty: 1000.0,
-		Price:      350.50,
-		CostPrice:  340.00,
-		Val:        350500.00,
-		PlVal:      10500.00,
+		PositionID:    12345,
+		PositionSide:  1,
+		Code:          "00700",
+		Name:          "Tencent",
+		Qty:           1000.0,
+		CanSellQty:    1000.0,
+		Price:         350.50,
+		CostPrice:     340.00,
+		Val:           350500.00,
+		PlVal:         10500.00,
 	}
 
 	if pos.Code != "00700" {
@@ -122,6 +136,9 @@ func TestPositionStructFields(t *testing.T) {
 	}
 	if pos.PlVal != 10500.00 {
 		t.Errorf("expected PlVal 10500.00, got %f", pos.PlVal)
+	}
+	if pos.PositionSide != 1 {
+		t.Errorf("expected PositionSide 1, got %d", pos.PositionSide)
 	}
 }
 

@@ -6,29 +6,32 @@ import "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 
 // Quote represents a real-time quote.
 type Quote struct {
-	Symbol       string `json:"symbol"`
-	Market       int32 `json:"market"`
+	Symbol       string  `json:"symbol"`
+	Market       int32   `json:"market"`
 	Price        float64 `json:"price"`
 	Open         float64 `json:"open"`
 	High         float64 `json:"high"`
 	Low          float64 `json:"low"`
-	Volume       int64 `json:"volume"`
-	Timestamp    string `json:"timestamp"`
-	Name         string `json:"name"`
+	Volume       int64   `json:"volume"`
+	Timestamp    string  `json:"timestamp"`
+	Name         string  `json:"name"`
 	LastClose    float64 `json:"lastClose"`
 	Turnover     float64 `json:"turnover"`
 	TurnoverRate float64 `json:"turnoverRate"`
 	Amplitude    float64 `json:"amplitude"`
+	IsSuspended  bool    `json:"isSuspended"`
+	SecStatus   int32   `json:"secStatus"`
 }
 
 // KLine represents a K-line (candlestick) data point.
 type KLine struct {
-	Time       string `json:"time"`
+	Time       string  `json:"time"`
+	IsBlank    bool    `json:"isBlank"`
 	Open       float64 `json:"open"`
 	High       float64 `json:"high"`
 	Low        float64 `json:"low"`
 	Close      float64 `json:"close"`
-	Volume     int64 `json:"volume"`
+	Volume     int64   `json:"volume"`
 	LastClose  float64 `json:"lastClose"`
 	Turnover   float64 `json:"turnover"`
 	ChangeRate float64 `json:"changeRate"`
@@ -58,10 +61,11 @@ type PlaceOrderResult struct {
 
 // Position represents a position.
 type Position struct {
-	PositionID       uint64 `json:"positionID"`
-	Code             string `json:"code"`
-	Name             string `json:"name"`
-	Market           int32 `json:"market"`
+	PositionID       uint64  `json:"positionID"`
+	PositionSide      int32   `json:"positionSide"`
+	Code             string  `json:"code"`
+	Name             string  `json:"name"`
+	Market           int32   `json:"market"`
 	Quantity         float64 `json:"quantity"`
 	CanSellQty       float64 `json:"canSellQty"`
 	CostPrice        float64 `json:"costPrice"`
@@ -76,8 +80,8 @@ type Position struct {
 	TodayPnL         float64 `json:"todayPnL"`
 	UnrealizedPL     float64 `json:"unrealizedPL"`
 	RealizedPL       float64 `json:"realizedPL"`
-	Currency         int32 `json:"currency"`
-	TrdMarket        int32 `json:"trdMarket"`
+	Currency         int32   `json:"currency"`
+	TrdMarket        int32   `json:"trdMarket"`
 	DilutedCostPrice float64 `json:"dilutedCostPrice"`
 	AverageCostPrice float64 `json:"averageCostPrice"`
 	AveragePnLRate   float64 `json:"averagePnLRate"`
@@ -129,6 +133,9 @@ type Funds struct {
 	DtStatus          int32 `json:"dtStatus"`
 	CashInfoList      []AccCashInfo `json:"cashInfoList"`
 	MarketInfoList    []AccMarketInfo `json:"marketInfoList"`
+	SecuritiesAssets  float64 `json:"securitiesAssets"`
+	FundAssets       float64 `json:"fundAssets"`
+	BondAssets       float64 `json:"bondAssets"`
 }
 
 // Order represents an order.
@@ -224,12 +231,15 @@ type Ticker struct {
 
 // RT represents real-time data.
 type RT struct {
-	Time      string `json:"time"`
+	Time      string  `json:"time"`
+	Minute    int32   `json:"minute"`
+	IsBlank   bool    `json:"isBlank"`
 	Price     float64 `json:"price"`
-	Volume    int64 `json:"volume"`
+	Volume    int64   `json:"volume"`
 	LastClose float64 `json:"lastClose"`
 	AvgPrice  float64 `json:"avgPrice"`
 	Turnover  float64 `json:"turnover"`
+	Timestamp float64 `json:"timestamp"`
 }
 
 // Broker represents broker data.
@@ -631,12 +641,19 @@ type OrderFeeItemInfo struct {
 
 // MarginRatioInfo represents margin ratio for a security.
 type MarginRatioInfo struct {
-	Security      *qotcommon.Security `json:"security"`
-	IsLongPermit  bool `json:"isLongPermit"`
-	IsShortPermit bool `json:"isShortPermit"`
-	ShortFeeRate  float64 `json:"shortFeeRate"`
-	ImLongRatio   float64 `json:"imLongRatio"`
-	ImShortRatio  float64 `json:"imShortRatio"`
+	Security       *qotcommon.Security `json:"security"`
+	IsLongPermit   bool    `json:"isLongPermit"`
+	IsShortPermit  bool    `json:"isShortPermit"`
+	ShortFeeRate   float64 `json:"shortFeeRate"`
+	ImLongRatio    float64 `json:"imLongRatio"`
+	ImShortRatio   float64 `json:"imShortRatio"`
+	ShortPoolRemain float64 `json:"shortPoolRemain"`
+	AlertLongRatio  float64 `json:"alertLongRatio"`
+	AlertShortRatio float64 `json:"alertShortRatio"`
+	McmLongRatio   float64 `json:"mcmLongRatio"`
+	McmShortRatio  float64 `json:"mcmShortRatio"`
+	MmLongRatio    float64 `json:"mmLongRatio"`
+	MmShortRatio   float64 `json:"mmShortRatio"`
 }
 
 // AccTradingInfo represents trading capability for a security.
@@ -657,6 +674,8 @@ type MaxTrdQtysInfo struct {
 	MaxPositionSell     float64 `json:"maxPositionSell"`
 	MaxSellShort        float64 `json:"maxSellShort"`
 	MaxBuyBack          float64 `json:"maxBuyBack"`
+	LongRequiredIM      float64 `json:"longRequiredIM"`
+	ShortRequiredIM     float64 `json:"shortRequiredIM"`
 }
 
 // PushQuote represents a parsed real-time quote push notification.
@@ -699,25 +718,33 @@ type OBItem struct {
 
 // PushTicker represents a parsed tick-by-tick push notification.
 type PushTicker struct {
-	Market   int32 `json:"market"`
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Price    float64 `json:"price"`
-	Volume   int64 `json:"volume"`
-	Turnover float64 `json:"turnover"`
-	Side     int32 `json:"side"`
+	Market    int32   `json:"market"`
+	Code      string  `json:"code"`
+	Name      string  `json:"name"`
+	Price     float64 `json:"price"`
+	Volume    int64   `json:"volume"`
+	Turnover  float64 `json:"turnover"`
+	Side      int32   `json:"side"`
+	Sequence  int64   `json:"sequence"`
+	Dir       int32   `json:"dir"`
+	RecvTime  float64 `json:"recvTime"`
+	Type      int32   `json:"type"`
+	TypeSign  int32   `json:"typeSign"`
 }
 
 // PushRT represents a parsed real-time minute data push notification.
 type PushRT struct {
-	Market   int32 `json:"market"`
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Time     string `json:"time"`
-	Price    float64 `json:"price"`
-	Volume   int64 `json:"volume"`
-	AvgPrice float64 `json:"avgPrice"`
-	Turnover float64 `json:"turnover"`
+	Market    int32   `json:"market"`
+	Code      string  `json:"code"`
+	Name      string  `json:"name"`
+	Time      string  `json:"time"`
+	Price     float64 `json:"price"`
+	Volume    int64   `json:"volume"`
+	AvgPrice  float64 `json:"avgPrice"`
+	Turnover  float64 `json:"turnover"`
+	Minute    int32   `json:"minute"`
+	IsBlank   bool    `json:"isBlank"`
+	Timestamp float64 `json:"timestamp"`
 }
 
 // PushBroker represents a parsed broker queue push notification.
@@ -732,8 +759,9 @@ type PushBroker struct {
 // BrokerItem represents a single broker queue entry.
 type BrokerItem struct {
 	Price    float64 `json:"price"`
-	Volume   int64 `json:"volume"`
-	BrokerID int32 `json:"brokerID"`
+	Volume   int64   `json:"volume"`
+	BrokerID int32   `json:"brokerID"`
+	Name     string  `json:"name"`
 }
 
 // PushOrderUpdate represents an order status update push.

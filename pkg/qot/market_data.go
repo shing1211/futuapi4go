@@ -153,7 +153,8 @@ type Ticker struct {
 	RecvTime  float64
 	Type      int32
 	TypeSign  int32
-	Timestamp float64
+	Timestamp    float64
+	PushDataType int32
 }
 
 // GetTickerRequest defines parameters for GetTicker.
@@ -207,16 +208,17 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 			continue
 		}
 		result.TickerList = append(result.TickerList, &Ticker{
-			Time:      t.GetTime(),
-			Sequence:  t.GetSequence(),
-			Dir:       t.GetDir(),
-			Price:     t.GetPrice(),
-			Volume:    t.GetVolume(),
-			Turnover:  t.GetTurnover(),
-			RecvTime:  t.GetRecvTime(),
-			Type:      t.GetType(),
-			TypeSign:  t.GetTypeSign(),
-			Timestamp: t.GetTimestamp(),
+			Time:        t.GetTime(),
+			Sequence:    t.GetSequence(),
+			Dir:         t.GetDir(),
+			Price:       t.GetPrice(),
+			Volume:      t.GetVolume(),
+			Turnover:    t.GetTurnover(),
+			RecvTime:    t.GetRecvTime(),
+			Type:        t.GetType(),
+			TypeSign:    t.GetTypeSign(),
+			Timestamp:   t.GetTimestamp(),
+			PushDataType: t.GetPushDataType(),
 		})
 	}
 
@@ -226,11 +228,14 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 // RT represents a single real-time data point.
 type RT struct {
 	Time           string
+	Minute         int32
+	IsBlank        bool
 	Price          float64
 	LastClosePrice float64
 	AvgPrice       float64
 	Volume         int64
 	Turnover       float64
+	Timestamp      float64
 }
 
 // GetRTRequest defines parameters for GetRT.
@@ -282,11 +287,14 @@ func GetRT(ctx context.Context, c *futuapi.Client, req *GetRTRequest) (*GetRTRes
 		}
 		result.RTList = append(result.RTList, &RT{
 			Time:           rt.GetTime(),
+			Minute:         rt.GetMinute(),
+			IsBlank:        rt.GetIsBlank(),
 			Price:          rt.GetPrice(),
 			LastClosePrice: rt.GetLastClosePrice(),
 			AvgPrice:       rt.GetAvgPrice(),
 			Volume:         rt.GetVolume(),
 			Turnover:       rt.GetTurnover(),
+			Timestamp:      rt.GetTimestamp(),
 		})
 	}
 
@@ -295,10 +303,11 @@ func GetRT(ctx context.Context, c *futuapi.Client, req *GetRTRequest) (*GetRTRes
 
 // Broker represents a broker (经纪) in the broker queue.
 type Broker struct {
-	ID     int64
-	Name   string
-	Pos    int32
-	Volume int64
+	ID      int64
+	Name    string
+	Pos     int32
+	Volume  int64
+	OrderID int64
 }
 
 // GetBrokerRequest defines parameters for GetBroker.
@@ -356,10 +365,11 @@ func GetBroker(ctx context.Context, c *futuapi.Client, req *GetBrokerRequest) (*
 			continue
 		}
 		result.AskBrokerList = append(result.AskBrokerList, &Broker{
-			ID:     b.GetId(),
-			Name:   b.GetName(),
-			Pos:    b.GetPos(),
-			Volume: b.GetVolume(),
+			ID:      b.GetId(),
+			Name:    b.GetName(),
+			Pos:     b.GetPos(),
+			Volume:  b.GetVolume(),
+			OrderID: b.GetOrderID(),
 		})
 	}
 
@@ -368,10 +378,11 @@ func GetBroker(ctx context.Context, c *futuapi.Client, req *GetBrokerRequest) (*
 			continue
 		}
 		result.BidBrokerList = append(result.BidBrokerList, &Broker{
-			ID:     b.GetId(),
-			Name:   b.GetName(),
-			Pos:    b.GetPos(),
-			Volume: b.GetVolume(),
+			ID:      b.GetId(),
+			Name:    b.GetName(),
+			Pos:     b.GetPos(),
+			Volume:  b.GetVolume(),
+			OrderID: b.GetOrderID(),
 		})
 	}
 

@@ -55,14 +55,18 @@ const (
 
 // UpdateBasicQot represents a real-time basic quote push notification.
 type UpdateBasicQot struct {
-	Security  *qotcommon.Security
-	Name      string
-	CurPrice  float64
-	OpenPrice float64
-	HighPrice float64
-	LowPrice  float64
-	Volume    int64
-	Turnover  float64
+	Security       *qotcommon.Security
+	Name           string
+	CurPrice       float64
+	OpenPrice      float64
+	HighPrice      float64
+	LowPrice       float64
+	Volume         int64
+	Turnover       float64
+	IsSuspended    bool
+	LastClosePrice float64
+	UpdateTime     string
+	UpdateTimestamp float64
 }
 
 // ParseUpdateBasicQot parses a basic quote push notification from a raw protobuf body.
@@ -80,14 +84,18 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	}
 	bq := s2c.GetBasicQotList()[0]
 	return &UpdateBasicQot{
-		Security:  bq.GetSecurity(),
-		Name:      bq.GetName(),
-		CurPrice:  bq.GetCurPrice(),
-		OpenPrice: bq.GetOpenPrice(),
-		HighPrice: bq.GetHighPrice(),
-		LowPrice:  bq.GetLowPrice(),
-		Volume:    bq.GetVolume(),
-		Turnover:  bq.GetTurnover(),
+		Security:       bq.GetSecurity(),
+		Name:           bq.GetName(),
+		CurPrice:       bq.GetCurPrice(),
+		OpenPrice:      bq.GetOpenPrice(),
+		HighPrice:      bq.GetHighPrice(),
+		LowPrice:       bq.GetLowPrice(),
+		Volume:         bq.GetVolume(),
+		Turnover:       bq.GetTurnover(),
+		IsSuspended:    bq.GetIsSuspended(),
+		LastClosePrice: bq.GetLastClosePrice(),
+		UpdateTime:     bq.GetUpdateTime(),
+		UpdateTimestamp: bq.GetUpdateTimestamp(),
 	}, nil
 }
 

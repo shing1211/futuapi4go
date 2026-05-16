@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `RT` struct (`pkg/qot/market_data.go`, `client/types.go`) now exposes all 9 `TimeShare` proto fields: `Time`, `Minute`, `IsBlank`, `Price`, `LastClosePrice`/`LastClose`, `AvgPrice`/`AvgPrice`, `Volume`, `Turnover`, `Timestamp`. Previously `Minute`, `IsBlank`, and `Timestamp` were omitted.
+
+- `BasicQot` struct (`pkg/qot/quote.go`) now exposes all 25 proto fields. Added: `ListTime`, `PriceSpread`, `DarkStatus`, `ListTimestamp`, `UpdateTimestamp`, `SecStatus`, `OptionExData`, `PreMarket`, `AfterMarket`, `FutureExData`, `Overnight`. Nested optional messages are exposed as raw proto pointers (`*qotcommon.Xxx`).
+
+- `Ticker` struct (`pkg/qot/market_data.go`) now includes `PushDataType` field.
+
+- `Broker` struct (`pkg/qot/market_data.go`) now includes `OrderID` field (SF market support).
+
+- `KLine` struct (`pkg/qot/quote.go`, `pkg/qot/kline.go`) now includes `TurnoverRate` field.
+
+- `Position` struct (`pkg/trd/position.go`) now includes `PositionSide` field.
+
+- `Funds` struct (`pkg/trd/position.go`) now includes `SecuritiesAssets`, `FundAssets`, `BondAssets` fields.
+
+- `UpdateBasicQot` struct (`pkg/push/qot_push.go`) now includes `IsSuspended`, `LastClosePrice`, `UpdateTime`, `UpdateTimestamp` fields.
+
+- `Quote` type (`client/types.go`) now includes `IsSuspended`, `SecStatus` fields.
+
+- `Position` type (`client/types.go`) now includes `PositionSide` field.
+
+- `Funds` type (`client/types.go`) now includes `SecuritiesAssets`, `FundAssets`, `BondAssets` fields.
+
+- `KLine` type (`client/types.go`) now includes `IsBlank` field.
+
+- `MaxTrdQtysInfo` type (`client/types.go`) now includes `LongRequiredIM`, `ShortRequiredIM` fields.
+
+- `MarginRatioInfo` type (`client/types.go`) now includes `ShortPoolRemain`, `AlertLongRatio`, `AlertShortRatio`, `McmLongRatio`, `McmShortRatio`, `MmLongRatio`, `MmShortRatio` fields.
+
+- `PushTicker` type (`client/types.go`) now includes `Sequence`, `Dir`, `RecvTime`, `Type`, `TypeSign` fields.
+
+- `PushRT` type (`client/types.go`) now includes `Minute`, `IsBlank`, `Timestamp` fields.
+
+- `BrokerItem` type (`client/types.go`) now includes `Name` field.
+
 ## [0.8.0] - 2026-05-17
 
 ### Added

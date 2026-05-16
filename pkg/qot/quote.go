@@ -126,6 +126,17 @@ type BasicQot struct {
 	Turnover       float64
 	TurnoverRate   float64
 	Amplitude      float64
+	ListTime         string
+	PriceSpread      float64
+	DarkStatus       int32
+	ListTimestamp    float64
+	UpdateTimestamp  float64
+	SecStatus       int32
+	OptionExData    *qotcommon.OptionBasicQotExData
+	PreMarket       *qotcommon.PreAfterMarketData
+	AfterMarket     *qotcommon.PreAfterMarketData
+	FutureExData    *qotcommon.FutureBasicQotExData
+	Overnight       *qotcommon.PreAfterMarketData
 }
 
 // GetBasicQot returns basic quote data for the given securities.
@@ -168,6 +179,17 @@ func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcomm
 			Turnover:       bq.GetTurnover(),
 			TurnoverRate:   bq.GetTurnoverRate(),
 			Amplitude:      bq.GetAmplitude(),
+			ListTime:        bq.GetListTime(),
+			PriceSpread:     bq.GetPriceSpread(),
+			DarkStatus:      bq.GetDarkStatus(),
+			ListTimestamp:   bq.GetListTimestamp(),
+			UpdateTimestamp: bq.GetUpdateTimestamp(),
+			SecStatus:       bq.GetSecStatus(),
+			OptionExData:   bq.GetOptionExData(),
+			PreMarket:       bq.GetPreMarket(),
+			AfterMarket:     bq.GetAfterMarket(),
+			FutureExData:   bq.GetFutureExData(),
+			Overnight:       bq.GetOvernight(),
 		})
 	}
 
@@ -185,6 +207,7 @@ type KLine struct {
 	LastClosePrice float64
 	Volume         int64
 	Turnover       float64
+	TurnoverRate   float64
 	ChangeRate     float64
 	Timestamp      float64
 }
@@ -251,6 +274,7 @@ func GetKL(ctx context.Context, c *futuapi.Client, req *GetKLRequest) (*GetKLRes
 			LastClosePrice: kl.GetLastClosePrice(),
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
+			TurnoverRate:   kl.GetTurnoverRate(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})

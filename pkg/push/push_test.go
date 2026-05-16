@@ -164,6 +164,7 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 	listTime := "2026-01-01"
 	priceSpread := 0.01
 	updateTime := "15:00:00"
+	updateTimestamp := 1744162200.0
 	lastClosePrice := 349.00
 	turnoverRate := 0.5
 	amplitude := 1.43
@@ -174,21 +175,22 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 		S2C: &qotupdatebasicqot.S2C{
 			BasicQotList: []*qotcommon.BasicQot{
 				{
-					Security:       &qotcommon.Security{Market: &hkMarket, Code: &code},
-					Name:           &name,
-					IsSuspended:    &isSuspended,
-					ListTime:       &listTime,
-					PriceSpread:    &priceSpread,
-					UpdateTime:     &updateTime,
-					CurPrice:       &curPrice,
-					OpenPrice:      &openPrice,
-					HighPrice:      &highPrice,
-					LowPrice:       &lowPrice,
-					LastClosePrice: &lastClosePrice,
-					Volume:         &volume,
-					Turnover:       &turnover,
-					TurnoverRate:   &turnoverRate,
-					Amplitude:      &amplitude,
+					Security:        &qotcommon.Security{Market: &hkMarket, Code: &code},
+					Name:            &name,
+					IsSuspended:     &isSuspended,
+					ListTime:        &listTime,
+					PriceSpread:     &priceSpread,
+					UpdateTime:      &updateTime,
+					UpdateTimestamp: &updateTimestamp,
+					CurPrice:        &curPrice,
+					OpenPrice:       &openPrice,
+					HighPrice:       &highPrice,
+					LowPrice:        &lowPrice,
+					LastClosePrice:  &lastClosePrice,
+					Volume:          &volume,
+					Turnover:        &turnover,
+					TurnoverRate:    &turnoverRate,
+					Amplitude:       &amplitude,
 				},
 			},
 		},
@@ -229,6 +231,18 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 	}
 	if result.Turnover != 4321098765.00 {
 		t.Errorf("expected Turnover 4321098765.00, got %f", result.Turnover)
+	}
+	if result.IsSuspended != false {
+		t.Errorf("expected IsSuspended false, got %v", result.IsSuspended)
+	}
+	if result.LastClosePrice != 349.00 {
+		t.Errorf("expected LastClosePrice 349.00, got %f", result.LastClosePrice)
+	}
+	if result.UpdateTime != "15:00:00" {
+		t.Errorf("expected UpdateTime 15:00:00, got %s", result.UpdateTime)
+	}
+	if result.UpdateTimestamp != 1744162200.0 {
+		t.Errorf("expected UpdateTimestamp 1744162200.0, got %f", result.UpdateTimestamp)
 	}
 }
 

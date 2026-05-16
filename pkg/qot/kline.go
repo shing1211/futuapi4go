@@ -123,6 +123,7 @@ func RequestHistoryKL(ctx context.Context, c *futuapi.Client, req *RequestHistor
 			LastClosePrice: kl.GetLastClosePrice(),
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
+			TurnoverRate:   kl.GetTurnoverRate(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})
@@ -211,6 +212,7 @@ func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLReque
 			LastClosePrice: kl.GetLastClosePrice(),
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
+			TurnoverRate:   kl.GetTurnoverRate(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})

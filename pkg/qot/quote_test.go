@@ -82,16 +82,27 @@ func TestSubscribeRequestValidation(t *testing.T) {
 	}
 }
 
-func TestBasicQotStructFields(t *testing.T) {
+func TestBasicQotStructFieldsComplete(t *testing.T) {
 	bq := &BasicQot{
-		Security:  &qotcommon.Security{Market: func() *int32 { v := int32(1); return &v }(), Code: func() *string { s := "00700"; return &s }()},
-		Name:      "Tencent",
-		CurPrice:  350.50,
-		OpenPrice: 348.00,
-		HighPrice: 352.00,
-		LowPrice:  347.00,
-		Volume:    12345678,
-		Turnover:  4321098765.00,
+		Security:        &qotcommon.Security{Market: func() *int32 { v := int32(1); return &v }(), Code: func() *string { s := "00700"; return &s }()},
+		Name:            "Tencent",
+		IsSuspended:     false,
+		UpdateTime:      "09:30:00",
+		HighPrice:       352.00,
+		OpenPrice:       348.00,
+		LowPrice:        347.00,
+		CurPrice:        350.50,
+		LastClosePrice:  349.00,
+		Volume:          12345678,
+		Turnover:        4321098765.00,
+		TurnoverRate:    0.025,
+		Amplitude:       0.030,
+		ListTime:        "2004-06-16",
+		PriceSpread:     0.01,
+		DarkStatus:      0,
+		ListTimestamp:    1087267200.0,
+		UpdateTimestamp:  1744162200.0,
+		SecStatus:       0,
 	}
 
 	if bq.Security.GetCode() != "00700" {
@@ -102,6 +113,24 @@ func TestBasicQotStructFields(t *testing.T) {
 	}
 	if bq.CurPrice != 350.50 {
 		t.Errorf("expected CurPrice 350.50, got %f", bq.CurPrice)
+	}
+	if bq.ListTime != "2004-06-16" {
+		t.Errorf("expected ListTime 2004-06-16, got %s", bq.ListTime)
+	}
+	if bq.ListTimestamp != 1087267200.0 {
+		t.Errorf("expected ListTimestamp 1087267200.0, got %f", bq.ListTimestamp)
+	}
+	if bq.UpdateTimestamp != 1744162200.0 {
+		t.Errorf("expected UpdateTimestamp 1744162200.0, got %f", bq.UpdateTimestamp)
+	}
+	if bq.SecStatus != 0 {
+		t.Errorf("expected SecStatus 0, got %d", bq.SecStatus)
+	}
+	if bq.IsSuspended != false {
+		t.Errorf("expected IsSuspended false, got %v", bq.IsSuspended)
+	}
+	if bq.TurnoverRate != 0.025 {
+		t.Errorf("expected TurnoverRate 0.025, got %f", bq.TurnoverRate)
 	}
 }
 
@@ -131,15 +160,24 @@ func TestKLineStructFields(t *testing.T) {
 func TestRTFields(t *testing.T) {
 	rt := &RT{
 		Time:           "2026-04-08 15:30:00",
+		Minute:         930,
+		IsBlank:        false,
 		Price:          350.50,
 		LastClosePrice: 349.00,
 		AvgPrice:       349.80,
 		Volume:         12345678,
 		Turnover:       4321098765.00,
+		Timestamp:      1744123800.0,
 	}
 
 	if rt.Time != "2026-04-08 15:30:00" {
 		t.Errorf("expected Time, got %s", rt.Time)
+	}
+	if rt.Minute != 930 {
+		t.Errorf("expected Minute 930, got %d", rt.Minute)
+	}
+	if rt.IsBlank != false {
+		t.Errorf("expected IsBlank false, got %v", rt.IsBlank)
 	}
 	if rt.Price != 350.50 {
 		t.Errorf("expected Price 350.50, got %f", rt.Price)
@@ -155,6 +193,9 @@ func TestRTFields(t *testing.T) {
 	}
 	if rt.Turnover != 4321098765.00 {
 		t.Errorf("expected Turnover 4321098765.00, got %f", rt.Turnover)
+	}
+	if rt.Timestamp != 1744123800.0 {
+		t.Errorf("expected Timestamp 1744123800.0, got %f", rt.Timestamp)
 	}
 }
 
@@ -177,8 +218,8 @@ func TestGetRTResponseConstruction(t *testing.T) {
 		Security: security,
 		Name:     "Tencent",
 		RTList: []*RT{
-			{Time: "10:00:00", Price: 350.0, Volume: 1000, Turnover: 350000.0},
-			{Time: "10:01:00", Price: 350.5, Volume: 2000, Turnover: 701000.0},
+			{Time: "10:00:00", Minute: 600, IsBlank: false, Price: 350.0, Volume: 1000, Turnover: 350000.0, Timestamp: 1744116000.0},
+			{Time: "10:01:00", Minute: 601, IsBlank: false, Price: 350.5, Volume: 2000, Turnover: 701000.0, Timestamp: 1744116060.0},
 		},
 	}
 
@@ -261,16 +302,17 @@ func TestGetOrderBookResponseConstruction(t *testing.T) {
 
 func TestTickerFields(t *testing.T) {
 	ticker := &Ticker{
-		Time:      "2026-04-08 15:00:00",
-		Sequence:  123456,
-		Dir:       1,
-		Price:     350.50,
-		Volume:    1000,
-		Turnover:  350500.00,
-		RecvTime:  1775635200.0,
-		Type:      0,
-		TypeSign:  1,
-		Timestamp: 1775635200.0,
+		Time:        "2026-04-08 15:00:00",
+		Sequence:   123456,
+		Dir:         1,
+		Price:       350.50,
+		Volume:      1000,
+		Turnover:    350500.00,
+		RecvTime:    1775635200.0,
+		Type:        0,
+		TypeSign:    1,
+		Timestamp:   1775635200.0,
+		PushDataType: 1,
 	}
 
 	if ticker.Price != 350.50 {
@@ -284,6 +326,9 @@ func TestTickerFields(t *testing.T) {
 	}
 	if ticker.Turnover != 350500.00 {
 		t.Errorf("expected Turnover 350500.00, got %f", ticker.Turnover)
+	}
+	if ticker.PushDataType != 1 {
+		t.Errorf("expected PushDataType 1, got %d", ticker.PushDataType)
 	}
 }
 
@@ -321,10 +366,11 @@ func TestGetTickerResponseConstruction(t *testing.T) {
 
 func TestBrokerFields(t *testing.T) {
 	broker := &Broker{
-		ID:     12345,
-		Name:   "Citi",
-		Pos:    1,
-		Volume: 5000,
+		ID:      12345,
+		Name:    "Citi",
+		Pos:     1,
+		Volume:  5000,
+		OrderID: 67890,
 	}
 
 	if broker.ID != 12345 {
@@ -335,6 +381,9 @@ func TestBrokerFields(t *testing.T) {
 	}
 	if broker.Pos != 1 {
 		t.Errorf("expected Pos 1, got %d", broker.Pos)
+	}
+	if broker.OrderID != 67890 {
+		t.Errorf("expected OrderID 67890, got %d", broker.OrderID)
 	}
 }
 

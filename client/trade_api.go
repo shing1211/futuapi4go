@@ -112,6 +112,7 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 	for i, p := range resp.PositionList {
 		positions[i] = Position{
 			PositionID:       p.PositionID,
+			PositionSide:      p.PositionSide,
 			Code:             p.Code,
 			Name:             p.Name,
 			Market:           p.TrdMarket,
@@ -197,6 +198,9 @@ func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constan
 		DtStatus:          f.DtStatus,
 		CashInfoList:      cashList,
 		MarketInfoList:    marketList,
+		SecuritiesAssets:  f.SecuritiesAssets,
+		FundAssets:       f.FundAssets,
+		BondAssets:       f.BondAssets,
 	}, nil
 }
 
@@ -251,6 +255,8 @@ func GetMaxTrdQtys(ctx context.Context, c *Client, accID uint64, market constant
 		MaxPositionSell:     m.MaxPositionSell,
 		MaxSellShort:        m.MaxSellShort,
 		MaxBuyBack:          m.MaxBuyBack,
+		LongRequiredIM:      m.LongRequiredIM,
+		ShortRequiredIM:     m.ShortRequiredIM,
 	}, nil
 }
 
@@ -302,12 +308,19 @@ func GetMarginRatio(ctx context.Context, c *Client, accID uint64, market constan
 			continue
 		}
 		result = append(result, &MarginRatioInfo{
-			Security:      m.Security,
-			IsLongPermit:  m.IsLongPermit,
-			IsShortPermit: m.IsShortPermit,
-			ShortFeeRate:  m.ShortFeeRate,
-			ImLongRatio:   m.ImLongRatio,
-			ImShortRatio:  m.ImShortRatio,
+			Security:        m.Security,
+			IsLongPermit:    m.IsLongPermit,
+			IsShortPermit:   m.IsShortPermit,
+			ShortFeeRate:    m.ShortFeeRate,
+			ImLongRatio:     m.ImLongRatio,
+			ImShortRatio:    m.ImShortRatio,
+			ShortPoolRemain: m.ShortPoolRemain,
+			AlertLongRatio:  m.AlertLongRatio,
+			AlertShortRatio: m.AlertShortRatio,
+			McmLongRatio:    m.McmLongRatio,
+			McmShortRatio:   m.McmShortRatio,
+			MmLongRatio:     m.MmLongRatio,
+			MmShortRatio:    m.MmShortRatio,
 		})
 	}
 	return result, nil

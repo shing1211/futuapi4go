@@ -76,6 +76,9 @@ type Funds struct {
 	DtStatus          int32
 	CashInfoList      []AccCashInfo
 	MarketInfoList    []AccMarketInfo
+	SecuritiesAssets  float64
+	FundAssets        float64
+	BondAssets        float64
 }
 
 // GetFundsRequest is the request to retrieve account funds.
@@ -173,6 +176,9 @@ func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*Ge
 			DtStatus:          f.GetDtStatus(),
 			CashInfoList:      accCashInfoListToGo(f.GetCashInfoList()),
 			MarketInfoList:    accMarketInfoListToGo(f.GetMarketInfoList()),
+			SecuritiesAssets:  f.GetSecuritiesAssets(),
+			FundAssets:        f.GetFundAssets(),
+			BondAssets:        f.GetBondAssets(),
 		},
 	}, nil
 }
@@ -210,6 +216,7 @@ func accMarketInfoListToGo(in []*trdcommon.AccMarketInfo) []AccMarketInfo {
 // Position represents a stock position with quantity, price, cost, and profit/loss information.
 type Position struct {
 	PositionID       uint64
+	PositionSide     int32
 	Code             string
 	Name             string
 	Qty              float64
@@ -313,6 +320,7 @@ func GetPositionList(ctx context.Context, c *futuapi.Client, req *GetPositionLis
 		}
 		result.PositionList = append(result.PositionList, &Position{
 			PositionID:       p.GetPositionID(),
+			PositionSide:     p.GetPositionSide(),
 			Code:             p.GetCode(),
 			Name:             p.GetName(),
 			Qty:              p.GetQty(),
