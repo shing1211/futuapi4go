@@ -82,3 +82,19 @@ func (s *MockServer) HasProtoID(protoID uint32) bool {
 	}
 	return false
 }
+
+// GetSHA1Results returns all recorded SHA1 validation results.
+func (s *MockServer) GetSHA1Results() []sha1Validation {
+	s.sha1ResultsMu.Lock()
+	defer s.sha1ResultsMu.Unlock()
+	result := make([]sha1Validation, len(s.sha1Results))
+	copy(result, s.sha1Results)
+	return result
+}
+
+// ClearSHA1Results clears all recorded SHA1 validation results.
+func (s *MockServer) ClearSHA1Results() {
+	s.sha1ResultsMu.Lock()
+	defer s.sha1ResultsMu.Unlock()
+	s.sha1Results = nil
+}

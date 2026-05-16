@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.5.13-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.6.2-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -12,7 +12,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.5.13
+go get github.com/shing1211/futuapi4go@v0.6.2
 ```
 
 Requires Go 1.26+ and a running [Futu OpenD](https://www.futunn.com/en/overview) instance.
@@ -96,31 +96,55 @@ import (
 
 // Quote updates stream into the channel
 ch := make(chan *push.UpdateBasicQot, 100)
-stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
+stop, err := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
+if err != nil {
+	log.Fatal(err)
+}
 defer stop()
 
 for q := range ch {
 	fmt.Printf("[%s] price=%.2f vol=%d\n", q.Security.GetCode(), q.CurPrice, q.Volume)
 }
 
-// Multiple K-line periods with per-period callbacks
-handlers := map[constant.KLType]func(*push.UpdateKL){
-	constant.KLType_K_1Min: func(kl *push.UpdateKL) {
-		for _, bar := range kl.KLList {
-			fmt.Printf("1MIN %s C=%.2f\n", *bar.Time, *bar.ClosePrice)
-		}
-	},
-	constant.KLType_K_Day: func(kl *push.UpdateKL) {
-		for _, bar := range kl.KLList {
-			fmt.Printf("DAY %s O=%.2f H=%.2f L=%.2f C=%.2f\n",
-				*bar.Time, *bar.OpenPrice, *bar.HighPrice,
-				*bar.LowPrice, *bar.ClosePrice)
-		}
-	},
+// Multiple K-line periods with a shared channel filter
+ch2 := make(chan *push.UpdateKL, 100)
+stop2, err := chanpkg.SubscribeKLines(ctx, cli,
+	int32(constant.Market_HK), "00700",
+	[]int32{int32(constant.KLType_K_1Min), int32(constant.KLType_K_Day)}, ch2)
+if err != nil {
+	log.Fatal(err)
 }
-stop := chanpkg.SubscribeKLines(cli, constant.Market_HK, "00700", handlers)
-defer stop()
+defer stop2()
+
+for kl := range ch2 {
+	switch kl.KlType {
+	case int32(constant.KLType_K_1Min):
+		fmt.Printf("1MIN %s C=%.2f\n", *kl.KLList[0].Time, *kl.KLList[0].ClosePrice)
+	case int32(constant.KLType_K_Day):
+		fmt.Printf("DAY %s O=%.2f H=%.2f L=%.2f C=%.2f\n",
+			*kl.KLList[0].Time, *kl.KLList[0].OpenPrice,
+			*kl.KLList[0].HighPrice, *kl.KLList[0].LowPrice, *kl.KLList[0].ClosePrice)
+	}
+}
 ```
+
+### Typed Push Callbacks
+
+Alternative to channels — register callbacks directly on the client for
+quote updates, order notifications, fills, K-lines, order book changes,
+tickers, and more.
+
+```go
+cli.OnQuote(func(q *push.UpdateBasicQot) {
+	fmt.Printf("[%s] price=%.2f vol=%d\n", q.Security.GetCode(), q.CurPrice, q.Volume)
+}).OnOrder(func(o *push.TrdUpdateOrder) {
+	fmt.Printf("Order %s: status=%d\n", o.GetOrderIDEx(), o.GetOrderStatus())
+}).OnOrderFill(func(f *push.TrdUpdateOrderFill) {
+	fmt.Printf("Fill %s: qty=%d price=%.2f\n", f.GetOrderIDEx(), f.GetQty(), f.GetPrice())
+})
+```
+
+Callbacks are chainable — each `On*()` returns the `*Client` for fluent setup.
 
 ### Circuit Breaker
 
@@ -204,20 +228,30 @@ s := util.FormatCode(mkt, code) // "HK.00700"
 | `pkg/logger` | Structured leveled logging |
 | `pkg/util` | Code parsing (`ParseCode`, `FormatCode`), market helpers |
 | `pkg/constant` | Typed constants with `String()` methods |
-| `pkg/pb/*` | 78 protobuf types (v10.5.6508) |
+| `pkg/futuapi` | Convenience re-export — `NewClient()`, `NewClientFromEnv()` |
+| `pkg/pb/*` | 79 protobuf types (v10.5.6508) |
 
 ## Common APIs
 
 ### Connection
 
 ```go
+// Manual config
 cli := client.New(
 	client.WithDialTimeout(10*time.Second),
 	client.WithAPISetTimeout(30*time.Second),
 )
-cli = cli.WithTradeEnv(constant.TrdEnv_Simulate) // safe default
+cli = cli.WithTradeEnv(constant.TrdEnv_Simulate)
+
+// Or from env vars: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
+cli, err := client.NewClientFromEnv()
+if err != nil {
+	log.Fatal(err)
+}
+
 cli.Connect("127.0.0.1:11111")
-// cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.CanSendProto(protoID)
+// cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.GetLoginUserID()
+// cli.CanSendProto(protoID)
 ```
 
 ### Market Data
@@ -254,11 +288,11 @@ cli.Connect("127.0.0.1:11111")
 |---|---|
 | `Subscribe(ctx, c, market, code, []SubType)` | Subscribe to push types |
 | `Unsubscribe(ctx, c, market, code, []SubType)` | Unsubscribe |
-| `chanpkg.SubscribeQuote(cli, market, code, ch)` | Quote push via channel |
-| `chanpkg.SubscribeKLine(cli, market, code, klType, ch)` | K-line push via channel |
-| `chanpkg.SubscribeKLines(cli, market, code, handlers)` | Multiple K-line types via callbacks |
-| `chanpkg.SubscribeTicker(cli, market, code, ch)` | Ticker push via channel |
-| `chanpkg.SubscribeOrderBook(cli, market, code, ch)` | Order book push via channel |
+| `chanpkg.SubscribeQuote(ctx, cli, market, code, ch)` | Quote push via channel |
+| `chanpkg.SubscribeKLine(ctx, cli, market, code, klType, ch)` | Single K-line push via channel |
+| `chanpkg.SubscribeKLines(ctx, cli, market, code, []klTypes, ch)` | Multi K-line push with filter |
+| `chanpkg.SubscribeTicker(ctx, cli, market, code, ch)` | Ticker push via channel |
+| `chanpkg.SubscribeOrderBook(ctx, cli, market, code, ch)` | Order book push via channel |
 
 ## Build & Test
 

@@ -7,15 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-05-16
+
+### Added
+
+- **SHA1 validation test** — `internal/testutil/mock/sha1_test.go` with two
+  tests that empirically prove: (1) the SDK sends SHA1(ciphertext), (2) both
+  SHA1(plaintext) and SHA1(ciphertext) are accepted by a spec-compliant server
+  (OpenD is lenient), (3) the official Python SDK
+  (`futu/common/utils.py:_joint_head()`) computes SHA1(plaintext) and works
+  correctly with OpenD in production.
+
+### Fixed
+
+- **`WritePacketEncrypted` comments** — Updated to accurately state the SHA1
+  situation: OpenD accepts both SHA1(plaintext) per the official Python SDK
+  and SHA1(ciphertext) per our v0.5.15 testing. We keep SHA1(ciphertext) for
+  historical compatibility.
+
 ## [0.6.1] - 2026-05-16
 
 ### Fixed
 
 - **`WritePacketEncrypted` parameter name** — Renamed `plaintextSHA1` to
   `encryptedBodySHA1` in `ConnInterface`, `Conn.WritePacketEncrypted`, and
-  `wsConn.WritePacketEncrypted` to accurately reflect that OpenD verifies
-  SHA1 against the encrypted body. Updated misleading comments claiming
-  "SHA1 of ORIGINAL PLAINTEXT".
+  `wsConn.WritePacketEncrypted`. Updated comments to accurately reflect that
+  the parameter receives SHA1 of the encrypted body.
 
 ## [0.6.0] - 2026-05-16
 

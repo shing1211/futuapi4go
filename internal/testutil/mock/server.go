@@ -40,10 +40,21 @@ import (
 type MockHandler func(req []byte) (proto.Message, error)
 
 type MockRequest struct {
-	ProtoID  uint32
-	SerialNo uint32
-	Body     []byte
-	Time     time.Time
+	ProtoID    uint32
+	SerialNo   uint32
+	Body       []byte
+	HeaderSHA1 [20]byte
+	Time       time.Time
+}
+
+type sha1Validation struct {
+	ProtoID           uint32
+	SerialNo          uint32
+	HeaderSHA1        [20]byte
+	CiphertextSHA1    [20]byte
+	PlaintextSHA1     [20]byte
+	MatchedCiphertext bool
+	MatchedPlaintext  bool
 }
 
 type connState struct {
@@ -66,10 +77,14 @@ type MockServer struct {
 	requests   []MockRequest
 	requestsMu sync.Mutex
 
+	sha1Results   []sha1Validation
+	sha1ResultsMu sync.Mutex
+
 	running     int32
 	wg          sync.WaitGroup
 	privKeyPEM  string
 	pubKeyPEM   string
+	StrictSHA1  bool
 }
 
 func NewMockServer(t *testing.T) *MockServer {
@@ -185,17 +200,18 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 	}()
 
 	for atomic.LoadInt32(&s.running) != 0 {
-		protoID, serialNo, body, err := s.readPacket(conn)
+		protoID, serialNo, headerSHA1, body, err := s.readPacket(conn)
 		if err != nil {
 			return
 		}
 
 		s.requestsMu.Lock()
 		s.requests = append(s.requests, MockRequest{
-			ProtoID:  protoID,
-			SerialNo: serialNo,
-			Body:     body,
-			Time:     time.Now(),
+			ProtoID:    protoID,
+			SerialNo:   serialNo,
+			Body:       body,
+			HeaderSHA1: headerSHA1,
+			Time:       time.Now(),
 		})
 		s.requestsMu.Unlock()
 
@@ -216,6 +232,30 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 					return
 				}
 				plainBody = decrypted
+			}
+		}
+
+		// Validate SHA1 for non-InitConnect requests
+		if protoID != 1001 {
+			result := sha1Validation{
+				ProtoID:        protoID,
+				SerialNo:       serialNo,
+				HeaderSHA1:     headerSHA1,
+				CiphertextSHA1: sha1.Sum(body),
+				PlaintextSHA1:  sha1.Sum(plainBody),
+			}
+			result.MatchedCiphertext = result.HeaderSHA1 == result.CiphertextSHA1
+			result.MatchedPlaintext = result.HeaderSHA1 == result.PlaintextSHA1
+			s.sha1ResultsMu.Lock()
+			s.sha1Results = append(s.sha1Results, result)
+			s.sha1ResultsMu.Unlock()
+
+			s.t.Logf("SHA1 check protoID=%d serialNo=%d: header=%x ciphertextMatch=%v plaintextMatch=%v",
+				protoID, serialNo, headerSHA1[:8], result.MatchedCiphertext, result.MatchedPlaintext)
+
+			if s.StrictSHA1 && !result.MatchedPlaintext {
+				s.t.Logf("protoID=%d: strict SHA1 check FAILED (closing connection)", protoID)
+				return
 			}
 		}
 
@@ -396,23 +436,24 @@ func (s *MockServer) handleGetUserInfo(req []byte) (proto.Message, error) {
 	}, nil
 }
 
-func (s *MockServer) readPacket(conn net.Conn) (protoID uint32, serialNo uint32, body []byte, err error) {
+func (s *MockServer) readPacket(conn net.Conn) (protoID uint32, serialNo uint32, bodySHA1 [20]byte, body []byte, err error) {
 	header := make([]byte, 44)
 	if _, err = readFull(conn, header); err != nil {
-		return 0, 0, nil, err
+		return 0, 0, [20]byte{}, nil, err
 	}
 	if header[0] != 'F' || header[1] != 'T' {
-		return 0, 0, nil, fmt.Errorf("invalid magic: %x %x", header[0], header[1])
+		return 0, 0, [20]byte{}, nil, fmt.Errorf("invalid magic: %x %x", header[0], header[1])
 	}
 	protoID = readUint32LE(header[2:])
 	serialNo = readUint32LE(header[8:])
 	bodyLen := readUint32LE(header[12:])
+	copy(bodySHA1[:], header[16:36])
 
 	body = make([]byte, bodyLen)
 	if _, err = readFull(conn, body); err != nil {
-		return 0, 0, nil, err
+		return 0, 0, [20]byte{}, nil, err
 	}
-	return protoID, serialNo, body, nil
+	return protoID, serialNo, bodySHA1, body, nil
 }
 
 func (s *MockServer) writePacket(conn net.Conn, protoID, serialNo uint32, body []byte) error {

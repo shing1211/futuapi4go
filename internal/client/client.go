@@ -1234,6 +1234,8 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 	}
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
+	// SHA1 is computed over ciphertext for historical compatibility (v0.5.15).
+	// OpenD accepts both SHA1(plaintext) and SHA1(ciphertext) — see WritePacketEncrypted doc.
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)
@@ -1286,6 +1288,8 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 	}
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
+	// SHA1 is computed over ciphertext for historical compatibility (v0.5.15).
+	// OpenD accepts both SHA1(plaintext) and SHA1(ciphertext) — see WritePacketEncrypted doc.
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)
