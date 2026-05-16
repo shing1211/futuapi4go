@@ -153,6 +153,30 @@ quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 | `没有解锁交易` | Call `UnlockTrading` with your trading password MD5. |
 | `模拟交易不支持` | Feature unavailable in simulate mode. Use `FUTU_TRD_ENV=real`. |
 
+### Distributed Tracing
+
+The SDK supports distributed tracing via an optional OpenTelemetry adapter.
+When enabled, spans are automatically created for API requests, connection
+lifecycle, and push notifications.
+
+```go
+import (
+    "github.com/shing1211/futuapi4go/pkg/tracing"
+    "github.com/shing1211/futuapi4go/pkg/tracing/otel"
+)
+
+// Install OpenTelemetry backend
+tracing.SetTracer(otel.NewTracer("my-trading-app"))
+
+// All subsequent API calls, connect/disconnect, and push handlers
+// will generate spans automatically. Export spans via your preferred
+// OTel exporter (stdout, Jaeger, OTLP, etc.).
+```
+
+No code changes are required in your application — just set the tracer once
+after creating the client. See `examples/97_opentelemetry_tracing` in the
+demo repository for a complete example with OTel stdout exporter.
+
 ---
 
 ## Chinese 中文 (繁體)
@@ -287,3 +311,25 @@ quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 | US 股票 `GetQuote` 無資料 | 美股需要先 `Subscribe`。港股不需要。 |
 | `没有解锁交易` | 需要先呼叫 `UnlockTrading` 解鎖交易密碼。 |
 | `模拟交易不支持` | 模擬模式不支援該功能。使用 `FUTU_TRD_ENV=real`。 |
+
+### 分散式追蹤
+
+SDK 支援透過可選的 OpenTelemetry 適配器進行分散式追蹤。
+啟用後，API 請求、連接生命周期和推送通知會自動生成 span。
+
+```go
+import (
+    "github.com/shing1211/futuapi4go/pkg/tracing"
+    "github.com/shing1211/futuapi4go/pkg/tracing/otel"
+)
+
+// 安裝 OpenTelemetry 後端
+tracing.SetTracer(otel.NewTracer("my-trading-app"))
+
+// 後續的 API 調用、連接/斷開和推送處理器
+// 都會自動生成 span。通過您偏好的 OTel 匯出器
+//（stdout、Jaeger、OTLP 等）導出 span。
+```
+
+只需在創建客戶端後設置一次 tracer——無需修改應用程式代碼。
+請參閱 demo 倉庫中的 `examples/97_opentelemetry_tracing` 獲取完整範例。

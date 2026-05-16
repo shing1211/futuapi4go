@@ -25,7 +25,7 @@ func NewTracer(serviceName string, opts ...Option) tracing.Tracer {
 
 	tracer := tp.Tracer(
 		"github.com/shing1211/futuapi4go",
-		trace.WithInstrumentationVersion("0.6.2"),
+		trace.WithInstrumentationVersion("0.7.0"),
 	)
 
 	return &oteltracer{

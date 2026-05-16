@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.6.2-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.7.0-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -13,6 +13,8 @@
 - One-liner connect with automatic env config (`NewClientFromEnv`)
 - Real-time push via channels or typed callbacks
 - Fluent API: `cli.Quote().GetBasicQot()`, `cli.Trade().PlaceOrder()`
+- Distributed tracing with OpenTelemetry (opt-in via `pkg/tracing/otel`)
+- Release automation with goreleaser
 - Circuit breaker, structured logging, and trading utilities included
 
 ## Table of Contents
@@ -32,7 +34,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.6.2
+go get github.com/shing1211/futuapi4go@v0.7.0
 ```
 
 Requires Go 1.26+ and a running [Futu OpenD](https://www.futunn.com/en/overview) instance.
@@ -159,8 +161,18 @@ For complete, runnable examples covering every API surface — including real-ti
 | `pkg/logger` | Structured leveled logging |
 | `pkg/util` | Code parsing (`ParseCode`, `FormatCode`), market helpers |
 | `pkg/constant` | Typed constants with `String()` methods |
+| `pkg/degradation` | Graceful degradation on connection loss |
 | `pkg/futuapi` | Convenience re-export — `NewClient()`, `NewClientFromEnv()` |
+| `pkg/health` | Health checks for OpenD liveness/readiness probes |
+| `pkg/history` | Auto-paginated historical K-line downloads |
+| `pkg/market` | Market hours, trading calendar, session detection |
+| `pkg/metrics` | Client-side performance metrics collection |
+| `pkg/option` | Options chain querying, code parsing, Greeks helpers |
 | `pkg/pb/*` | 79 protobuf types (v10.5.6508) |
+| `pkg/ratelimit` | API rate limiting (token bucket per protoID) |
+| `pkg/retry` | Configurable retry with exponential backoff |
+| `pkg/tracing` | Core tracing interfaces (Tracer, Span, no-op default) |
+| `pkg/tracing/otel` | OpenTelemetry-backed tracing adapter (opt-in) |
 
 ## Common APIs
 
