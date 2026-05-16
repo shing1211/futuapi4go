@@ -18,99 +18,140 @@ go get github.com/shing1211/futuapi4go@latest
 package main
 
 import (
-    "log"
+	"log"
 
-    futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
+	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
 func main() {
-    // One-call connect — reads FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, etc.
-    // from environment by default, falls back to 127.0.0.1:11111.
-    cli, err := futuapi.NewClientFromEnv()
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer cli.Close()
+	cli, err := futuapi.NewClientFromEnv() // reads FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, etc.
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cli.Close()
 
-    // ... use cli
+	quote, _ := cli.GetQuote(ctx, "US.AAPL")
+	log.Printf("AAPL: %.2f", quote.CurPrice)
 }
 ```
 
 ### Quickstart (Manual)
 
 ```go
-package main
+cli := client.New(client.WithLogLevel(3))
+if err := cli.Connect("127.0.0.1:11111"); err != nil {
+	log.Fatal(err)
+}
+defer cli.Close()
 
-import (
-    "context"
-    "log"
+ctx := context.Background()
+quote, err := cli.GetQuote(ctx, "US.AAPL")
+if err != nil {
+	log.Fatal(err)
+}
+log.Printf("AAPL: %.2f", quote.CurPrice)
+```
 
-    "github.com/shing1211/futuapi4go/client"
-)
+### Environment Variables
 
-func main() {
-    cli := client.New(
-        client.WithLogLevel(3), // silent
-    )
-    if err := cli.Connect("127.0.0.1:11111"); err != nil {
-        log.Fatal(err)
-    }
-    defer cli.Close()
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `FUTU_OPEND_ADDR` | OpenD address (`host:port`) | `127.0.0.1:11111` |
+| `FUTU_RSA_PUBLIC_KEY` | RSA public key PEM (file path or inline) | — |
+| `FUTU_RSA_PRIVATE_KEY` | RSA private key PEM (file path or inline) | — |
+| `FUTU_ENCRYPT` | Set to `"1"` or `"true"` to enable encryption | — |
+| `FUTU_LOG_LEVEL` | Log level: `0`=info, `1`=warn, `2`=error, `3`=silent | `0` |
+| `FUTU_TRD_ENV` | Trading environment: `"real"` or `"simulate"` | `"simulate"` |
 
-    // Get a quote
-    ctx := context.Background()
-    quote, err := cli.GetQuote(ctx, "US.AAPL")
-    if err != nil {
-        log.Fatal(err)
-    }
-    log.Printf("AAPL: %.2f", quote.CurPrice)
+### Core Patterns
+
+#### Fluent API
+
+```go
+// High-level wrappers
+cli.Quote().GetBasicQot(ctx, securities)
+cli.Trade().PlaceOrder(ctx, req)
+cli.System().GetGlobalState(ctx)
+```
+
+#### Channels & Typed Callbacks
+
+```go
+// Channel-based (streaming)
+ch := make(chan *client.PushQuote, 100)
+stop, _ := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
+defer stop()
+for q := range ch {
+	log.Printf("%s: %.2f", q.Code, q.CurPrice)
+}
+
+// Callback-based (chainable on client)
+cli.OnQuote(func(q *client.PushQuote) error {
+	log.Printf("%s: %.2f", q.Code, q.CurPrice)
+	return nil
+}).OnOrder(func(o *client.PushOrderUpdate) error {
+	log.Printf("Order %s: status=%d", o.OrderIDEx, o.OrderStatus)
+	return nil
+})
+```
+
+#### Order Builder
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/trd"
+
+order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+	Buy("00700", 100).
+	At(350.0).
+	Build()
+```
+
+#### Circuit Breaker
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/breaker"
+
+cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
+result, err := cb.Do(func() (interface{}, error) {
+	return client.PlaceOrder(ctx, cli, accID, ...)
+})
+if err == breaker.ErrOpen {
+	log.Println("Trading suspended — circuit open")
 }
 ```
 
-### Subscribing to Real-Time Push
+#### Historical K-Lines (Auto-Paginated)
 
 ```go
-// Register typed callbacks before connecting.
-cli := client.New().
-    OnQuote(func(q *client.PushQuote) error {
-        log.Printf("%s: %.2f", q.Code, q.CurPrice)
-        return nil
-    }).
-    OnOrder(func(o *client.PushOrderUpdate) error {
-        log.Printf("Order %s: status=%d", o.OrderID, o.OrderStatus)
-        return nil
-    })
+klines, err := client.RequestHistoryKL(ctx, cli,
+	constant.Market_HK, "00700",
+	constant.KLType_K_Day,
+	"2024-01-01", "2025-01-01")
 
-cli.Connect("127.0.0.1:11111")
+for _, kl := range klines {
+	fmt.Printf("%s O=%.2f H=%.2f L=%.2f C=%.2f\n",
+		kl.Time, kl.Open, kl.High, kl.Low, kl.Close)
+}
+```
 
-// Then subscribe to symbols:
+#### Subscribe + Get
+
+```go
 cli.Subscribe(ctx, []string{"US.AAPL"}, client.SubType_Basic, true)
+
+// Then call one-shot API
+quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 ```
 
-### Trading Example
+### Troubleshooting
 
-```go
-acc := cli.FindAccount(accounts)
-order, err := cli.PlaceOrder(ctx, acc, "US.AAPL",
-    client.TrdEnv_Simulate,
-    client.Side_Buy,
-    client.OrderType_Normal,
-    100,     // quantity
-    150.0,   // price
-    0,       // adjust limit
-)
-```
-
-### Environment Variables (`WithEnvConfig`)
-
-| Variable | Description |
-|----------|-------------|
-| `FUTU_OPEND_ADDR` | OpenD address (`host:port`), default `127.0.0.1:11111` |
-| `FUTU_RSA_PUBLIC_KEY` | RSA public key PEM (file path or inline) |
-| `FUTU_RSA_PRIVATE_KEY` | RSA private key PEM (file path or inline) |
-| `FUTU_ENCRYPT` | `"1"` or `"true"` to enable encryption |
-| `FUTU_LOG_LEVEL` | `0`=info, `1`=warn, `2`=error, `3`=silent |
-| `FUTU_TRD_ENV` | `"real"` or `"simulate"` |
+| Issue | Likely Cause |
+|-------|-------------|
+| `connection refused` | OpenD not running. Check `FUTU_OPEND_ADDR`. |
+| No data from `GetQuote` (US stocks) | Need to `Subscribe` first for US market data. |
+| `The packet body SHA1 signature is incorrect` | Outdated OpenD (< v10.5). Upgrade OpenD. |
+| `没有解锁交易` | Call `UnlockTrading` with your trading password MD5. |
+| `模拟交易不支持` | Feature unavailable in simulate mode. Use `FUTU_TRD_ENV=real`. |
 
 ---
 
@@ -128,87 +169,121 @@ go get github.com/shing1211/futuapi4go@latest
 package main
 
 import (
-    "log"
+	"log"
 
-    futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
+	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
 func main() {
-    // 一鍵連接，自動讀取環境變數
-    cli, err := futuapi.NewClientFromEnv()
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer cli.Close()
+	cli, err := futuapi.NewClientFromEnv() // 自動讀取環境變數
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cli.Close()
+
+	quote, _ := cli.GetQuote(ctx, "HK.00700")
+	log.Printf("00700: %.2f", quote.CurPrice)
 }
 ```
 
 ### 快速開始（手動）
 
 ```go
-package main
-
-import (
-    "context"
-    "log"
-
-    "github.com/shing1211/futuapi4go/client"
-)
-
-func main() {
-    cli := client.New(client.WithLogLevel(3))
-    if err := cli.Connect("127.0.0.1:11111"); err != nil {
-        log.Fatal(err)
-    }
-    defer cli.Close()
-
-    ctx := context.Background()
-    quote, err := cli.GetQuote(ctx, "US.AAPL")
-    if err != nil {
-        log.Fatal(err)
-    }
-    log.Printf("AAPL: %.2f", quote.CurPrice)
+cli := client.New(client.WithLogLevel(3))
+if err := cli.Connect("127.0.0.1:11111"); err != nil {
+	log.Fatal(err)
 }
-```
+defer cli.Close()
 
-### 訂閱即時推送
-
-```go
-cli := client.New().
-    OnQuote(func(q *client.PushQuote) error {
-        log.Printf("%s 現價: %.2f", q.Code, q.CurPrice)
-        return nil
-    }).
-    OnOrder(func(o *client.PushOrderUpdate) error {
-        log.Printf("訂單 %s 狀態: %d", o.OrderID, o.OrderStatus)
-        return nil
-    })
-
-cli.Connect("127.0.0.1:11111")
-cli.Subscribe(ctx, []string{"US.AAPL"}, client.SubType_Basic, true)
-```
-
-### 交易範例
-
-```go
-acc := cli.FindAccount(accounts)
-order, err := cli.PlaceOrder(ctx, acc, "US.AAPL",
-    client.TrdEnv_Simulate,
-    client.Side_Buy,
-    client.OrderType_Normal,
-    100,    // 數量
-    150.0,  // 價格
-    0,      // 調整限價
-)
+ctx := context.Background()
+quote, err := cli.GetQuote(ctx, "HK.00700")
+if err != nil {
+	log.Fatal(err)
+}
+log.Printf("00700: %.2f", quote.CurPrice)
 ```
 
 ### 環境變數配置
 
-| 變數 | 說明 |
-|------|------|
-| `FUTU_OPEND_ADDR` | OpenD 位址（預設 `127.0.0.1:11111`） |
-| `FUTU_RSA_PUBLIC_KEY` | RSA 公鑰 PEM（檔案路徑或內容） |
-| `FUTU_RSA_PRIVATE_KEY` | RSA 私鑰 PEM（檔案路徑或內容） |
-| `FUTU_ENCRYPT` | 設為 `"1"` 或 `"true"` 啟用加密 |
-| `FUTU_LOG_LEVEL` | 日誌級別：0=資訊, 1=警告, 2=錯誤, 3=靜默 |
-| `FUTU_TRD_ENV` | 交易環境：`"real"` 或 `"simulate"` |
+| 變數 | 說明 | 預設值 |
+|------|------|--------|
+| `FUTU_OPEND_ADDR` | OpenD 位址（`host:port`） | `127.0.0.1:11111` |
+| `FUTU_RSA_PUBLIC_KEY` | RSA 公鑰 PEM（檔案路徑或內容） | — |
+| `FUTU_RSA_PRIVATE_KEY` | RSA 私鑰 PEM（檔案路徑或內容） | — |
+| `FUTU_ENCRYPT` | 設為 `"1"` 或 `"true"` 啟用加密 | — |
+| `FUTU_LOG_LEVEL` | 日誌級別：0=資訊, 1=警告, 2=錯誤, 3=靜默 | `0` |
+| `FUTU_TRD_ENV` | 交易環境：`"real"` 或 `"simulate"` | `"simulate"` |
+
+### 核心模式
+
+#### Fluent API
+
+```go
+cli.Quote().GetBasicQot(ctx, securities)
+cli.Trade().PlaceOrder(ctx, req)
+cli.System().GetGlobalState(ctx)
+```
+
+#### 頻道與回呼
+
+```go
+// 頻道模式（串流）
+ch := make(chan *client.PushQuote, 100)
+stop, _ := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
+defer stop()
+for q := range ch {
+	log.Printf("%s 現價: %.2f", q.Code, q.CurPrice)
+}
+
+// 回呼模式（鏈式呼叫）
+cli.OnQuote(func(q *client.PushQuote) error {
+	log.Printf("%s 現價: %.2f", q.Code, q.CurPrice)
+	return nil
+}).OnOrder(func(o *client.PushOrderUpdate) error {
+	log.Printf("訂單 %s 狀態: %d", o.OrderIDEx, o.OrderStatus)
+	return nil
+})
+```
+
+#### 訂單建立器
+
+```go
+order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+	Buy("00700", 100).
+	At(350.0).
+	Build()
+```
+
+#### 斷路器
+
+```go
+cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
+result, err := cb.Do(func() (interface{}, error) {
+	return client.PlaceOrder(ctx, cli, accID, ...)
+})
+```
+
+#### 自動分頁歷史 K 線
+
+```go
+klines, err := client.RequestHistoryKL(ctx, cli,
+	constant.Market_HK, "00700",
+	constant.KLType_K_Day,
+	"2024-01-01", "2025-01-01")
+```
+
+#### 訂閱後查詢
+
+```go
+cli.Subscribe(ctx, []string{"US.AAPL"}, client.SubType_Basic, true)
+quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
+```
+
+### 疑難排解
+
+| 問題 | 可能原因 |
+|------|----------|
+| `connection refused` | OpenD 未啟動。請檢查 `FUTU_OPEND_ADDR`。 |
+| US 股票 `GetQuote` 無資料 | 美股需要先 `Subscribe`。港股不需要。 |
+| `没有解锁交易` | 需要先呼叫 `UnlockTrading` 解鎖交易密碼。 |
+| `模拟交易不支持` | 模擬模式不支援該功能。使用 `FUTU_TRD_ENV=real`。 |

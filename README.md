@@ -7,7 +7,27 @@
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
-> **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for Futu OpenAPI — market data, trading, real-time push, and more.
+> **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for [Futu OpenAPI](https://www.futunn.com/en/overview) — market data, trading, and real-time push. All communication via Protocol Buffers over TCP.
+
+- 79 protobuf types covering every Futu OpenAPI service
+- One-liner connect with automatic env config (`NewClientFromEnv`)
+- Real-time push via channels or typed callbacks
+- Fluent API: `cli.Quote().GetBasicQot()`, `cli.Trade().PlaceOrder()`
+- Circuit breaker, structured logging, and trading utilities included
+
+## Table of Contents
+
+- [Install](#install)
+- [Quick Start](#quick-start)
+- [Key Features](#key-features)
+- [Examples](#examples)
+- [Package Map](#package-map)
+- [Common APIs](#common-apis)
+- [Build & Test](#build--test)
+- [Architecture](#architecture)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Install
 
@@ -25,194 +45,105 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
+	"log"
 
-	"github.com/shing1211/futuapi4go/client"
-	"github.com/shing1211/futuapi4go/pkg/constant"
+	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
 func main() {
-	cli := client.New()
+	// One-call connect (reads env: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, ...)
+	cli, err := futuapi.NewClientFromEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer cli.Close()
 
-	// Connect to OpenD (default: simulate trading)
-	if err := cli.Connect("127.0.0.1:11111"); err != nil {
-		fmt.Fprintf(os.Stderr, "connect failed: %v\n", err)
-		os.Exit(1)
-	}
-
 	ctx := context.Background()
-
-	// Market data
-	quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
+	quote, err := cli.GetQuote(ctx, "HK.00700")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "quote failed: %v\n", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	fmt.Printf("HK.00700: price=%.2f open=%.2f high=%.2f\n",
-		quote.Price, quote.Open, quote.High)
-
-	// Trading — list accounts, unlock, place order
-	accounts, _ := client.GetAccountList(ctx, cli)
-	if len(accounts) == 0 {
-		fmt.Println("no accounts")
-		return
-	}
-	accID := accounts[0].AccID
-
-	_ = client.UnlockTrading(ctx, cli, "your_md5_password") // skip in simulate mode
-	result, err := client.PlaceOrder(ctx, cli, accID,
-		constant.TrdMarket_HK, "00700",
-		constant.TrdSide_Buy, constant.OrderType_Normal,
-		350.0, 100)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "order failed: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Printf("OrderID=%d OrderIDEx=%s\n", result.OrderID, result.OrderIDEx)
+	fmt.Printf("%s: price=%.2f high=%.2f low=%.2f vol=%d\n",
+		quote.Code, quote.CurPrice, quote.HighPrice, quote.LowPrice, quote.Volume)
 }
 ```
 
 > **Note:** US stocks require subscribing before `GetQuote` works. HK stocks do not.
 
-## Examples
-
-For more complete, runnable examples covering every API surface — including
-real-time push, trading workflows, historical data, and circuit breaker patterns
-— see the demo repository:
-
-**[futuapi4go-demo →](https://github.com/shing1211/futuapi4go-demo)**
-
 ## Key Features
 
-### Real-Time Push via Channels
+### Real-Time Push
 
-Stop polling — let data come to you.
+Stop polling — receive data as it arrives. Two delivery models:
 
 ```go
-import (
-	chanpkg "github.com/shing1211/futuapi4go/pkg/push/chan"
-)
-
-// Quote updates stream into the channel
+// Option 1: Channels (streaming)
 ch := make(chan *push.UpdateBasicQot, 100)
-stop, err := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
-if err != nil {
-	log.Fatal(err)
-}
+stop, _ := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
 defer stop()
-
 for q := range ch {
-	fmt.Printf("[%s] price=%.2f vol=%d\n", q.Security.GetCode(), q.CurPrice, q.Volume)
+	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
 }
 
-// Multiple K-line periods with a shared channel filter
-ch2 := make(chan *push.UpdateKL, 100)
-stop2, err := chanpkg.SubscribeKLines(ctx, cli,
-	int32(constant.Market_HK), "00700",
-	[]int32{int32(constant.KLType_K_1Min), int32(constant.KLType_K_Day)}, ch2)
-if err != nil {
-	log.Fatal(err)
-}
-defer stop2()
-
-for kl := range ch2 {
-	switch kl.KlType {
-	case int32(constant.KLType_K_1Min):
-		fmt.Printf("1MIN %s C=%.2f\n", *kl.KLList[0].Time, *kl.KLList[0].ClosePrice)
-	case int32(constant.KLType_K_Day):
-		fmt.Printf("DAY %s O=%.2f H=%.2f L=%.2f C=%.2f\n",
-			*kl.KLList[0].Time, *kl.KLList[0].OpenPrice,
-			*kl.KLList[0].HighPrice, *kl.KLList[0].LowPrice, *kl.KLList[0].ClosePrice)
-	}
-}
-```
-
-### Typed Push Callbacks
-
-Alternative to channels — register callbacks directly on the client for
-quote updates, order notifications, fills, K-lines, order book changes,
-tickers, and more.
-
-```go
+// Option 2: Typed callbacks (chainable on client)
 cli.OnQuote(func(q *push.UpdateBasicQot) {
-	fmt.Printf("[%s] price=%.2f vol=%d\n", q.Security.GetCode(), q.CurPrice, q.Volume)
+	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
 }).OnOrder(func(o *push.TrdUpdateOrder) {
 	fmt.Printf("Order %s: status=%d\n", o.GetOrderIDEx(), o.GetOrderStatus())
-}).OnOrderFill(func(f *push.TrdUpdateOrderFill) {
-	fmt.Printf("Fill %s: qty=%d price=%.2f\n", f.GetOrderIDEx(), f.GetQty(), f.GetPrice())
 })
 ```
 
-Callbacks are chainable — each `On*()` returns the `*Client` for fluent setup.
-
-### Circuit Breaker
-
-Protect trading from cascading failures.
+### Market Data
 
 ```go
-import "github.com/shing1211/futuapi4go/pkg/breaker"
+// One-shot
+quote, _ := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
+snapshots, _ := client.GetSecuritySnapshot(ctx, cli, securities)
 
-cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
-result, err := cb.Do(func() (interface{}, error) {
-	return client.PlaceOrder(ctx, cli, accID, constant.TrdMarket_HK, "00700",
-		constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
-})
-if err == breaker.ErrOpen {
-	fmt.Println("Trading suspended — too many failures")
-}
+// Auto-paginated historical K-lines
+klines, _ := client.RequestHistoryKL(ctx, cli, constant.Market_HK, "00700",
+	constant.KLType_K_Day, "2024-01-01", "2025-01-01")
 ```
 
-### Fluent API
+### Trading
 
 ```go
-// High-level client wrappers (recommended)
-cli.Quote().GetBasicQot(ctx, securities)
-cli.Trade().PlaceOrder(ctx, req)
-cli.System().GetGlobalState(ctx)
+accounts, _ := client.GetAccountList(ctx, cli)
+accID := accounts[0].AccID
 
-// Order builder
-import "github.com/shing1211/futuapi4go/pkg/trd"
+client.UnlockTrading(ctx, cli, "md5_password")
+result, _ := client.PlaceOrder(ctx, cli, accID,
+	constant.TrdMarket_HK, "00700",
+	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
 
+// Fluent order builder
 order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
-	Buy("00700", 100).
-	At(350.0).
-	Build()
+	Buy("00700", 100).At(350.0).Build()
 ```
 
-### Historical K-Lines (auto-paginated)
+### Utilities
 
 ```go
-klines, err := client.RequestHistoryKL(ctx, cli,
-	constant.Market_HK, "00700",
-	constant.KLType_K_Day,
-	"2024-01-01", "2025-01-01")
+// Circuit breaker
+cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
+result, _ := cb.Do(func() (interface{}, error) {
+	return client.PlaceOrder(ctx, cli, accID, ...)
+})
 
-for _, kl := range klines {
-	fmt.Printf("%s O=%.2f H=%.2f L=%.2f C=%.2f\n",
-		kl.Time, kl.Open, kl.High, kl.Low, kl.Close)
-}
+// Structured logging
+l := futulogger.New(futulogger.WithLevel(futulogger.LevelDebug))
+l.Info("connected", "addr", "127.0.0.1:11111")
+
+// Code helpers
+mkt, code := util.ParseCode("HK.00700")  // market=1, code="00700"
+s := util.FormatCode(mkt, code)          // "HK.00700"
 ```
 
-### Structured Logging
+## Examples
 
-```go
-import futulogger "github.com/shing1211/futuapi4go/pkg/logger"
+For complete, runnable examples covering every API surface — including real-time push, trading workflows, historical data, and strategy patterns:
 
-l := futulogger.New(futulogger.WithLevel(futulogger.LevelDebug), futulogger.WithFormat(futulogger.FormatJSON))
-l.Info("connected", "addr", "127.0.0.1:11111", "conn_id", 42)
-```
-
-### Code Helpers
-
-```go
-import "github.com/shing1211/futuapi4go/pkg/util"
-
-// "HK.00700" → market=1, code="00700"
-mkt, code := util.ParseCode("HK.00700")
-// Back again
-s := util.FormatCode(mkt, code) // "HK.00700"
-```
+**[futuapi4go-demo →](https://github.com/shing1211/futuapi4go-demo)**
 
 ## Package Map
 
@@ -240,14 +171,10 @@ s := util.FormatCode(mkt, code) // "HK.00700"
 cli := client.New(
 	client.WithDialTimeout(10*time.Second),
 	client.WithAPISetTimeout(30*time.Second),
-)
-cli = cli.WithTradeEnv(constant.TrdEnv_Simulate)
+).WithTradeEnv(constant.TrdEnv_Simulate)
 
-// Or from env vars: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
-cli, err := client.NewClientFromEnv()
-if err != nil {
-	log.Fatal(err)
-}
+// From env vars: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
+cli, _ := client.NewClientFromEnv()
 
 cli.Connect("127.0.0.1:11111")
 // cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.GetLoginUserID()
@@ -299,8 +226,7 @@ cli.Connect("127.0.0.1:11111")
 ```bash
 go build ./...      # Compile everything
 go vet ./...        # Lint
-go test ./...       # Run full suite
-go test -race ./... # Race detector
+go test -race ./... # Full suite with race detector
 ```
 
 ## Architecture
@@ -314,12 +240,34 @@ Application
                       └── Futu OpenD (TCP socket)
 ```
 
-All communication is via Protocol Buffers over TCP. See [DESIGN.md](DESIGN.md) for full architecture details.
+All communication is via Protocol Buffers over TCP. See [DESIGN.md](DESIGN.md) for full architecture decisions and [internal/testutil/mock](internal/testutil/mock/) for the mock OpenD server used in tests.
+
+## Troubleshooting
+
+| Error | Likely Cause |
+|-------|-------------|
+| `connection refused` | OpenD not running. Check `FUTU_OPEND_ADDR`. |
+| no data from `GetQuote` (US stocks) | Must call `Subscribe` first for US market. HK does not need it. |
+| `The packet body SHA1 signature is incorrect` (very old OpenD) | Upgrade OpenD to v10.5+. The SDK uses SHA1(ciphertext) which OpenD accepts. |
+| `解析protobuf协议失败` | Missing required C2S fields in request body. |
+| `模拟交易不支持` | Feature not available in simulate mode; use `WithTradeEnv(TrdEnv_Real)`. |
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feat/my-change`).
+3. Ensure all existing tests pass: `go test -race ./...`
+4. Add tests for any new functionality.
+5. Run `go vet ./...` and fix any warnings.
+6. Open a pull request.
+
+See [CHANGELOG.md](CHANGELOG.md) for the version history and [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md) for the roadmap.
 
 ## See Also
 
 - [CHANGELOG](CHANGELOG.md) — version history and release notes
-- [DESIGN](DESIGN.md) — architecture, design decisions, and API patterns
+- [USAGE Guide](docs/USAGE.md) — detailed setup, environment, and advanced patterns
+- [DESIGN](DESIGN.md) — architecture, design decisions, API patterns
 - [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — upcoming features and roadmap
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — runnable examples for every feature
 

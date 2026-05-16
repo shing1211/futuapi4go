@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **README.md** — Complete rewrite: added TOC, feature highlights, categorized features, troubleshooting, and contributing section. Reduced from 330 to 280 lines with cleaner structure.
+- **docs/USAGE.md** — Rewritten with advanced patterns (Fluent API, order builder, circuit breaker, auto-paginated K-lines), troubleshooting section, and parity between English and Chinese (Traditional) sections.
+
 ## [0.6.2] - 2026-05-16
 
 ### Added
