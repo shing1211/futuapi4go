@@ -1,0 +1,34 @@
+# goreleaser config for futuapi4go SDK
+# Pure Go library — no binaries to build
+
+project_name: futuapi4go
+builds: []
+
+# Changelog configuration
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^chore:'
+      - '^test:'
+      - '^refactor:'
+      - '^ci:'
+      - '^perf:'
+      - '^style:'
+      - '^revert:'
+
+# Release configuration
+release:
+  github:
+    owner: shing1211
+    name: futuapi4go
+  header: |
+    ## What's Changed
+  footer: |
+    **Full Changelog**: https://github.com/shing1211/futuapi4go/compare/{{ .PreviousTag }}...{{ .Tag }}
+  draft: false
+  prerelease: auto
+
+# Skip existing tags (idempotent)
+skip: false

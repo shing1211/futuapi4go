@@ -1,6 +1,6 @@
 # futuapi4go Makefile
 
-.PHONY: build test vet lint clean install bench help
+.PHONY: build test vet lint clean install bench release help
 
 # Build all packages
 build:
@@ -58,6 +58,10 @@ test-pkg:
 test-integration:
 	go test -tags=integration ./test/integration/...
 
+# Run goreleaser release (requires git tag)
+release:
+	goreleaser release --clean
+
 # Show help
 help:
 	@echo "futuapi4go Makefile targets:"
@@ -73,4 +77,5 @@ help:
 	@echo "  make install     - Install dependencies"
 	@echo "  make check       - Quick check (fmt + vet + build)"
 	@echo "  make test-pkg    - Run specific package tests"
+	@echo "  make release     - Create GitHub release (requires git tag)"
 	@echo "  make help        - Show this help"

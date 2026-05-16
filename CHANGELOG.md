@@ -7,10 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **OpenTelemetry tracing** — New `pkg/tracing/otel/` package (opt-in adapter) plus wiring in `internal/client/client.go` for `requestContextInternal`, `ConnectWithRSA`, `connectWebSocket`, `reconnect`, `Close`, and both TCP/WS push handlers. 19 tests pass across `pkg/tracing` and `pkg/tracing/otel`.
+- **`.goreleaser.yaml`** — Release automation config with empty builds (pure library), changelog, and GitHub release publisher.
+- **`BoolAttr`** helper added to `pkg/tracing/tracing.go`.
+- **Trilingual package documentation** — Created `doc.go` for all 22 public packages with English, Simplified Chinese (zh-CN), and Traditional Chinese (zh-TW) documentation.
+
 ### Changed
 
 - **README.md** — Complete rewrite: added TOC, feature highlights, categorized features, troubleshooting, and contributing section. Reduced from 330 to 280 lines with cleaner structure.
 - **docs/USAGE.md** — Rewritten with advanced patterns (Fluent API, order builder, circuit breaker, auto-paginated K-lines), troubleshooting section, and parity between English and Chinese (Traditional) sections.
+- **Makefile** — Added `release` target (goreleaser) and phony declarations.
+- **AGENTS.md** — Updated with goreleaser release process.
 
 ## [0.6.2] - 2026-05-16
 

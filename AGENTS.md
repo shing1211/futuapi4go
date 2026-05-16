@@ -141,6 +141,26 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 
 ---
 
+## Release Process
+
+```bash
+# 1. Update CHANGELOG.md: move [Unreleased] → [x.y.z] - YYYY-MM-DD
+# 2. Commit changes
+git add -A && git commit -m "release vx.y.z: summary"
+
+# 3. Tag and push to both remotes
+git tag vx.y.z
+git push origin vx.y.z
+git push github vx.y.z
+
+# 4. Create GitHub release with goreleaser
+make release
+```
+
+Prerequisites: `go install github.com/goreleaser/goreleaser@latest`
+
+---
+
 ## Official Documentation References
 
 - **API Reference:** See README.md "Full API Reference" section

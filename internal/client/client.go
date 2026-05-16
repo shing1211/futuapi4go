@@ -28,6 +28,8 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/shing1211/futuapi4go/pkg/tracing"
+
 	"github.com/gorilla/websocket"
 	"github.com/shing1211/futuapi4go/pkg/breaker"
 	"github.com/shing1211/futuapi4go/pkg/metrics"
@@ -478,6 +480,12 @@ func (c *Client) ConnectWSS(addr string) error {
 }
 
 func (c *Client) connectWebSocket(addr string, tls bool) error {
+	_, span := tracing.StartSpan(c.ctx, "futuapi.connect_ws",
+		tracing.StringAttr("addr", addr),
+		tracing.BoolAttr("tls", tls),
+	)
+	defer span.End()
+
 	c.mu.Lock()
 	c.addr = addr
 	c.mu.Unlock()
@@ -568,6 +576,11 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	c.mu.Unlock()
 
 	c.conn.SetPushHandler(func(pkt *Packet) {
+		_, span := tracing.StartSpan(c.ctx, "futuapi.push",
+			tracing.IntAttr("proto_id", int(pkt.Header.ProtoID)),
+		)
+		defer span.End()
+
 		c.recordPush()
 		c.handlersMu.RLock()
 		handler, ok := c.handlers[pkt.Header.ProtoID]
@@ -598,6 +611,11 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 }
 
 func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
+	_, span := tracing.StartSpan(c.ctx, "futuapi.connect",
+		tracing.StringAttr("addr", addr),
+	)
+	defer span.End()
+
 	c.mu.Lock()
 	c.addr = addr
 	c.rsaKey = rsaPublicKeyPEM
@@ -771,6 +789,11 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	metrics.RecordOpenDUp(true)
 
 	c.conn.SetPushHandler(func(pkt *Packet) {
+		_, span := tracing.StartSpan(c.ctx, "futuapi.push",
+			tracing.IntAttr("proto_id", int(pkt.Header.ProtoID)),
+		)
+		defer span.End()
+
 		c.recordPush()
 		protoStr := fmt.Sprintf("%d", pkt.Header.ProtoID)
 		metrics.RecordPushMessage(protoStr)
@@ -914,6 +937,9 @@ func (c *Client) drainPendingDispatches() {
 }
 
 func (c *Client) reconnect() {
+	_, span := tracing.StartSpan(c.ctx, "futuapi.reconnect")
+	defer span.End()
+
 	// Atomically check and set reconnecting flag to prevent TOCTOU race
 	if !atomic.CompareAndSwapInt32(&c.reconnecting, 0, 1) {
 		return // Already reconnecting
@@ -982,6 +1008,9 @@ func (c *Client) UnregisterHandler(protoID uint32) {
 }
 
 func (c *Client) Close() error {
+	_, span := tracing.StartSpan(c.ctx, "futuapi.close")
+	defer span.End()
+
 	atomic.StoreInt32(&c.connActive, 0)
 	atomic.StoreInt32(&c.connected, 0)
 	metrics.RecordDisconnect("tcp")
@@ -1278,6 +1307,11 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 }
 
 func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req proto.Message, rsp proto.Message) error {
+	ctx, span := tracing.StartSpan(ctx, "futuapi.request",
+		tracing.IntAttr("proto_id", int(protoID)),
+	)
+	defer span.End()
+
 	if c.conn == nil {
 		return ErrNotConnected
 	}
