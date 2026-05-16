@@ -53,6 +53,7 @@ const (
 	ProtoID_Qot_UpdatePriceReminder = 3019
 )
 
+// UpdateBasicQot represents a real-time basic quote push notification.
 type UpdateBasicQot struct {
 	Security  *qotcommon.Security
 	Name      string
@@ -64,6 +65,7 @@ type UpdateBasicQot struct {
 	Turnover  float64
 }
 
+// ParseUpdateBasicQot parses a basic quote push notification from a raw protobuf body.
 func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -89,6 +91,7 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	}, nil
 }
 
+// UpdateKL represents a K-line push notification.
 type UpdateKL struct {
 	RehabType int32
 	KlType    int32
@@ -97,6 +100,7 @@ type UpdateKL struct {
 	KLList    []*qotcommon.KLine
 }
 
+// ParseUpdateKL parses a K-line push notification from a raw protobuf body.
 func ParseUpdateKL(body []byte) (*UpdateKL, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -106,7 +110,7 @@ func ParseUpdateKL(body []byte) (*UpdateKL, error) {
 		return nil, err
 	}
 	s2c := resp.GetS2C()
-	if s2c == nil || s2c.KlList == nil {
+	if s2c == nil || s2c.GetKlList() == nil {
 		return nil, nil
 	}
 	return &UpdateKL{
@@ -118,6 +122,7 @@ func ParseUpdateKL(body []byte) (*UpdateKL, error) {
 	}, nil
 }
 
+// UpdateOrderBook represents an order book push notification.
 type UpdateOrderBook struct {
 	Security                *qotcommon.Security
 	Name                    string
@@ -129,6 +134,7 @@ type UpdateOrderBook struct {
 	SvrRecvTimeAskTimestamp float64
 }
 
+// ParseUpdateOrderBook parses an order book push notification from a raw protobuf body.
 func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -153,12 +159,14 @@ func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
 	}, nil
 }
 
+// UpdateTicker represents a ticker push notification.
 type UpdateTicker struct {
 	Security   *qotcommon.Security
 	Name       string
 	TickerList []*qotcommon.Ticker
 }
 
+// ParseUpdateTicker parses a ticker push notification from a raw protobuf body.
 func ParseUpdateTicker(body []byte) (*UpdateTicker, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -178,12 +186,14 @@ func ParseUpdateTicker(body []byte) (*UpdateTicker, error) {
 	}, nil
 }
 
+// UpdateRT represents a real-time data push notification.
 type UpdateRT struct {
 	Security *qotcommon.Security
 	Name     string
 	RTList   []*qotcommon.TimeShare
 }
 
+// ParseUpdateRT parses a real-time data push notification from a raw protobuf body.
 func ParseUpdateRT(body []byte) (*UpdateRT, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -203,6 +213,7 @@ func ParseUpdateRT(body []byte) (*UpdateRT, error) {
 	}, nil
 }
 
+// UpdateBroker represents a broker queue push notification.
 type UpdateBroker struct {
 	Security      *qotcommon.Security
 	Name          string
@@ -210,6 +221,7 @@ type UpdateBroker struct {
 	BidBrokerList []*qotcommon.Broker
 }
 
+// ParseUpdateBroker parses a broker queue push notification from a raw protobuf body.
 func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
 	if len(body) == 0 {
 		return nil, nil
@@ -230,6 +242,7 @@ func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
 	}, nil
 }
 
+// UpdatePriceReminder represents a price reminder push notification.
 type UpdatePriceReminder struct {
 	Security     *qotcommon.Security
 	Name         string
@@ -244,6 +257,7 @@ type UpdatePriceReminder struct {
 	CurValue     float64
 }
 
+// ParseUpdatePriceReminder parses a price reminder push notification from a raw protobuf body.
 func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 	if len(body) == 0 {
 		return nil, nil

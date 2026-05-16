@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK - Advanced Enhancement Plan
 
-> **Version**: v0.5.13 | **Date**: 2026-05-14 | **Status**: ACTIVE
+> **Version**: v0.6.0 | **Date**: 2026-05-16 | **Status**: ACTIVE
 
 ---
 
@@ -389,14 +389,20 @@ Standard storage adapters for common use cases.
 
 | Phase | Name | Items | Priority | Status |
 |-------|------|-------|----------|--------|
-| **0** | Core SDK Robustness | 18 | P0 | 🟢 16 done, 2 pending |
+| **0** | Core SDK Robustness | 18 | P0 | 🟢 18 done |
+| **1** | File Splits (client, qot, trd) | 3 | P0 | 🟢 3 done |
+| **2a** | Util Package (price, date, security, crypto, json) | 5 | P0 | 🟢 5 done |
+| **2b** | JSON Tags + Slice Methods | 2 | P0 | 🟢 2 done |
+| **3a** | Mock OpenD Server | 1 | P1 | 🟢 1 done |
+| **3b** | Typed Push Callbacks + WithEnvConfig | 2 | P1 | 🟢 2 done |
+| **4** | Convenience Re-export (pkg/futuapi) | 1 | P1 | 🟢 1 done |
 | **A** | Execution Algorithms | 8 | P1 | ⚪ Pending |
 | **B** | Real-Time Risk Engine | 7 | P1 | ⚪ Pending |
 | **C** | Event-Driven Framework | 11 | P1 | ⚪ Pending |
 | **D** | Advanced Data Features | 11 | P2 | ⚪ Pending |
 | **E** | Portfolio & Multi-Account | 8 | P2 | ⚪ Pending |
 | **F** | Persistence & Storage | 3 | P3 | ⚪ Pending |
-| **Total** | | **66** | | |
+| **Total** | | **80** | | |
 
 ---
 
@@ -418,10 +424,11 @@ Standard storage adapters for common use cases.
 | Version | Phase | Target |
 |---------|-------|--------|
 | v0.5.13 | 0 (Core Robustness) | All P0 bugs, races, and nil safety items |
-| v0.6.0 | A (Execution Algorithms) | TWAP/VWAP/IS as first-class SDK citizens |
-| v0.7.0 | B (Risk Engine) | VaR, Greeks, margin monitoring |
-| v0.8.0 | C (Event Framework) | Strategy plug-in, backtesting |
-| v0.9.0 | D-F | Streaming, options, portfolio, persistence |
+| **v0.6.0** | **1-4 (SDK Polish)** | **File splits, utils, JSON tags, mock server, callbacks, re-export** |
+| v0.7.0 | A (Execution Algorithms) | TWAP/VWAP/IS as first-class SDK citizens |
+| v0.8.0 | B (Risk Engine) | VaR, Greeks, margin monitoring |
+| v0.9.0 | C (Event Framework) | Strategy plug-in, backtesting |
+| v1.0.0 | D-F | Streaming, options, portfolio, persistence |
 
 ---
 

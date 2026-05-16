@@ -975,6 +975,12 @@ func (c *Client) RegisterHandler(protoID uint32, handler Handler) {
 	c.handlersMu.Unlock()
 }
 
+func (c *Client) UnregisterHandler(protoID uint32) {
+	c.handlersMu.Lock()
+	delete(c.handlers, protoID)
+	c.handlersMu.Unlock()
+}
+
 func (c *Client) Close() error {
 	atomic.StoreInt32(&c.connActive, 0)
 	atomic.StoreInt32(&c.connected, 0)

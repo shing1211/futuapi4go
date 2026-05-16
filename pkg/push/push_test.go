@@ -111,30 +111,42 @@ func TestParseUpdatePriceReminderInvalidData(t *testing.T) {
 }
 
 func TestParseSystemNotifyInvalidData(t *testing.T) {
-	_, err := ParseSystemNotify([]byte{})
-	if err == nil {
-		t.Error("ParseSystemNotify should fail with empty data")
+	result, err := ParseSystemNotify([]byte{})
+	if err != nil {
+		t.Errorf("ParseSystemNotify should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseSystemNotify should return nil for empty data")
 	}
 }
 
 func TestParseUpdateOrderInvalidData(t *testing.T) {
-	_, err := ParseUpdateOrder([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateOrder should fail with empty data")
+	result, err := ParseUpdateOrder([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateOrder should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateOrder should return nil for empty data")
 	}
 }
 
 func TestParseUpdateOrderFillInvalidData(t *testing.T) {
-	_, err := ParseUpdateOrderFill([]byte{})
-	if err == nil {
-		t.Error("ParseUpdateOrderFill should fail with empty data")
+	result, err := ParseUpdateOrderFill([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateOrderFill should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateOrderFill should return nil for empty data")
 	}
 }
 
 func TestParseTrdNotifyInvalidData(t *testing.T) {
-	_, err := ParseTrdNotify([]byte{})
-	if err == nil {
-		t.Error("ParseTrdNotify should fail with empty data")
+	result, err := ParseTrdNotify([]byte{})
+	if err != nil {
+		t.Errorf("ParseTrdNotify should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseTrdNotify should return nil for empty data")
 	}
 }
 
@@ -617,16 +629,20 @@ func TestParseSystemNotifyValidData(t *testing.T) {
 	typ := int32(1)
 	eventType := int32(1)
 	desc := "test event"
+	retType := int32(0)
 
-	s2c := &notify.S2C{
-		Type: &typ,
-		Event: &notify.GtwEvent{
-			EventType: &eventType,
-			Desc:      &desc,
+	resp := &notify.Response{
+		RetType: &retType,
+		S2C: &notify.S2C{
+			Type: &typ,
+			Event: &notify.GtwEvent{
+				EventType: &eventType,
+				Desc:      &desc,
+			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -665,27 +681,31 @@ func TestParseUpdateOrderValidData(t *testing.T) {
 	createTime := "2026-04-08 10:00:00"
 	updateTime := "2026-04-08 10:05:00"
 	fillAvgPrice := 350.00
+	retType := int32(0)
 
-	s2c := &trdupdateorder.S2C{
-		Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
-		Order: &trdcommon.Order{
-			OrderID:      &orderID,
-			OrderIDEx:    &code,
-			Code:         &code,
-			Name:         &name,
-			TrdSide:      &trdSide,
-			OrderType:    &orderType,
-			OrderStatus:  &orderStatus,
-			Price:        &orderPrice,
-			Qty:          &orderQty,
-			FillQty:      &fillQty,
-			CreateTime:   &createTime,
-			UpdateTime:   &updateTime,
-			FillAvgPrice: &fillAvgPrice,
+	resp := &trdupdateorder.Response{
+		RetType: &retType,
+		S2C: &trdupdateorder.S2C{
+			Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
+			Order: &trdcommon.Order{
+				OrderID:      &orderID,
+				OrderIDEx:    &code,
+				Code:         &code,
+				Name:         &name,
+				TrdSide:      &trdSide,
+				OrderType:    &orderType,
+				OrderStatus:  &orderStatus,
+				Price:        &orderPrice,
+				Qty:          &orderQty,
+				FillQty:      &fillQty,
+				CreateTime:   &createTime,
+				UpdateTime:   &updateTime,
+				FillAvgPrice: &fillAvgPrice,
+			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -723,23 +743,27 @@ func TestParseUpdateOrderFillValidData(t *testing.T) {
 	price := 350.00
 	qty := 100.0
 	createTime := "2026-04-08 10:05:00"
+	retType := int32(0)
 
-	s2c := &trdupdateorderfill.S2C{
-		Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
-		OrderFill: &trdcommon.OrderFill{
-			OrderID:    &orderID,
-			FillID:     &fillID,
-			FillIDEx:   &code,
-			Code:       &code,
-			Name:       &name,
-			TrdSide:    &trdSide,
-			Price:      &price,
-			Qty:        &qty,
-			CreateTime: &createTime,
+	resp := &trdupdateorderfill.Response{
+		RetType: &retType,
+		S2C: &trdupdateorderfill.S2C{
+			Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
+			OrderFill: &trdcommon.OrderFill{
+				OrderID:    &orderID,
+				FillID:     &fillID,
+				FillIDEx:   &code,
+				Code:       &code,
+				Name:       &name,
+				TrdSide:    &trdSide,
+				Price:      &price,
+				Qty:        &qty,
+				CreateTime: &createTime,
+			},
 		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}
@@ -767,13 +791,17 @@ func TestParseTrdNotifyValidData(t *testing.T) {
 	trdEnv := int32(trdcommon.TrdEnv_TrdEnv_Real)
 	trdMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
 	typ := int32(1)
+	retType := int32(0)
 
-	s2c := &trdnotify.S2C{
-		Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
-		Type:   &typ,
+	resp := &trdnotify.Response{
+		RetType: &retType,
+		S2C: &trdnotify.S2C{
+			Header: &trdcommon.TrdHeader{AccID: &accID, TrdEnv: &trdEnv, TrdMarket: &trdMarket},
+			Type:   &typ,
+		},
 	}
 
-	body, err := proto.Marshal(s2c)
+	body, err := proto.Marshal(resp)
 	if err != nil {
 		t.Fatalf("failed to marshal protobuf: %v", err)
 	}

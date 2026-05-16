@@ -33,6 +33,7 @@ const (
 	ProtoID_Trd_Notify          = 2207
 )
 
+// SystemNotify contains system notification event data from OpenD.
 type SystemNotify struct {
 	Type          int32
 	Event         *notify.GtwEvent
@@ -44,67 +45,102 @@ type SystemNotify struct {
 	UsedQuota     *notify.UsedQuota
 }
 
+// ParseSystemNotify unmarshals a system notification push body.
 func ParseSystemNotify(body []byte) (*SystemNotify, error) {
-	var rsp notify.S2C
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var rsp notify.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &SystemNotify{
-		Type:          rsp.GetType(),
-		Event:         rsp.GetEvent(),
-		ProgramStatus: rsp.GetProgramStatus(),
-		ConnectStatus: rsp.GetConnectStatus(),
-		QotRight:      rsp.GetQotRight(),
-		ApiLevel:      rsp.GetApiLevel(),
-		ApiQuota:      rsp.GetApiQuota(),
-		UsedQuota:     rsp.GetUsedQuota(),
+		Type:          s2c.GetType(),
+		Event:         s2c.GetEvent(),
+		ProgramStatus: s2c.GetProgramStatus(),
+		ConnectStatus: s2c.GetConnectStatus(),
+		QotRight:      s2c.GetQotRight(),
+		ApiLevel:      s2c.GetApiLevel(),
+		ApiQuota:      s2c.GetApiQuota(),
+		UsedQuota:     s2c.GetUsedQuota(),
 	}, nil
 }
 
+// UpdateOrder contains an order update from a TRD push.
 type UpdateOrder struct {
 	Header *trdcommon.TrdHeader
 	Order  *trdcommon.Order
 }
 
+// ParseUpdateOrder unmarshals a trade order update push body.
 func ParseUpdateOrder(body []byte) (*UpdateOrder, error) {
-	var rsp trdupdateorder.S2C
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var rsp trdupdateorder.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateOrder{
-		Header: rsp.GetHeader(),
-		Order:  rsp.GetOrder(),
+		Header: s2c.GetHeader(),
+		Order:  s2c.GetOrder(),
 	}, nil
 }
 
+// UpdateOrderFill contains an order fill update from a TRD push.
 type UpdateOrderFill struct {
 	Header    *trdcommon.TrdHeader
 	OrderFill *trdcommon.OrderFill
 }
 
+// ParseUpdateOrderFill unmarshals a trade order fill update push body.
 func ParseUpdateOrderFill(body []byte) (*UpdateOrderFill, error) {
-	var rsp trdupdateorderfill.S2C
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var rsp trdupdateorderfill.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &UpdateOrderFill{
-		Header:    rsp.GetHeader(),
-		OrderFill: rsp.GetOrderFill(),
+		Header:    s2c.GetHeader(),
+		OrderFill: s2c.GetOrderFill(),
 	}, nil
 }
 
+// TrdNotify contains a trade notification from a TRD push.
 type TrdNotify struct {
 	Header *trdcommon.TrdHeader
 	Type   int32
 }
 
+// ParseTrdNotify unmarshals a trade notification push body.
 func ParseTrdNotify(body []byte) (*TrdNotify, error) {
-	var rsp trdnotify.S2C
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var rsp trdnotify.Response
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, nil
+	}
 	return &TrdNotify{
-		Header: rsp.GetHeader(),
-		Type:   rsp.GetType(),
+		Header: s2c.GetHeader(),
+		Type:   s2c.GetType(),
 	}, nil
 }

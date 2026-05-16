@@ -305,6 +305,9 @@ type VerificationRequest struct {
 // Verification submits a verification request for user authentication.
 // Returns an error if the verification fails.
 func Verification(ctx context.Context, c *futuapi.Client, req *VerificationRequest) error {
+	if req == nil {
+		return fmt.Errorf("Verification: request is nil")
+	}
 	// Input validation
 	if req.Code == "" {
 		return fmt.Errorf("verification code is required")
@@ -380,6 +383,9 @@ type TestCmdResponse struct {
 // TestCmd sends a test command to OpenD for internal diagnostics.
 // Returns the command result or an error if the request fails.
 func TestCmd(ctx context.Context, c *futuapi.Client, req *TestCmdRequest) (*TestCmdResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("TestCmd: request is nil")
+	}
 	if req.Cmd == "" {
 		return nil, fmt.Errorf("TestCmd: cmd is required")
 	}

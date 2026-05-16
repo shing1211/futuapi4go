@@ -62,7 +62,6 @@ const (
 	ProtoID_Verification       = 1006 // 请求或输入验证码
 	ProtoID_GetDelayStatistics = 1007 // 获取延迟统计
 	ProtoID_TestCmd            = 1008 // 测试命令
-	ProtoID_InitQuantMode      = 1009 // 初始化量化模式
 	ProtoID_UsedQuota          = 1010 // 已使用额度
 
 	// Trading APIs

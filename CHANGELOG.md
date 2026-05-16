@@ -5,25 +5,58 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.18] - 2026-05-15
-
-### Added
-
-- **`OrderBuilder.WithTrailType(t)`** — sets the trailing stop type (Ratio or Amount) on the fluent OrderBuilder.
-- **`OrderBuilder.WithTrailValue(v)`** — sets the trailing stop value (percentage or dollar amount) on the fluent OrderBuilder.
-- **`OrderBuilder.WithSpread(s)`** — sets the trailing stop spread on the fluent OrderBuilder.
-
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-16
+
 ### Added
+
+- **Phase 1: File Splits** — `client/client.go` (3,393L → 349L) split into 9 focused files; `pkg/qot/quote.go` (2,767L → 238L) split into 14 files; `pkg/trd/trade.go` (1,695L → 171L) split into 7 files.
+- **Phase 2a: Util Package** — `pkg/util/{price,date,security,crypto,json}.go` providing PricePrecision, FormatPrice, NewSecurity, MD5Hex, ToJSON, ToCSV, etc. 88 util tests.
+- **Phase 2b: JSON Tags + Slice Methods** — `json:"camelCase"` tags on all ~280 fields across 64 structs in `client/types.go`; 27 slice types with `ToJSON()`, `ToCSV()`, `Filter()` in `client/slice_methods.go`.
+- **Phase 3a: Mock OpenD Server** — `internal/testutil/mock/` with FT-protocol, RSA/AES encryption, handler registry, request logging, `fillNilPointers`. Replaces `test/util/mock_server.go`.
+- **Phase 3b: Typed Push Callbacks** — `OnQuote()`, `OnOrder()`, `OnOrderFill()`, `OnKLine()`, `OnOrderBook()`, `OnTicker()`, `OnRT()`, `OnBroker()`, `OnPriceReminder()`, `OnTrdNotify()` — chainable callbacks on `*Client`.
+- **Phase 3b: `WithEnvConfig()` option** — reads `FUTU_OPEND_ADDR`, `FUTU_RSA_PUBLIC_KEY`, `FUTU_RSA_PRIVATE_KEY`, `FUTU_ENCRYPT`, `FUTU_LOG_LEVEL` from environment. PEM values support both file paths and inline strings.
+- **Phase 4: Convenience Re-export** — `pkg/futuapi` with `NewClient()`, `NewClientFromEnv()` and re-exported constants.
+- **Documentation** — `docs/USAGE.md` (bilingual EN/CN), `client/example_test.go` (runnable examples), updated `ENHANCEMENT_PLAN.md`.
+
+### Changed
+
+- **Client struct** now holds a `*callbackState` for typed push callbacks. `WithTradeEnv`/`WithTradeMarket` remain copy-safe.
+- **FixupResponse** in mock server corrected protoID mappings (1002→GetGlobalState, 1004→KeepAlive).
+- **FixupResponse** now fills nil pointers even for unregistered protoIDs (custom handlers).
+- **Mock server** now only AES-decrypts when the client explicitly requests encryption via `PacketEncAlgo != -1`.
+
+### Fixed
+
+- **AES ECB encrypts/decrypts only 16 bytes** — `block.Encrypt`/`Decrypt` processes exactly one AES block. Any protobuf body >16 bytes is silently corrupted. Fixed with a loop: `for i := 0; i < len(padded); i += bs`.
+- **Operator precedence in `inferSecMarket`** — `&&` binds tighter than `||`. Code ≤3 chars with `.SZ` suffix panics with index-out-of-bounds. Fixed with parentheses.
+- **isEncrypt unprotected reads/writes** — 8 locations accessed `isEncrypt` (int32) without atomic operations. Fixed with `atomic.LoadInt32`/`StoreInt32`.
+- **aesKey read without mutex** — `EncryptRequestBody`/`DecryptResponseBody` read `c.aesKey` without lock protection. Fixed with new `getAESKey()` mutex accessor.
+- **Nil safety: GetOrderBook** — Iterated nil `ob` or `d` items from proto lists. Fixed with nil guards.
+- **Nil safety: GetFunds** — `s2c.GetFunds()` could be nil, panics on first field access. Fixed with nil check.
+- **Push handler deregistration race** — `RegisterHandler(protoID, nil)` writes nil to handler map while concurrent push dispatch may read it. Fixed: handler checks a closed stop channel instead.
+- **wrapError in pkg/qot/quote.go** — 3 functions used `fmt.Errorf` instead of `wrapError`: GetBasicQot, GetKL, GetOrderBook nil checks. Fixed.
+- **GetStaticInfo overly strict validation** — `req.Market == 0` rejected requests even when `securityList` was provided. Proto says `securityList` takes precedence. Fixed to only require market when no securities provided.
+- **RSA private key PEM warning** — `RSAEncrypt` accepted private key PEM (extracted public key internally). Added runtime `logf` warning that this is for testing/backward compat only.
+- **WithContext shared ClientOptions** — Deep-copied `ClientOptions` to prevent caller mutations from affecting original client.
+- **MockServer protocol handshake** — `MockHandler` signature changed to `func(req []byte) (proto.Message, error)`. Server now calls `fillNilPointers` + `proto.Marshal` on the returned message, enabling proto2 required-field auto-fill. 17 handler registrations updated across 3 test files.
+
+### Added (pre-v0.6.0)
 
 - **`WithEncryption(enable)` option** — opt-in FTAES_ECB encryption for all packets after InitConnect (matching Python SDK's `SysConfig.enable_proto_encrypt(True)`). When enabled, the InitConnect response is RSA-decrypted to extract the AES key, and all subsequent communication uses FTAES_ECB encryption with that key.
 - **`WithRSAPrivateKey(pem)` option** — sets the RSA private key PEM for decrypting InitConnect responses. Required when `WithEncryption(true)` is used. The public key is extracted automatically, so `WithRSAPublicKey` is optional when a private key PEM is provided.
 - **`RSADecrypt()` function** — RSA decryption using PKCS#1 v1.5 (matching the custom padding scheme used by `RSAEncrypt`). Decrypts the InitConnect response body when FTAES encryption is negotiated.
+- **57 new unit tests** — Added tests for: AES ECB round-trip and edge cases (pkg/metrics, pkg/ratelimit, pkg/retry, pkg/degradation, pkg/health, pkg/history, pkg/tracing, pkg/breaker).
+- **Push handler test coverage** — Mock push handler race detection, goroutine leak tests.
+- **fillNilPointers helper** — Reflection-based auto-filler for nil proto2 pointer fields in mock server.
+- **`OrderBuilder.WithTrailType(t)`** — sets the trailing stop type (Ratio or Amount) on the fluent OrderBuilder.
+- **`OrderBuilder.WithTrailValue(v)`** — sets the trailing stop value (percentage or dollar amount) on the fluent OrderBuilder.
+- **`OrderBuilder.WithSpread(s)`** — sets the trailing stop spread on the fluent OrderBuilder.
 
-### Fixed
+### Fixed (pre-v0.6.0)
 
-- **RSA connections default to no FTAES encryption** — The SDK previously forced `isEncrypt=1` whenever an RSA public key was configured, causing the server to receive undecryptable FTAES-encrypted GetGlobalState requests. The Python SDK defaults to `IS_PROTO_ENCRYPT = False` — encryption must be explicitly enabled via `WithEncryption(true)`. Now `isEncrypt=0` by default, matching Python SDK behavior. The `WithEncryption()` option provides the opt-in path for users who need encrypted communication.
+- **RSA connections default to no FTAES encryption** — The SDK previously forced `isEncrypt=1` whenever an RSA public key was configured, causing the server to receive undecryptable FTAES-encrypted GetGlobalState requests.
 
 ## [0.5.16] - 2026-05-15
 
