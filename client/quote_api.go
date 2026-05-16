@@ -7,6 +7,7 @@ import (
 
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/qot"
@@ -1320,6 +1321,44 @@ func RequestRehab(ctx context.Context, c *Client, market constant.Market, code s
 	return result, nil
 }
 
+// GetRehab returns rehabilitation (复权) data for the given security.
+// Unlike RequestRehab (which may use cached data), GetRehab always fetches
+// fresh rehabilitation data from the server.
+func GetRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	resp, err := qot.GetRehab(ctx, c.inner, &qot.GetRehabRequest{
+		Security: sec,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*RehabInfo, 0, len(resp.RehabList))
+	for _, r := range resp.RehabList {
+		if r == nil {
+			continue
+		}
+		result = append(result, &RehabInfo{
+			Time:       getStr(r.Time),
+			FwdFactorA: getFloat64(r.FwdFactorA),
+			FwdFactorB: getFloat64(r.FwdFactorB),
+			BwdFactorA: getFloat64(r.BwdFactorA),
+			BwdFactorB: getFloat64(r.BwdFactorB),
+			SplitBase:  getInt32(r.SplitBase),
+			SplitErt:   getInt32(r.SplitErt),
+			JoinBase:   getInt32(r.JoinBase),
+			JoinErt:    getInt32(r.JoinErt),
+			BonusBase:  getInt32(r.BonusBase),
+			BonusErt:   getInt32(r.BonusErt),
+			AllotBase:  getInt32(r.AllotBase),
+			AllotErt:   getInt32(r.AllotErt),
+			AllotPrice: getFloat64(r.AllotPrice),
+		})
+	}
+	return result, nil
+}
+
 // RequestHistoryKLQuota queries historical K-line quota.
 func RequestHistoryKLQuota(ctx context.Context, c *Client) (*HistoryKLQuotaInfo, error) {
 	resp, err := qot.RequestHistoryKLQuota(ctx, c.inner, &qot.RequestHistoryKLQuotaRequest{
@@ -1345,4 +1384,42 @@ func RequestHistoryKLQuota(ctx context.Context, c *Client) (*HistoryKLQuotaInfo,
 		RemainQuota: resp.RemainQuota,
 		DetailList:  details,
 	}, nil
+}
+
+// GetHistoryKLPoints retrieves K-line data at specific time points for a security.
+func GetHistoryKLPoints(ctx context.Context, c *Client, market constant.Market, code string, times []string, klType constant.KLType, rehabType constant.RehabType, noDataMode qot.NoDataMode) (*qot.GetHistoryKLPointsResponse, error) {
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetHistoryKLPoints(ctx, c.inner, &qot.GetHistoryKLPointsRequest{
+		RehabType:  rehabType,
+		KLType:    klType,
+		NoDataMode: noDataMode,
+		Securities: []*qotcommon.Security{sec},
+		Times:     times,
+	})
+}
+
+// GetTradeDates retrieves trade dates for a market within a date range.
+func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endTime string) ([]TradeDate, error) {
+	req := &qotgettradedate.C2S{
+		Market:    &market,
+		BeginTime: &beginTime,
+		EndTime:   &endTime,
+	}
+	resp, err := qot.GetTradeDate(ctx, c.inner, req)
+	if err != nil {
+		return nil, err
+	}
+	dates := make([]TradeDate, 0, len(resp.TradeDateList))
+	for _, d := range resp.TradeDateList {
+		if d == nil {
+			continue
+		}
+		dates = append(dates, TradeDate{
+			Time:          d.GetTime(),
+			Timestamp:     d.GetTimestamp(),
+			TradeDateType: d.GetTradeDateType(),
+		})
+	}
+	return dates, nil
 }

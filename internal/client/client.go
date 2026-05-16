@@ -65,9 +65,20 @@ func logf(format string, v ...interface{}) {
 	l.Printf(format, v...)
 }
 
+func (c *Client) slogAttrs() []any {
+	return []any{
+		"conn_id", c.connID,
+		"user_id", c.loginUserID,
+	}
+}
+
 // logInfo logs at info level if log level allows.
 func (c *Client) logInfo(format string, v ...interface{}) {
 	if c.opts.LogLevel > LogLevelInfo {
+		return
+	}
+	if sl := c.opts.SlogLogger; sl != nil {
+		sl.Info(c.ctx, fmt.Sprintf(format, v...), c.slogAttrs()...)
 		return
 	}
 	l := c.opts.Logger
@@ -82,6 +93,10 @@ func (c *Client) logWarn(format string, v ...interface{}) {
 	if c.opts.LogLevel > LogLevelWarn {
 		return
 	}
+	if sl := c.opts.SlogLogger; sl != nil {
+		sl.Warn(c.ctx, fmt.Sprintf(format, v...), c.slogAttrs()...)
+		return
+	}
 	l := c.opts.Logger
 	if l == nil {
 		l = defaultLogger()
@@ -92,6 +107,10 @@ func (c *Client) logWarn(format string, v ...interface{}) {
 // logError logs at error level if log level allows.
 func (c *Client) logError(format string, v ...interface{}) {
 	if c.opts.LogLevel > LogLevelError {
+		return
+	}
+	if sl := c.opts.SlogLogger; sl != nil {
+		sl.Error(c.ctx, fmt.Sprintf(format, v...), c.slogAttrs()...)
 		return
 	}
 	l := c.opts.Logger
@@ -105,6 +124,7 @@ const (
 	ProtoID_InitConnect    = 1001
 	ProtoID_GetGlobalState = 1002
 	ProtoID_KeepAlive      = 1004
+	ProtoID_SkillWrapAPI   = 8001
 )
 
 const (
@@ -123,6 +143,17 @@ const (
 	LogLevelWarn   int = 1 // Log warnings and errors only
 	LogLevelError  int = 2 // Log errors only
 	LogLevelSilent int = 3 // Suppress all logs
+)
+
+// ConnState represents the connection state of the client.
+type ConnState int32
+
+const (
+	StateDisconnected ConnState = 0
+	StateConnecting   ConnState = 1
+	StateConnected    ConnState = 2
+	StateReconnecting ConnState = 3
+	StateClosing      ConnState = 4
 )
 
 // ClientOptions holds configuration options for the Client.
@@ -149,6 +180,9 @@ type ClientOptions struct {
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
+
+	// State change callback
+	OnStateChange func(oldState, newState ConnState) // Callback when connection state changes
 
 	TLSConfig *tls.Config	// TLS configuration (nil = no TLS)
 
@@ -334,15 +368,20 @@ type Client struct {
 	ctx               context.Context
 	cancel            context.CancelFunc
 	wg                sync.WaitGroup
-	connected         int32
-	connActive        int32
+	state             int32
 
-	addr         string
-	reconnecting int32
+	addr              string
 
 	rsaKey string
 
+	isWebSocket bool
+	wsAddr      string
+	wsSecretKey string
+	wsTLS       bool
+
 	bufPool *bufferPool
+
+	pendingRequests sync.WaitGroup
 
 	metrics   *Metrics
 	metricsMu sync.RWMutex
@@ -568,8 +607,11 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
 	atomic.StoreInt32(&c.isEncrypt, 0)
 	c.serverVer = s2c.GetServerVer()
-	atomic.StoreInt32(&c.connected, 1)
-	atomic.StoreInt32(&c.connActive, 1)
+	c.setState(StateConnected)
+	c.isWebSocket = true
+	c.wsAddr = addr
+	c.wsSecretKey = secretKey
+	c.wsTLS = tls
 	c.metricsMu.Lock()
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
@@ -619,6 +661,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.mu.Lock()
 	c.addr = addr
 	c.rsaKey = rsaPublicKeyPEM
+	c.isWebSocket = false
 	c.mu.Unlock()
 
 	c.logInfo("[%s] ConnectWithRSA: Start, addr=%s, rsaKeyLen=%d", c.ts(), addr, len(rsaPublicKeyPEM))
@@ -777,8 +820,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	atomic.StoreInt32(&c.isEncrypt, isEnc)
 	c.serverVer = s2c.GetServerVer()
 	c.keepAliveInterval = s2c.GetKeepAliveInterval()
-	atomic.StoreInt32(&c.connected, 1)
-	atomic.StoreInt32(&c.connActive, 1)
+	c.setState(StateConnected)
 	c.metricsMu.Lock()
 	c.metrics.ConnectedSince = time.Now()
 	c.metricsMu.Unlock()
@@ -835,7 +877,7 @@ func (c *Client) keepAliveLoop(interval time.Duration) {
 		case <-c.ctx.Done():
 			return
 		case <-ticker.C:
-			if atomic.LoadInt32(&c.connActive) == 0 {
+			if ConnState(atomic.LoadInt32(&c.state)) != StateConnected {
 				return
 			}
 			if err := c.keepAlive(); err != nil {
@@ -919,8 +961,8 @@ func (c *Client) readLoop() {
 			c.conn.Dispatch(pkt)
 		case err := <-errCh:
 			c.mu.Lock()
-			if atomic.LoadInt32(&c.connected) == 1 {
-				atomic.StoreInt32(&c.connected, 0)
+			if c.IsConnected() {
+				c.setState(StateDisconnected)
 				c.logWarn("connection lost: %v\n", err)
 				c.mu.Unlock()
 				go c.reconnect()
@@ -940,12 +982,23 @@ func (c *Client) reconnect() {
 	_, span := tracing.StartSpan(c.ctx, "futuapi.reconnect")
 	defer span.End()
 
-	// Atomically check and set reconnecting flag to prevent TOCTOU race
-	if !atomic.CompareAndSwapInt32(&c.reconnecting, 0, 1) {
-		return // Already reconnecting
+	// Atomically transition from Disconnected to Reconnecting to prevent TOCTOU race
+	if !atomic.CompareAndSwapInt32(&c.state, int32(StateDisconnected), int32(StateReconnecting)) {
+		return // Already reconnecting or not in disconnected state
 	}
-	defer atomic.StoreInt32(&c.reconnecting, 0)
 	defer c.recordReconnect()
+	defer func() {
+		if ConnState(atomic.LoadInt32(&c.state)) != StateConnected {
+			c.setState(StateDisconnected)
+		}
+	}()
+
+	if c.breaker != nil {
+		if !c.breaker.Allow() {
+			c.logWarn("reconnect: circuit breaker is open, skipping reconnection\n")
+			return
+		}
+	}
 
 	maxRetries := c.opts.MaxRetries
 	if maxRetries == 0 {
@@ -960,13 +1013,15 @@ func (c *Client) reconnect() {
 		backoff = 1.0
 	}
 
-	atomic.StoreInt32(&c.connActive, 0)
-
 	if c.conn != nil {
 		c.conn.Close()
 	}
 
 	c.mu.RLock()
+	isWS := c.isWebSocket
+	wsAddr := c.wsAddr
+	wsKey := c.wsSecretKey
+	wsTLS := c.wsTLS
 	addr := c.addr
 	rsaKey := c.rsaKey
 	c.mu.RUnlock()
@@ -982,7 +1037,15 @@ func (c *Client) reconnect() {
 		c.logInfo("reconnect attempt %d/%d...\n", attempt, maxRetries)
 		time.Sleep(interval)
 
-		if err := c.ConnectWithRSA(addr, rsaKey); err != nil {
+		var err error
+		if isWS {
+			// Reconnect via WebSocket; store security key on options before connecting
+			c.opts.WSSecretKey = wsKey
+			err = c.connectWebSocket(wsAddr, wsTLS)
+		} else {
+			err = c.ConnectWithRSA(addr, rsaKey)
+		}
+		if err != nil {
 			c.logWarn("reconnect failed: %v\n", err)
 			interval = time.Duration(float64(interval) * backoff)
 			continue
@@ -1007,12 +1070,33 @@ func (c *Client) UnregisterHandler(protoID uint32) {
 	c.handlersMu.Unlock()
 }
 
+// Shutdown gracefully drains in-flight requests and then closes the connection.
+// If the timeout is exceeded, pending requests are abandoned and the connection
+// is closed anyway.
+func (c *Client) Shutdown(timeout time.Duration) error {
+	c.setState(StateClosing)
+
+	done := make(chan struct{})
+	go func() {
+		c.pendingRequests.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(timeout):
+	}
+
+	return c.Close()
+}
+
 func (c *Client) Close() error {
 	_, span := tracing.StartSpan(c.ctx, "futuapi.close")
 	defer span.End()
 
-	atomic.StoreInt32(&c.connActive, 0)
-	atomic.StoreInt32(&c.connected, 0)
+	if ConnState(atomic.LoadInt32(&c.state)) != StateClosing {
+		c.setState(StateClosing)
+	}
 	metrics.RecordDisconnect("tcp")
 	metrics.RecordOpenDUp(false)
 	if c.conn != nil {
@@ -1021,6 +1105,9 @@ func (c *Client) Close() error {
 	}
 	c.cancel()
 	c.wg.Wait()
+	if ConnState(atomic.LoadInt32(&c.state)) != StateDisconnected {
+		c.setState(StateDisconnected)
+	}
 	return nil
 }
 
@@ -1124,15 +1211,27 @@ func (c *Client) CanSendProto(protoID uint32) bool {
 }
 
 func (c *Client) IsConnected() bool {
-	return atomic.LoadInt32(&c.connected) == 1
+	return ConnState(atomic.LoadInt32(&c.state)) == StateConnected
 }
 
 // EnsureConnected returns an error if the client is not connected.
 // This should be called by all public API functions before making requests.
+// State returns the current connection state.
+func (c *Client) State() ConnState {
+	return ConnState(atomic.LoadInt32(&c.state))
+}
+
+func (c *Client) setState(new ConnState) {
+	old := ConnState(atomic.SwapInt32(&c.state, int32(new)))
+	if old != new && c.opts.OnStateChange != nil {
+		c.opts.OnStateChange(old, new)
+	}
+}
+
 func (c *Client) EnsureConnected() error {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	if atomic.LoadInt32(&c.connected) == 0 {
+	if !c.IsConnected() {
 		return ErrNotConnected
 	}
 	if c.conn == nil {
@@ -1179,7 +1278,7 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 	newClient.isEncrypt = atomic.LoadInt32(&c.isEncrypt)
 	newClient.serverVer = c.serverVer
 	newClient.keepAliveInterval = c.keepAliveInterval
-	newClient.connected = atomic.LoadInt32(&c.connected)
+	newClient.state = atomic.LoadInt32(&c.state)
 	newClient.mu.RUnlock()
 	return newClient
 }
@@ -1222,13 +1321,20 @@ func (c *Client) request(protoID uint32, req proto.Message, resp proto.Message) 
 
 func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) error {
 	start := time.Now()
+	fn := func() error {
+		if c.breaker != nil && !isControlProto(protoID) {
+			_, err := c.breaker.Do(func() (interface{}, error) {
+				return nil, c.requestInternal(protoID, req, rsp)
+			})
+			return err
+		}
+		return c.requestInternal(protoID, req, rsp)
+	}
 	var err error
-	if c.breaker != nil && !isControlProto(protoID) {
-		_, err = c.breaker.Do(func() (interface{}, error) {
-			return nil, c.requestInternal(protoID, req, rsp)
-		})
+	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 {
+		err = retry.Do(context.Background(), *c.retryConfig, fn)
 	} else {
-		err = c.requestInternal(protoID, req, rsp)
+		err = fn()
 	}
 	c.recordRequest(protoID, time.Since(start), err)
 	return err
@@ -1236,13 +1342,20 @@ func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) e
 
 func (c *Client) RequestContext(ctx context.Context, protoID uint32, req proto.Message, rsp proto.Message) error {
 	start := time.Now()
+	fn := func() error {
+		if c.breaker != nil && !isControlProto(protoID) {
+			_, err := c.breaker.Do(func() (interface{}, error) {
+				return nil, c.requestContextInternal(ctx, protoID, req, rsp)
+			})
+			return err
+		}
+		return c.requestContextInternal(ctx, protoID, req, rsp)
+	}
 	var err error
-	if c.breaker != nil && !isControlProto(protoID) {
-		_, err = c.breaker.Do(func() (interface{}, error) {
-			return nil, c.requestContextInternal(ctx, protoID, req, rsp)
-		})
+	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 {
+		err = retry.Do(ctx, *c.retryConfig, fn)
 	} else {
-		err = c.requestContextInternal(ctx, protoID, req, rsp)
+		err = fn()
 	}
 	c.recordRequest(protoID, time.Since(start), err)
 	return err
@@ -1255,6 +1368,18 @@ func isControlProto(protoID uint32) bool {
 func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Message) error {
 	if c.conn == nil {
 		return ErrNotConnected
+	}
+	if ConnState(atomic.LoadInt32(&c.state)) == StateClosing {
+		return ErrClientClosing
+	}
+
+	c.pendingRequests.Add(1)
+	defer c.pendingRequests.Done()
+
+	if c.rateLimiter != nil {
+		if err := c.rateLimiter.Wait(c.ctx, protoID); err != nil {
+			return err
+		}
 	}
 
 	body, err := proto.Marshal(req)
@@ -1314,6 +1439,18 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 
 	if c.conn == nil {
 		return ErrNotConnected
+	}
+	if ConnState(atomic.LoadInt32(&c.state)) == StateClosing {
+		return ErrClientClosing
+	}
+
+	c.pendingRequests.Add(1)
+	defer c.pendingRequests.Done()
+
+	if c.rateLimiter != nil {
+		if err := c.rateLimiter.Wait(ctx, protoID); err != nil {
+			return err
+		}
 	}
 
 	body, err := proto.Marshal(req)

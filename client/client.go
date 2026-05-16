@@ -120,6 +120,11 @@ func (c *Client) IsConnected() bool {
 	return c.inner.IsConnected()
 }
 
+// State returns the current connection state.
+func (c *Client) State() futuapi.ConnState {
+	return c.inner.State()
+}
+
 // WaitForSignal blocks until a termination signal is received.
 func (c *Client) WaitForSignal(cleanup func()) os.Signal {
 	sigChan := make(chan os.Signal, 1)
@@ -358,6 +363,11 @@ func WithRSAPrivateKey(pem string) Option {
 // WithEncryption enables FTAES encryption for all packets after InitConnect.
 func WithEncryption(enable bool) Option {
 	return futuapi.WithEncryption(enable)
+}
+
+// WithOnStateChange sets a callback that is invoked when the connection state changes.
+func WithOnStateChange(fn func(oldState, newState futuapi.ConnState)) Option {
+	return func(o *futuapi.ClientOptions) { o.OnStateChange = fn }
 }
 
 // Env vars read by WithEnvConfig:

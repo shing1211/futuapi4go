@@ -5,6 +5,7 @@ import (
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/shing1211/futuapi4go/pkg/tracing"
@@ -96,10 +97,17 @@ type Option func(*config)
 type config struct {
 	serviceName    string
 	tracerProvider trace.TracerProvider
+	meterProvider  metric.MeterProvider
 }
 
 func WithTracerProvider(tp trace.TracerProvider) Option {
 	return func(c *config) {
 		c.tracerProvider = tp
+	}
+}
+
+func WithMeterProvider(mp metric.MeterProvider) Option {
+	return func(c *config) {
+		c.meterProvider = mp
 	}
 }

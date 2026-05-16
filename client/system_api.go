@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 )
 
@@ -116,6 +117,21 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 	}, nil
 }
 
+// GetTechnicalUnusual queries technical unusual stocks via SkillWrapAPI.
+func GetTechnicalUnusual(ctx context.Context, c *Client, req *skillwrapapi.TechnicalUnusualReq) (*skillwrapapi.TechnicalUnusualRsp, error) {
+	return sys.GetTechnicalUnusual(ctx, c.inner, req)
+}
+
+// GetFinancialUnusual queries financial unusual stocks via SkillWrapAPI.
+func GetFinancialUnusual(ctx context.Context, c *Client, req *skillwrapapi.FinancialUnusualReq) (*skillwrapapi.FinancialUnusualRsp, error) {
+	return sys.GetFinancialUnusual(ctx, c.inner, req)
+}
+
+// GetDerivativeUnusual queries derivative unusual stocks via SkillWrapAPI.
+func GetDerivativeUnusual(ctx context.Context, c *Client, req *skillwrapapi.DerivativeUnusualReq) (*skillwrapapi.DerivativeUnusualRsp, error) {
+	return sys.GetDerivativeUnusual(ctx, c.inner, req)
+}
+
 // TestCmd sends a test command to OpenD for internal diagnostics.
 func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*TestCmdResult, error) {
 	p := ""
@@ -132,5 +148,22 @@ func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*Tes
 	return &TestCmdResult{
 		Cmd:    resp.Cmd,
 		Result: resp.Result,
+	}, nil
+}
+
+// Verification submits a verification request (e.g., SMS or email verification).
+func Verification(ctx context.Context, c *Client, req *sys.VerificationRequest) error {
+	return sys.Verification(ctx, c.inner, req)
+}
+
+// GetUsedQuota retrieves the current quota usage for subscriptions and historical K-line requests.
+func GetUsedQuota(ctx context.Context, c *Client) (*UsedQuotaInfo, error) {
+	resp, err := sys.GetUsedQuota(ctx, c.inner)
+	if err != nil {
+		return nil, err
+	}
+	return &UsedQuotaInfo{
+		UsedSubQuota:   resp.UsedSubQuota,
+		UsedKLineQuota: resp.UsedKLineQuota,
 	}, nil
 }

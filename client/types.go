@@ -785,3 +785,16 @@ type PushTrdNotify struct {
 	TrdMarket int32 `json:"trdMarket"`
 	Type      int32 `json:"type"`
 }
+
+// TradeDate represents a single trade date with its type (full day, half day, etc.).
+type TradeDate struct {
+	Time          string  `json:"time"`
+	Timestamp     float64 `json:"timestamp,omitempty"`
+	TradeDateType int32   `json:"tradeDateType,omitempty"`
+}
+
+// UsedQuotaInfo represents the quota usage for subscriptions and historical K-line requests.
+type UsedQuotaInfo struct {
+	UsedSubQuota   int32 `json:"usedSubQuota"`
+	UsedKLineQuota int32 `json:"usedKLineQuota"`
+}

@@ -132,6 +132,7 @@ var (
 	ErrReconnectFailed  = errors.New("reconnect failed: max retries exceeded")
 	ErrMarshalFailed    = errors.New("marshal failed")
 	ErrUnmarshalFailed  = errors.New("unmarshal failed")
+	ErrClientClosing    = errors.New("client is closing")
 )
 
 type Error struct {
