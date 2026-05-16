@@ -153,11 +153,13 @@ git tag vx.y.z
 git push origin vx.y.z
 git push github vx.y.z
 
-# 4. Create GitHub release with goreleaser
-make release
+# 4. Create GitHub release
+make release          # macOS/Linux — requires goreleaser
+# or:
+gh release create vx.y.z --title "vx.y.z" --notes "see CHANGELOG.md"
 ```
 
-Prerequisites: `go install github.com/goreleaser/goreleaser@latest`
+Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest`
 
 ---
 
