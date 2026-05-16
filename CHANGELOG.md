@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-05-16
+
+### Fixed
+
+- **`WritePacketEncrypted` parameter name** — Renamed `plaintextSHA1` to
+  `encryptedBodySHA1` in `ConnInterface`, `Conn.WritePacketEncrypted`, and
+  `wsConn.WritePacketEncrypted` to accurately reflect that OpenD verifies
+  SHA1 against the encrypted body. Updated misleading comments claiming
+  "SHA1 of ORIGINAL PLAINTEXT".
+
 ## [0.6.0] - 2026-05-16
 
 ### Added
