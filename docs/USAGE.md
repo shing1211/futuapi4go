@@ -179,6 +179,120 @@ demo repository for a complete example with OTel stdout exporter.
 
 ---
 
+### Connection State Machine
+
+Monitor connection lifecycle with the built-in state machine:
+
+```go
+import futuapi "github.com/shing1211/futuapi4go/internal/client"
+
+// Check current state
+switch cli.State() {
+case futuapi.StateConnected:
+    fmt.Println("Connected")
+case futuapi.StateDisconnected:
+    fmt.Println("Disconnected")
+case futuapi.StateReconnecting:
+    fmt.Println("Reconnecting...")
+case futuapi.StateClosing:
+    fmt.Println("Closing")
+}
+
+// React to state transitions
+cli := client.New(
+    client.WithOnStateChange(func(old, new futuapi.ConnState) {
+        log.Printf("State: %d → %d", old, new)
+    }),
+)
+```
+
+### Graceful Shutdown
+
+Drain in-flight requests before closing with configurable timeout:
+
+```go
+if err := cli.Shutdown(5 * time.Second); err != nil {
+    log.Printf("shutdown error: %v", err)
+}
+// New requests return ErrClientClosing during shutdown
+```
+
+### K-Line Data Cache
+
+Built-in LRU+TTL cache to avoid redundant API calls:
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/cache"
+
+klCache := cache.NewKLCache(
+    cache.WithMaxEntries(2000),
+    cache.WithTTL(5*time.Minute),
+)
+cachedCli := cache.NewKLCachedClient(cli, klCache)
+klines, err := cachedCli.GetKL(ctx, rehabType, klType, security)
+```
+
+### Order Pre-Flight Validation
+
+Validate orders before submission to catch common issues:
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/trd"
+
+warnings := trd.ValidateOrder(&trd.OrderValidationInput{
+    Order:       req,
+    MarketOpen:  true,
+    BuyingPower: 50000,
+    MaxBuyQty:   1000,
+    MaxSellQty:  1000,
+})
+if trd.HasErrors(warnings) {
+    for _, w := range warnings {
+        log.Printf("Validation: %s", w.Message)
+    }
+}
+```
+
+### Audit Logging
+
+Record all trade operations with structured slog output:
+
+```go
+audit := trd.NewAuditLogger(slog.Default())
+
+resp, err := trd.PlaceOrder(ctx, cli, req)
+audit.LogPlaceOrder(req, resp.OrderID, err) // JSON: {"op":"PlaceOrder","code":"US.AAPL","success":true}
+```
+
+### OpenTelemetry Metrics
+
+Export SDK metrics via OTLP alongside Prometheus:
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/tracing/otel"
+
+meter, err := otel.NewOTelMeter()
+if err != nil {
+    log.Fatal(err)
+}
+meter.RecordConnection("tcp")
+meter.RecordAPICall("3001", "success")
+```
+
+### Structured Logging
+
+Replace unstructured log output with JSON-structured logs:
+
+```go
+import futuapi "github.com/shing1211/futuapi4go/internal/client"
+
+sl := futuapi.NewSlogLoggerDefault(futuapi.LevelDebug)
+cli := client.New(client.WithSlog(sl))
+// All internal logs now include connID and userID attributes in JSON format
+```
+
+---
+
 ## Chinese 中文 (繁體)
 
 ### 安裝
@@ -333,3 +447,90 @@ tracing.SetTracer(otel.NewTracer("my-trading-app"))
 
 只需在創建客戶端後設置一次 tracer——無需修改應用程式代碼。
 請參閱 demo 倉庫中的 `examples/97_opentelemetry_tracing` 獲取完整範例。
+
+### 連線狀態機
+
+監控連線生命週期的狀態機：
+
+```go
+import futuapi "github.com/shing1211/futuapi4go/internal/client"
+
+switch cli.State() {
+case futuapi.StateConnected:
+    fmt.Println("已連線")
+case futuapi.StateDisconnected:
+    fmt.Println("未連線")
+case futuapi.StateReconnecting:
+    fmt.Println("重新連線中...")
+}
+
+// 監聽狀態變化
+cli := client.New(
+    client.WithOnStateChange(func(old, new futuapi.ConnState) {
+        log.Printf("狀態: %d → %d", old, new)
+    }),
+)
+```
+
+### 優雅關閉
+
+在關閉前等待進行中的請求完成：
+
+```go
+if err := cli.Shutdown(5 * time.Second); err != nil {
+    log.Printf("關閉錯誤: %v", err)
+}
+```
+
+### K 線資料快取
+
+內建 LRU + TTL 快取，減少重複 API 請求：
+
+```go
+import "github.com/shing1211/futuapi4go/pkg/cache"
+
+klCache := cache.NewKLCache(cache.WithMaxEntries(2000))
+cachedCli := cache.NewKLCachedClient(cli, klCache)
+klines, err := cachedCli.GetKL(ctx, rehabType, klType, security)
+```
+
+### 委託前驗證
+
+送出委託前檢查常見問題：
+
+```go
+warnings := trd.ValidateOrder(&trd.OrderValidationInput{
+    Order: req, MarketOpen: true, BuyingPower: 50000,
+})
+if trd.HasErrors(warnings) {
+    for _, w := range warnings { log.Printf("驗證: %s", w.Message) }
+}
+```
+
+### 審計日誌
+
+以結構化日誌記錄所有交易操作：
+
+```go
+audit := trd.NewAuditLogger(slog.Default())
+resp, err := trd.PlaceOrder(ctx, cli, req)
+audit.LogPlaceOrder(req, resp.OrderID, err)
+```
+
+### OpenTelemetry 指標
+
+透過 OTLP 匯出 SDK 指標：
+
+```go
+meter, err := otel.NewOTelMeter()
+meter.RecordAPICall("3001", "success")
+```
+
+### 結構化日誌
+
+將內部日誌輸出為 JSON 格式：
+
+```go
+sl := futuapi.NewSlogLoggerDefault(futuapi.LevelDebug)
+cli := client.New(client.WithSlog(sl))
+```

@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.7.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.8.0-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
@@ -13,9 +13,11 @@
 - One-liner connect with automatic env config (`NewClientFromEnv`)
 - Real-time push via channels or typed callbacks
 - Fluent API: `cli.Quote().GetBasicQot()`, `cli.Trade().PlaceOrder()`
-- Distributed tracing with OpenTelemetry (opt-in via `pkg/tracing/otel`)
+- Distributed tracing + metrics with OpenTelemetry (opt-in via `pkg/tracing/otel`)
+- Connection state machine, graceful shutdown, and auto-reconnect
+- Rate limiter, circuit breaker, and retry wired into every API call
+- K-Line data cache (LRU + TTL), order pre-flight validation, audit logging
 - Release automation with goreleaser
-- Circuit breaker, structured logging, and trading utilities included
 
 ## Table of Contents
 
@@ -34,7 +36,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.7.0
+go get github.com/shing1211/futuapi4go@v0.8.0
 ```
 
 Requires Go 1.26+ and a running [Futu OpenD](https://www.futunn.com/en/overview) instance.
@@ -158,6 +160,7 @@ For complete, runnable examples covering every API surface — including real-ti
 | `pkg/push` | Push notification parsers |
 | `pkg/push/chan` | Channel-based real-time push delivery |
 | `pkg/breaker` | Circuit breaker pattern |
+| `pkg/cache` | K-Line data cache (LRU + TTL) |
 | `pkg/logger` | Structured leveled logging |
 | `pkg/util` | Code parsing (`ParseCode`, `FormatCode`), market helpers |
 | `pkg/constant` | Typed constants with `String()` methods |
@@ -171,6 +174,8 @@ For complete, runnable examples covering every API surface — including real-ti
 | `pkg/pb/*` | 79 protobuf types (v10.5.6508) |
 | `pkg/ratelimit` | API rate limiting (token bucket per protoID) |
 | `pkg/retry` | Configurable retry with exponential backoff |
+| `pkg/trd/audit.go` | Trade audit logging |
+| `pkg/trd/validation.go` | Order pre-flight validation |
 | `pkg/tracing` | Core tracing interfaces (Tracer, Span, no-op default) |
 | `pkg/tracing/otel` | OpenTelemetry-backed tracing adapter (opt-in) |
 

@@ -171,7 +171,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `ENHANCEMENT_PLAN.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.5.12)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.8.0)
 
 ---
 
@@ -206,7 +206,7 @@ Before ending a work session, confirm:
 
 ---
 
-*Last updated: 2026-05-13*
+*Last updated: 2026-05-17*
 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
