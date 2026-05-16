@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-17
+
+### Added
+
+- **Rate limiter wired** — `ratelimit.ProtoLimiter` now actually invoked in `requestInternal`/`requestContextInternal` (previously dead code).
+- **Retry wired** — `retry.Config` wraps `Request()`/`RequestContext()` with exponential backoff and recoverable error filtering.
+- **WebSocket auto-reconnect** — `reconnect()` now handles WS connections (previously TCP-only).
+- **SkillWrapAPI wrappers** — `GetTechnicalUnusual()`, `GetFinancialUnusual()`, `GetDerivativeUnusual()` in `pkg/sys/skill_wrap.go`.
+- **Qot_GetTradeDate wrapper** — `GetTradeDate()` (proto 3225) in `pkg/qot/trade_date.go`.
+- **Connection state machine** — `ConnState` enum (`Disconnected`→`Connecting`→`Connected`→`Reconnecting`→`Closing`), `State()` method, `OnStateChange` callback.
+- **Graceful Shutdown** — `Shutdown(timeout)` drains in-flight requests before closing, `ErrClientClosing` sentinel.
+- **Fluent API completion** — 30+ new client-level convenience wrappers covering remaining qot/trd/sys functions.
+- **OpenTelemetry metrics bridge** — `pkg/tracing/otel/metrics.go` with 8 sync instruments + 3 observable gauges.
+- **K-Line data cache** — `pkg/cache/kl_cache.go` with LRU eviction + TTL expiry.
+- **Structured slog integration** — `logInfo`/`logWarn`/`logError` route through `SlogLogger` when configured.
+- **Order pre-flight validation** — `pkg/trd/validation.go` with market-open, buying-power, and max-qty checks.
+- **Audit/compliance logging** — `pkg/trd/audit.go` with `AuditLogger` for `PlaceOrder`, `ModifyOrder`, `ReconfirmOrder`.
+- **Verification tests** — 37 new tests across rate limiter, retry, breaker, state machine, shutdown, KL cache, validation, audit, OTel metrics, slog integration.
+
+### Changed
+
+- **ENHANCEMENT_PLAN.md** — Stripped to only core SDK work (Phases A–F removed to separate repo).
+- **docs/USAGE.md** — Added 7 new sections: connection state machine, graceful shutdown, K-line cache, order validation, audit logging, OTel metrics, structured logging.
+
 ## [0.7.0] - 2026-05-16
 
 ### Added

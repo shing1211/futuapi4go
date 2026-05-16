@@ -31,6 +31,17 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/qot"
 )
 
+// ConnState represents the connection state of the client.
+type ConnState = futuapi.ConnState
+
+const (
+	StateDisconnected ConnState = 0
+	StateConnecting   ConnState = 1
+	StateConnected    ConnState = 2
+	StateReconnecting ConnState = 3
+	StateClosing      ConnState = 4
+)
+
 // Client is the main client type for connecting to Futu OpenD.
 // It wraps the internal client to provide a public API.
 type Client struct {
@@ -113,6 +124,11 @@ func (c *Client) ConnectAddr(addr string) error {
 // Close closes the connection to OpenD.
 func (c *Client) Close() {
 	c.inner.Close()
+}
+
+// Shutdown gracefully drains pending requests then closes the connection.
+func (c *Client) Shutdown(timeout time.Duration) error {
+	return c.inner.Shutdown(timeout)
 }
 
 // IsConnected returns true if the client is currently connected.

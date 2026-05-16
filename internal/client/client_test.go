@@ -16,8 +16,18 @@ package futuapi
 
 import (
 	"context"
+	"crypto/tls"
+	"errors"
+	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/shing1211/futuapi4go/pkg/breaker"
+	"github.com/shing1211/futuapi4go/pkg/ratelimit"
+	"github.com/shing1211/futuapi4go/pkg/retry"
+	"google.golang.org/protobuf/proto"
+
+	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
 )
 
 func TestNewClient(t *testing.T) {
@@ -201,5 +211,252 @@ func TestSerialNoIncrement(t *testing.T) {
 	}
 	if third <= second {
 		t.Errorf("serial numbers not incrementing: %d, %d", second, third)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Mock ConnInterface for tests that need to simulate network behavior
+// ---------------------------------------------------------------------------
+
+type mockConn struct {
+	writePacketFn    func(protoID uint32, serialNo uint32, body []byte) error
+	readResponseFn   func(serialNo uint32, timeout time.Duration) (*Packet, error)
+	closeFn          func()
+	apiTimeout       time.Duration
+}
+
+func (m *mockConn) Close() error {
+	if m.closeFn != nil {
+		m.closeFn()
+	}
+	return nil
+}
+
+func (m *mockConn) WritePacket(protoID uint32, serialNo uint32, body []byte) error {
+	if m.writePacketFn != nil {
+		return m.writePacketFn(protoID, serialNo, body)
+	}
+	return nil
+}
+
+func (m *mockConn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error {
+	return m.WritePacket(protoID, serialNo, body)
+}
+
+func (m *mockConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, encryptedBodySHA1 [20]byte) error {
+	return m.WritePacket(protoID, serialNo, encryptedBody)
+}
+
+func (m *mockConn) ReadResponse(serialNo uint32, timeout time.Duration) (*Packet, error) {
+	if m.readResponseFn != nil {
+		return m.readResponseFn(serialNo, timeout)
+	}
+	return &Packet{}, nil
+}
+
+func (m *mockConn) ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error) {
+	return m.ReadResponse(serialNo, timeout)
+}
+
+func (m *mockConn) SetPushHandler(handler PacketHandler) {}
+
+func (m *mockConn) Dispatch(pkt *Packet) {}
+
+func (m *mockConn) DrainDispatches() {}
+
+func (m *mockConn) APITimeout() time.Duration { return m.apiTimeout }
+
+func (m *mockConn) SetAPITimeout(d time.Duration) { m.apiTimeout = d }
+
+func (m *mockConn) Dial(addr string) error { return nil }
+
+func (m *mockConn) SetTLSConfig(cfg *tls.Config) {}
+
+func (m *mockConn) readOne() (*Packet, error) { return &Packet{}, nil }
+
+// ---------------------------------------------------------------------------
+// Rate limiter tests
+// ---------------------------------------------------------------------------
+
+func TestRateLimiterWired(t *testing.T) {
+	rl := ratelimit.NewProtoLimiter(1000, 1000, ratelimit.ModeWait)
+	client := New(WithRateLimiter(rl))
+	defer client.Close()
+
+	if client.rateLimiter != rl {
+		t.Error("WithRateLimiter did not set rate limiter on client")
+	}
+	if client.opts.RateLimiter != rl {
+		t.Error("WithRateLimiter did not set rate limiter in options")
+	}
+}
+
+func TestRateLimiterBlocksWhenExhausted(t *testing.T) {
+	// ProtoLimiter with 0 capacity in Reject mode will immediately reject
+	rl := ratelimit.NewProtoLimiter(0, 0, ratelimit.ModeReject)
+	client := New()
+	client.rateLimiter = rl
+	defer client.Close()
+
+	atomic.StoreInt32(&client.state, int32(StateConnected))
+	client.conn = &mockConn{
+		writePacketFn: func(protoID uint32, serialNo uint32, body []byte) error {
+			return nil
+		},
+		readResponseFn: func(serialNo uint32, timeout time.Duration) (*Packet, error) {
+			retType := int32(0)
+			body, _ := proto.Marshal(&keepalive.Response{RetType: &retType})
+			return &Packet{Body: body}, nil
+		},
+	}
+
+	req := &keepalive.Request{C2S: &keepalive.C2S{Time: proto.Int64(time.Now().Unix())}}
+	rsp := &keepalive.Response{}
+
+	err := client.Request(ProtoID_KeepAlive, req, rsp)
+	if err == nil {
+		t.Fatal("expected rate limit error from exhausted rate limiter")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Retry tests
+// ---------------------------------------------------------------------------
+
+func TestRetryOnTransientFailure(t *testing.T) {
+	attempts := 0
+	client := New(WithRetryConfig(retry.Config{
+		MaxAttempts:    3,
+		BaseDelay:      1 * time.Millisecond,
+		MaxDelay:       10 * time.Millisecond,
+		Jitter:         false,
+		IsRecoverable:  func(err error) bool { return errors.Is(err, ErrRequestTimeout) },
+	}))
+	defer client.Close()
+
+	atomic.StoreInt32(&client.state, int32(StateConnected))
+	client.conn = &mockConn{
+		writePacketFn: func(protoID uint32, serialNo uint32, body []byte) error {
+			attempts++
+			if attempts < 3 {
+				return ErrRequestTimeout
+			}
+			return nil
+		},
+		readResponseFn: func(serialNo uint32, timeout time.Duration) (*Packet, error) {
+			retType := int32(0)
+			body, _ := proto.Marshal(&keepalive.Response{RetType: &retType})
+			return &Packet{Body: body}, nil
+		},
+	}
+
+	req := &keepalive.Request{C2S: &keepalive.C2S{Time: proto.Int64(time.Now().Unix())}}
+	rsp := &keepalive.Response{}
+
+	err := client.Request(ProtoID_KeepAlive, req, rsp)
+	if err != nil {
+		t.Fatalf("Request failed after retries: %v", err)
+	}
+	if attempts != 3 {
+		t.Errorf("expected 3 attempts, got %d", attempts)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Circuit breaker tests
+// ---------------------------------------------------------------------------
+
+func TestBreakerInReconnect(t *testing.T) {
+	cb := breaker.New(breaker.WithThreshold(1))
+	client := New(WithBreaker(cb))
+	defer client.Close()
+
+	cb.RecordFailure()
+
+	client.reconnect()
+
+	// Even when breaker prevents reconnection, the state should be disconnected
+	if client.State() != StateDisconnected {
+		t.Error("expected client to remain disconnected when breaker is open")
+	}
+}
+
+func TestReconnectWithBreakerOpen(t *testing.T) {
+	cb := breaker.New(breaker.WithThreshold(1))
+	client := New(WithBreaker(cb))
+	defer client.Close()
+
+	cb.RecordFailure()
+
+	client.reconnect()
+
+	if client.IsConnected() {
+		t.Error("expected IsConnected() to be false after reconnect with open breaker")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// State transition tests
+// ---------------------------------------------------------------------------
+
+func TestClientStateTransitions(t *testing.T) {
+	client := New()
+	defer client.Close()
+
+	if client.State() != StateDisconnected {
+		t.Errorf("expected StateDisconnected, got %v", client.State())
+	}
+
+	client.setState(StateConnected)
+	if client.State() != StateConnected {
+		t.Errorf("expected StateConnected, got %v", client.State())
+	}
+
+	client.setState(StateDisconnected)
+	if client.State() != StateDisconnected {
+		t.Errorf("expected StateDisconnected, got %v", client.State())
+	}
+}
+
+func TestOnStateChangeFires(t *testing.T) {
+	var transitions []struct{ old, new ConnState }
+	client := New(WithOnStateChange(func(old, new ConnState) {
+		transitions = append(transitions, struct{ old, new ConnState }{old, new})
+	}))
+	defer client.Close()
+
+	client.setState(StateConnected)
+	client.setState(StateDisconnected)
+
+	if len(transitions) != 2 {
+		t.Fatalf("expected 2 transitions, got %d", len(transitions))
+	}
+	if transitions[0].old != StateDisconnected || transitions[0].new != StateConnected {
+		t.Errorf("unexpected first transition: %v -> %v", transitions[0].old, transitions[0].new)
+	}
+	if transitions[1].old != StateConnected || transitions[1].new != StateDisconnected {
+		t.Errorf("unexpected second transition: %v -> %v", transitions[1].old, transitions[1].new)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Shutdown tests
+// ---------------------------------------------------------------------------
+
+func TestShutdownRejectsRequests(t *testing.T) {
+	client := New()
+	defer client.Close()
+
+	client.setState(StateClosing)
+
+	err := client.requestInternal(ProtoID_KeepAlive, &keepalive.Request{}, &keepalive.Response{})
+	if !errors.Is(err, ErrClientClosing) {
+		t.Errorf("expected ErrClientClosing, got %v", err)
+	}
+}
+
+func WithOnStateChange(fn func(oldState, newState ConnState)) Option {
+	return func(o *ClientOptions) {
+		o.OnStateChange = fn
 	}
 }
