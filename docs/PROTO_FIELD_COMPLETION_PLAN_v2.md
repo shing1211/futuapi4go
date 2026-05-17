@@ -1107,3 +1107,93 @@ func GetUserInfoSimple(ctx context.Context, c *futuapi.Client) (*GetUserInfoResp
 ---
 
 *Plan generated 2026-05-17. Corresponds to futuapi4go v0.9.0 audit.*
+
+---
+
+## Implementation Status
+
+| Phase | Title | Released | Status |
+|-------|-------|----------|--------|
+| 1 | Push Wrapper Enrichment | v0.8.1 | ✅ Done |
+| 2 | Proto Field Gaps in pkg/ Wrappers | v0.8.1 | ✅ Done |
+| 3 | Missing Wrapper: Qot_GetRehab | v0.8.1 | ✅ Done |
+| 4 | Proto Type Leakage Fixes | v0.8.1 | ✅ Done |
+| 5 | MaxTrdQtys Price Fix | v0.8.1 | ✅ Done |
+| 6 | Client Type Enrichment | v0.8.1 | ✅ Done |
+| 7 | GetUserInfo Enrichment | v0.8.1 | ✅ Done |
+| 8 | GetDelayStatistics Cleanup | v0.8.1 | ✅ Done |
+| 9 | Consistency Fixes | v0.8.2 | ✅ Done |
+| 10 | Cross-Layer Field Audit | v0.8.4 | ✅ Done |
+
+---
+
+## Phase 10 — Cross-Layer Field Audit (Examples 00-20)
+
+Completed 2026-05-17. Audited all 21 demo examples (00–20) for missing proto→SDK→client→demo field coverage. Fixed 7 gaps across wrapper layers.
+
+### Gap A — PushTicker Missing Fields (examples 02, 09)
+
+- **Problem:** `client/push.go` `ParsePushTicker` mapper only mapped 7 of 15 proto `Ticker` fields.
+- **Fix:** Added `Time`, `Timestamp`, `PushDataType` to `client/types.go` `PushTicker` struct. Mapper now maps all 15 fields.
+- **Files:** `client/types.go`, `client/push.go`
+
+### Gap B — PushRT Missing Fields (examples 04, 10)
+
+- **Problem:** `client/push.go` `ParsePushRT` mapper only mapped 7 of 11 proto `TimeShare` fields.
+- **Fix:** Added `LastClosePrice` to `client/types.go` `PushRT` struct. Mapper now maps all 11 fields.
+- **Files:** `client/types.go`, `client/push.go`
+
+### Gap C — KLine Missing Pe (examples 06, 07, 15)
+
+- **Problem:** `client.KLine` struct had no `Pe` field. 3 of 4 KLine mappers also missed `IsBlank` and `TurnoverRate`.
+- **Fix:** Added `Pe` to `client/types.go` `KLine`. Updated all 4 mappers (`GetKLines`, `RequestHistoryKLWithLimit`, `GetHistoryKL`, `ParsePushKLine`) to map all 13 proto fields.
+- **Files:** `client/types.go`, `client/quote_api.go`, `client/push.go`
+
+### Gap D — StaticInfo Missing Fields (example 14, GetStaticInfo)
+
+- **Problem:** `client.StaticInfo` struct had only 5 fields (Code, Name, Type, ListTime, LotSize). Proto `SecurityStaticBasic` has 9 fields. `GetPlateSecurity` mapper only populated Code, Name, Type — skipped ListTime and LotSize too.
+- **Fix:** Added `Id`, `Delisting`, `ListTimestamp`, `ExchType` to `StaticInfo`. Both `GetStaticInfo` and `GetPlateSecurity` mappers now populate all 9 fields.
+- **Files:** `client/types.go`, `client/quote_api.go`
+
+### Gap E — GetCapitalFlow Drops Metadata (example 12)
+
+- **Problem:** `client.GetCapitalFlow` returned only `([]CapitalFlow, error)`, dropping `LastValidTime` and `LastValidTimestamp` from the S2C response.
+- **Fix:** New `client.CapitalFlowResponse` struct wraps `Items []CapitalFlow` + `LastValidTime` + `LastValidTimestamp`. Function now returns `(*CapitalFlowResponse, error)`.
+- **Breaking?** Yes. Callers must use `.Items` to iterate.
+- **Files:** `client/types.go`, `client/quote_api.go`
+
+### Gap F — GetMarketState Drops Code/Name (example 16)
+
+- **Problem:** `client.GetMarketState` returned bare `(int32, error)`, dropping `Security` (code) and `Name` from the S2C `MarketInfo`.
+- **Fix:** New `client.MarketStateResult` struct with `Code`, `Name`, `State`. Function now returns `(*MarketStateResult, error)`.
+- **Breaking?** Yes. Callers must use `.State` for the numeric value.
+- **Files:** `client/types.go`, `client/quote_api.go`
+
+---
+
+## Open Issues / Next Steps
+
+These items were identified during the audit but not yet addressed. Track them here for the next work session.
+
+### Priority: Medium
+
+- [ ] **Audit examples 21-96+** — The remaining ~80 demo examples may contain additional unmapped proto fields. Run the same cross-layer trace per example.
+- [ ] **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). Consider wrapping in the push path for safety, or leave as-is since demo accesses raw fields.
+- [ ] **GetHistoryOrderListResponse.OrderList** — Still uses `[]*trdcommon.Order` (raw proto). Phase 4 Issue #4 was partially deferred.
+- [ ] **GetDelayStatistics** — Still uses `WritePacket`/`ReadResponseContext` + raw proto types. Phase 8 was deferred (complex proto2 encoding issue).
+
+### Priority: Low
+
+- [ ] **Demo replace directive** — `futuapi4go-demo/go.mod` still has `replace github.com/shing1211/futuapi4go => ../futuapi4go`. Should remove when cutting a stable release.
+- [ ] **ProtoID constant consolidation** — Phase 9 Issue #19 was partially completed. Some local ProtoID constants may still exist alongside `constant.go` definitions.
+- [ ] **Subscribe/RegQotPush return type** — Phase 9 Issue #21 (change `(*SubscribeResponse, error)` → `error`). Breaking change, low adoption risk.
+- [ ] **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow.
+
+### Known Won't Fix
+
+- **GitHub push blocked** — Intermittent network issue (`Failed to connect to github.com port 443`). Tags `v0.8.2`, `v0.8.3`, `v0.8.4` pushed successfully when network is available. Gitee is the canonical remote.
+- **Nested proto pointers in client types** — `OptionExData`, `PreMarket`, `AfterMarket`, `FutureExData`, `WarrantExData`, `Overnight` intentionally omitted from `client.Quote` per design decision (see §1 above).
+
+---
+
+*Last updated: 2026-05-17. Corresponds to futuapi4go v0.8.4.*
