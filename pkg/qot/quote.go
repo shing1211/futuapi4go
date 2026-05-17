@@ -90,7 +90,7 @@ const (
 	ProtoID_GetFutureInfo           = 3218
 	ProtoID_GetIpoList              = 3217
 	ProtoID_GetHistoryKL           = 3101
-	ProtoID_GetRehab                = 3102
+	ProtoID_Qot_GetRehab              = 3102
 	ProtoID_GetHoldingChangeList    = 3208
 	ProtoID_RequestRehab            = 3105
 	ProtoID_GetUserSecurityGroup    = 3222

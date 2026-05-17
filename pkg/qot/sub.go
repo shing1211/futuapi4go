@@ -193,7 +193,7 @@ func GetSubInfo(ctx context.Context, c *futuapi.Client) (*GetSubInfoResponse, er
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetSubInfo: s2c is nil")
+		return nil, wrapError("GetSubInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetSubInfoResponse{
@@ -239,7 +239,7 @@ func GetSecuritySnapshot(ctx context.Context, c *futuapi.Client, req *GetSecurit
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetSecuritySnapshot: s2c is nil")
+		return nil, wrapError("GetSecuritySnapshot", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetSecuritySnapshotResponse{
@@ -287,7 +287,7 @@ func GetStaticInfo(ctx context.Context, c *futuapi.Client, req *GetStaticInfoReq
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetStaticInfo: s2c is nil")
+		return nil, wrapError("GetStaticInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetStaticInfoResponse{

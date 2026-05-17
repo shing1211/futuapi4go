@@ -59,7 +59,7 @@ func GetUserSecurity(ctx context.Context, c *futuapi.Client, groupName string) (
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetUserSecurity: s2c is nil")
+		return nil, wrapError("GetUserSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetUserSecurityResponse{
@@ -113,7 +113,7 @@ func GetUserSecurityGroup(ctx context.Context, c *futuapi.Client, req *GetUserSe
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetUserSecurityGroup: s2c is nil")
+		return nil, wrapError("GetUserSecurityGroup", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetUserSecurityGroupResponse{
@@ -249,7 +249,7 @@ func SetPriceReminder(ctx context.Context, c *futuapi.Client, req *SetPriceRemin
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("SetPriceReminder: s2c is nil")
+		return nil, wrapError("SetPriceReminder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &SetPriceReminderResponse{
@@ -304,7 +304,7 @@ func GetPriceReminder(ctx context.Context, c *futuapi.Client, security *qotcommo
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetPriceReminder: s2c is nil")
+		return nil, wrapError("GetPriceReminder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPriceReminderResponse{
@@ -432,7 +432,7 @@ func GetIpoList(ctx context.Context, c *futuapi.Client, req *GetIpoListRequest) 
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetIpoList: s2c is nil")
+		return nil, wrapError("GetIpoList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetIpoListResponse{

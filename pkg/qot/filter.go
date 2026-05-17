@@ -99,7 +99,7 @@ func StockFilter(ctx context.Context, c *futuapi.Client, req *StockFilterRequest
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("StockFilter: s2c is nil")
+		return nil, wrapError("StockFilter", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &StockFilterResponse{
@@ -331,7 +331,7 @@ func GetWarrant(ctx context.Context, c *futuapi.Client, req *GetWarrantRequest) 
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetWarrant: s2c is nil")
+		return nil, wrapError("GetWarrant", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetWarrantResponse{
@@ -434,7 +434,7 @@ func GetReference(ctx context.Context, c *futuapi.Client, req *GetReferenceReque
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetReference: s2c is nil")
+		return nil, wrapError("GetReference", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetReferenceResponse{

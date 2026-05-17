@@ -24,26 +24,26 @@ The SDK has reached **~99% API coverage** with all core features implemented acr
 | # | Item | Description | File(s) |
 |---|------|-------------|---------|
 | 1a | ~~**GetDelayStatistics**~~ ✅ DONE — Convert from raw proto types + `WritePacket`/`ReadResponseContext` to proper typed wrappers with nil guards. `QotPushDelayStatistics`, `ReqReplyDelayStatistics`, `PlaceOrderDelayStatistics`, `DelayStatisticsItem` structs added to `pkg/sys/system.go`. | `pkg/sys/system.go:224-253` |
-| 1b | **GetFlowSummaryResponse** — Replace `[]*trdflowsummary.FlowSummaryInfo` (raw proto) return type with wrapped `[]*FlowSummaryInfo`. Wrapper type already exists at `client/types.go:662`. | `pkg/trd/position.go:582` |
+| 1b | ~~**GetFlowSummaryResponse**~~ ✅ DONE — Replace `[]*trdflowsummary.FlowSummaryInfo` with wrapped `[]*trd.FlowSummaryInfo` in `pkg/trd/position.go:582`. Wrapper type added at `pkg/trd/position.go:580-592`. Nil guards on all 8 fields. | `pkg/trd/position.go:580-592` |
 | 1c | **Audit examples 21-99** — 107 examples in `futuapi4go-demo/examples/`, ~6 verified (StaticInfo, CapitalFlow, MarketState, PushTicker, PushRT, KLine Pe). ~60+ need cross-layer proto field trace for unmapped fields or raw proto leakage. | `futuapi4go-demo/examples/` |
 
 ### 🟡 Phase 2: Cleanup & Standardization (Low Priority)
 
 | # | Item | Description | File(s) |
 |---|------|-------------|---------|
-| 2a | **ProtoID constant consolidation** — Local ProtoID constants still exist in 6 files while centralized constants are in `pkg/constant/constant.go`. `ProtoID_Qot_GetTradeDate (3225)` and `ProtoID_Qot_GetRehab (3102)` are not in `constant.go`. | `pkg/qot/quote.go`, `pkg/qot/sub.go`, `pkg/qot/trade_date.go`, `pkg/trd/trade.go`, `pkg/sys/system.go`, `pkg/push/qot_push.go` |
-| 2b | **S2C nil wrapError standardization** — 13+ functions use `fmt.Errorf("FuncName: s2c is nil")` instead of `wrapError()`. Examples: GetTicker, GetRT, GetBroker, GetFunds, GetPositionList, GetOrderList, GetHistoryOrderList. | Various `pkg/*/*.go` |
-| 2c | **Replace GetXxx() with direct nil checks** — Codebase predominantly uses `GetXxx()` proto accessor pattern. Apply to new/changed code per existing convention. | Widespread |
-| 2d | **FutureInfo.TradeTimeList** — Missing field on wrapper struct `client/types.go:328-345` | `client/types.go` |
-| 2e | **IpoData.CnExData/HkExData/UsExData** — IPO extended data fields not present on `client/types.go:355-360` | `client/types.go` |
+| 2a | ~~**ProtoID constant consolidation**~~ ✅ DONE — `ProtoID_Qot_GetTradeDate (3225)` and `ProtoID_Qot_GetRehab (3102)` added to `pkg/constant/constant.go`. Removed duplicate local constants from `pkg/qot/trade_date.go` and `pkg/qot/quote.go`. References updated in `pkg/qot/trade_date.go` and `pkg/qot/holding.go`. | `pkg/constant/constant.go:136-137`, `pkg/qot/trade_date.go:13`, `pkg/qot/quote.go:93` |
+| 2b | ~~**S2C nil wrapError standardization**~~ ✅ DONE — 50+ `fmt.Errorf("FuncName: s2c is nil")` replaced with `wrapError(..., int32(common.RetType_RetType_Unknown), "s2c is nil")` across all pkg files. Removed unused `fmt` import from `pkg/trd/trade.go`. | 17 files across `pkg/qot/`, `pkg/trd/`, `pkg/sys/` |
+| 2c | ~~**Replace GetXxx() with direct nil checks**~~ — Already applied in new wrappers (GetDelayStatistics, GetFlowSummary) and client API layer. Not applied to existing legacy code per codebase convention. | Widespread — deferred |
+| 2d | ~~**FutureInfo.TradeTimeList**~~ ✅ N/A — `pkg/qot/options.go` already uses `[]*qotgetfutureinfo.TradeTime` (wrapped at client layer). No change needed. | `pkg/qot/options.go:218` |
+| 2e | ~~**IpoData.CnExData/HkExData/UsExData**~~ ✅ N/A — `pkg/qot/user.go` already wraps all three extended data types (CNIpoExData, HKIpoExData, USIpoExData) in `IpoData` struct. No change needed. | `pkg/qot/user.go:398-406` |
 
 ### 🟢 Phase 3: Non-Blocking Improvements
 
-| # | Item | Description |
-|---|------|-------------|
-| 3a | **Demo replace directive** — Remove `replace github.com/shing1211/futuapi4go => ../futuapi4go` from `futuapi4go-demo/go.mod` when cutting a stable release. |
-| 3b | **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow. |
-| 3c | **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). |
+| # | Item | Description | Status |
+|---|------|-------------|--------|
+| 3a | ~~**Demo replace directive**~~ ✅ DONE — Removed `replace github.com/shing1211/futuapi4go => ../futuapi4go` from `futuapi4go-demo/go.mod`. `go mod tidy` resolved all dependencies from v0.8.5 release. | Done |
+| 3b | **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow. | Pending |
+| 3c | **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). | Pending |
 
 ---
 

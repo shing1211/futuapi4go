@@ -89,7 +89,7 @@ func GetCapitalFlow(ctx context.Context, c *futuapi.Client, req *GetCapitalFlowR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetCapitalFlow: s2c is nil")
+		return nil, wrapError("GetCapitalFlow", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetCapitalFlowResponse{
@@ -159,7 +159,7 @@ func GetCapitalDistribution(ctx context.Context, c *futuapi.Client, security *qo
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetCapitalDistribution: s2c is nil")
+		return nil, wrapError("GetCapitalDistribution", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetCapitalDistributionResponse{

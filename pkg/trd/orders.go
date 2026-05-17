@@ -192,7 +192,7 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("PlaceOrder: s2c is nil")
+		return nil, wrapError("PlaceOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &PlaceOrderResponse{
@@ -317,7 +317,7 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("ModifyOrder: s2c is nil")
+		return nil, wrapError("ModifyOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &ModifyOrderResponse{
@@ -389,7 +389,7 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("ReconfirmOrder: s2c is nil")
+		return nil, wrapError("ReconfirmOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &ReconfirmOrderResponse{

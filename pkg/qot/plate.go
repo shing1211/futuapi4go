@@ -77,7 +77,7 @@ func GetPlateSet(ctx context.Context, c *futuapi.Client, req *GetPlateSetRequest
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetPlateSet: s2c is nil")
+		return nil, wrapError("GetPlateSet", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPlateSetResponse{
@@ -134,7 +134,7 @@ func GetPlateSecurity(ctx context.Context, c *futuapi.Client, req *GetPlateSecur
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetPlateSecurity: s2c is nil")
+		return nil, wrapError("GetPlateSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetPlateSecurityResponse{
@@ -178,7 +178,7 @@ func GetOwnerPlate(ctx context.Context, c *futuapi.Client, req *GetOwnerPlateReq
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOwnerPlate: s2c is nil")
+		return nil, wrapError("GetOwnerPlate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetOwnerPlateResponse{

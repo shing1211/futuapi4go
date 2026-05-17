@@ -111,7 +111,7 @@ func GetGlobalState(ctx context.Context, c *futuapi.Client) (*GetGlobalStateResp
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetGlobalState: s2c is nil")
+		return nil, wrapError("GetGlobalState", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetGlobalStateResponse{
@@ -480,7 +480,7 @@ func GetUsedQuota(ctx context.Context, c *futuapi.Client) (*GetUsedQuotaResponse
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetUsedQuota: s2c is nil")
+		return nil, wrapError("GetUsedQuota", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetUsedQuotaResponse{
@@ -534,7 +534,7 @@ func TestCmd(ctx context.Context, c *futuapi.Client, req *TestCmdRequest) (*Test
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("TestCmd: s2c is nil")
+		return nil, wrapError("TestCmd", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &TestCmdResponse{

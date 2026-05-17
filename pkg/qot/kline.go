@@ -99,7 +99,7 @@ func RequestHistoryKL(ctx context.Context, c *futuapi.Client, req *RequestHistor
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("RequestHistoryKL: s2c is nil")
+		return nil, wrapError("RequestHistoryKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &RequestHistoryKLResponse{
@@ -189,7 +189,7 @@ func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLReque
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryKL: s2c is nil")
+		return nil, wrapError("GetHistoryKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetHistoryKLResponse{
@@ -312,7 +312,7 @@ func GetHistoryKLPoints(ctx context.Context, c *futuapi.Client, req *GetHistoryK
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryKLPoints: s2c is nil")
+		return nil, wrapError("GetHistoryKLPoints", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	klPointList := s2c.GetKlPointList()
@@ -388,7 +388,7 @@ func RequestHistoryKLQuota(ctx context.Context, c *futuapi.Client, req *RequestH
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("RequestHistoryKLQuota: s2c is nil")
+		return nil, wrapError("RequestHistoryKLQuota", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &RequestHistoryKLQuotaResponse{

@@ -132,6 +132,8 @@ const (
 	ProtoID_Qot_GetUserSecurityGroup    = 3222 // 获取自选股分组
 	ProtoID_Qot_GetMarketState          = 3223 // 获取指定品种的市场状态
 	ProtoID_Qot_GetOptionExpirationDate = 3224 // 获取期权到期日
+	ProtoID_Qot_GetTradeDate            = 3225 // 获取交易日
+	ProtoID_Qot_GetRehab                = 3102 // 获取复权信息
 )
 
 // AllPushIDs returns all push notification ProtoIDs

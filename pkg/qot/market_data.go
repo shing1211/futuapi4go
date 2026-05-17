@@ -200,7 +200,7 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetTicker: s2c is nil")
+		return nil, wrapError("GetTicker", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetTickerResponse{
@@ -281,7 +281,7 @@ func GetRT(ctx context.Context, c *futuapi.Client, req *GetRTRequest) (*GetRTRes
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetRT: s2c is nil")
+		return nil, wrapError("GetRT", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetRTResponse{
@@ -359,7 +359,7 @@ func GetBroker(ctx context.Context, c *futuapi.Client, req *GetBrokerRequest) (*
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetBroker: s2c is nil")
+		return nil, wrapError("GetBroker", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetBrokerResponse{

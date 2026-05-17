@@ -5,12 +5,9 @@ import (
 	"fmt"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
-)
-
-const (
-	ProtoID_Qot_GetTradeDate = 3225
 )
 
 type GetTradeDateRequest struct {
@@ -41,7 +38,7 @@ func GetTradeDate(ctx context.Context, c *futuapi.Client, req *GetTradeDateReque
 	}
 
 	var rsp qotgettradedate.Response
-	if err := c.RequestContext(ctx, ProtoID_Qot_GetTradeDate, &qotgettradedate.Request{C2S: c2s}, &rsp); err != nil {
+	if err := c.RequestContext(ctx, constant.ProtoID_Qot_GetTradeDate, &qotgettradedate.Request{C2S: c2s}, &rsp); err != nil {
 		return nil, err
 	}
 

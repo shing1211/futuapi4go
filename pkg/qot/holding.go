@@ -21,6 +21,7 @@ import (
 	"fmt"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
@@ -71,7 +72,7 @@ func GetHoldingChangeList(ctx context.Context, c *futuapi.Client, req *GetHoldin
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetHoldingChangeList: s2c is nil")
+		return nil, wrapError("GetHoldingChangeList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetHoldingChangeListResponse{
@@ -116,7 +117,7 @@ func RequestRehab(ctx context.Context, c *futuapi.Client, req *RequestRehabReque
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("RequestRehab: s2c is nil")
+		return nil, wrapError("RequestRehab", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &RequestRehabResponse{
@@ -151,7 +152,7 @@ func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*Ge
 	pkt := &qotgetrehab.Request{C2S: c2s}
 	var rsp qotgetrehab.Response
 
-	if err := c.RequestContext(ctx, ProtoID_GetRehab, pkt, &rsp); err != nil {
+	if err := c.RequestContext(ctx, constant.ProtoID_Qot_GetRehab, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -161,7 +162,7 @@ func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*Ge
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetRehab: s2c is nil")
+		return nil, wrapError("GetRehab", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetRehabResponse{

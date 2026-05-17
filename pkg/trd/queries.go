@@ -86,7 +86,7 @@ func GetOrderList(ctx context.Context, c *futuapi.Client, req *GetOrderListReque
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOrderList: s2c is nil")
+		return nil, wrapError("GetOrderList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderListResponse{
@@ -204,7 +204,7 @@ func GetOrderFillList(ctx context.Context, c *futuapi.Client, req *GetOrderFillL
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOrderFillList: s2c is nil")
+		return nil, wrapError("GetOrderFillList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderFillListResponse{
@@ -306,7 +306,7 @@ func GetOrderFee(ctx context.Context, c *futuapi.Client, req *GetOrderFeeRequest
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOrderFee: s2c is nil")
+		return nil, wrapError("GetOrderFee", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderFeeResponse{
@@ -392,7 +392,7 @@ func GetHistoryOrderList(ctx context.Context, c *futuapi.Client, req *GetHistory
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryOrderList: s2c is nil")
+		return nil, wrapError("GetHistoryOrderList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	orderList := make([]*Order, 0, len(s2c.GetOrderList()))
@@ -497,7 +497,7 @@ func GetHistoryOrderFillList(ctx context.Context, c *futuapi.Client, req *GetHis
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetHistoryOrderFillList: s2c is nil")
+		return nil, wrapError("GetHistoryOrderFillList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	list := make([]*OrderFill, 0, len(s2c.GetOrderFillList()))

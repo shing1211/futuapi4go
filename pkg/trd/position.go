@@ -142,7 +142,7 @@ func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*Ge
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetFunds: s2c is nil")
+		return nil, wrapError("GetFunds", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	f := s2c.GetFunds()
@@ -312,7 +312,7 @@ func GetPositionList(ctx context.Context, c *futuapi.Client, req *GetPositionLis
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetPositionList: s2c is nil")
+		return nil, wrapError("GetPositionList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPositionListResponse{
@@ -425,7 +425,7 @@ func GetMarginRatio(ctx context.Context, c *futuapi.Client, req *GetMarginRatioR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetMarginRatio: s2c is nil")
+		return nil, wrapError("GetMarginRatio", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetMarginRatioResponse{
@@ -547,7 +547,7 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetMaxTrdQtys: s2c is nil")
+		return nil, wrapError("GetMaxTrdQtys", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	m := s2c.GetMaxTrdQtys()
@@ -652,7 +652,7 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetFlowSummary: s2c is nil")
+		return nil, wrapError("GetFlowSummary", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	flowSummaryList := s2c.GetFlowSummaryInfoList()

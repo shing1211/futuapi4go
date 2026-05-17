@@ -36,7 +36,6 @@ package trd
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"google.golang.org/protobuf/proto"
@@ -162,7 +161,7 @@ func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory constant.Trd
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetAccList: s2c is nil")
+		return nil, wrapError("GetAccList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetAccListResponse{

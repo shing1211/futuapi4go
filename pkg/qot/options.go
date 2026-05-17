@@ -74,7 +74,7 @@ func GetOptionExpirationDate(ctx context.Context, c *futuapi.Client, req *GetOpt
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOptionExpirationDate: s2c is nil")
+		return nil, wrapError("GetOptionExpirationDate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOptionExpirationDateResponse{
@@ -157,7 +157,7 @@ func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetOptionChain: s2c is nil")
+		return nil, wrapError("GetOptionChain", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOptionChainResponse{
@@ -252,7 +252,7 @@ func GetFutureInfo(ctx context.Context, c *futuapi.Client, req *GetFutureInfoReq
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetFutureInfo: s2c is nil")
+		return nil, wrapError("GetFutureInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetFutureInfoResponse{

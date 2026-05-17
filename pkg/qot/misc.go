@@ -75,7 +75,7 @@ func RequestTradeDate(ctx context.Context, c *futuapi.Client, req *RequestTradeD
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("RequestTradeDate: s2c is nil")
+		return nil, wrapError("RequestTradeDate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &RequestTradeDateResponse{
@@ -135,7 +135,7 @@ func GetSuspend(ctx context.Context, c *futuapi.Client, req *GetSuspendRequest) 
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetSuspend: s2c is nil")
+		return nil, wrapError("GetSuspend", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetSuspendResponse{
@@ -218,7 +218,7 @@ func GetCodeChange(ctx context.Context, c *futuapi.Client, req *GetCodeChangeReq
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetCodeChange: s2c is nil")
+		return nil, wrapError("GetCodeChange", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetCodeChangeResponse{
@@ -288,7 +288,7 @@ func GetMarketState(ctx context.Context, c *futuapi.Client, req *GetMarketStateR
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetMarketState: s2c is nil")
+		return nil, wrapError("GetMarketState", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetMarketStateResponse{
