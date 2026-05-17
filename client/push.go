@@ -23,15 +23,20 @@ func ParsePushQuote(body []byte) (*PushQuote, error) {
 		return nil, err
 	}
 	return &PushQuote{
-		Market:    data.Security.GetMarket(),
-		Code:      data.Security.GetCode(),
-		Name:      data.Name,
-		CurPrice:  data.CurPrice,
-		OpenPrice: data.OpenPrice,
-		HighPrice: data.HighPrice,
-		LowPrice:  data.LowPrice,
-		Volume:    data.Volume,
-		Turnover:  data.Turnover,
+		Market:       data.Security.GetMarket(),
+		Code:         data.Security.GetCode(),
+		Name:         data.Name,
+		CurPrice:     data.CurPrice,
+		OpenPrice:    data.OpenPrice,
+		HighPrice:    data.HighPrice,
+		LowPrice:     data.LowPrice,
+		Volume:       data.Volume,
+		Turnover:     data.Turnover,
+		LastClose:    data.LastClosePrice,
+		TurnoverRate: data.TurnoverRate,
+		Amplitude:    data.Amplitude,
+		IsSuspended:  data.IsSuspended,
+		SecStatus:    data.SecStatus,
 	}, nil
 }
 
@@ -43,10 +48,11 @@ func ParsePushKLine(body []byte) (*PushKLine, error) {
 	}
 	kl := data.KLList[0]
 	return &PushKLine{
-		Market: data.Security.GetMarket(),
-		Code:   data.Security.GetCode(),
-		Name:   data.Name,
-		KLType: data.KlType,
+		Market:    data.Security.GetMarket(),
+		Code:      data.Security.GetCode(),
+		Name:      data.Name,
+		KLType:    data.KlType,
+		RehabType: data.RehabType,
 		KLine: KLine{
 			Time:         kl.Time,
 			IsBlank:      kl.IsBlank,
@@ -72,9 +78,11 @@ func ParsePushOrderBook(body []byte) (*PushOrderBook, error) {
 		return nil, err
 	}
 	ob := &PushOrderBook{
-		Market: data.Security.GetMarket(),
-		Code:   data.Security.GetCode(),
-		Name:   data.Name,
+		Market:         data.Security.GetMarket(),
+		Code:           data.Security.GetCode(),
+		Name:           data.Name,
+		SvrRecvTimeBid: data.SvrRecvTimeBid,
+		SvrRecvTimeAsk: data.SvrRecvTimeAsk,
 	}
 	for _, b := range data.OrderBookBidList {
 		ob.Bids = append(ob.Bids, OBItem{
@@ -157,12 +165,16 @@ func ParsePushBroker(body []byte) (*PushBroker, error) {
 		ob.Asks = append(ob.Asks, BrokerItem{
 			Volume:   a.GetVolume(),
 			BrokerID: int32(a.GetId()),
+			Name:     a.GetName(),
+			Pos:      a.GetPos(),
 		})
 	}
 	for _, b := range data.BidBrokerList {
 		ob.Bids = append(ob.Bids, BrokerItem{
 			Volume:   b.GetVolume(),
 			BrokerID: int32(b.GetId()),
+			Name:     b.GetName(),
+			Pos:      b.GetPos(),
 		})
 	}
 	return ob, nil

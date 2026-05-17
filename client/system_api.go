@@ -70,6 +70,26 @@ func GetUserInfo(ctx context.Context, c *Client) (*UserInfo, error) {
 		CnQotRight:           resp.CnQotRight,
 		SubQuota:             resp.SubQuota,
 		HistoryKLQuota:       resp.HistoryKLQuota,
+		HkOptionQotRight:     resp.HkOptionQotRight,
+		HasUSOptionQotRight:  resp.HasUSOptionQotRight,
+		HkFutureQotRight:     resp.HkFutureQotRight,
+		UsFutureQotRight:     resp.UsFutureQotRight,
+		UsOptionQotRight:     resp.UsOptionQotRight,
+		WebKey:               resp.WebKey,
+		WebJumpUrlHead:       resp.WebJumpUrlHead,
+		UserAttribution:      resp.UserAttribution,
+		UpdateWhatsNew:       resp.UpdateWhatsNew,
+		UpdateType:           resp.UpdateType,
+		UsIndexQotRight:      resp.UsIndexQotRight,
+		UsOtcQotRight:        resp.UsOtcQotRight,
+		UsCMEFutureQotRight:  resp.UsCMEFutureQotRight,
+		UsCBOTFutureQotRight: resp.UsCBOTFutureQotRight,
+		UsNYMEXFutureQotRight: resp.UsNYMEXFutureQotRight,
+		UsCOMEXFutureQotRight: resp.UsCOMEXFutureQotRight,
+		UsCBOEFutureQotRight:  resp.UsCBOEFutureQotRight,
+		SgFutureQotRight:      resp.SgFutureQotRight,
+		JpFutureQotRight:      resp.JpFutureQotRight,
+		IsAppNNOrMM:           resp.IsAppNNOrMM,
 	}, nil
 }
 
@@ -78,22 +98,6 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 	resp, err := sys.GetDelayStatistics(ctx, c.inner, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	if len(resp.QotPushStatisticsList) == 0 {
-		return &DelayStatistics{}, nil
-	}
-
-	stats := resp.QotPushStatisticsList[0]
-	items := make([]DelayStatisticsItem, 0, len(stats.ItemList))
-	for _, item := range stats.ItemList {
-		items = append(items, DelayStatisticsItem{
-			Begin:           item.Begin,
-			End:             item.End,
-			Count:           item.Count,
-			Proportion:      float64(item.Proportion),
-			CumulativeRatio: float64(item.CumulativeRatio),
-		})
 	}
 
 	reqReplyList := make([]ReqReplyStatisticsItem, 0, len(resp.ReqReplyStatisticsList))
@@ -119,14 +123,51 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 		})
 	}
 
-	return &DelayStatistics{
-		QotPushType:    stats.QotPushType,
-		DelayAvg:       float64(stats.DelayAvg),
-		Count:          stats.Count,
-		ItemList:       items,
+	result := &DelayStatistics{
 		ReqReplyList:   reqReplyList,
 		PlaceOrderList: placeOrderList,
-	}, nil
+	}
+
+	if len(resp.QotPushStatisticsList) > 0 {
+		stats := resp.QotPushStatisticsList[0]
+		result.QotPushType = stats.QotPushType
+		result.DelayAvg = float64(stats.DelayAvg)
+		result.Count = stats.Count
+		items := make([]DelayStatisticsItem, 0, len(stats.ItemList))
+		for _, item := range stats.ItemList {
+			items = append(items, DelayStatisticsItem{
+				Begin:           item.Begin,
+				End:             item.End,
+				Count:           item.Count,
+				Proportion:      float64(item.Proportion),
+				CumulativeRatio: float64(item.CumulativeRatio),
+			})
+		}
+		result.ItemList = items
+
+		pushList := make([]PushDelayStatisticsItem, 0, len(resp.QotPushStatisticsList))
+		for _, s := range resp.QotPushStatisticsList {
+			si := make([]DelayStatisticsItem, 0, len(s.ItemList))
+			for _, item := range s.ItemList {
+				si = append(si, DelayStatisticsItem{
+					Begin:           item.Begin,
+					End:             item.End,
+					Count:           item.Count,
+					Proportion:      float64(item.Proportion),
+					CumulativeRatio: float64(item.CumulativeRatio),
+				})
+			}
+			pushList = append(pushList, PushDelayStatisticsItem{
+				QotPushType: s.QotPushType,
+				DelayAvg:    float64(s.DelayAvg),
+				Count:       s.Count,
+				ItemList:    si,
+			})
+		}
+		result.QotPushList = pushList
+	}
+
+	return result, nil
 }
 
 // GetTechnicalUnusual queries technical unusual stocks via SkillWrapAPI.

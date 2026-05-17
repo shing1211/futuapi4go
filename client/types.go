@@ -6,26 +6,41 @@ import "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 
 // Quote represents a real-time quote.
 type Quote struct {
-	Symbol         string  `json:"symbol"`
-	Market         int32   `json:"market"`
-	Price          float64 `json:"price"`
-	Open           float64 `json:"open"`
-	High           float64 `json:"high"`
-	Low            float64 `json:"low"`
-	Volume         int64   `json:"volume"`
-	Timestamp      string  `json:"timestamp"`
-	Name           string  `json:"name"`
-	LastClose      float64 `json:"lastClose"`
-	Turnover       float64 `json:"turnover"`
-	TurnoverRate   float64 `json:"turnoverRate"`
-	Amplitude      float64 `json:"amplitude"`
-	IsSuspended    bool    `json:"isSuspended"`
-	SecStatus      int32   `json:"secStatus"`
-	ListTime       string  `json:"listTime"`
-	PriceSpread    float64 `json:"priceSpread"`
-	DarkStatus     int32   `json:"darkStatus"`
-	ListTimestamp  float64 `json:"listTimestamp"`
+	Symbol          string  `json:"symbol"`
+	Market          int32   `json:"market"`
+	Price           float64 `json:"price"`
+	Open            float64 `json:"open"`
+	High            float64 `json:"high"`
+	Low             float64 `json:"low"`
+	Volume          int64   `json:"volume"`
+	Timestamp       string  `json:"timestamp"`
+	Name            string  `json:"name"`
+	LastClose       float64 `json:"lastClose"`
+	Turnover        float64 `json:"turnover"`
+	TurnoverRate    float64 `json:"turnoverRate"`
+	Amplitude       float64 `json:"amplitude"`
+	IsSuspended     bool    `json:"isSuspended"`
+	SecStatus       int32   `json:"secStatus"`
+	ListTime        string  `json:"listTime"`
+	PriceSpread     float64 `json:"priceSpread"`
+	DarkStatus      int32   `json:"darkStatus"`
+	ListTimestamp   float64 `json:"listTimestamp"`
 	UpdateTimestamp float64 `json:"updateTimestamp"`
+	PreMarket       *PreAfterMarketData `json:"preMarket,omitempty"`
+	AfterMarket     *PreAfterMarketData `json:"afterMarket,omitempty"`
+	Overnight       *PreAfterMarketData `json:"overnight,omitempty"`
+}
+
+// PreAfterMarketData represents pre-market, after-market, or overnight trading data.
+type PreAfterMarketData struct {
+	Price     float64 `json:"price"`
+	HighPrice float64 `json:"highPrice"`
+	LowPrice  float64 `json:"lowPrice"`
+	Volume    int64   `json:"volume"`
+	Turnover  float64 `json:"turnover"`
+	ChangeVal float64 `json:"changeVal"`
+	ChangeRate float64 `json:"changeRate"`
+	Amplitude float64 `json:"amplitude"`
 }
 
 // KLine represents a K-line (candlestick) data point.
@@ -342,6 +357,15 @@ type FutureInfo struct {
 	QuoteUnit          string `json:"quoteUnit"`
 	TimeZone           string `json:"timeZone"`
 	ExchangeFormatUrl  string `json:"exchangeFormatUrl"`
+	Security           *qotcommon.Security `json:"security,omitempty"`
+	Origin             *qotcommon.Security `json:"origin,omitempty"`
+	TradeTimeList      []TradeTime `json:"tradeTimeList,omitempty"`
+}
+
+// TradeTime represents a trading session time range.
+type TradeTime struct {
+	Begin float64 `json:"begin"`
+	End   float64 `json:"end"`
 }
 
 // Plate represents a market plate (æ¿å—).
@@ -488,15 +512,22 @@ type Snapshot struct {
 	LowestHistoryPrice      float64 `json:"lowestHistoryPrice"`
 	SecStatus               int32 `json:"secStatus"`
 	ClosePrice5Minute       float64 `json:"closePrice5Minute"`
+	PreMarket               *PreAfterMarketData `json:"preMarket,omitempty"`
+	AfterMarket             *PreAfterMarketData `json:"afterMarket,omitempty"`
+	Overnight               *PreAfterMarketData `json:"overnight,omitempty"`
 }
 
 // CodeChangeInfo represents information about a code change.
 type CodeChangeInfo struct {
-	Type            int32 `json:"type"`
-	Security        *qotcommon.Security `json:"security"`
-	RelatedSecurity *qotcommon.Security `json:"relatedSecurity"`
-	PublicTime      string `json:"publicTime"`
-	EffectiveTime   string `json:"effectiveTime"`
+	Type               int32 `json:"type"`
+	Security           *qotcommon.Security `json:"security"`
+	RelatedSecurity    *qotcommon.Security `json:"relatedSecurity"`
+	PublicTime         string `json:"publicTime"`
+	PublicTimestamp    float64 `json:"publicTimestamp"`
+	EffectiveTime      string `json:"effectiveTime"`
+	EffectiveTimestamp float64 `json:"effectiveTimestamp"`
+	EndTime            string `json:"endTime"`
+	EndTimestamp       float64 `json:"endTimestamp"`
 }
 
 // GlobalState represents global connection state.
@@ -537,6 +568,26 @@ type UserInfo struct {
 	CnQotRight           int32  `json:"cnQotRight"`
 	SubQuota             int32  `json:"subQuota"`
 	HistoryKLQuota       int32  `json:"historyKLQuota"`
+	HkOptionQotRight     int32  `json:"hkOptionQotRight"`
+	HasUSOptionQotRight  bool   `json:"hasUSOptionQotRight"`
+	HkFutureQotRight     int32  `json:"hkFutureQotRight"`
+	UsFutureQotRight     int32  `json:"usFutureQotRight"`
+	UsOptionQotRight     int32  `json:"usOptionQotRight"`
+	WebKey               string `json:"webKey"`
+	WebJumpUrlHead       string `json:"webJumpUrlHead"`
+	UserAttribution      int32  `json:"userAttribution"`
+	UpdateWhatsNew       string `json:"updateWhatsNew"`
+	UpdateType           int32  `json:"updateType"`
+	UsIndexQotRight      int32  `json:"usIndexQotRight"`
+	UsOtcQotRight        int32  `json:"usOtcQotRight"`
+	UsCMEFutureQotRight  int32  `json:"usCMEFutureQotRight"`
+	UsCBOTFutureQotRight int32  `json:"usCBOTFutureQotRight"`
+	UsNYMEXFutureQotRight int32 `json:"usNYMEXFutureQotRight"`
+	UsCOMEXFutureQotRight int32 `json:"usCOMEXFutureQotRight"`
+	UsCBOEFutureQotRight  int32 `json:"usCBOEFutureQotRight"`
+	SgFutureQotRight      int32 `json:"sgFutureQotRight"`
+	JpFutureQotRight      int32 `json:"jpFutureQotRight"`
+	IsAppNNOrMM           bool  `json:"isAppNNOrMM"`
 }
 
 // DelayStatistics represents delay statistics for Qot push.
@@ -547,6 +598,15 @@ type DelayStatistics struct {
 	ItemList       []DelayStatisticsItem `json:"itemList"`
 	ReqReplyList   []ReqReplyStatisticsItem `json:"reqReplyList"`
 	PlaceOrderList []PlaceOrderStatisticsItem `json:"placeOrderList"`
+	QotPushList    []PushDelayStatisticsItem `json:"qotPushList,omitempty"`
+}
+
+// PushDelayStatisticsItem represents delay statistics for a single push type.
+type PushDelayStatisticsItem struct {
+	QotPushType int32 `json:"qotPushType"`
+	DelayAvg    float64 `json:"delayAvg"`
+	Count       int32 `json:"count"`
+	ItemList    []DelayStatisticsItem `json:"itemList"`
 }
 
 // DelayStatisticsItem represents a single delay statistics item.
@@ -626,25 +686,34 @@ type HoldingChangeInfo struct {
 	Timestamp    float64 `json:"timestamp"`
 }
 
-// RehabInfo represents rehabilitation (å¤æƒ) data.
+// RehabInfo represents rehabilitation (复权) data.
 type RehabInfo struct {
-	Time       string `json:"time"`
-	FwdFactorA float64 `json:"fwdFactorA"`
-	FwdFactorB float64 `json:"fwdFactorB"`
-	BwdFactorA float64 `json:"bwdFactorA"`
-	BwdFactorB float64 `json:"bwdFactorB"`
-	SplitBase  int32 `json:"splitBase"`
-	SplitErt   int32 `json:"splitErt"`
-	JoinBase   int32 `json:"joinBase"`
-	JoinErt    int32 `json:"joinErt"`
-	BonusBase  int32 `json:"bonusBase"`
-	BonusErt   int32 `json:"bonusErt"`
-	AllotBase  int32 `json:"allotBase"`
-	AllotErt   int32 `json:"allotErt"`
-	AllotPrice float64 `json:"allotPrice"`
+	Time           string  `json:"time"`
+	CompanyActFlag int64   `json:"companyActFlag"`
+	FwdFactorA     float64 `json:"fwdFactorA"`
+	FwdFactorB     float64 `json:"fwdFactorB"`
+	BwdFactorA     float64 `json:"bwdFactorA"`
+	BwdFactorB     float64 `json:"bwdFactorB"`
+	SplitBase      int32   `json:"splitBase"`
+	SplitErt       int32   `json:"splitErt"`
+	JoinBase       int32   `json:"joinBase"`
+	JoinErt        int32   `json:"joinErt"`
+	BonusBase      int32   `json:"bonusBase"`
+	BonusErt       int32   `json:"bonusErt"`
+	TransferBase   int32   `json:"transferBase"`
+	TransferErt    int32   `json:"transferErt"`
+	AllotBase      int32   `json:"allotBase"`
+	AllotErt       int32   `json:"allotErt"`
+	AllotPrice     float64 `json:"allotPrice"`
+	AddBase        int32   `json:"addBase"`
+	AddErt         int32   `json:"addErt"`
+	AddPrice       float64 `json:"addPrice"`
+	Dividend       float64 `json:"dividend"`
+	SpDividend     float64 `json:"spDividend"`
+	SpinOffBase    float64 `json:"spinOffBase"`
+	SpinOffErt     float64 `json:"spinOffErt"`
+	Timestamp      float64 `json:"timestamp"`
 }
-
-// HistoryKLQuotaInfo represents historical K-line quota info.
 type HistoryKLQuotaInfo struct {
 	UsedQuota   int32 `json:"usedQuota"`
 	RemainQuota int32 `json:"remainQuota"`
@@ -710,6 +779,7 @@ type AccTradingInfo struct {
 	MaxBuyBack          float64 `json:"maxBuyBack"`
 	LongRequiredIM      float64 `json:"longRequiredIM"`
 	ShortRequiredIM     float64 `json:"shortRequiredIM"`
+	Session             int32   `json:"session"`
 }
 
 // MaxTrdQtysInfo represents maximum tradable quantities.
@@ -721,37 +791,46 @@ type MaxTrdQtysInfo struct {
 	MaxBuyBack          float64 `json:"maxBuyBack"`
 	LongRequiredIM      float64 `json:"longRequiredIM"`
 	ShortRequiredIM     float64 `json:"shortRequiredIM"`
+	Session             int32   `json:"session"`
 }
 
 // PushQuote represents a parsed real-time quote push notification.
 type PushQuote struct {
-	Market    int32 `json:"market"`
-	Code      string `json:"code"`
-	Name      string `json:"name"`
-	CurPrice  float64 `json:"curPrice"`
-	OpenPrice float64 `json:"openPrice"`
-	HighPrice float64 `json:"highPrice"`
-	LowPrice  float64 `json:"lowPrice"`
-	Volume    int64 `json:"volume"`
-	Turnover  float64 `json:"turnover"`
+	Market     int32   `json:"market"`
+	Code       string  `json:"code"`
+	Name       string  `json:"name"`
+	CurPrice   float64 `json:"curPrice"`
+	OpenPrice  float64 `json:"openPrice"`
+	HighPrice  float64 `json:"highPrice"`
+	LowPrice   float64 `json:"lowPrice"`
+	Volume     int64   `json:"volume"`
+	Turnover   float64 `json:"turnover"`
+	LastClose  float64 `json:"lastClose"`
+	TurnoverRate float64 `json:"turnoverRate"`
+	Amplitude  float64 `json:"amplitude"`
+	IsSuspended bool   `json:"isSuspended"`
+	SecStatus  int32   `json:"secStatus"`
 }
 
 // PushKLine represents a parsed K-line push notification.
 type PushKLine struct {
-	Market int32 `json:"market"`
-	Code   string `json:"code"`
-	Name   string `json:"name"`
-	KLType int32 `json:"kLType"`
+	Market    int32 `json:"market"`
+	Code      string `json:"code"`
+	Name      string `json:"name"`
+	KLType    int32 `json:"kLType"`
+	RehabType int32 `json:"rehabType"`
 	KLine
 }
 
 // PushOrderBook represents a parsed order book push notification.
 type PushOrderBook struct {
-	Market int32 `json:"market"`
-	Code   string `json:"code"`
-	Name   string `json:"name"`
-	Bids   []OBItem `json:"bids"`
-	Asks   []OBItem `json:"asks"`
+	Market          int32  `json:"market"`
+	Code            string `json:"code"`
+	Name            string `json:"name"`
+	Bids            []OBItem `json:"bids"`
+	Asks            []OBItem `json:"asks"`
+	SvrRecvTimeBid  string  `json:"svrRecvTimeBid"`
+	SvrRecvTimeAsk  string  `json:"svrRecvTimeAsk"`
 }
 
 // OBItem represents a single price level in the order book push data.
@@ -807,10 +886,10 @@ type PushBroker struct {
 
 // BrokerItem represents a single broker queue entry.
 type BrokerItem struct {
-	Price    float64 `json:"price"`
-	Volume   int64   `json:"volume"`
-	BrokerID int32   `json:"brokerID"`
-	Name     string  `json:"name"`
+	Volume   int64  `json:"volume"`
+	BrokerID int32  `json:"brokerID"`
+	Name     string `json:"name"`
+	Pos      int32  `json:"pos"`
 }
 
 // PushOrderUpdate represents an order status update push.

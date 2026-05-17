@@ -259,6 +259,7 @@ func GetMaxTrdQtys(ctx context.Context, c *Client, accID uint64, market constant
 		MaxBuyBack:          m.MaxBuyBack,
 		LongRequiredIM:      m.LongRequiredIM,
 		ShortRequiredIM:     m.ShortRequiredIM,
+		Session:             m.Session,
 	}, nil
 }
 
@@ -573,6 +574,7 @@ func GetAccTradingInfo(ctx context.Context, c *Client, accID uint64, market cons
 		MaxBuyBack:          m.MaxBuyBack,
 		LongRequiredIM:      m.LongRequiredIM,
 		ShortRequiredIM:     m.ShortRequiredIM,
+		Session:             m.Session,
 	}, nil
 }
 

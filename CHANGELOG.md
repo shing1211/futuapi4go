@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.8.6] - 2026-05-17
+
+### Added
+
+- `GetUserInfoResponse` struct (`pkg/sys/system.go`) extended with 11 new fields: `UpdateType`, `UsIndexQotRight`, `UsOtcQotRight`, `UsCMEFutureQotRight`, `UsCBOTFutureQotRight`, `UsNYMEXFutureQotRight`, `UsCOMEXFutureQotRight`, `UsCBOEFutureQotRight`, `SgFutureQotRight`, `JpFutureQotRight`, `IsAppNNOrMM`.
+- `Quote` struct (`client/types.go`) extended with `Id`, `DarkStatus`, `ListTimestamp` fields from proto S2C. All quote-related APIs updated.
+- `Quote` struct also gains `LastClose`, `Amplitude`, `PriceSpread`, `IsSuspended`, `SecStatus`, `ListTime`, `Turnover`, `TurnoverRate` fields.
+
+### Changed
+
+- `client/types.go` — all structs now use proper proto field mapping with comprehensive field coverage.
+- `client/quote_api.go`, `client/system_api.go`, `client/push.go`, `client/slice_methods.go` — updated field access for extended structs.
+- `pkg/sys/system.go` — `GetUserInfo` now maps all new S2C fields to response struct.
+
 ## [v0.8.5] - 2026-05-17
 
 ### Added

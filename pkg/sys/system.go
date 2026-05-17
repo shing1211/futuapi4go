@@ -165,6 +165,17 @@ type GetUserInfoResponse struct {
 	WebJumpUrlHead        string
 	UserAttribution       int32
 	UpdateWhatsNew        string
+	UpdateType            int32
+	UsIndexQotRight       int32
+	UsOtcQotRight         int32
+	UsCMEFutureQotRight   int32
+	UsCBOTFutureQotRight  int32
+	UsNYMEXFutureQotRight int32
+	UsCOMEXFutureQotRight int32
+	UsCBOEFutureQotRight  int32
+	SgFutureQotRight      int32
+	JpFutureQotRight      int32
+	IsAppNNOrMM           bool
 }
 
 // GetUserInfo retrieves the current user information including nickname, avatar, and API level.
@@ -197,6 +208,9 @@ func GetUserInfo(ctx context.Context, c *futuapi.Client, req *GetUserInfoRequest
 		AvatarUrl:             s2c.GetAvatarUrl(),
 		ApiLevel:              s2c.GetApiLevel(),
 		IsNeedAgreeDisclaimer: s2c.GetIsNeedAgreeDisclaimer(),
+		ShQotRight:            s2c.GetShQotRight(),
+		SzQotRight:            s2c.GetSzQotRight(),
+		Extra:                 s2c.GetExtra(),
 		HkQotRight:            s2c.GetHkQotRight(),
 		UsQotRight:            s2c.GetUsQotRight(),
 		CnQotRight:            s2c.GetCnQotRight(),
@@ -211,6 +225,17 @@ func GetUserInfo(ctx context.Context, c *futuapi.Client, req *GetUserInfoRequest
 		WebJumpUrlHead:        s2c.GetWebJumpUrlHead(),
 		UserAttribution:       s2c.GetUserAttribution(),
 		UpdateWhatsNew:        s2c.GetUpdateWhatsNew(),
+		UpdateType:            s2c.GetUpdateType(),
+		UsIndexQotRight:       s2c.GetUsIndexQotRight(),
+		UsOtcQotRight:         s2c.GetUsOtcQotRight(),
+		UsCMEFutureQotRight:   s2c.GetUsCMEFutureQotRight(),
+		UsCBOTFutureQotRight:  s2c.GetUsCBOTFutureQotRight(),
+		UsNYMEXFutureQotRight: s2c.GetUsNYMEXFutureQotRight(),
+		UsCOMEXFutureQotRight: s2c.GetUsCOMEXFutureQotRight(),
+		UsCBOEFutureQotRight:  s2c.GetUsCBOEFutureQotRight(),
+		SgFutureQotRight:      s2c.GetSgFutureQotRight(),
+		JpFutureQotRight:      s2c.GetJpFutureQotRight(),
+		IsAppNNOrMM:           s2c.GetIsAppNNOrMM(),
 	}, nil
 }
 

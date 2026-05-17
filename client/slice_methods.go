@@ -508,9 +508,9 @@ func (s BrokerItemSlice) Filter(fn func(BrokerItem) bool) BrokerItemSlice {
 }
 func (s BrokerItemSlice) ToCSV() string {
 	var b strings.Builder
-	b.WriteString(csvLine("Price", "Volume", "BrokerID"))
+	b.WriteString(csvLine("BrokerID", "Name", "Pos", "Volume"))
 	for _, v := range s {
-		b.WriteString(csvLine(floatStr(v.Price), intStr(v.Volume), intStr(v.BrokerID)))
+		b.WriteString(csvLine(intStr(v.BrokerID), v.Name, intStr(v.Pos), intStr(v.Volume)))
 	}
 	return b.String()
 }
@@ -604,9 +604,9 @@ func (s PushQuoteSlice) Filter(fn func(PushQuote) bool) PushQuoteSlice {
 }
 func (s PushQuoteSlice) ToCSV() string {
 	var b strings.Builder
-	b.WriteString(csvLine("Market", "Code", "Name", "CurPrice", "OpenPrice", "HighPrice", "LowPrice", "Volume", "Turnover"))
+	b.WriteString(csvLine("Market", "Code", "Name", "CurPrice", "OpenPrice", "HighPrice", "LowPrice", "Volume", "Turnover", "LastClose", "TurnoverRate", "Amplitude", "IsSuspended", "SecStatus"))
 	for _, v := range s {
-		b.WriteString(csvLine(intStr(v.Market), v.Code, v.Name, floatStr(v.CurPrice), floatStr(v.OpenPrice), floatStr(v.HighPrice), floatStr(v.LowPrice), intStr(v.Volume), floatStr(v.Turnover)))
+		b.WriteString(csvLine(intStr(v.Market), v.Code, v.Name, floatStr(v.CurPrice), floatStr(v.OpenPrice), floatStr(v.HighPrice), floatStr(v.LowPrice), intStr(v.Volume), floatStr(v.Turnover), floatStr(v.LastClose), floatStr(v.TurnoverRate), floatStr(v.Amplitude), boolStr(v.IsSuspended), intStr(v.SecStatus)))
 	}
 	return b.String()
 }
@@ -628,9 +628,9 @@ func (s PushKLineSlice) Filter(fn func(PushKLine) bool) PushKLineSlice {
 }
 func (s PushKLineSlice) ToCSV() string {
 	var b strings.Builder
-	b.WriteString(csvLine("Market", "Code", "Name", "KLType", "Time", "Open", "High", "Low", "Close", "Volume", "Turnover"))
+	b.WriteString(csvLine("Market", "Code", "Name", "KLType", "RehabType", "Time", "Open", "High", "Low", "Close", "Volume", "Turnover"))
 	for _, v := range s {
-		b.WriteString(csvLine(intStr(v.Market), v.Code, v.Name, intStr(v.KLType), v.Time, floatStr(v.Open), floatStr(v.High), floatStr(v.Low), floatStr(v.Close), intStr(v.Volume), floatStr(v.Turnover)))
+		b.WriteString(csvLine(intStr(v.Market), v.Code, v.Name, intStr(v.KLType), intStr(v.RehabType), v.Time, floatStr(v.Open), floatStr(v.High), floatStr(v.Low), floatStr(v.Close), intStr(v.Volume), floatStr(v.Turnover)))
 	}
 	return b.String()
 }

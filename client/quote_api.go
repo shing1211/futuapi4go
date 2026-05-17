@@ -57,7 +57,59 @@ func GetQuote(ctx context.Context, c *Client, market constant.Market, code strin
 		DarkStatus:      q.DarkStatus,
 		ListTimestamp:   q.ListTimestamp,
 		UpdateTimestamp: q.UpdateTimestamp,
+		PreMarket:       mapPreAfterMarketData(q.PreMarket),
+		AfterMarket:     mapPreAfterMarketData(q.AfterMarket),
+		Overnight:       mapPreAfterMarketData(q.Overnight),
 	}, nil
+}
+
+func mapPreAfterMarketData(d *qotcommon.PreAfterMarketData) *PreAfterMarketData {
+	if d == nil {
+		return nil
+	}
+	return &PreAfterMarketData{
+		Price:      d.GetPrice(),
+		HighPrice:  d.GetHighPrice(),
+		LowPrice:   d.GetLowPrice(),
+		Volume:     d.GetVolume(),
+		Turnover:   d.GetTurnover(),
+		ChangeVal:  d.GetChangeVal(),
+		ChangeRate: d.GetChangeRate(),
+		Amplitude:  d.GetAmplitude(),
+	}
+}
+
+func mapRehabInfo(r *qotcommon.Rehab) *RehabInfo {
+	if r == nil {
+		return nil
+	}
+	return &RehabInfo{
+		Time:           getStr(r.Time),
+		CompanyActFlag: r.GetCompanyActFlag(),
+		FwdFactorA:     getFloat64(r.FwdFactorA),
+		FwdFactorB:     getFloat64(r.FwdFactorB),
+		BwdFactorA:     getFloat64(r.BwdFactorA),
+		BwdFactorB:     getFloat64(r.BwdFactorB),
+		SplitBase:      getInt32(r.SplitBase),
+		SplitErt:       getInt32(r.SplitErt),
+		JoinBase:       getInt32(r.JoinBase),
+		JoinErt:        getInt32(r.JoinErt),
+		BonusBase:      getInt32(r.BonusBase),
+		BonusErt:       getInt32(r.BonusErt),
+		TransferBase:   getInt32(r.TransferBase),
+		TransferErt:    getInt32(r.TransferErt),
+		AllotBase:      getInt32(r.AllotBase),
+		AllotErt:       getInt32(r.AllotErt),
+		AllotPrice:     getFloat64(r.AllotPrice),
+		AddBase:        getInt32(r.AddBase),
+		AddErt:         getInt32(r.AddErt),
+		AddPrice:       getFloat64(r.AddPrice),
+		Dividend:       getFloat64(r.Dividend),
+		SpDividend:     getFloat64(r.SpDividend),
+		SpinOffBase:    getFloat64(r.SpinOffBase),
+		SpinOffErt:     getFloat64(r.SpinOffErt),
+		Timestamp:      getFloat64(r.Timestamp),
+	}
 }
 
 // GetKLines retrieves K-line (candlestick) data.
@@ -475,6 +527,9 @@ func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon
 			LowestHistoryPrice:      getFloat64(basic.LowestHistoryPrice),
 			SecStatus:               getInt32(basic.SecStatus),
 			ClosePrice5Minute:       getFloat64(basic.ClosePrice5Minute),
+			PreMarket:               mapPreAfterMarketData(basic.PreMarket),
+			AfterMarket:             mapPreAfterMarketData(basic.AfterMarket),
+			Overnight:               mapPreAfterMarketData(basic.Overnight),
 		})
 	}
 	return result, nil
@@ -566,6 +621,18 @@ func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, e
 			QuoteUnit:          f.QuoteUnit,
 			TimeZone:           f.TimeZone,
 			ExchangeFormatUrl:  f.ExchangeFormatUrl,
+			Security:           f.Security,
+			Origin:             f.Origin,
+			TradeTimeList: func() []TradeTime {
+				if len(f.TradeTimeList) == 0 {
+					return nil
+				}
+				tt := make([]TradeTime, len(f.TradeTimeList))
+				for j, t := range f.TradeTimeList {
+					tt[j] = TradeTime{Begin: t.GetBegin(), End: t.GetEnd()}
+				}
+				return tt
+			}(),
 		}
 	}
 	return infos, nil
@@ -1156,11 +1223,15 @@ func GetCodeChange(ctx context.Context, c *Client, securities []*qotcommon.Secur
 			continue
 		}
 		result = append(result, &CodeChangeInfo{
-			Type:            cc.Type,
-			Security:        cc.Security,
-			RelatedSecurity: cc.RelatedSecurity,
-			PublicTime:      cc.PublicTime,
-			EffectiveTime:   cc.EffectiveTime,
+			Type:               cc.Type,
+			Security:           cc.Security,
+			RelatedSecurity:    cc.RelatedSecurity,
+			PublicTime:         cc.PublicTime,
+			PublicTimestamp:    cc.PublicTimestamp,
+			EffectiveTime:      cc.EffectiveTime,
+			EffectiveTimestamp: cc.EffectiveTimestamp,
+			EndTime:            cc.EndTime,
+			EndTimestamp:       cc.EndTimestamp,
 		})
 	}
 	return result, nil
@@ -1382,25 +1453,7 @@ func RequestRehab(ctx context.Context, c *Client, market constant.Market, code s
 
 	result := make([]*RehabInfo, 0, len(resp.RehabList))
 	for _, r := range resp.RehabList {
-		if r == nil {
-			continue
-		}
-		result = append(result, &RehabInfo{
-			Time:       getStr(r.Time),
-			FwdFactorA: getFloat64(r.FwdFactorA),
-			FwdFactorB: getFloat64(r.FwdFactorB),
-			BwdFactorA: getFloat64(r.BwdFactorA),
-			BwdFactorB: getFloat64(r.BwdFactorB),
-			SplitBase:  getInt32(r.SplitBase),
-			SplitErt:   getInt32(r.SplitErt),
-			JoinBase:   getInt32(r.JoinBase),
-			JoinErt:    getInt32(r.JoinErt),
-			BonusBase:  getInt32(r.BonusBase),
-			BonusErt:   getInt32(r.BonusErt),
-			AllotBase:  getInt32(r.AllotBase),
-			AllotErt:   getInt32(r.AllotErt),
-			AllotPrice: getFloat64(r.AllotPrice),
-		})
+		result = append(result, mapRehabInfo(r))
 	}
 	return result, nil
 }
@@ -1431,54 +1484,9 @@ func GetRehab(ctx context.Context, c *Client, market constant.Market, code strin
 
 	result := make([]*RehabInfo, 0, len(rehabList))
 	for _, r := range rehabList {
-		if r == nil {
-			continue
-		}
-		result = append(result, &RehabInfo{
-			Time:       getStr(r.Time),
-			FwdFactorA: getFloat64(r.FwdFactorA),
-			FwdFactorB: getFloat64(r.FwdFactorB),
-			BwdFactorA: getFloat64(r.BwdFactorA),
-			BwdFactorB: getFloat64(r.BwdFactorB),
-			SplitBase:  getInt32(r.SplitBase),
-			SplitErt:   getInt32(r.SplitErt),
-			JoinBase:   getInt32(r.JoinBase),
-			JoinErt:    getInt32(r.JoinErt),
-			BonusBase:  getInt32(r.BonusBase),
-			BonusErt:   getInt32(r.BonusErt),
-			AllotBase:  getInt32(r.AllotBase),
-			AllotErt:   getInt32(r.AllotErt),
-			AllotPrice: getFloat64(r.AllotPrice),
-		})
+		result = append(result, mapRehabInfo(r))
 	}
 	return result, nil
-}
-
-// RequestHistoryKLQuota queries historical K-line quota.
-func RequestHistoryKLQuota(ctx context.Context, c *Client) (*HistoryKLQuotaInfo, error) {
-	resp, err := qot.RequestHistoryKLQuota(ctx, c.inner, &qot.RequestHistoryKLQuotaRequest{
-		GetDetail: true,
-	})
-	if err != nil {
-		return nil, err
-	}
-	details := make([]HistoryKLQuotaDetail, 0, len(resp.DetailList))
-	for _, d := range resp.DetailList {
-		if d == nil {
-			continue
-		}
-		details = append(details, HistoryKLQuotaDetail{
-			Security:         d.GetSecurity(),
-			Name:             d.GetName(),
-			RequestTime:      d.GetRequestTime(),
-			RequestTimestamp: d.GetRequestTimeStamp(),
-		})
-	}
-	return &HistoryKLQuotaInfo{
-		UsedQuota:   resp.UsedQuota,
-		RemainQuota: resp.RemainQuota,
-		DetailList:  details,
-	}, nil
 }
 
 // GetHistoryKLPoints retrieves K-line data at specific time points for a security.
