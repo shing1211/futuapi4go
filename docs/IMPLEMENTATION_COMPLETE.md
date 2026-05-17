@@ -67,19 +67,24 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 ---
 
-## Phase 3: Non-Blocking — Mostly Complete
+## Phase 3: Non-Blocking — COMPLETE
 
 ### Item 3a: Demo Replace Directive
 
 - **What:** Removed `replace github.com/shing1211/futuapi4go => ../futuapi4go` from `futuapi4go-demo/go.mod`
 - **Status:** ✅ DONE
 
-### Items 3b–3c: Pending
+### Item 3b: GitHub Release Automation
 
-| Item | Description | Status |
-|------|-------------|--------|
-| 3b | GitHub release automation — `make release` requires macOS/Linux; manual `gh release create` is current workflow | Pending |
-| 3c | `Push.KLine` raw proto passthrough — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk) | Pending |
+- **What:** `make release` now checks for `goreleaser` and falls back to clear manual instructions
+- **Files changed:** `Makefile:62-71`
+- **Status:** ✅ DONE
+
+### Item 3c: Push.KLine Raw Proto Passthrough
+
+- **What:** Added `PushKLine` struct in `pkg/push/qot_push.go` (13 fields). `UpdateKL.KLList` now uses `[]*PushKLine` instead of `[]*qotcommon.KLine`. Example 07 updated to use direct field access.
+- **Files changed:** `pkg/push/qot_push.go`, `client/push.go`, `pkg/push/push_test.go`, `examples/07_kline_multi/main.go`
+- **Status:** ✅ DONE
 
 ---
 
@@ -158,13 +163,14 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 ---
 
-## What's Left (Minimal)
+## What's Left (None — All Items Complete)
+
+All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 
 | Item | Description | Priority |
 |------|-------------|----------|
-| 3b | GitHub release automation (`make release` macOS/Linux only) | Low |
-| 3c | Push.KLine raw proto passthrough in example 07 | Low |
-| 2c | Legacy `.GetXxx()` convention — deferred by design | N/A |
+| — | All Phase 1, 2, 3 items complete | N/A |
+| 2c | Legacy `.GetXxx()` convention — deferred by design, not a bug | N/A |
 
 ---
 
