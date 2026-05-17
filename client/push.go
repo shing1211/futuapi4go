@@ -48,16 +48,19 @@ func ParsePushKLine(body []byte) (*PushKLine, error) {
 		Name:   data.Name,
 		KLType: data.KlType,
 		KLine: KLine{
-			Time:       kl.GetTime(),
-			Open:       kl.GetOpenPrice(),
-			High:       kl.GetHighPrice(),
-			Low:        kl.GetLowPrice(),
-			Close:      kl.GetClosePrice(),
-			Volume:     kl.GetVolume(),
-			LastClose:  kl.GetLastClosePrice(),
-			Turnover:   kl.GetTurnover(),
-			ChangeRate: kl.GetChangeRate(),
-			Timestamp:  kl.GetTimestamp(),
+			Time:         kl.GetTime(),
+			IsBlank:      kl.GetIsBlank(),
+			Open:         kl.GetOpenPrice(),
+			High:         kl.GetHighPrice(),
+			Low:          kl.GetLowPrice(),
+			Close:        kl.GetClosePrice(),
+			Volume:       kl.GetVolume(),
+			LastClose:    kl.GetLastClosePrice(),
+			Turnover:     kl.GetTurnover(),
+			TurnoverRate: kl.GetTurnoverRate(),
+			Pe:           kl.GetPe(),
+			ChangeRate:   kl.GetChangeRate(),
+			Timestamp:    kl.GetTimestamp(),
 		},
 	}, nil
 }
@@ -98,13 +101,21 @@ func ParsePushTicker(body []byte) (*PushTicker, error) {
 	}
 	t := data.TickerList[0]
 	return &PushTicker{
-		Market:   data.Security.GetMarket(),
-		Code:     data.Security.GetCode(),
-		Name:     data.Name,
-		Price:    t.GetPrice(),
-		Volume:   t.GetVolume(),
-		Turnover: t.GetTurnover(),
-		Side:     t.GetDir(),
+		Market:       data.Security.GetMarket(),
+		Code:         data.Security.GetCode(),
+		Name:         data.Name,
+		Time:         t.GetTime(),
+		Price:        t.GetPrice(),
+		Volume:       t.GetVolume(),
+		Turnover:     t.GetTurnover(),
+		Side:         t.GetDir(),
+		Sequence:     t.GetSequence(),
+		Dir:          t.GetDir(),
+		RecvTime:     t.GetRecvTime(),
+		Type:         t.GetType(),
+		TypeSign:     t.GetTypeSign(),
+		Timestamp:    t.GetTimestamp(),
+		PushDataType: t.GetPushDataType(),
 	}, nil
 }
 
@@ -116,13 +127,18 @@ func ParsePushRT(body []byte) (*PushRT, error) {
 	}
 	rt := data.RTList[0]
 	return &PushRT{
-		Market:   data.Security.GetMarket(),
-		Code:     data.Security.GetCode(),
-		Name:     data.Name,
-		Time:     rt.GetTime(),
-		Price:    rt.GetPrice(),
-		Volume:   rt.GetVolume(),
-		AvgPrice: rt.GetAvgPrice(),
+		Market:        data.Security.GetMarket(),
+		Code:          data.Security.GetCode(),
+		Name:          data.Name,
+		Time:          rt.GetTime(),
+		Price:         rt.GetPrice(),
+		Volume:        rt.GetVolume(),
+		AvgPrice:       rt.GetAvgPrice(),
+		Turnover:      rt.GetTurnover(),
+		Minute:        rt.GetMinute(),
+		IsBlank:       rt.GetIsBlank(),
+		Timestamp:     rt.GetTimestamp(),
+		LastClosePrice: rt.GetLastClosePrice(),
 	}, nil
 }
 

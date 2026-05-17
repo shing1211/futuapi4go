@@ -40,6 +40,7 @@ type KLine struct {
 	LastClose    float64 `json:"lastClose"`
 	Turnover     float64 `json:"turnover"`
 	TurnoverRate float64 `json:"turnoverRate"`
+	Pe           float64 `json:"pe"`
 	ChangeRate   float64 `json:"changeRate"`
 	Timestamp    float64 `json:"timestamp"`
 }
@@ -265,11 +266,29 @@ type Broker struct {
 
 // StaticInfo represents static security info.
 type StaticInfo struct {
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Type     int32 `json:"type"`
-	ListTime string `json:"listTime"`
-	LotSize  int32 `json:"lotSize"`
+	Code          string  `json:"code"`
+	Name          string  `json:"name"`
+	Type          int32   `json:"type"`
+	ListTime      string  `json:"listTime"`
+	LotSize       int32   `json:"lotSize"`
+	Id            int64   `json:"id"`
+	Delisting     bool    `json:"delisting"`
+	ListTimestamp float64 `json:"listTimestamp"`
+	ExchType      int32   `json:"exchType"`
+}
+
+// MarketStateResult wraps market state response with security info.
+type MarketStateResult struct {
+	Code  string `json:"code"`
+	Name  string `json:"name"`
+	State int32  `json:"state"`
+}
+
+// CapitalFlowResponse wraps capital flow items with response-level metadata.
+type CapitalFlowResponse struct {
+	Items             []CapitalFlow
+	LastValidTime     string
+	LastValidTimestamp float64
 }
 
 // CapitalFlow represents capital flow data.
@@ -744,33 +763,37 @@ type OBItem struct {
 
 // PushTicker represents a parsed tick-by-tick push notification.
 type PushTicker struct {
-	Market    int32   `json:"market"`
-	Code      string  `json:"code"`
-	Name      string  `json:"name"`
-	Price     float64 `json:"price"`
-	Volume    int64   `json:"volume"`
-	Turnover  float64 `json:"turnover"`
-	Side      int32   `json:"side"`
-	Sequence  int64   `json:"sequence"`
-	Dir       int32   `json:"dir"`
-	RecvTime  float64 `json:"recvTime"`
-	Type      int32   `json:"type"`
-	TypeSign  int32   `json:"typeSign"`
+	Market       int32   `json:"market"`
+	Code         string  `json:"code"`
+	Name         string  `json:"name"`
+	Time         string  `json:"time"`
+	Price        float64 `json:"price"`
+	Volume       int64   `json:"volume"`
+	Turnover     float64 `json:"turnover"`
+	Side         int32   `json:"side"`
+	Sequence     int64   `json:"sequence"`
+	Dir          int32   `json:"dir"`
+	RecvTime     float64 `json:"recvTime"`
+	Type         int32   `json:"type"`
+	TypeSign     int32   `json:"typeSign"`
+	Timestamp    float64 `json:"timestamp"`
+	PushDataType int32   `json:"pushDataType"`
 }
 
 // PushRT represents a parsed real-time minute data push notification.
 type PushRT struct {
-	Market    int32   `json:"market"`
-	Code      string  `json:"code"`
-	Name      string  `json:"name"`
-	Time      string  `json:"time"`
-	Price     float64 `json:"price"`
-	Volume    int64   `json:"volume"`
-	AvgPrice  float64 `json:"avgPrice"`
-	Turnover  float64 `json:"turnover"`
-	Minute    int32   `json:"minute"`
-	IsBlank   bool    `json:"isBlank"`
-	Timestamp float64 `json:"timestamp"`
+	Market        int32   `json:"market"`
+	Code          string  `json:"code"`
+	Name          string  `json:"name"`
+	Time          string  `json:"time"`
+	Price         float64 `json:"price"`
+	Volume        int64   `json:"volume"`
+	AvgPrice      float64 `json:"avgPrice"`
+	Turnover      float64 `json:"turnover"`
+	Minute        int32   `json:"minute"`
+	IsBlank       bool    `json:"isBlank"`
+	Timestamp     float64 `json:"timestamp"`
+	LastClosePrice float64 `json:"lastClosePrice"`
 }
 
 // PushBroker represents a parsed broker queue push notification.

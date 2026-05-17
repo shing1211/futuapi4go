@@ -88,6 +88,7 @@ func GetKLines(ctx context.Context, c *Client, market constant.Market, code stri
 			LastClose:    kl.LastClosePrice,
 			Turnover:     kl.Turnover,
 			TurnoverRate: kl.TurnoverRate,
+			Pe:           kl.Pe,
 			ChangeRate:   kl.ChangeRate,
 			Timestamp:    kl.Timestamp,
 		}
@@ -373,6 +374,10 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 		var secType int32
 		var listTime string
 		var lotSize int32
+		var id int64
+		var delisting bool
+		var listTimestamp float64
+		var exchType int32
 		if s.Basic != nil {
 			if s.Basic.Name != nil {
 				name = *s.Basic.Name
@@ -386,8 +391,30 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 			if s.Basic.LotSize != nil {
 				lotSize = *s.Basic.LotSize
 			}
+			if s.Basic.Id != nil {
+				id = *s.Basic.Id
+			}
+			if s.Basic.Delisting != nil {
+				delisting = *s.Basic.Delisting
+			}
+			if s.Basic.ListTimestamp != nil {
+				listTimestamp = *s.Basic.ListTimestamp
+			}
+			if s.Basic.ExchType != nil {
+				exchType = *s.Basic.ExchType
+			}
 		}
-		infos[i] = StaticInfo{Code: code, Name: name, Type: secType, ListTime: listTime, LotSize: lotSize}
+		infos[i] = StaticInfo{
+			Code:          code,
+			Name:          name,
+			Type:          secType,
+			ListTime:      listTime,
+			LotSize:       lotSize,
+			Id:            id,
+			Delisting:     delisting,
+			ListTimestamp: listTimestamp,
+			ExchType:      exchType,
+		}
 	}
 	return infos, nil
 }
@@ -638,7 +665,7 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 }
 
 // GetMarketState retrieves market state (trading status).
-func GetMarketState(ctx context.Context, c *Client, market constant.Market, code string) (int32, error) {
+func GetMarketState(ctx context.Context, c *Client, market constant.Market, code string) (*MarketStateResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -646,18 +673,23 @@ func GetMarketState(ctx context.Context, c *Client, market constant.Market, code
 		SecurityList: []*qotcommon.Security{sec},
 	})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	if len(resp.MarketInfoList) == 0 {
-		return 0, nil
+		return nil, nil
 	}
 
-	return resp.MarketInfoList[0].MarketState, nil
+	info := resp.MarketInfoList[0]
+	return &MarketStateResult{
+		Code:  code,
+		Name:  info.Name,
+		State: info.MarketState,
+	}, nil
 }
 
 // GetCapitalFlow retrieves capital flow data.
-func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...constant.CapitalFlowPeriodType) ([]CapitalFlow, error) {
+func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...constant.CapitalFlowPeriodType) (*CapitalFlowResponse, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -687,7 +719,11 @@ func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code
 			Timestamp:   f.Timestamp,
 		})
 	}
-	return flows, nil
+	return &CapitalFlowResponse{
+		Items:              flows,
+		LastValidTime:      resp.LastValidTime,
+		LastValidTimestamp: resp.LastValidTimestamp,
+	}, nil
 }
 
 // GetCapitalDistribution retrieves capital distribution.
@@ -771,16 +807,19 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 
 		for _, kl := range resp.KLList {
 			allKLines = append(allKLines, KLine{
-				Time:       kl.Time,
-				Open:       kl.OpenPrice,
-				High:       kl.HighPrice,
-				Low:        kl.LowPrice,
-				Close:      kl.ClosePrice,
-				Volume:     kl.Volume,
-				LastClose:  kl.LastClosePrice,
-				Turnover:   kl.Turnover,
-				ChangeRate: kl.ChangeRate,
-				Timestamp:  kl.Timestamp,
+				Time:         kl.Time,
+				IsBlank:      kl.IsBlank,
+				Open:         kl.OpenPrice,
+				High:         kl.HighPrice,
+				Low:          kl.LowPrice,
+				Close:        kl.ClosePrice,
+				Volume:       kl.Volume,
+				LastClose:    kl.LastClosePrice,
+				Turnover:     kl.Turnover,
+				TurnoverRate: kl.TurnoverRate,
+				Pe:           kl.Pe,
+				ChangeRate:   kl.ChangeRate,
+				Timestamp:    kl.Timestamp,
 			})
 		}
 
@@ -817,16 +856,19 @@ func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code s
 	klines := make([]KLine, len(resp.KLList))
 	for i, kl := range resp.KLList {
 		klines[i] = KLine{
-			Time:       kl.Time,
-			Open:       kl.OpenPrice,
-			High:       kl.HighPrice,
-			Low:        kl.LowPrice,
-			Close:      kl.ClosePrice,
-			Volume:     kl.Volume,
-			LastClose:  kl.LastClosePrice,
-			Turnover:   kl.Turnover,
-			ChangeRate: kl.ChangeRate,
-			Timestamp:  kl.Timestamp,
+			Time:         kl.Time,
+			IsBlank:      kl.IsBlank,
+			Open:         kl.OpenPrice,
+			High:         kl.HighPrice,
+			Low:          kl.LowPrice,
+			Close:        kl.ClosePrice,
+			Volume:       kl.Volume,
+			LastClose:    kl.LastClosePrice,
+			Turnover:     kl.Turnover,
+			TurnoverRate: kl.TurnoverRate,
+			Pe:           kl.Pe,
+			ChangeRate:   kl.ChangeRate,
+			Timestamp:    kl.Timestamp,
 		}
 	}
 	return klines, nil
@@ -898,10 +940,40 @@ func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, pl
 		if s.Basic.SecType != nil {
 			secType = *s.Basic.SecType
 		}
+		listTime := ""
+		if s.Basic.ListTime != nil {
+			listTime = *s.Basic.ListTime
+		}
+		lotSize := int32(0)
+		if s.Basic.LotSize != nil {
+			lotSize = *s.Basic.LotSize
+		}
+		id := int64(0)
+		if s.Basic.Id != nil {
+			id = *s.Basic.Id
+		}
+		delisting := false
+		if s.Basic.Delisting != nil {
+			delisting = *s.Basic.Delisting
+		}
+		listTimestamp := float64(0)
+		if s.Basic.ListTimestamp != nil {
+			listTimestamp = *s.Basic.ListTimestamp
+		}
+		exchType := int32(0)
+		if s.Basic.ExchType != nil {
+			exchType = *s.Basic.ExchType
+		}
 		infos = append(infos, StaticInfo{
-			Code: code,
-			Name: name,
-			Type: secType,
+			Code:          code,
+			Name:          name,
+			Type:          secType,
+			ListTime:      listTime,
+			LotSize:       lotSize,
+			Id:            id,
+			Delisting:     delisting,
+			ListTimestamp: listTimestamp,
+			ExchType:      exchType,
 		})
 	}
 	return infos, nil
