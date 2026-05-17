@@ -98,7 +98,9 @@ func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) er
 	if len(req.RegPushRehabTypeList) > 0 {
 		c2s.RegPushRehabTypeList = req.RegPushRehabTypeList
 	}
-	c2s.IsFirstPush = &req.IsFirstPush
+	if req.IsFirstPush {
+		c2s.IsFirstPush = &req.IsFirstPush
+	}
 	if req.IsUnsubAll {
 		c2s.IsUnsubAll = &req.IsUnsubAll
 	}

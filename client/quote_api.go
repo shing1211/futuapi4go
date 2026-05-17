@@ -390,7 +390,6 @@ func GetBroker(ctx context.Context, c *Client, market constant.Market, code stri
 
 	resp, err := qot.GetBroker(ctx, c.inner, &qot.GetBrokerRequest{
 		Security: sec,
-		Num:      int32(num),
 	})
 	if err != nil {
 		return nil, nil, err

@@ -100,7 +100,9 @@ func GetPlateSet(ctx context.Context, c *futuapi.Client, req *GetPlateSetRequest
 
 // GetPlateSecurityRequest defines parameters for GetPlateSecurity.
 type GetPlateSecurityRequest struct {
-	Plate *qotcommon.Security
+	Plate     *qotcommon.Security
+	SortField int32
+	Ascend    bool
 }
 
 // GetPlateSecurityResponse is the response type for GetPlateSecurity.
@@ -119,6 +121,12 @@ func GetPlateSecurity(ctx context.Context, c *futuapi.Client, req *GetPlateSecur
 
 	c2s := &qotgetplatesecurity.C2S{
 		Plate: req.Plate,
+	}
+	if req.SortField != 0 {
+		c2s.SortField = &req.SortField
+	}
+	if req.Ascend {
+		c2s.Ascend = &req.Ascend
 	}
 
 	pkt := &qotgetplatesecurity.Request{C2S: c2s}

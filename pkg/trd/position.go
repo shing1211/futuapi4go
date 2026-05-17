@@ -469,6 +469,8 @@ type GetMaxTrdQtysRequest struct {
 	AdjustSideAndLimit float64
 	SecMarket          constant.TrdSecMarket
 	OrderIDEx          string
+	Session            int32
+	PositionID         uint64
 }
 
 // MaxTrdQtysInfo represents the maximum tradable quantities for various trading scenarios.
@@ -532,6 +534,12 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 	}
 	if req.OrderIDEx != "" {
 		c2s.OrderIDEx = &req.OrderIDEx
+	}
+	if req.Session != 0 {
+		c2s.Session = &req.Session
+	}
+	if req.PositionID != 0 {
+		c2s.PositionID = &req.PositionID
 	}
 
 	pkt := &trdgetmaxtrdqtys.Request{C2S: c2s}

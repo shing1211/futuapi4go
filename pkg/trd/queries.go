@@ -160,6 +160,7 @@ type GetOrderFillListRequest struct {
 	TrdMarket        constant.TrdMarket
 	TrdEnv           constant.TrdEnv
 	FilterConditions *trdcommon.TrdFilterConditions
+	RefreshCache     bool
 }
 
 // GetOrderFillListResponse is the response containing a list of order fills.
@@ -189,6 +190,9 @@ func GetOrderFillList(ctx context.Context, c *futuapi.Client, req *GetOrderFillL
 	c2s := &trdgetorderfilllist.C2S{
 		Header:           header,
 		FilterConditions: req.FilterConditions,
+	}
+	if req.RefreshCache {
+		c2s.RefreshCache = &req.RefreshCache
 	}
 
 	pkt := &trdgetorderfilllist.Request{C2S: c2s}

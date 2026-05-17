@@ -568,7 +568,6 @@ func TestIntegration_HSI_ComprehensiveMarketData(t *testing.T) {
 	t.Run("GetBroker", func(t *testing.T) {
 		req := &qot.GetBrokerRequest{
 			Security: fixtures.HSISecurity(),
-			Num:      5,
 		}
 		_, err := qot.GetBroker(context.Background(), cli, req)
 		if err != nil {

@@ -392,7 +392,6 @@ func TestGetBrokerRequestConstruction(t *testing.T) {
 	security := &qotcommon.Security{Market: &hkMarket, Code: func() *string { s := "00700"; return &s }()}
 	req := &GetBrokerRequest{
 		Security: security,
-		Num:      10,
 	}
 
 	if req.Security.GetCode() != "00700" {

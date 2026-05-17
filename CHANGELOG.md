@@ -5,6 +5,27 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.8.7] - 2026-05-17
+
+### Added
+
+- `GetPlateSecurityRequest` now supports `SortField` and `Ascend` for sorting plate security results.
+- `GetOrderFillListRequest` now supports `RefreshCache` for cache-busting order fill queries.
+- `GetMaxTrdQtysRequest` now supports `Session` and `PositionID` fields for session/position-specific queries.
+
+### Changed
+
+- `pkg/qot/sub.go` — `Subscribe` now conditionally sets `IsFirstPush` (only when true), matching proto optional semantics.
+
+### Removed
+
+- `pkg/qot/market_data.go` — removed unused `Num` field from `GetBrokerRequest` (not present in proto C2S).
+- `pkg/qot/quote_test.go`, `test/qot_api/qot_test.go`, `test/integration/integration_hsi_test.go` — removed `Num` from `GetBrokerRequest` test literals.
+
+### Fixed
+
+- Comprehensive proto field audit: all Go wrapper structs verified against 64 proto definitions. 3 missing C2S fields added, 1 unused field removed, 1 optional field made conditional.
+
 ## [v0.8.6] - 2026-05-17
 
 ### Added

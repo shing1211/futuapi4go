@@ -322,7 +322,6 @@ type Broker struct {
 // GetBrokerRequest defines parameters for GetBroker.
 type GetBrokerRequest struct {
 	Security *qotcommon.Security
-	Num      int32
 }
 
 // GetBrokerResponse is the response type for GetBroker.

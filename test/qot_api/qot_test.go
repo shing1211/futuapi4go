@@ -402,7 +402,6 @@ func TestGetBroker_HSI(t *testing.T) {
 
 	req := &qot.GetBrokerRequest{
 		Security: fixtures.HSISecurity(),
-		Num:      10,
 	}
 
 	result, err := qot.GetBroker(context.Background(), cli, req)
