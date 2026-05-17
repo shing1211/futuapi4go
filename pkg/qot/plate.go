@@ -34,8 +34,9 @@ const (
 
 // Plate represents a market plate (板块).
 type Plate struct {
-	Plate *qotcommon.Security
-	Name  string
+	Plate     *qotcommon.Security
+	Name      string
+	PlateType int32
 }
 
 // GetPlateSetRequest defines parameters for GetPlateSet.
@@ -88,8 +89,9 @@ func GetPlateSet(ctx context.Context, c *futuapi.Client, req *GetPlateSetRequest
 			continue
 		}
 		result.PlateSetList = append(result.PlateSetList, &Plate{
-			Plate: p.GetPlate(),
-			Name:  p.GetName(),
+			Plate:     p.GetPlate(),
+			Name:      p.GetName(),
+			PlateType: p.GetPlateType(),
 		})
 	}
 

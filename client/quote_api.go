@@ -558,7 +558,7 @@ func GetPlateSet(ctx context.Context, c *Client, market constant.Market) ([]Plat
 		if p.Plate != nil && p.Plate.Code != nil {
 			code = *p.Plate.Code
 		}
-		plates[i] = Plate{Code: code, Name: p.Name}
+		plates[i] = Plate{Code: code, Name: p.Name, PlateType: p.PlateType}
 	}
 	return plates, nil
 }

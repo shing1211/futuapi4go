@@ -327,8 +327,9 @@ type FutureInfo struct {
 
 // Plate represents a market plate (æ¿å—).
 type Plate struct {
-	Code string `json:"code"`
-	Name string `json:"name"`
+	Code      string `json:"code"`
+	Name      string `json:"name"`
+	PlateType int32  `json:"plateType"`
 }
 
 // IpoData represents IPO data.
