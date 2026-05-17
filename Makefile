@@ -59,8 +59,14 @@ test-integration:
 	go test -tags=integration ./test/integration/...
 
 # Run goreleaser release (requires git tag)
+# Note: goreleaser requires macOS/Linux. For cross-platform, use: gh release create
 release:
-	goreleaser release --clean
+	@command -v goreleaser >/dev/null 2>&1 && goreleaser release --clean || { \
+		echo "goreleaser not found. Install from https://goreleaser.com/install/"; \
+		echo "Or create release manually:"; \
+		echo "  git tag vX.Y.Z && git push origin vX.Y.Z"; \
+		echo "  gh release create vX.Y.Z --title 'vX.Y.Z' --notes 'See CHANGELOG.md'" ; \
+	}
 
 # Show help
 help:

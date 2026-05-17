@@ -125,13 +125,30 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	}, nil
 }
 
+// PushKLine represents a single K-line bar from push notification.
+type PushKLine struct {
+	Time         string
+	IsBlank      bool
+	HighPrice    float64
+	OpenPrice    float64
+	LowPrice     float64
+	ClosePrice   float64
+	LastClosePrice float64
+	Volume       int64
+	Turnover     float64
+	TurnoverRate float64
+	Pe           float64
+	ChangeRate   float64
+	Timestamp    float64
+}
+
 // UpdateKL represents a K-line push notification.
 type UpdateKL struct {
 	RehabType int32
 	KlType    int32
 	Security  *qotcommon.Security
 	Name      string
-	KLList    []*qotcommon.KLine
+	KLList    []*PushKLine
 }
 
 // ParseUpdateKL parses a K-line push notification from a raw protobuf body.
@@ -147,12 +164,34 @@ func ParseUpdateKL(body []byte) (*UpdateKL, error) {
 	if s2c == nil || s2c.GetKlList() == nil {
 		return nil, nil
 	}
+	s2cList := s2c.GetKlList()
+	klList := make([]*PushKLine, 0, len(s2cList))
+	for _, kl := range s2cList {
+		if kl == nil {
+			continue
+		}
+		klList = append(klList, &PushKLine{
+			Time:           kl.GetTime(),
+			IsBlank:        kl.GetIsBlank(),
+			HighPrice:      kl.GetHighPrice(),
+			OpenPrice:      kl.GetOpenPrice(),
+			LowPrice:       kl.GetLowPrice(),
+			ClosePrice:     kl.GetClosePrice(),
+			LastClosePrice: kl.GetLastClosePrice(),
+			Volume:         kl.GetVolume(),
+			Turnover:       kl.GetTurnover(),
+			TurnoverRate:   kl.GetTurnoverRate(),
+			Pe:             kl.GetPe(),
+			ChangeRate:     kl.GetChangeRate(),
+			Timestamp:      kl.GetTimestamp(),
+		})
+	}
 	return &UpdateKL{
 		RehabType: s2c.GetRehabType(),
 		KlType:    s2c.GetKlType(),
 		Security:  s2c.GetSecurity(),
 		Name:      s2c.GetName(),
-		KLList:    s2c.GetKlList(),
+		KLList:    klList,
 	}, nil
 }
 

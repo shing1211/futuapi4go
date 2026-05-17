@@ -382,8 +382,8 @@ func TestParseUpdateKLValidData(t *testing.T) {
 	if len(result.KLList) != 1 {
 		t.Fatalf("expected 1 KL entry, got %d", len(result.KLList))
 	}
-	if result.KLList[0].GetClosePrice() != 350.50 {
-		t.Errorf("expected close price 350.50, got %f", result.KLList[0].GetClosePrice())
+	if result.KLList[0].ClosePrice != 350.50 {
+		t.Errorf("expected close price 350.50, got %f", result.KLList[0].ClosePrice)
 	}
 }
 

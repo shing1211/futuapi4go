@@ -42,8 +42,8 @@ The SDK has reached **~99% API coverage** with all core features implemented acr
 | # | Item | Description | Status |
 |---|------|-------------|--------|
 | 3a | ~~**Demo replace directive**~~ ✅ DONE — Removed `replace github.com/shing1211/futuapi4go => ../futuapi4go` from `futuapi4go-demo/go.mod`. `go mod tidy` resolved all dependencies from v0.8.5 release. | Done |
-| 3b | **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow. | Pending |
-| 3c | **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). | Pending |
+| 3b | ~~**GitHub release automation**~~ ✅ DONE — `make release` now checks for `goreleaser` and falls back to clear instructions for manual `gh release create`. Gracefully handles missing goreleaser. | Done |
+| 3c | ~~**Push.KLine raw proto passthrough**~~ ✅ DONE — Added `PushKLine` struct in `pkg/push/qot_push.go` (13 fields). `UpdateKL.KLList` now uses `[]*PushKLine` instead of `[]*qotcommon.KLine`. Example 07 updated. Tests updated. | Done |
 
 ---
 
