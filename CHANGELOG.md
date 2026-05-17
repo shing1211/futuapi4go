@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `StaticInfo` struct (`client/types.go`) now includes `Id`, `Delisting`, `ListTimestamp`, `ExchType` fields obtained from `SecurityStaticBasic` proto. `GetPlateSecurity` and `GetStaticInfo` populate all 9 fields.
+
+- `KLine` struct (`client/types.go`) now includes `Pe` field. All 4 KLine mappers (`GetKLines`, `RequestHistoryKLWithLimit`, `GetHistoryKL`, `ParsePushKLine`) now map all 13 proto fields including `Pe`, `IsBlank`, `TurnoverRate`.
+
+- `PushTicker` struct (`client/types.go`) and `ParsePushTicker` mapper now map all 15 `Ticker` proto fields (added: `Time`, `Timestamp`, `PushDataType`).
+
+- `PushRT` struct (`client/types.go`) and `ParsePushRT` mapper now map all 11 `TimeShare` proto fields (added: `LastClosePrice`, `Turnover`, `Minute`, `IsBlank`, `Timestamp`).
+
+- `GetCapitalFlow` (`client/quote_api.go`) now returns `*CapitalFlowResponse` including `LastValidTime` and `LastValidTimestamp` from the response S2C (previously dropped).
+
+- `GetMarketState` (`client/quote_api.go`) now returns `*MarketStateResult{Code, Name, State}` instead of bare `int32` (previously dropped Code/Name).
+
+### Changed
+
+- `GetCapitalFlow` return type: `[]CapitalFlow` → `*CapitalFlowResponse` (use `.Items` for slice).
+- `GetMarketState` return type: `(int32, error)` → `(*MarketStateResult, error)` (use `.State` for value).
+
+## [0.8.3] - 2026-05-17
+
+### Added
+
 - `Plate.PlateType` field added to `pkg/qot/plate.go` and `client/types.go` — was missing from the SDK wrapper layers despite being present in the proto `PlateInfo`.
 
 ## [0.8.2] - 2026-05-17
