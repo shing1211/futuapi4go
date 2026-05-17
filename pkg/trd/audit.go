@@ -96,15 +96,10 @@ func (a *AuditLogger) LogModifyOrder(req *ModifyOrderRequest, resp *ModifyOrderR
 }
 
 func (a *AuditLogger) LogReconfirmOrder(req *ReconfirmOrderRequest, resp *ReconfirmOrderResponse, err error) {
-	op := req.Header
-	accID := uint64(0)
-	if op != nil {
-		accID = op.GetAccID()
-	}
 	entry := AuditEntry{
 		Timestamp: time.Now(),
 		Op:        OpReconfirmOrder,
-		AccID:     accID,
+		AccID:     req.AccID,
 		OrderID:   req.OrderID,
 		Success:   err == nil,
 	}

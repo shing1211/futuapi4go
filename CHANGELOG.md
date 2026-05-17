@@ -5,6 +5,26 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `GetTradeDate` (`pkg/qot/trade_date.go`) now uses proper typed `GetTradeDateRequest`/`GetTradeDateResponse` structs instead of raw proto types. `client/quote_api.go` `GetTradeDates` updated to use new wrapper.
+
+- `SubscribeKLines`/`SubscribeKLine` (`pkg/push/chan/chan.go`) now accept `constant.Market` and `[]constant.KLType` instead of raw `int32`/`[]int32`. `klTypeToSubType` now returns an error on unknown KLType instead of silently defaulting.
+
+- `GetFunds` (`pkg/trd/position.go`) validation: split combined nil/zero check into separate checks with distinct error messages.
+
+- Input validation added to `GetBasicQot` (empty security list), `GetOrderBook` (nil Security), `GetTicker` (nil Security), `GetRT` (nil Security), `GetKL` (nil Security, ReqNum > 0).
+
+- `Funds.IsPDT` and `Funds.PDTSeq` fields now have GoDoc comments explaining PDT meaning.
+
+- Removed unused `ProtoID_GetHistoryKLPoints` constant from `pkg/qot/kline.go` and unused `ProtoID_GetMarketSnapshot` alias from `pkg/qot/quote.go`.
+
+### Fixed
+
+- `klTypeToSubType` returns error on unknown KLType instead of silently mapping to `SubType_K_1Min`.
+
 ## [0.8.1] - 2026-05-17
 
 ### Changed

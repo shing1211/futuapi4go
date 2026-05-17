@@ -80,7 +80,6 @@ const (
 	ProtoID_GetOrderBook            = 3012
 	ProtoID_GetTicker               = 3010
 	ProtoID_GetRT                   = 3008
-	ProtoID_GetMarketSnapshot       = 3203
 	ProtoID_GetSecuritySnapshot     = 3203
 	ProtoID_GetBroker               = 3014
 	ProtoID_GetStaticInfo           = 3202
@@ -91,6 +90,7 @@ const (
 	ProtoID_GetFutureInfo           = 3218
 	ProtoID_GetIpoList              = 3217
 	ProtoID_GetHistoryKL           = 3101
+	ProtoID_GetRehab                = 3102
 	ProtoID_GetHoldingChangeList    = 3208
 	ProtoID_RequestRehab            = 3105
 	ProtoID_GetUserSecurityGroup    = 3222
@@ -137,10 +137,14 @@ type BasicQot struct {
 	AfterMarket     *qotcommon.PreAfterMarketData
 	FutureExData    *qotcommon.FutureBasicQotExData
 	Overnight       *qotcommon.PreAfterMarketData
+	WarrantExData   *qotcommon.WarrantBasicQotExData
 }
 
 // GetBasicQot returns basic quote data for the given securities.
 func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcommon.Security) ([]*BasicQot, error) {
+	if len(securityList) == 0 {
+		return nil, fmt.Errorf("GetBasicQot: security list is empty")
+	}
 	c2s := &qotgetbasicqot.C2S{
 		SecurityList: securityList,
 	}
@@ -190,6 +194,7 @@ func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcomm
 			AfterMarket:     bq.GetAfterMarket(),
 			FutureExData:   bq.GetFutureExData(),
 			Overnight:       bq.GetOvernight(),
+			WarrantExData:  bq.GetWarrantExData(),
 		})
 	}
 
@@ -208,6 +213,7 @@ type KLine struct {
 	Volume         int64
 	Turnover       float64
 	TurnoverRate   float64
+	Pe             float64
 	ChangeRate     float64
 	Timestamp      float64
 }
@@ -231,6 +237,12 @@ type GetKLResponse struct {
 func GetKL(ctx context.Context, c *futuapi.Client, req *GetKLRequest) (*GetKLResponse, error) {
 	if req == nil {
 		return nil, fmt.Errorf("GetKL: request is nil")
+	}
+	if req.Security == nil {
+		return nil, fmt.Errorf("GetKL: Security is nil")
+	}
+	if req.ReqNum <= 0 {
+		return nil, fmt.Errorf("GetKL: ReqNum must be positive")
 	}
 	c2s := &qotgetkl.C2S{
 		Security:  req.Security,
@@ -275,6 +287,7 @@ func GetKL(ctx context.Context, c *futuapi.Client, req *GetKLRequest) (*GetKLRes
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
 			TurnoverRate:   kl.GetTurnoverRate(),
+			Pe:             kl.GetPe(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})

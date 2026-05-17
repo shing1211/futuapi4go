@@ -104,7 +104,7 @@ type GetOptionChainRequest struct {
 	Condition       int32
 	BeginTime       string
 	EndTime         string
-	DataFilter      interface{}
+	DataFilter      *qotgetoptionchain.DataFilter
 }
 
 // OptionItem represents a pair of call and put options at the same strike price.
@@ -141,6 +141,7 @@ func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainR
 		Condition:       &req.Condition,
 		BeginTime:       &req.BeginTime,
 		EndTime:         &req.EndTime,
+		DataFilter:      req.DataFilter,
 	}
 
 	pkt := &qotgetoptionchain.Request{C2S: c2s}

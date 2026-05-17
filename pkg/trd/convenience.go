@@ -21,6 +21,9 @@ type CancelAllOrdersResult struct {
 // CancelAllOrders cancels all open orders for the given account, market, and
 // environment.
 func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*CancelAllOrdersResult, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("CancelAllOrders: accID is required")
+	}
 	trdMarket := int32(market)
 	trdEnv := int32(env)
 	header := &trdcommon.TrdHeader{

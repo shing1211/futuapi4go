@@ -62,6 +62,7 @@ package chanpkg
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/shing1211/futuapi4go/client"
@@ -106,6 +107,22 @@ func NewRTChannel(bufferSize int) chan *push.UpdateRT {
 
 func NewBrokerChannel(bufferSize int) chan *push.UpdateBroker {
 	return make(chan *push.UpdateBroker, WithBufferSize(bufferSize))
+}
+
+func NewSystemNotifyChannel(bufferSize int) chan *push.SystemNotify {
+	return make(chan *push.SystemNotify, WithBufferSize(bufferSize))
+}
+
+func NewOrderUpdateChannel(bufferSize int) chan *push.UpdateOrder {
+	return make(chan *push.UpdateOrder, WithBufferSize(bufferSize))
+}
+
+func NewOrderFillUpdateChannel(bufferSize int) chan *push.UpdateOrderFill {
+	return make(chan *push.UpdateOrderFill, WithBufferSize(bufferSize))
+}
+
+func NewTrdNotifyChannel(bufferSize int) chan *push.TrdNotify {
+	return make(chan *push.TrdNotify, WithBufferSize(bufferSize))
 }
 
 func subscribeOne[T any](ctx context.Context, cli *client.Client, protoID uint32, ch chan<- *T, parseFn func([]byte) (*T, error), subFn func() error) (func(), error) {
@@ -157,14 +174,18 @@ func SubscribeQuote(ctx context.Context, cli *client.Client, market constant.Mar
 
 func SubscribeKLine(ctx context.Context, cli *client.Client, market constant.Market, code string, klType constant.KLType, ch chan<- *push.UpdateKL) (func(), error) {
 	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateKL, ch, push.ParseUpdateKL, func() error {
-		return client.Subscribe(ctx, cli, market, code, []constant.SubType{klTypeToSubType(klType)})
+		st, err := klTypeToSubType(klType)
+		if err != nil {
+			return err
+		}
+		return client.Subscribe(ctx, cli, market, code, []constant.SubType{st})
 	})
 }
 
-func SubscribeKLines(ctx context.Context, cli *client.Client, market int32, code string, kTypes []int32, ch chan<- *push.UpdateKL) (func(), error) {
+func SubscribeKLines(ctx context.Context, cli *client.Client, market constant.Market, code string, kTypes []constant.KLType, ch chan<- *push.UpdateKL) (func(), error) {
 	ktMap := make(map[int32]struct{}, len(kTypes))
 	for _, kt := range kTypes {
-		ktMap[kt] = struct{}{}
+		ktMap[int32(kt)] = struct{}{}
 	}
 
 	wrappedParse := func(body []byte) (*push.UpdateKL, error) {
@@ -182,40 +203,44 @@ func SubscribeKLines(ctx context.Context, cli *client.Client, market int32, code
 	})
 }
 
-func subscribe(ctx context.Context, cli *client.Client, market int32, code string, kTypes []int32) error {
-	subtypes := make([]constant.SubType, len(kTypes))
-	for i, kt := range kTypes {
-		subtypes[i] = klTypeToSubType(constant.KLType(kt))
+func subscribe(ctx context.Context, cli *client.Client, market constant.Market, code string, kTypes []constant.KLType) error {
+	subtypes := make([]constant.SubType, 0, len(kTypes))
+	for _, kt := range kTypes {
+		st, err := klTypeToSubType(kt)
+		if err != nil {
+			return err
+		}
+		subtypes = append(subtypes, st)
 	}
-	return client.Subscribe(ctx, cli, constant.Market(market), code, subtypes)
+	return client.Subscribe(ctx, cli, market, code, subtypes)
 }
 
-func klTypeToSubType(k constant.KLType) constant.SubType {
+func klTypeToSubType(k constant.KLType) (constant.SubType, error) {
 	switch k {
 	case constant.KLType_K_1Min:
-		return constant.SubType_K_1Min
+		return constant.SubType_K_1Min, nil
 	case constant.KLType_K_5Min:
-		return constant.SubType_K_5Min
+		return constant.SubType_K_5Min, nil
 	case constant.KLType_K_15Min:
-		return constant.SubType_K_15Min
+		return constant.SubType_K_15Min, nil
 	case constant.KLType_K_30Min:
-		return constant.SubType_K_30Min
+		return constant.SubType_K_30Min, nil
 	case constant.KLType_K_60Min:
-		return constant.SubType_K_60Min
+		return constant.SubType_K_60Min, nil
 	case constant.KLType_K_Day:
-		return constant.SubType_K_Day
+		return constant.SubType_K_Day, nil
 	case constant.KLType_K_Week:
-		return constant.SubType_K_Week
+		return constant.SubType_K_Week, nil
 	case constant.KLType_K_Month:
-		return constant.SubType_K_Month
+		return constant.SubType_K_Month, nil
 	case constant.KLType_K_Quarter:
-		return constant.SubType_K_Quarter
+		return constant.SubType_K_Quarter, nil
 	case constant.KLType_K_Year:
-		return constant.SubType_K_Year
+		return constant.SubType_K_Year, nil
 	case constant.KLType_K_3Min:
-		return constant.SubType_K_3Min
+		return constant.SubType_K_3Min, nil
 	default:
-		return constant.SubType_K_1Min
+		return constant.SubType_K_1Min, fmt.Errorf("unknown KLType: %d", k)
 	}
 }
 
@@ -245,6 +270,30 @@ func SubscribeBroker(ctx context.Context, cli *client.Client, market constant.Ma
 
 func SubscribePriceReminder(ctx context.Context, cli *client.Client, ch chan<- *push.UpdatePriceReminder) (func(), error) {
 	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdatePriceReminder, ch, push.ParseUpdatePriceReminder, func() error {
+		return nil
+	})
+}
+
+func SubscribeSystemNotify(ctx context.Context, cli *client.Client, ch chan<- *push.SystemNotify) (func(), error) {
+	return subscribeOne(ctx, cli, constant.ProtoID_Notify, ch, push.ParseSystemNotify, func() error {
+		return nil
+	})
+}
+
+func SubscribeOrderUpdate(ctx context.Context, cli *client.Client, ch chan<- *push.UpdateOrder) (func(), error) {
+	return subscribeOne(ctx, cli, constant.ProtoID_Trd_UpdateOrder, ch, push.ParseUpdateOrder, func() error {
+		return nil
+	})
+}
+
+func SubscribeOrderFillUpdate(ctx context.Context, cli *client.Client, ch chan<- *push.UpdateOrderFill) (func(), error) {
+	return subscribeOne(ctx, cli, constant.ProtoID_Trd_UpdateOrderFill, ch, push.ParseUpdateOrderFill, func() error {
+		return nil
+	})
+}
+
+func SubscribeTrdNotify(ctx context.Context, cli *client.Client, ch chan<- *push.TrdNotify) (func(), error) {
+	return subscribeOne(ctx, cli, push.ProtoID_Trd_Notify, ch, push.ParseTrdNotify, func() error {
 		return nil
 	})
 }

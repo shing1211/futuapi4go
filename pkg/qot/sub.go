@@ -71,22 +71,16 @@ type SubscribeRequest struct {
 	Session              int32
 }
 
-// SubscribeResponse is the response type for Subscribe.
-type SubscribeResponse struct {
-	RetType int32
-	RetMsg  string
-}
-
 // Subscribe subscribes to or unsubscribes from real-time market data.
-func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) (*SubscribeResponse, error) {
+func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) error {
 	if req == nil {
-		return nil, fmt.Errorf("Subscribe: request is nil")
+		return fmt.Errorf("Subscribe: request is nil")
 	}
 	if len(req.SecurityList) == 0 {
-		return nil, fmt.Errorf("security list is empty")
+		return fmt.Errorf("security list is empty")
 	}
 	if len(req.SubTypeList) == 0 {
-		return nil, fmt.Errorf("subtype list is empty")
+		return fmt.Errorf("subtype list is empty")
 	}
 	subTypeList := make([]int32, len(req.SubTypeList))
 	for i, st := range req.SubTypeList {
@@ -122,17 +116,14 @@ func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) (*
 	var rsp qotsub.Response
 
 	if err := c.RequestContext(ctx, ProtoID_Subscribe, pkt, &rsp); err != nil {
-		return nil, err
+		return err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("Subscribe", rsp.GetRetType(), rsp.GetRetMsg())
+		return wrapError("Subscribe", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
-	return &SubscribeResponse{
-		RetType: rsp.GetRetType(),
-		RetMsg:  rsp.GetRetMsg(),
-	}, nil
+	return nil
 }
 
 // RegQotPushRequest defines parameters for RegQotPush.
@@ -144,22 +135,16 @@ type RegQotPushRequest struct {
 	IsFirstPush   bool
 }
 
-// RegQotPushResponse is the response type for RegQotPush.
-type RegQotPushResponse struct {
-	RetType int32
-	RetMsg  string
-}
-
 // RegQotPush registers or unregisters for real-time push notifications.
-func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) (*RegQotPushResponse, error) {
+func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) error {
 	if req == nil {
-		return nil, fmt.Errorf("RegQotPush: request is nil")
+		return fmt.Errorf("RegQotPush: request is nil")
 	}
 	if len(req.SecurityList) == 0 {
-		return nil, fmt.Errorf("security list is empty")
+		return fmt.Errorf("security list is empty")
 	}
 	if len(req.SubTypeList) == 0 {
-		return nil, fmt.Errorf("subtype list is empty")
+		return fmt.Errorf("subtype list is empty")
 	}
 
 	c2s := &qotregqotpush.C2S{
@@ -174,17 +159,14 @@ func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) 
 	var rsp qotregqotpush.Response
 
 	if err := c.RequestContext(ctx, ProtoID_RegQotPush, pkt, &rsp); err != nil {
-		return nil, err
+		return err
 	}
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("RegQotPush", rsp.GetRetType(), rsp.GetRetMsg())
+		return wrapError("RegQotPush", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
-	return &RegQotPushResponse{
-		RetType: rsp.GetRetType(),
-		RetMsg:  rsp.GetRetMsg(),
-	}, nil
+	return nil
 }
 
 // GetSubInfoResponse is the response type for GetSubInfo.

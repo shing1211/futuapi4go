@@ -131,10 +131,12 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 			UnrealizedPL:     p.UnrealizedPL,
 			RealizedPL:       p.RealizedPL,
 			Currency:         p.Currency,
-			TrdMarket:        p.TrdMarket,
+			TrdMarket:        p.SecMarket,
 			DilutedCostPrice: p.DilutedCostPrice,
 			AverageCostPrice: p.AverageCostPrice,
 			AveragePnLRate:   p.AveragePlRatio,
+			SecMarket:        p.SecMarket,
+			TdTrdVal:         p.TdTrdVal,
 		}
 	}
 	return positions, nil
@@ -367,6 +369,7 @@ func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error)
 			Currency:        o.Currency,
 			TrdMarket:       o.TrdMarket,
 			Session:         o.Session,
+			JpAccType:       o.JpAccType,
 		}
 	}
 	return orders, nil
@@ -397,33 +400,34 @@ func GetHistoryOrderList(ctx context.Context, c *Client, accID uint64, market co
 			continue
 		}
 		orders = append(orders, Order{
-			OrderID:         getUint64(o.OrderID),
-			OrderIDEx:       getStr(o.OrderIDEx),
-			Code:            getStr(o.Code),
-			Name:            getStr(o.Name),
-			TrdSide:         getInt32(o.TrdSide),
-			OrderType:       getInt32(o.OrderType),
-			OrderStatus:     getInt32(o.OrderStatus),
-			Price:           getFloat64(o.Price),
-			Qty:             getFloat64(o.Qty),
-			FillQty:         getFloat64(o.FillQty),
-			FillAvgPrice:    getFloat64(o.FillAvgPrice),
-			CreateTime:      getStr(o.CreateTime),
-			UpdateTime:      getStr(o.UpdateTime),
-			LastErrMsg:      getStr(o.LastErrMsg),
-			SecMarket:       getInt32(o.SecMarket),
-			CreateTimestamp: getFloat64(o.CreateTimestamp),
-			UpdateTimestamp: getFloat64(o.UpdateTimestamp),
-			Remark:          getStr(o.Remark),
-			TimeInForce:     getInt32(o.TimeInForce),
-			FillOutsideRTH:  getBool(o.FillOutsideRTH),
-			AuxPrice:        getFloat64(o.AuxPrice),
-			TrailType:       getInt32(o.TrailType),
-			TrailValue:      getFloat64(o.TrailValue),
-			TrailSpread:     getFloat64(o.TrailSpread),
-			Currency:        getInt32(o.Currency),
-			TrdMarket:       getInt32(o.TrdMarket),
-			Session:         getInt32(o.Session),
+			OrderID:         o.OrderID,
+			OrderIDEx:       o.OrderIDEx,
+			Code:            o.Code,
+			Name:            o.Name,
+			TrdSide:         o.TrdSide,
+			OrderType:       o.OrderType,
+			OrderStatus:     o.OrderStatus,
+			Price:           o.Price,
+			Qty:             o.Qty,
+			FillQty:         o.FillQty,
+			FillAvgPrice:    o.FillAvgPrice,
+			CreateTime:      o.CreateTime,
+			UpdateTime:      o.UpdateTime,
+			LastErrMsg:      o.LastErrMsg,
+			SecMarket:       o.SecMarket,
+			CreateTimestamp: o.CreateTimestamp,
+			UpdateTimestamp: o.UpdateTimestamp,
+			Remark:          o.Remark,
+			TimeInForce:     o.TimeInForce,
+			FillOutsideRTH:  o.FillOutsideRTH,
+			AuxPrice:        o.AuxPrice,
+			TrailType:       o.TrailType,
+			TrailValue:      o.TrailValue,
+			TrailSpread:     o.TrailSpread,
+			Currency:        o.Currency,
+			TrdMarket:       o.TrdMarket,
+			Session:         o.Session,
+			JpAccType:       o.JpAccType,
 		})
 	}
 	return orders, nil
@@ -512,15 +516,10 @@ func GetFlowSummary(ctx context.Context, c *Client, accID uint64, market constan
 	if clearingDate == "" {
 		clearingDate = time.Now().Format("2006-01-02")
 	}
-	marketPtr := int32(market)
-	trdEnvInt := int32(c.trdEnv)
-	header := &trdcommon.TrdHeader{
-		AccID:     &accID,
-		TrdMarket: &marketPtr,
-		TrdEnv:    &trdEnvInt,
-	}
 	resp, err := trd.GetFlowSummary(ctx, c.inner, &trd.GetFlowSummaryRequest{
-		Header:            header,
+		AccID:             accID,
+		TrdMarket:         constant.TrdMarket(market),
+		TrdEnv:            c.trdEnv,
 		ClearingDate:      clearingDate,
 		CashFlowDirection: int32(direction),
 	})
@@ -586,13 +585,6 @@ func SubAccPush(ctx context.Context, c *Client, accIDList []uint64) error {
 
 // ReconfirmOrder reconfirms an order requiring additional verification.
 func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
-	marketPtr := int32(market)
-	trdEnvInt := int32(c.trdEnv)
-	header := &trdcommon.TrdHeader{
-		AccID:     &accID,
-		TrdMarket: &marketPtr,
-		TrdEnv:    &trdEnvInt,
-	}
 	connID := c.inner.GetConnID()
 	serialNo := c.inner.NextSerialNo()
 	resp, err := trd.ReconfirmOrder(ctx, c.inner, &trd.ReconfirmOrderRequest{
@@ -600,7 +592,9 @@ func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constan
 			ConnID:   &connID,
 			SerialNo: &serialNo,
 		},
-		Header:          header,
+		AccID:           accID,
+		TrdMarket:       market,
+		TrdEnv:          c.trdEnv,
 		OrderID:         orderID,
 		ReconfirmReason: reason,
 	})
@@ -608,9 +602,9 @@ func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constan
 		return nil, err
 	}
 	return &ReconfirmOrderResult{
-		AccID:     resp.Header.GetAccID(),
-		TrdEnv:    resp.Header.GetTrdEnv(),
-		TrdMarket: resp.Header.GetTrdMarket(),
+		AccID:     resp.AccID,
+		TrdEnv:    resp.TrdEnv,
+		TrdMarket: resp.TrdMarket,
 		OrderID:   resp.OrderID,
 	}, nil
 }

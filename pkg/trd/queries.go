@@ -348,7 +348,7 @@ type GetHistoryOrderListRequest struct {
 
 // GetHistoryOrderListResponse is the response containing historical orders.
 type GetHistoryOrderListResponse struct {
-	OrderList []*trdcommon.Order
+	OrderList []*Order
 }
 
 // GetHistoryOrderList retrieves the historical order list based on filter conditions.
@@ -395,8 +395,44 @@ func GetHistoryOrderList(ctx context.Context, c *futuapi.Client, req *GetHistory
 		return nil, fmt.Errorf("GetHistoryOrderList: s2c is nil")
 	}
 
+	orderList := make([]*Order, 0, len(s2c.GetOrderList()))
+	for _, o := range s2c.GetOrderList() {
+		if o == nil {
+			continue
+		}
+		orderList = append(orderList, &Order{
+			OrderID:         o.GetOrderID(),
+			OrderIDEx:       o.GetOrderIDEx(),
+			Code:            o.GetCode(),
+			Name:            o.GetName(),
+			TrdSide:         o.GetTrdSide(),
+			OrderType:       o.GetOrderType(),
+			OrderStatus:     o.GetOrderStatus(),
+			Price:           o.GetPrice(),
+			Qty:             o.GetQty(),
+			FillQty:         o.GetFillQty(),
+			FillAvgPrice:    o.GetFillAvgPrice(),
+			CreateTime:      o.GetCreateTime(),
+			UpdateTime:      o.GetUpdateTime(),
+			LastErrMsg:      o.GetLastErrMsg(),
+			SecMarket:       o.GetSecMarket(),
+			CreateTimestamp: o.GetCreateTimestamp(),
+			UpdateTimestamp: o.GetUpdateTimestamp(),
+			Remark:          o.GetRemark(),
+			TimeInForce:     o.GetTimeInForce(),
+			FillOutsideRTH:  o.GetFillOutsideRTH(),
+			AuxPrice:        o.GetAuxPrice(),
+			TrailType:       o.GetTrailType(),
+			TrailValue:      o.GetTrailValue(),
+			TrailSpread:     o.GetTrailSpread(),
+			Currency:        o.GetCurrency(),
+			TrdMarket:       o.GetTrdMarket(),
+			Session:         o.GetSession(),
+			JpAccType:       o.GetJpAccType(),
+		})
+	}
 	return &GetHistoryOrderListResponse{
-		OrderList: s2c.GetOrderList(),
+		OrderList: orderList,
 	}, nil
 }
 

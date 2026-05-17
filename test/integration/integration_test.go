@@ -174,16 +174,12 @@ func TestIntegrationSubscribe(t *testing.T) {
 		IsRegOrUnRegPush: true,
 	}
 
-	subResp, err := qot.Subscribe(context.Background(), client, subReq)
+	err := qot.Subscribe(context.Background(), client, subReq)
 	if err != nil {
 		t.Fatalf("Subscribe failed: %v", err)
 	}
 
-	t.Logf("Subscribe result: RetType=%d, RetMsg=%s", subResp.RetType, subResp.RetMsg)
-
-	if subResp.RetType != 0 {
-		t.Errorf("expected RetType 0 (success), got %d", subResp.RetType)
-	}
+	t.Log("Subscribe succeeded")
 }
 
 func TestIntegrationMultipleAPIs(t *testing.T) {
@@ -233,7 +229,7 @@ func TestIntegrationMultipleAPIs(t *testing.T) {
 					IsSubOrUnSub:     true,
 					IsRegOrUnRegPush: true,
 				}
-				_, err := qot.Subscribe(context.Background(), client, subReq)
+				err := qot.Subscribe(context.Background(), client, subReq)
 				return err
 			},
 		},

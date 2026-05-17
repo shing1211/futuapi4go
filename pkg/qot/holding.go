@@ -23,6 +23,7 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestrehab"
 )
@@ -130,10 +131,11 @@ type GetRehabRequest struct {
 
 // GetRehabResponse is the response type for GetRehab.
 type GetRehabResponse struct {
-	RehabList []*qotcommon.Rehab
+	SecurityRehabList []*qotgetrehab.SecurityRehab
 }
 
 // GetRehab returns rehabilitation (复权) data for the given security.
+// Uses Qot_GetRehab (ProtoID 3102) which supports multiple securities.
 func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
 	if req == nil {
 		return nil, fmt.Errorf("GetRehab: request is nil")
@@ -142,14 +144,14 @@ func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*Ge
 		return nil, fmt.Errorf("security is required")
 	}
 
-	c2s := &qotrequestrehab.C2S{
-		Security: req.Security,
+	c2s := &qotgetrehab.C2S{
+		SecurityList: []*qotcommon.Security{req.Security},
 	}
 
-	pkt := &qotrequestrehab.Request{C2S: c2s}
-	var rsp qotrequestrehab.Response
+	pkt := &qotgetrehab.Request{C2S: c2s}
+	var rsp qotgetrehab.Response
 
-	if err := c.RequestContext(ctx, ProtoID_RequestRehab, pkt, &rsp); err != nil {
+	if err := c.RequestContext(ctx, ProtoID_GetRehab, pkt, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -163,6 +165,6 @@ func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*Ge
 	}
 
 	return &GetRehabResponse{
-		RehabList: s2c.GetRehabList(),
+		SecurityRehabList: s2c.GetSecurityRehabList(),
 	}, nil
 }

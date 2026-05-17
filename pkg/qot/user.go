@@ -175,6 +175,11 @@ func ModifyUserSecurity(ctx context.Context, c *futuapi.Client, req *ModifyUserS
 		return nil, wrapError("ModifyUserSecurity", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
+	s2c := rsp.GetS2C()
+	if s2c == nil {
+		return nil, wrapError("ModifyUserSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
 	return &ModifyUserSecurityResponse{
 		RetType: rsp.GetRetType(),
 		RetMsg:  rsp.GetRetMsg(),

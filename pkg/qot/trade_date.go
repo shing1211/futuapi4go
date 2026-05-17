@@ -13,13 +13,35 @@ const (
 	ProtoID_Qot_GetTradeDate = 3225
 )
 
-func GetTradeDate(ctx context.Context, c *futuapi.Client, req *qotgettradedate.C2S) (*qotgettradedate.S2C, error) {
+type GetTradeDateRequest struct {
+	Market    int32
+	BeginTime string
+	EndTime   string
+}
+
+type TradeDateInfo struct {
+	Time          string
+	Timestamp     float64
+	TradeDateType int32
+}
+
+type GetTradeDateResponse struct {
+	TradeDateList []*TradeDateInfo
+}
+
+func GetTradeDate(ctx context.Context, c *futuapi.Client, req *GetTradeDateRequest) (*GetTradeDateResponse, error) {
 	if req == nil {
 		return nil, fmt.Errorf("GetTradeDate: request is nil")
 	}
 
+	c2s := &qotgettradedate.C2S{
+		Market:    &req.Market,
+		BeginTime: &req.BeginTime,
+		EndTime:   &req.EndTime,
+	}
+
 	var rsp qotgettradedate.Response
-	if err := c.RequestContext(ctx, ProtoID_Qot_GetTradeDate, &qotgettradedate.Request{C2S: req}, &rsp); err != nil {
+	if err := c.RequestContext(ctx, ProtoID_Qot_GetTradeDate, &qotgettradedate.Request{C2S: c2s}, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -27,9 +49,23 @@ func GetTradeDate(ctx context.Context, c *futuapi.Client, req *qotgettradedate.C
 		return nil, wrapError("GetTradeDate", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
-	if rsp.GetS2C() == nil {
+	s2c := rsp.GetS2C()
+	if s2c == nil {
 		return nil, wrapError("GetTradeDate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	return rsp.GetS2C(), nil
+	result := &GetTradeDateResponse{
+		TradeDateList: make([]*TradeDateInfo, 0, len(s2c.GetTradeDateList())),
+	}
+	for _, td := range s2c.GetTradeDateList() {
+		if td == nil {
+			continue
+		}
+		result.TradeDateList = append(result.TradeDateList, &TradeDateInfo{
+			Time:          td.GetTime(),
+			Timestamp:     td.GetTimestamp(),
+			TradeDateType: td.GetTradeDateType(),
+		})
+	}
+	return result, nil
 }

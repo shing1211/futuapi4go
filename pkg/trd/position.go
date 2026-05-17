@@ -68,7 +68,9 @@ type Funds struct {
 	MaxWithdrawal     float64
 	RiskStatus        int32
 	MarginCallMargin  float64
+	// IsPDT indicates whether the account is a Pattern Day Trader (US margin accounts).
 	IsPDT             bool
+	// PDTSeq is the PDT sequence number.
 	PDTSeq            string
 	BeginningDTBP     float64
 	RemainingDTBP     float64
@@ -99,7 +101,10 @@ type GetFundsResponse struct {
 // GetFunds retrieves the account funds information including cash, assets, and available funds.
 // Returns the funds data or an error if the request fails.
 func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*GetFundsResponse, error) {
-	if req == nil || req.AccID == 0 {
+	if req == nil {
+		return nil, fmt.Errorf("GetFunds: request is nil")
+	}
+	if req.AccID == 0 {
 		return nil, constant.ErrInvalidAccID
 	}
 	trdEnv := int32(req.TrdEnv)
@@ -475,6 +480,7 @@ type MaxTrdQtysInfo struct {
 	MaxBuyBack          float64
 	LongRequiredIM      float64
 	ShortRequiredIM     float64
+	Session             int32
 }
 
 // GetMaxTrdQtysResponse is the response containing maximum tradable quantities.
@@ -510,9 +516,7 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 		Header:    header,
 		OrderType: &orderType,
 		Code:      &req.Code,
-	}
-	if req.Price != 0 {
-		c2s.Price = &req.Price
+		Price:     &req.Price,
 	}
 	if req.OrderID != 0 {
 		c2s.OrderID = &req.OrderID
@@ -559,20 +563,22 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 			MaxBuyBack:          m.GetMaxBuyBack(),
 			LongRequiredIM:      m.GetLongRequiredIM(),
 			ShortRequiredIM:     m.GetShortRequiredIM(),
+			Session:             m.GetSession(),
 		},
 	}, nil
 }
 
 // GetFlowSummaryRequest is the request to retrieve fund flow summary for a clearing date.
 type GetFlowSummaryRequest struct {
-	Header            *trdcommon.TrdHeader
+	AccID             uint64
+	TrdMarket         constant.TrdMarket
+	TrdEnv            constant.TrdEnv
 	ClearingDate      string
 	CashFlowDirection int32
 }
 
 // GetFlowSummaryResponse is the response containing the fund flow summary.
 type GetFlowSummaryResponse struct {
-	Header          *trdcommon.TrdHeader
 	FlowSummaryList []*trdflowsummary.FlowSummaryInfo
 }
 
@@ -582,12 +588,24 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 	if req == nil {
 		return nil, fmt.Errorf("GetFlowSummary: request is nil")
 	}
-	if req.Header == nil {
-		return nil, fmt.Errorf("header is required")
+	if req.AccID == 0 {
+		return nil, fmt.Errorf("invalid account ID: must be non-zero")
+	}
+	if req.ClearingDate == "" && req.CashFlowDirection != 0 {
+		return nil, fmt.Errorf("clearing date is required when cash flow direction is specified")
+	}
+
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &trdMarket,
+		TrdEnv:    &trdEnv,
 	}
 
 	c2s := &trdflowsummary.C2S{
-		Header:            req.Header,
+		Header:            header,
 		ClearingDate:      &req.ClearingDate,
 		CashFlowDirection: &req.CashFlowDirection,
 	}
@@ -609,7 +627,6 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 	}
 
 	return &GetFlowSummaryResponse{
-		Header:          s2c.GetHeader(),
 		FlowSummaryList: s2c.GetFlowSummaryInfoList(),
 	}, nil
 }

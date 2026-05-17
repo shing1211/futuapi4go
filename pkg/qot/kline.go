@@ -124,6 +124,7 @@ func RequestHistoryKL(ctx context.Context, c *futuapi.Client, req *RequestHistor
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
 			TurnoverRate:   kl.GetTurnoverRate(),
+			Pe:             kl.GetPe(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})
@@ -213,6 +214,7 @@ func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLReque
 			Volume:         kl.GetVolume(),
 			Turnover:       kl.GetTurnover(),
 			TurnoverRate:   kl.GetTurnoverRate(),
+			Pe:             kl.GetPe(),
 			ChangeRate:     kl.GetChangeRate(),
 			Timestamp:      kl.GetTimestamp(),
 		})
@@ -221,9 +223,6 @@ func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLReque
 	return result, nil
 }
 
-const (
-	ProtoID_GetHistoryKLPoints = 3106
-)
 
 // NoDataMode specifies how to return data when the requested time point is empty.
 type NoDataMode = qotgethistoryklpoints.NoDataMode

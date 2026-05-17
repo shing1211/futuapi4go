@@ -456,7 +456,6 @@ func TestProtoIDConstants(t *testing.T) {
 		{"ProtoID_GetOrderBook", 3012},
 		{"ProtoID_GetTicker", 3010},
 		{"ProtoID_GetRT", 3008},
-		{"ProtoID_GetMarketSnapshot", 3203},
 		{"ProtoID_GetSecuritySnapshot", 3203},
 		{"ProtoID_GetBroker", 3014},
 		{"ProtoID_GetStaticInfo", 3202},
@@ -505,8 +504,6 @@ func TestProtoIDConstants(t *testing.T) {
 				got = ProtoID_GetTicker
 			case "ProtoID_GetRT":
 				got = ProtoID_GetRT
-			case "ProtoID_GetMarketSnapshot":
-				got = ProtoID_GetMarketSnapshot
 			case "ProtoID_GetSecuritySnapshot":
 				got = ProtoID_GetSecuritySnapshot
 			case "ProtoID_GetBroker":
@@ -726,19 +723,6 @@ func TestSubscribeRequestFullConstruction(t *testing.T) {
 	}
 }
 
-func TestSubscribeResponseConstruction(t *testing.T) {
-	rsp := &SubscribeResponse{
-		RetType: 0,
-		RetMsg:  "success",
-	}
-
-	if rsp.RetType != 0 {
-		t.Errorf("expected RetType 0, got %d", rsp.RetType)
-	}
-	if rsp.RetMsg != "success" {
-		t.Errorf("expected RetMsg success, got %s", rsp.RetMsg)
-	}
-}
 
 func TestGetCapitalFlowRequestConstruction(t *testing.T) {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
@@ -1372,16 +1356,7 @@ func TestRegQotPushRequestConstruction(t *testing.T) {
 	}
 }
 
-func TestRegQotPushResponseConstruction(t *testing.T) {
-	rsp := &RegQotPushResponse{
-		RetType: 0,
-		RetMsg:  "success",
-	}
 
-	if rsp.RetType != 0 {
-		t.Errorf("expected RetType 0, got %d", rsp.RetType)
-	}
-}
 
 func TestRequestRehabRequestConstruction(t *testing.T) {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)

@@ -332,15 +332,19 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 // ReconfirmOrderRequest is the request to reconfirm an order with a specified reason.
 type ReconfirmOrderRequest struct {
 	PacketID        *common.PacketID
-	Header          *trdcommon.TrdHeader
+	AccID           uint64
+	TrdMarket       constant.TrdMarket
+	TrdEnv          constant.TrdEnv
 	OrderID         uint64
 	ReconfirmReason int32
 }
 
-// ReconfirmOrderResponse is the response containing the reconfirmed order header and ID.
+// ReconfirmOrderResponse is the response containing the reconfirmed order details.
 type ReconfirmOrderResponse struct {
-	Header  *trdcommon.TrdHeader
-	OrderID uint64
+	AccID     uint64
+	TrdEnv    int32
+	TrdMarket int32
+	OrderID   uint64
 }
 
 // ReconfirmOrder reconfirms an order that requires additional verification.
@@ -352,13 +356,22 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 	if req.OrderID == 0 {
 		return nil, fmt.Errorf("invalid order ID: must be non-zero")
 	}
-	if req.Header == nil {
-		return nil, fmt.Errorf("header is required")
+	if req.AccID == 0 {
+		return nil, fmt.Errorf("invalid account ID: must be non-zero")
+	}
+
+	trdEnv := int32(req.TrdEnv)
+	trdMarket := int32(req.TrdMarket)
+
+	header := &trdcommon.TrdHeader{
+		AccID:     &req.AccID,
+		TrdMarket: &trdMarket,
+		TrdEnv:    &trdEnv,
 	}
 
 	c2s := &trdreconfirmorder.C2S{
 		PacketID:        req.PacketID,
-		Header:          req.Header,
+		Header:          header,
 		OrderID:         &req.OrderID,
 		ReconfirmReason: &req.ReconfirmReason,
 	}
@@ -380,7 +393,9 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 	}
 
 	return &ReconfirmOrderResponse{
-		Header:  s2c.GetHeader(),
-		OrderID: s2c.GetOrderID(),
+		AccID:     s2c.GetHeader().GetAccID(),
+		TrdEnv:    s2c.GetHeader().GetTrdEnv(),
+		TrdMarket: s2c.GetHeader().GetTrdMarket(),
+		OrderID:   s2c.GetOrderID(),
 	}, nil
 }

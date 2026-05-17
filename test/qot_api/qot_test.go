@@ -544,7 +544,7 @@ func TestSubscribe_HSI(t *testing.T) {
 		IsSubOrUnSub: true,
 	}
 
-	_, err := qot.Subscribe(context.Background(), cli, req)
+	err := qot.Subscribe(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("Subscribe failed: %v", err)
 	}

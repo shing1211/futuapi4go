@@ -66,6 +66,9 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 	if req == nil {
 		return nil, fmt.Errorf("GetOrderBook: request is nil")
 	}
+	if req.Security == nil {
+		return nil, fmt.Errorf("GetOrderBook: Security is nil")
+	}
 	c2s := &qotgetorderbook.C2S{
 		Security: req.Security,
 		Num:      &req.Num,
@@ -175,6 +178,9 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 	if req == nil {
 		return nil, fmt.Errorf("GetTicker: request is nil")
 	}
+	if req.Security == nil {
+		return nil, fmt.Errorf("GetTicker: Security is nil")
+	}
 	maxRetNum := req.Num
 	c2s := &qotgetticker.C2S{
 		Security:  req.Security,
@@ -254,6 +260,9 @@ type GetRTResponse struct {
 func GetRT(ctx context.Context, c *futuapi.Client, req *GetRTRequest) (*GetRTResponse, error) {
 	if req == nil {
 		return nil, fmt.Errorf("GetRT: request is nil")
+	}
+	if req.Security == nil {
+		return nil, fmt.Errorf("GetRT: Security is nil")
 	}
 	c2s := &qotgetrt.C2S{
 		Security: req.Security,

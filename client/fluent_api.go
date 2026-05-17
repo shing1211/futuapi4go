@@ -53,12 +53,12 @@ func (api *QuoteAPI) GetSecuritySnapshot(ctx context.Context, req *qot.GetSecuri
 }
 
 // Subscribe subscribes to market data.
-func (api *QuoteAPI) Subscribe(ctx context.Context, req *qot.SubscribeRequest) (*qot.SubscribeResponse, error) {
+func (api *QuoteAPI) Subscribe(ctx context.Context, req *qot.SubscribeRequest) error {
 	return qot.Subscribe(ctx, api.client, req)
 }
 
 // RegQotPush registers for push notifications.
-func (api *QuoteAPI) RegQotPush(ctx context.Context, req *qot.RegQotPushRequest) (*qot.RegQotPushResponse, error) {
+func (api *QuoteAPI) RegQotPush(ctx context.Context, req *qot.RegQotPushRequest) error {
 	return qot.RegQotPush(ctx, api.client, req)
 }
 
@@ -212,13 +212,13 @@ func (api *SystemAPI) GetGlobalState(ctx context.Context) (*sys.GetGlobalStateRe
 }
 
 // GetUserInfo retrieves user info.
-func (api *SystemAPI) GetUserInfo(ctx context.Context) (*sys.GetUserInfoResponse, error) {
-	return sys.GetUserInfo(ctx, api.client)
+func (api *SystemAPI) GetUserInfo(ctx context.Context, req *sys.GetUserInfoRequest) (*sys.GetUserInfoResponse, error) {
+	return sys.GetUserInfo(ctx, api.client, req)
 }
 
 // GetDelayStatistics retrieves delay statistics.
 func (api *SystemAPI) GetDelayStatistics(ctx context.Context) (*sys.GetDelayStatisticsResponse, error) {
-	return sys.GetDelayStatistics(ctx, api.client)
+	return sys.GetDelayStatistics(ctx, api.client, nil)
 }
 
 // GetUsedQuota retrieves quota usage.

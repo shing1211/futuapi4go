@@ -7,7 +7,6 @@ import (
 
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/qot"
@@ -38,21 +37,26 @@ func GetQuote(ctx context.Context, c *Client, market constant.Market, code strin
 
 	q := quotes[0]
 	return &Quote{
-		Symbol:       code,
-		Market:       int32(market),
-		Price:        q.CurPrice,
-		Open:         q.OpenPrice,
-		High:         q.HighPrice,
-		Low:          q.LowPrice,
-		Volume:       q.Volume,
-		Timestamp:    q.UpdateTime,
-		Name:         q.Name,
-		LastClose:    q.LastClosePrice,
-		Turnover:     q.Turnover,
-		TurnoverRate: q.TurnoverRate,
-		Amplitude:    q.Amplitude,
-		IsSuspended:  q.IsSuspended,
-		SecStatus:   q.SecStatus,
+		Symbol:          code,
+		Market:          int32(market),
+		Price:           q.CurPrice,
+		Open:            q.OpenPrice,
+		High:            q.HighPrice,
+		Low:             q.LowPrice,
+		Volume:          q.Volume,
+		Timestamp:       q.UpdateTime,
+		Name:            q.Name,
+		LastClose:       q.LastClosePrice,
+		Turnover:        q.Turnover,
+		TurnoverRate:    q.TurnoverRate,
+		Amplitude:       q.Amplitude,
+		IsSuspended:     q.IsSuspended,
+		SecStatus:       q.SecStatus,
+		ListTime:        q.ListTime,
+		PriceSpread:     q.PriceSpread,
+		DarkStatus:      q.DarkStatus,
+		ListTimestamp:   q.ListTimestamp,
+		UpdateTimestamp: q.UpdateTimestamp,
 	}, nil
 }
 
@@ -74,17 +78,18 @@ func GetKLines(ctx context.Context, c *Client, market constant.Market, code stri
 	klines := make([]KLine, len(resp.KLList))
 	for i, kl := range resp.KLList {
 		klines[i] = KLine{
-			Time:       kl.Time,
-			IsBlank:    kl.IsBlank,
-			Open:       kl.OpenPrice,
-			High:       kl.HighPrice,
-			Low:        kl.LowPrice,
-			Close:      kl.ClosePrice,
-			Volume:     kl.Volume,
-			LastClose:  kl.LastClosePrice,
-			Turnover:   kl.Turnover,
-			ChangeRate: kl.ChangeRate,
-			Timestamp:  kl.Timestamp,
+			Time:         kl.Time,
+			IsBlank:      kl.IsBlank,
+			Open:         kl.OpenPrice,
+			High:         kl.HighPrice,
+			Low:          kl.LowPrice,
+			Close:        kl.ClosePrice,
+			Volume:       kl.Volume,
+			LastClose:    kl.LastClosePrice,
+			Turnover:     kl.Turnover,
+			TurnoverRate: kl.TurnoverRate,
+			ChangeRate:   kl.ChangeRate,
+			Timestamp:    kl.Timestamp,
 		}
 	}
 	return klines, nil
@@ -100,7 +105,7 @@ func Subscribe(ctx context.Context, c *Client, market constant.Market, code stri
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+	err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     []*qotcommon.Security{sec},
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     true,
@@ -120,7 +125,7 @@ func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code st
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+	err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     []*qotcommon.Security{sec},
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     false,
@@ -131,7 +136,7 @@ func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code st
 
 // UnsubscribeAll unsubscribes from all market data.
 func UnsubscribeAll(ctx context.Context, c *Client) error {
-	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+	err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SubTypeList:  []qot.SubType{},
 		IsSubOrUnSub: false,
 		IsUnsubAll:   true,
@@ -156,7 +161,7 @@ func SubscribeSymbols(ctx context.Context, c *Client, market constant.Market, co
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+	err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     securities,
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     true,
@@ -183,7 +188,7 @@ func UnsubscribeSymbols(ctx context.Context, c *Client, market constant.Market, 
 		subTypesConverted[i] = qot.SubType(st)
 	}
 
-	_, err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
+	err := qot.Subscribe(ctx, c.inner, &qot.SubscribeRequest{
 		SecurityList:     securities,
 		SubTypeList:      subTypesConverted,
 		IsSubOrUnSub:     false,
@@ -211,7 +216,7 @@ func RegQotPush(ctx context.Context, c *Client, market constant.Market, code str
 		rehabTypesConverted[i] = int32(rt)
 	}
 
-	_, err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
+	err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
 		SecurityList:   []*qotcommon.Security{sec},
 		SubTypeList:    subTypesConverted,
 		RehabTypeList:  rehabTypesConverted,
@@ -282,16 +287,17 @@ func GetTicker(ctx context.Context, c *Client, market constant.Market, code stri
 			dir = "Sell"
 		}
 		tickers[i] = Ticker{
-			Time:      t.Time,
-			Sequence:  t.Sequence,
-			Price:     t.Price,
-			Volume:    t.Volume,
-			Direction: dir,
-			Turnover:  t.Turnover,
-			RecvTime:  t.RecvTime,
-			Type:      t.Type,
-			TypeSign:  t.TypeSign,
-			Timestamp: t.Timestamp,
+			Time:         t.Time,
+			Sequence:     t.Sequence,
+			Price:        t.Price,
+			Volume:       t.Volume,
+			Direction:    dir,
+			Turnover:     t.Turnover,
+			RecvTime:     t.RecvTime,
+			Type:         t.Type,
+			TypeSign:     t.TypeSign,
+			Timestamp:    t.Timestamp,
+			PushDataType: t.PushDataType,
 		}
 	}
 	return tickers, nil
@@ -339,11 +345,11 @@ func GetBroker(ctx context.Context, c *Client, market constant.Market, code stri
 
 	bidBrokers := make([]Broker, len(resp.BidBrokerList))
 	for i, b := range resp.BidBrokerList {
-		bidBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume}
+	bidBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume, OrderID: b.OrderID}
 	}
 	askBrokers := make([]Broker, len(resp.AskBrokerList))
-	for i, a := range resp.AskBrokerList {
-		askBrokers[i] = Broker{ID: a.ID, Name: a.Name, Pos: a.Pos, Volume: a.Volume}
+	for i, b := range resp.AskBrokerList {
+		askBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume, OrderID: b.OrderID}
 	}
 	return bidBrokers, askBrokers, nil
 }
@@ -1340,8 +1346,19 @@ func GetRehab(ctx context.Context, c *Client, market constant.Market, code strin
 		return nil, err
 	}
 
-	result := make([]*RehabInfo, 0, len(resp.RehabList))
-	for _, r := range resp.RehabList {
+	var rehabList []*qotcommon.Rehab
+	for _, sr := range resp.SecurityRehabList {
+		if sr == nil {
+			continue
+		}
+		if sr.GetSecurity().GetCode() == code {
+			rehabList = sr.GetRehabList()
+			break
+		}
+	}
+
+	result := make([]*RehabInfo, 0, len(rehabList))
+	for _, r := range rehabList {
 		if r == nil {
 			continue
 		}
@@ -1407,12 +1424,11 @@ func GetHistoryKLPoints(ctx context.Context, c *Client, market constant.Market, 
 
 // GetTradeDates retrieves trade dates for a market within a date range.
 func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endTime string) ([]TradeDate, error) {
-	req := &qotgettradedate.C2S{
-		Market:    &market,
-		BeginTime: &beginTime,
-		EndTime:   &endTime,
-	}
-	resp, err := qot.GetTradeDate(ctx, c.inner, req)
+	resp, err := qot.GetTradeDate(ctx, c.inner, &qot.GetTradeDateRequest{
+		Market:    market,
+		BeginTime: beginTime,
+		EndTime:   endTime,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -1422,9 +1438,9 @@ func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endT
 			continue
 		}
 		dates = append(dates, TradeDate{
-			Time:          d.GetTime(),
-			Timestamp:     d.GetTimestamp(),
-			TradeDateType: d.GetTradeDateType(),
+			Time:          d.Time,
+			Timestamp:     d.Timestamp,
+			TradeDateType: d.TradeDateType,
 		})
 	}
 	return dates, nil

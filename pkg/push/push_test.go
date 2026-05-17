@@ -168,6 +168,9 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 	lastClosePrice := 349.00
 	turnoverRate := 0.5
 	amplitude := 1.43
+	darkStatus := int32(0)
+	listTimestamp := 1767110400.0
+	secStatus := int32(1)
 	retType := int32(common.RetType_RetType_Succeed)
 
 	resp := &qotupdatebasicqot.Response{
@@ -191,6 +194,9 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 					Turnover:        &turnover,
 					TurnoverRate:    &turnoverRate,
 					Amplitude:       &amplitude,
+					DarkStatus:      &darkStatus,
+					ListTimestamp:   &listTimestamp,
+					SecStatus:       &secStatus,
 				},
 			},
 		},
@@ -243,6 +249,45 @@ func TestParseUpdateBasicQotValidData(t *testing.T) {
 	}
 	if result.UpdateTimestamp != 1744162200.0 {
 		t.Errorf("expected UpdateTimestamp 1744162200.0, got %f", result.UpdateTimestamp)
+	}
+	if result.ListTime != "2026-01-01" {
+		t.Errorf("expected ListTime 2026-01-01, got %s", result.ListTime)
+	}
+	if result.PriceSpread != 0.01 {
+		t.Errorf("expected PriceSpread 0.01, got %f", result.PriceSpread)
+	}
+	if result.TurnoverRate != 0.5 {
+		t.Errorf("expected TurnoverRate 0.5, got %f", result.TurnoverRate)
+	}
+	if result.Amplitude != 1.43 {
+		t.Errorf("expected Amplitude 1.43, got %f", result.Amplitude)
+	}
+	if result.DarkStatus != 0 {
+		t.Errorf("expected DarkStatus 0, got %d", result.DarkStatus)
+	}
+	if result.OptionExData != nil {
+		t.Errorf("expected OptionExData nil, got %v", result.OptionExData)
+	}
+	if result.ListTimestamp != 1767110400.0 {
+		t.Errorf("expected ListTimestamp 1767110400.0, got %f", result.ListTimestamp)
+	}
+	if result.PreMarket != nil {
+		t.Errorf("expected PreMarket nil, got %v", result.PreMarket)
+	}
+	if result.AfterMarket != nil {
+		t.Errorf("expected AfterMarket nil, got %v", result.AfterMarket)
+	}
+	if result.SecStatus != 1 {
+		t.Errorf("expected SecStatus 1, got %d", result.SecStatus)
+	}
+	if result.FutureExData != nil {
+		t.Errorf("expected FutureExData nil, got %v", result.FutureExData)
+	}
+	if result.WarrantExData != nil {
+		t.Errorf("expected WarrantExData nil, got %v", result.WarrantExData)
+	}
+	if result.Overnight != nil {
+		t.Errorf("expected Overnight nil, got %v", result.Overnight)
 	}
 }
 

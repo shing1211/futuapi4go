@@ -67,6 +67,19 @@ type UpdateBasicQot struct {
 	LastClosePrice float64
 	UpdateTime     string
 	UpdateTimestamp float64
+	ListTime       string
+	PriceSpread    float64
+	TurnoverRate   float64
+	Amplitude      float64
+	DarkStatus     int32
+	OptionExData   *qotcommon.OptionBasicQotExData
+	ListTimestamp  float64
+	PreMarket      *qotcommon.PreAfterMarketData
+	AfterMarket    *qotcommon.PreAfterMarketData
+	SecStatus      int32
+	FutureExData   *qotcommon.FutureBasicQotExData
+	WarrantExData  *qotcommon.WarrantBasicQotExData
+	Overnight      *qotcommon.PreAfterMarketData
 }
 
 // ParseUpdateBasicQot parses a basic quote push notification from a raw protobuf body.
@@ -84,18 +97,31 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	}
 	bq := s2c.GetBasicQotList()[0]
 	return &UpdateBasicQot{
-		Security:       bq.GetSecurity(),
-		Name:           bq.GetName(),
-		CurPrice:       bq.GetCurPrice(),
-		OpenPrice:      bq.GetOpenPrice(),
-		HighPrice:      bq.GetHighPrice(),
-		LowPrice:       bq.GetLowPrice(),
-		Volume:         bq.GetVolume(),
-		Turnover:       bq.GetTurnover(),
-		IsSuspended:    bq.GetIsSuspended(),
-		LastClosePrice: bq.GetLastClosePrice(),
-		UpdateTime:     bq.GetUpdateTime(),
+		Security:        bq.GetSecurity(),
+		Name:            bq.GetName(),
+		CurPrice:        bq.GetCurPrice(),
+		OpenPrice:       bq.GetOpenPrice(),
+		HighPrice:       bq.GetHighPrice(),
+		LowPrice:        bq.GetLowPrice(),
+		Volume:          bq.GetVolume(),
+		Turnover:        bq.GetTurnover(),
+		IsSuspended:     bq.GetIsSuspended(),
+		LastClosePrice:  bq.GetLastClosePrice(),
+		UpdateTime:      bq.GetUpdateTime(),
 		UpdateTimestamp: bq.GetUpdateTimestamp(),
+		ListTime:        bq.GetListTime(),
+		PriceSpread:     bq.GetPriceSpread(),
+		TurnoverRate:    bq.GetTurnoverRate(),
+		Amplitude:       bq.GetAmplitude(),
+		DarkStatus:      bq.GetDarkStatus(),
+		OptionExData:    bq.GetOptionExData(),
+		ListTimestamp:   bq.GetListTimestamp(),
+		PreMarket:       bq.GetPreMarket(),
+		AfterMarket:     bq.GetAfterMarket(),
+		SecStatus:       bq.GetSecStatus(),
+		FutureExData:    bq.GetFutureExData(),
+		WarrantExData:   bq.GetWarrantExData(),
+		Overnight:       bq.GetOvernight(),
 	}, nil
 }
 

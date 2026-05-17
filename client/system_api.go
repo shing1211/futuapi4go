@@ -43,27 +43,39 @@ func GetGlobalState(ctx context.Context, c *Client) (*GlobalState, error) {
 			}
 			return ""
 		}(),
+		ConnID:       resp.ConnID,
+		QotSvrIpAddr: resp.QotSvrIpAddr,
+		TrdSvrIpAddr: resp.TrdSvrIpAddr,
 	}, nil
 }
 
 // GetUserInfo retrieves user information.
 func GetUserInfo(ctx context.Context, c *Client) (*UserInfo, error) {
-	resp, err := sys.GetUserInfo(ctx, c.inner)
+	resp, err := sys.GetUserInfo(ctx, c.inner, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return &UserInfo{
-		UserID:    resp.UserID,
-		NickName:  resp.NickName,
-		AvatarUrl: resp.AvatarUrl,
-		ApiLevel:  resp.ApiLevel,
+		UserID:               resp.UserID,
+		NickName:             resp.NickName,
+		AvatarUrl:            resp.AvatarUrl,
+		ApiLevel:             resp.ApiLevel,
+		IsNeedAgreeDisclaimer: resp.IsNeedAgreeDisclaimer,
+		ShQotRight:           resp.ShQotRight,
+		SzQotRight:           resp.SzQotRight,
+		Extra:                resp.Extra,
+		HkQotRight:           resp.HkQotRight,
+		UsQotRight:           resp.UsQotRight,
+		CnQotRight:           resp.CnQotRight,
+		SubQuota:             resp.SubQuota,
+		HistoryKLQuota:       resp.HistoryKLQuota,
 	}, nil
 }
 
 // GetDelayStatistics retrieves delay statistics.
 func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error) {
-	resp, err := sys.GetDelayStatistics(ctx, c.inner)
+	resp, err := sys.GetDelayStatistics(ctx, c.inner, nil)
 	if err != nil {
 		return nil, err
 	}

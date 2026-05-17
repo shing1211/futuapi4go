@@ -21,7 +21,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
 )
 
@@ -620,11 +619,10 @@ func TestSubAccPushRequestConstruction(t *testing.T) {
 }
 
 func TestReconfirmOrderRequestConstruction(t *testing.T) {
-	accID := uint64(123456789)
-	trdMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
 	req := &ReconfirmOrderRequest{
 		PacketID:        &common.PacketID{ConnID: func() *uint64 { v := uint64(1); return &v }(), SerialNo: func() *uint32 { v := uint32(1); return &v }()},
-		Header:          &trdcommon.TrdHeader{AccID: &accID, TrdMarket: &trdMarket},
+		AccID:           123456789,
+		TrdMarket:       1,
 		OrderID:         9876543210,
 		ReconfirmReason: 1,
 	}
@@ -635,26 +633,30 @@ func TestReconfirmOrderRequestConstruction(t *testing.T) {
 	if req.ReconfirmReason != 1 {
 		t.Errorf("expected ReconfirmReason 1, got %d", req.ReconfirmReason)
 	}
+	if req.AccID != 123456789 {
+		t.Errorf("expected AccID 123456789, got %d", req.AccID)
+	}
 }
 
 func TestReconfirmOrderResponseConstruction(t *testing.T) {
-	accID := uint64(123456789)
-	trdMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
 	rsp := &ReconfirmOrderResponse{
-		Header:  &trdcommon.TrdHeader{AccID: &accID, TrdMarket: &trdMarket},
-		OrderID: 9876543210,
+		AccID:     123456789,
+		TrdMarket: 1,
+		OrderID:   9876543210,
 	}
 
 	if rsp.OrderID != 9876543210 {
 		t.Errorf("expected OrderID 9876543210, got %d", rsp.OrderID)
 	}
+	if rsp.AccID != 123456789 {
+		t.Errorf("expected AccID 123456789, got %d", rsp.AccID)
+	}
 }
 
 func TestGetFlowSummaryRequestConstruction(t *testing.T) {
-	accID := uint64(123456789)
-	trdMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
 	req := &GetFlowSummaryRequest{
-		Header:            &trdcommon.TrdHeader{AccID: &accID, TrdMarket: &trdMarket},
+		AccID:             123456789,
+		TrdMarket:         1,
 		ClearingDate:      "2026-04-08",
 		CashFlowDirection: 1,
 	}
@@ -668,14 +670,11 @@ func TestGetFlowSummaryRequestConstruction(t *testing.T) {
 }
 
 func TestGetFlowSummaryResponseConstruction(t *testing.T) {
-	accID := uint64(123456789)
-	trdMarket := int32(trdcommon.TrdMarket_TrdMarket_HK)
 	rsp := &GetFlowSummaryResponse{
-		Header:          &trdcommon.TrdHeader{AccID: &accID, TrdMarket: &trdMarket},
 		FlowSummaryList: []*trdflowsummary.FlowSummaryInfo{},
 	}
 
-	if rsp.Header == nil {
-		t.Fatal("Header should not be nil")
+	if rsp.FlowSummaryList == nil {
+		t.Fatal("FlowSummaryList should not be nil")
 	}
 }

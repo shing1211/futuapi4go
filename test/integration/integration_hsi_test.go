@@ -287,7 +287,7 @@ func TestIntegration_HSI_Subscribe_Push(t *testing.T) {
 		IsRegOrUnRegPush: true,
 	}
 
-	_, err := qot.Subscribe(context.Background(), cli, req)
+	err := qot.Subscribe(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("Subscribe failed: %v", err)
 	}
@@ -302,7 +302,7 @@ func TestIntegration_HSI_Subscribe_Push(t *testing.T) {
 
 	// Unsubscribe
 	req.IsSubOrUnSub = false
-	_, err = qot.Subscribe(context.Background(), cli, req)
+	err = qot.Subscribe(context.Background(), cli, req)
 	if err != nil {
 		t.Fatalf("Unsubscribe failed: %v", err)
 	}

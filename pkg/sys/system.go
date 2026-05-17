@@ -136,6 +136,11 @@ func GetGlobalState(ctx context.Context, c *futuapi.Client) (*GetGlobalStateResp
 	}, nil
 }
 
+// GetUserInfoRequest defines optional parameters for GetUserInfo.
+type GetUserInfoRequest struct {
+	Flag int32 // bitmask for selecting specific info fields (see UserInfoField in proto)
+}
+
 // GetUserInfoResponse represents the user information including user ID, nickname, avatar, and API level.
 type GetUserInfoResponse struct {
 	UserID                int64
@@ -143,15 +148,32 @@ type GetUserInfoResponse struct {
 	AvatarUrl             string
 	ApiLevel              string
 	IsNeedAgreeDisclaimer bool
-	ShQotRight            int32 //上海市场行情权限
-	SzQotRight            int32 //深圳市场行情权限
-	Extra                 int32 //透传信息
+	ShQotRight            int32
+	SzQotRight            int32
+	Extra                 int32
+	HkQotRight            int32
+	UsQotRight            int32
+	CnQotRight            int32
+	SubQuota              int32
+	HistoryKLQuota        int32
+	HkOptionQotRight      int32
+	HasUSOptionQotRight   bool
+	HkFutureQotRight      int32
+	UsFutureQotRight      int32
+	UsOptionQotRight      int32
+	WebKey                string
+	WebJumpUrlHead        string
+	UserAttribution       int32
+	UpdateWhatsNew        string
 }
 
 // GetUserInfo retrieves the current user information including nickname, avatar, and API level.
-// Returns the user info or an error if the request fails.
-func GetUserInfo(ctx context.Context, c *futuapi.Client) (*GetUserInfoResponse, error) {
+// If req is nil, sends an empty C2S (backward compatible). Returns the user info or an error.
+func GetUserInfo(ctx context.Context, c *futuapi.Client, req *GetUserInfoRequest) (*GetUserInfoResponse, error) {
 	c2s := &getuserinfo.C2S{}
+	if req != nil && req.Flag != 0 {
+		c2s.Flag = &req.Flag
+	}
 
 	pkt := &getuserinfo.Request{C2S: c2s}
 	var rsp getuserinfo.Response
@@ -166,7 +188,7 @@ func GetUserInfo(ctx context.Context, c *futuapi.Client) (*GetUserInfoResponse, 
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetUserInfo: s2c is nil")
+		return nil, wrapError("GetUserInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetUserInfoResponse{
@@ -175,10 +197,28 @@ func GetUserInfo(ctx context.Context, c *futuapi.Client) (*GetUserInfoResponse, 
 		AvatarUrl:             s2c.GetAvatarUrl(),
 		ApiLevel:              s2c.GetApiLevel(),
 		IsNeedAgreeDisclaimer: s2c.GetIsNeedAgreeDisclaimer(),
-		ShQotRight:            s2c.GetShQotRight(),
-		SzQotRight:            s2c.GetSzQotRight(),
-		Extra:                 s2c.GetExtra(),
+		HkQotRight:            s2c.GetHkQotRight(),
+		UsQotRight:            s2c.GetUsQotRight(),
+		CnQotRight:            s2c.GetCnQotRight(),
+		SubQuota:              s2c.GetSubQuota(),
+		HistoryKLQuota:        s2c.GetHistoryKLQuota(),
+		HkOptionQotRight:      s2c.GetHkOptionQotRight(),
+		HasUSOptionQotRight:   s2c.GetHasUSOptionQotRight(),
+		HkFutureQotRight:      s2c.GetHkFutureQotRight(),
+		UsFutureQotRight:      s2c.GetUsFutureQotRight(),
+		UsOptionQotRight:      s2c.GetUsOptionQotRight(),
+		WebKey:                s2c.GetWebKey(),
+		WebJumpUrlHead:        s2c.GetWebJumpUrlHead(),
+		UserAttribution:       s2c.GetUserAttribution(),
+		UpdateWhatsNew:        s2c.GetUpdateWhatsNew(),
 	}, nil
+}
+
+// GetDelayStatisticsRequest defines optional parameters for GetDelayStatistics.
+type GetDelayStatisticsRequest struct {
+	TypeList     []int32
+	QotPushStage int32
+	SegmentList  []int32
 }
 
 // GetDelayStatisticsResponse represents delay statistics for quote push, request-reply, and order placement.
@@ -188,38 +228,38 @@ type GetDelayStatisticsResponse struct {
 	PlaceOrderStatisticsList []*getdelaystatistics.PlaceOrderStatisticsItem
 }
 
-// marshalC2SProto2 marshals the C2S message using proto2 wire format.
+// marshalGetDelayStatisticsRequestProto2 marshals the C2S message using proto2 wire format.
 // This is a workaround for the proto2 vs proto3 wire format incompatibility.
 // Proto2 uses non-packed encoding for repeated int32, while proto3 uses packed encoding.
 // OpenD's C++ parser expects proto2 non-packed encoding.
-func marshalC2SProto2(c2s *getdelaystatistics.C2S) ([]byte, error) {
+func marshalGetDelayStatisticsRequestProto2(c2s *getdelaystatistics.C2S) ([]byte, error) {
 	buf := make([]byte, 0, 64)
 
-	// Field 1: TypeList (proto2 non-packed encoding)
-	// Wire type 0 = varint, field number 1 -> tag = (1 << 3) | 0 = 8
 	for _, v := range c2s.GetTypeList() {
-		buf = append(buf, 8) // tag for field 1, wire type 0
+		buf = append(buf, 8)
 		buf = appendVarint(buf, uint64(v))
 	}
 
-	// Field 2: QotPushStage (optional int32)
 	if c2s.QotPushStage != nil {
-		// Wire type 0 = varint, field number 2 -> tag = (2 << 3) | 0 = 16
 		buf = append(buf, 16)
 		buf = appendVarint(buf, uint64(*c2s.QotPushStage))
 	}
 
-	// Field 3: SegmentList (proto2 non-packed encoding)
-	// Wire type 0 = varint, field number 3 -> tag = (3 << 3) | 0 = 24
 	for _, v := range c2s.GetSegmentList() {
-		buf = append(buf, 24) // tag for field 3, wire type 0
+		buf = append(buf, 24)
 		buf = appendVarint(buf, uint64(v))
 	}
 
-	return buf, nil
+	// Wrap C2S in Request message with proto2 length-delimited encoding
+	reqBuf := make([]byte, 0, len(buf)+10)
+	reqBuf = append(reqBuf, 0x0A)
+	reqBuf = appendVarint(reqBuf, uint64(len(buf)))
+	reqBuf = append(reqBuf, buf...)
+
+	return reqBuf, nil
 }
 
-// appendVarint appends a varint to the buffer.
+// appendVarint appends a varint-encoded uint64 to the buffer.
 func appendVarint(buf []byte, v uint64) []byte {
 	for v >= 0x80 {
 		buf = append(buf, byte(v)|0x80)
@@ -229,32 +269,25 @@ func appendVarint(buf []byte, v uint64) []byte {
 	return buf
 }
 
-// marshalGetDelayStatisticsRequest marshals the GetDelayStatistics request using proto2 wire format.
-func marshalGetDelayStatisticsRequest(c2s *getdelaystatistics.C2S) ([]byte, error) {
-	c2sBuf, err := marshalC2SProto2(c2s)
-	if err != nil {
-		return nil, err
-	}
-
-	// Wrap C2S in Request message with proto2 length-delimited encoding
-	// Field 1, wire type 2 = length-delimited
-	buf := make([]byte, 0, len(c2sBuf)+10)
-	buf = append(buf, 0x0A) // tag for field 1, wire type 2 (length-delimited)
-	buf = appendVarint(buf, uint64(len(c2sBuf)))
-	buf = append(buf, c2sBuf...)
-
-	return buf, nil
-}
-
 // GetDelayStatistics retrieves performance delay statistics for quote pushes, request-reply, and order placements.
 // Returns the delay statistics or an error if the request fails.
 //
 // Note: This function uses proto2 wire format for compatibility with OpenD's C++ protobuf parser.
-func GetDelayStatistics(ctx context.Context, c *futuapi.Client) (*GetDelayStatisticsResponse, error) {
+func GetDelayStatistics(ctx context.Context, c *futuapi.Client, req *GetDelayStatisticsRequest) (*GetDelayStatisticsResponse, error) {
 	c2s := &getdelaystatistics.C2S{}
+	if req != nil {
+		if len(req.TypeList) > 0 {
+			c2s.TypeList = req.TypeList
+		}
+		if req.QotPushStage != 0 {
+			c2s.QotPushStage = &req.QotPushStage
+		}
+		if len(req.SegmentList) > 0 {
+			c2s.SegmentList = req.SegmentList
+		}
+	}
 
-	// Use custom proto2 marshaling to avoid proto3 packed encoding issue
-	body, err := marshalGetDelayStatisticsRequest(c2s)
+	body, err := marshalGetDelayStatisticsRequestProto2(c2s)
 	if err != nil {
 		return nil, fmt.Errorf("marshalGetDelayStatisticsRequest failed: %w", err)
 	}
@@ -285,7 +318,7 @@ func GetDelayStatistics(ctx context.Context, c *futuapi.Client) (*GetDelayStatis
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
-		return nil, fmt.Errorf("GetDelayStatistics: s2c is nil")
+		return nil, wrapError("GetDelayStatistics", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetDelayStatisticsResponse{
