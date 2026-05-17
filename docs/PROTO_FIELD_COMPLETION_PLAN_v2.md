@@ -1,4 +1,7 @@
-# Proto Field Completion Plan v2
+# Proto Field Completion Plan v2 [PARTIALLY COMPLETED]
+
+> **Status:** 🔶 26 of 30 audit issues resolved as of v0.8.5. See Open Issues below for remaining 4 items + 3 cross-layer gaps.
+> 100% proto field coverage achieved for core types. Some raw type leakage and error patterns remain.
 
 > Implementation plan for closing 30 audit issues in the futuapi4go SDK.
 > All 30 issues must be resolved to reach 100% proto field coverage, eliminate raw type leakage, and standardize error/validation patterns.
@@ -1173,27 +1176,30 @@ Completed 2026-05-17. Audited all 21 demo examples (00–20) for missing proto�
 
 ## Open Issues / Next Steps
 
-These items were identified during the audit but not yet addressed. Track them here for the next work session.
+### ✅ Resolved (Remove from tracking)
+- **GetHistoryOrderListResponse.OrderList** — ✅ Now uses wrapped `[]*Order` (confirmed `pkg/trd/queries.go:351`). Was already fixed but Open Issues section was stale.
+- **Subscribe/RegQotPush return type** — ✅ Already returns `error` only (confirmed `pkg/qot/sub.go:75`). Breaking change applied.
+- **Nested proto pointers in client types** — ✅ Intentional design decision. No action needed.
 
-### Priority: Medium
+### 🔴 Remaining: 5 Audit Issues + 3 Gaps + Example Audit
+These are the items still pending implementation:
 
-- [ ] **Audit examples 21-96+** — The remaining ~80 demo examples may contain additional unmapped proto fields. Run the same cross-layer trace per example.
-- [ ] **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). Consider wrapping in the push path for safety, or leave as-is since demo accesses raw fields.
-- [ ] **GetHistoryOrderListResponse.OrderList** — Still uses `[]*trdcommon.Order` (raw proto). Phase 4 Issue #4 was partially deferred.
-- [ ] **GetDelayStatistics** — Still uses `WritePacket`/`ReadResponseContext` + raw proto types. Phase 8 was deferred (complex proto2 encoding issue).
+| # | Item | Priority | Status Detail |
+|---|------|----------|---------------|
+| #13-15 | **GetDelayStatistics** — Still uses `WritePacket`/`ReadResponseContext` + raw proto types. Phase 8 was deferred due to complex proto2 encoding issue. | MEDIUM | `pkg/sys/system.go:217-328` |
+| #10 item 3 | **GetFlowSummaryResponse** — Still returns `[]*trdflowsummary.FlowSummaryInfo` (raw proto) instead of wrapped `[]*FlowSummaryInfo`. Wrapper type exists at `client/types.go:662`. | MEDIUM | `pkg/trd/position.go:582` |
+| – | **Audit remaining examples** — 107 examples in `futuapi4go-demo/examples/`, ~6 verified (StaticInfo, CapitalFlow, MarketState, PushTicker, PushRT, KLine Pe), **~60+ need cross-layer proto field trace** for unmapped fields or raw proto leakage. | MEDIUM | `futuapi4go-demo/examples/21_*`–`99_*` |
+| #11 | **FutureInfo.TradeTimeList** — Field not present on `client/types.go:328-345` | LOW | Missing from wrapper struct |
+| #11 | **IpoData.CnExData/HkExData/UsExData** — IPO extended data fields not present on `client/types.go:355-360` | LOW | Missing from wrapper struct |
+| #19 | **ProtoID constant consolidation** — Local ProtoID constants still exist in `pkg/qot/quote.go`, `pkg/qot/sub.go`, `pkg/qot/trade_date.go`, `pkg/trd/trade.go`, `pkg/sys/system.go`, `pkg/push/qot_push.go`. `ProtoID_Qot_GetTradeDate (3225)` and `ProtoID_Qot_GetRehab (3102)` are NOT in `constant.go`. | LOW | Partial completion |
+| #18 | **S2C nil wrapError standardization** — 13+ functions still use `fmt.Errorf("FuncName: s2c is nil")` instead of `wrapError()`. Examples: GetTicker, GetRT, GetBroker, GetFunds, GetPositionList, GetOrderList, GetHistoryOrderList. | LOW | Pre-existing pattern |
+| #30 | **Replace GetXxx() with direct nil checks** — Codebase predominantly still uses `GetXxx()` proto accessor pattern. Plan specified new/changed code only. | LOW | Ongoing style preference |
 
-### Priority: Low
-
-- [ ] **Demo replace directive** — `futuapi4go-demo/go.mod` still has `replace github.com/shing1211/futuapi4go => ../futuapi4go`. Should remove when cutting a stable release.
-- [ ] **ProtoID constant consolidation** — Phase 9 Issue #19 was partially completed. Some local ProtoID constants may still exist alongside `constant.go` definitions.
-- [ ] **Subscribe/RegQotPush return type** — Phase 9 Issue #21 (change `(*SubscribeResponse, error)` → `error`). Breaking change, low adoption risk.
-- [ ] **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow.
-
-### Known Won't Fix
-
-- **GitHub push blocked** — Intermittent network issue (`Failed to connect to github.com port 443`). Tags `v0.8.2`, `v0.8.3`, `v0.8.4` pushed successfully when network is available. Gitee is the canonical remote.
-- **Nested proto pointers in client types** — `OptionExData`, `PreMarket`, `AfterMarket`, `FutureExData`, `WarrantExData`, `Overnight` intentionally omitted from `client.Quote` per design decision (see §1 above).
+### Non-Blocking Items
+- **Demo replace directive** — `futuapi4go-demo/go.mod` has `replace github.com/shing1211/futuapi4go => ../futuapi4go`. Remove when cutting a stable release.
+- **GitHub release automation** — `make release` fails outside macOS/Linux. Manual `gh release create` is the current workflow.
+- **Push.KLine raw proto passthrough** — Example 07 uses `*qotcommon.KLine` directly (nil pointer risk). Deferred.
 
 ---
 
-*Last updated: 2026-05-17. Corresponds to futuapi4go v0.8.4.*
+*Last updated: 2026-05-17. Corresponds to futuapi4go v0.8.5.*

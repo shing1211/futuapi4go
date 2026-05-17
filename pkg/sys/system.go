@@ -223,9 +223,45 @@ type GetDelayStatisticsRequest struct {
 
 // GetDelayStatisticsResponse represents delay statistics for quote push, request-reply, and order placement.
 type GetDelayStatisticsResponse struct {
-	QotPushStatisticsList    []*getdelaystatistics.DelayStatistics
-	ReqReplyStatisticsList   []*getdelaystatistics.ReqReplyStatisticsItem
-	PlaceOrderStatisticsList []*getdelaystatistics.PlaceOrderStatisticsItem
+	QotPushStatisticsList    []*QotPushDelayStatistics
+	ReqReplyStatisticsList    []*ReqReplyDelayStatistics
+	PlaceOrderStatisticsList  []*PlaceOrderDelayStatistics
+}
+
+// QotPushDelayStatistics represents quote push delay statistics.
+type QotPushDelayStatistics struct {
+	QotPushType int32
+	ItemList    []*DelayStatisticsItem
+	DelayAvg    float32
+	Count       int32
+}
+
+// DelayStatisticsItem represents a single delay statistics item.
+type DelayStatisticsItem struct {
+	Begin          int32
+	End            int32
+	Count          int32
+	Proportion     float32
+	CumulativeRatio float32
+}
+
+// ReqReplyDelayStatistics represents request-reply delay statistics.
+type ReqReplyDelayStatistics struct {
+	ProtoID       int32
+	Count         int32
+	TotalCostAvg  float32
+	OpenDCostAvg  float32
+	NetDelayAvg   float32
+	IsLocalReply  bool
+}
+
+// PlaceOrderDelayStatistics represents order placement delay statistics.
+type PlaceOrderDelayStatistics struct {
+	OrderID    string
+	TotalCost  float32
+	OpenDCost  float32
+	NetDelay   float32
+	UpdateCost float32
 }
 
 // marshalGetDelayStatisticsRequestProto2 marshals the C2S message using proto2 wire format.
@@ -321,10 +357,65 @@ func GetDelayStatistics(ctx context.Context, c *futuapi.Client, req *GetDelaySta
 		return nil, wrapError("GetDelayStatistics", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
+	qotList := make([]*QotPushDelayStatistics, 0, len(s2c.GetQotPushStatisticsList()))
+	for _, item := range s2c.GetQotPushStatisticsList() {
+		if item == nil {
+			continue
+		}
+		items := make([]*DelayStatisticsItem, 0, len(item.GetItemList()))
+		for _, it := range item.GetItemList() {
+			if it == nil {
+				continue
+			}
+			items = append(items, &DelayStatisticsItem{
+				Begin:           it.GetBegin(),
+				End:             it.GetEnd(),
+				Count:           it.GetCount(),
+				Proportion:      it.GetProportion(),
+				CumulativeRatio: it.GetCumulativeRatio(),
+			})
+		}
+		qotList = append(qotList, &QotPushDelayStatistics{
+			QotPushType: item.GetQotPushType(),
+			ItemList:    items,
+			DelayAvg:    item.GetDelayAvg(),
+			Count:       item.GetCount(),
+		})
+	}
+
+	reqReplyList := make([]*ReqReplyDelayStatistics, 0, len(s2c.GetReqReplyStatisticsList()))
+	for _, item := range s2c.GetReqReplyStatisticsList() {
+		if item == nil {
+			continue
+		}
+		reqReplyList = append(reqReplyList, &ReqReplyDelayStatistics{
+			ProtoID:      item.GetProtoID(),
+			Count:        item.GetCount(),
+			TotalCostAvg: item.GetTotalCostAvg(),
+			OpenDCostAvg: item.GetOpenDCostAvg(),
+			NetDelayAvg:  item.GetNetDelayAvg(),
+			IsLocalReply: item.GetIsLocalReply(),
+		})
+	}
+
+	placeOrderList := make([]*PlaceOrderDelayStatistics, 0, len(s2c.GetPlaceOrderStatisticsList()))
+	for _, item := range s2c.GetPlaceOrderStatisticsList() {
+		if item == nil {
+			continue
+		}
+		placeOrderList = append(placeOrderList, &PlaceOrderDelayStatistics{
+			OrderID:    item.GetOrderID(),
+			TotalCost:  item.GetTotalCost(),
+			OpenDCost:  item.GetOpenDCost(),
+			NetDelay:   item.GetNetDelay(),
+			UpdateCost: item.GetUpdateCost(),
+		})
+	}
+
 	return &GetDelayStatisticsResponse{
-		QotPushStatisticsList:    s2c.GetQotPushStatisticsList(),
-		ReqReplyStatisticsList:   s2c.GetReqReplyStatisticsList(),
-		PlaceOrderStatisticsList: s2c.GetPlaceOrderStatisticsList(),
+		QotPushStatisticsList:    qotList,
+		ReqReplyStatisticsList:    reqReplyList,
+		PlaceOrderStatisticsList:  placeOrderList,
 	}, nil
 }
 

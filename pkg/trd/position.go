@@ -577,9 +577,38 @@ type GetFlowSummaryRequest struct {
 	CashFlowDirection int32
 }
 
+// FlowSummaryInfo represents a single cash flow entry.
+type FlowSummaryInfo struct {
+	CashFlowID        uint64
+	ClearingDate      string
+	SettlementDate    string
+	Currency          int32
+	CashFlowType      string
+	CashFlowDirection int32
+	CashFlowAmount    float64
+	CashFlowRemark    string
+}
+
+// flowSummaryInfoFromProto converts a proto FlowSummaryInfo to a wrapped type.
+func flowSummaryInfoFromProto(f *trdflowsummary.FlowSummaryInfo) *FlowSummaryInfo {
+	if f == nil {
+		return nil
+	}
+	return &FlowSummaryInfo{
+		CashFlowID:        f.GetCashFlowID(),
+		ClearingDate:      f.GetClearingDate(),
+		SettlementDate:    f.GetSettlementDate(),
+		Currency:          f.GetCurrency(),
+		CashFlowType:      f.GetCashFlowType(),
+		CashFlowDirection: f.GetCashFlowDirection(),
+		CashFlowAmount:    f.GetCashFlowAmount(),
+		CashFlowRemark:    f.GetCashFlowRemark(),
+	}
+}
+
 // GetFlowSummaryResponse is the response containing the fund flow summary.
 type GetFlowSummaryResponse struct {
-	FlowSummaryList []*trdflowsummary.FlowSummaryInfo
+	FlowSummaryList []*FlowSummaryInfo
 }
 
 // GetFlowSummary retrieves the fund flow summary for a specified clearing date.
@@ -626,7 +655,12 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 		return nil, fmt.Errorf("GetFlowSummary: s2c is nil")
 	}
 
+	flowSummaryList := s2c.GetFlowSummaryInfoList()
+	result := make([]*FlowSummaryInfo, 0, len(flowSummaryList))
+	for _, item := range flowSummaryList {
+		result = append(result, flowSummaryInfoFromProto(item))
+	}
 	return &GetFlowSummaryResponse{
-		FlowSummaryList: s2c.GetFlowSummaryInfoList(),
+		FlowSummaryList: result,
 	}, nil
 }

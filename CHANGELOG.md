@@ -5,9 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.8.5] - 2026-05-17
 
 ### Added
+
+- `GetFlowSummaryResponse.FlowSummaryList` now uses `[]*trd.FlowSummaryInfo` (wrapped type) instead of raw `[]*trdpb.FlowSummaryInfo` proto type, with proper nil guards on all 8 fields.
+
+- `GetDelayStatisticsResponse` now uses wrapped types (`[]*QotPushDelayStatistics`, `[]*ReqReplyDelayStatistics`, `[]*PlaceOrderDelayStatistics`) instead of raw proto types, with nil guards throughout. `pkg/sys/system.go` adds `QotPushDelayStatistics`, `ReqReplyDelayStatistics`, `PlaceOrderDelayStatistics`, `DelayStatisticsItem` structs. `client/system_api.go` updated to use field access.
 
 - `StaticInfo` struct (`client/types.go`) now includes `Id`, `Delisting`, `ListTimestamp`, `ExchType` fields obtained from `SecurityStaticBasic` proto. `GetPlateSecurity` and `GetStaticInfo` populate all 9 fields.
 

@@ -17,7 +17,7 @@ package sys
 import (
 	"testing"
 
-	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
+	
 )
 
 func TestGetGlobalStateResponseFields(t *testing.T) {
@@ -67,7 +67,7 @@ func TestGetUserInfoResponseFields(t *testing.T) {
 
 func TestGetDelayStatisticsResponseFields(t *testing.T) {
 	resp := &GetDelayStatisticsResponse{
-		QotPushStatisticsList: []*getdelaystatistics.DelayStatistics{},
+		QotPushStatisticsList: []*QotPushDelayStatistics{},
 	}
 
 	if resp.QotPushStatisticsList == nil {

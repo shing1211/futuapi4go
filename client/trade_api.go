@@ -533,14 +533,14 @@ func GetFlowSummary(ctx context.Context, c *Client, accID uint64, market constan
 			continue
 		}
 		result = append(result, &FlowSummaryInfo{
-			CashFlowID:        f.GetCashFlowID(),
-			ClearingDate:      f.GetClearingDate(),
-			SettlementDate:    f.GetSettlementDate(),
-			Currency:          f.GetCurrency(),
-			CashFlowType:      f.GetCashFlowType(),
-			CashFlowDirection: f.GetCashFlowDirection(),
-			CashFlowAmount:    f.GetCashFlowAmount(),
-			CashFlowRemark:    f.GetCashFlowRemark(),
+			CashFlowID:        f.CashFlowID,
+			ClearingDate:      f.ClearingDate,
+			SettlementDate:    f.SettlementDate,
+			Currency:          f.Currency,
+			CashFlowType:      f.CashFlowType,
+			CashFlowDirection: f.CashFlowDirection,
+			CashFlowAmount:    f.CashFlowAmount,
+			CashFlowRemark:    f.CashFlowRemark,
 		})
 	}
 	return result, nil

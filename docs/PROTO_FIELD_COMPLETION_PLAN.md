@@ -1,5 +1,10 @@
-# SDK Proto Field Completion — Implementation Plan
+# SDK Proto Field Completion — Implementation Plan [COMPLETED — Phase I Scope]
 
+> **Status:** ✅ Phase I scope completed as of v0.8.1–v0.8.3.
+> BasicQot, KLine, Ticker, RT, Broker, PushTicker, PriceReminder, CapitalFlow, MarketState, and all other core types now expose 100% of proto fields.
+>
+> ⚠️ This was the first phase of a larger effort. **Phase II is tracked in `PROTO_FIELD_COMPLETION_PLAN_v2.md`** where several items remain pending (see that file for current status).
+>
 > **Goal:** Fill all gaps where wrapper structs or mapper functions omit proto fields.
 > Direct continuation of the RT fix (v0.8.1), applied systematically across all types.
 >

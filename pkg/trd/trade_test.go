@@ -21,7 +21,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/trdflowsummary"
+	
 )
 
 func TestPlaceOrderRequestValidation(t *testing.T) {
@@ -671,7 +671,7 @@ func TestGetFlowSummaryRequestConstruction(t *testing.T) {
 
 func TestGetFlowSummaryResponseConstruction(t *testing.T) {
 	rsp := &GetFlowSummaryResponse{
-		FlowSummaryList: []*trdflowsummary.FlowSummaryInfo{},
+		FlowSummaryList: []*FlowSummaryInfo{},
 	}
 
 	if rsp.FlowSummaryList == nil {
