@@ -411,7 +411,7 @@ func GetRT(ctx context.Context, c *Client, market constant.Market, code string) 
 }
 
 // GetBroker retrieves broker data.
-func GetBroker(ctx context.Context, c *Client, market constant.Market, code string, num int) ([]Broker, []Broker, error) {
+func GetBroker(ctx context.Context, c *Client, market constant.Market, code string, num int) (*BrokerResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -419,18 +419,24 @@ func GetBroker(ctx context.Context, c *Client, market constant.Market, code stri
 		Security: sec,
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	bidBrokers := make([]Broker, len(resp.BidBrokerList))
 	for i, b := range resp.BidBrokerList {
-	bidBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume, OrderID: b.OrderID}
+		bidBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume, OrderID: b.OrderID}
 	}
 	askBrokers := make([]Broker, len(resp.AskBrokerList))
 	for i, b := range resp.AskBrokerList {
 		askBrokers[i] = Broker{ID: b.ID, Name: b.Name, Pos: b.Pos, Volume: b.Volume, OrderID: b.OrderID}
 	}
-	return bidBrokers, askBrokers, nil
+
+	return &BrokerResult{
+		Bids:     bidBrokers,
+		Asks:     askBrokers,
+		Security: resp.Security,
+		Name:     resp.Name,
+	}, nil
 }
 
 // GetStaticInfo retrieves static security info.

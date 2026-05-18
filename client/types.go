@@ -100,6 +100,14 @@ type RTResult struct {
 	Name     string              `json:"name,omitempty"`
 }
 
+// BrokerResult wraps broker data with response metadata.
+type BrokerResult struct {
+	Bids     []Broker             `json:"bids"`
+	Asks     []Broker             `json:"asks"`
+	Security *qotcommon.Security  `json:"security,omitempty"`
+	Name     string               `json:"name,omitempty"`
+}
+
 // Account represents a trading account.
 type Account struct {
 	AccID             uint64 `json:"accID"`
