@@ -920,7 +920,7 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Mark
 }
 
 // GetOwnerPlate retrieves owner plates.
-func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) (map[string][]*OwnerPlateInfo, error) {
+func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) (map[string]*OwnerPlateEntry, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -931,19 +931,19 @@ func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code 
 		return nil, err
 	}
 
-	result := make(map[string][]*OwnerPlateInfo)
+	result := make(map[string]*OwnerPlateEntry)
 	for _, securityPlate := range resp.OwnerPlateList {
 		sec := securityPlate.GetSecurity()
 		code := sec.GetCode()
-		var plates []*OwnerPlateInfo
+		entry := &OwnerPlateEntry{Name: securityPlate.GetName()}
 		for _, plateInfo := range securityPlate.GetPlateInfoList() {
-			plates = append(plates, &OwnerPlateInfo{
+			entry.Plates = append(entry.Plates, &OwnerPlateInfo{
 				Code:      plateInfo.GetPlate().GetCode(),
 				Name:      plateInfo.GetName(),
 				PlateType: plateInfo.GetPlateType(),
 			})
 		}
-		result[code] = plates
+		result[code] = entry
 	}
 	return result, nil
 }
@@ -1499,7 +1499,7 @@ func GetOptionChain(ctx context.Context, c *Client, market constant.Market, code
 }
 
 // GetWarrant returns the list of warrants for the given underlying security.
-func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer qotcommon.Issuer, status constant.WarrantStatus) ([]*WarrantData, error) {
+func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer qotcommon.Issuer, status constant.WarrantStatus) (*WarrantResult, error) {
 	marketPtr := int32(market)
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	optTypePtr := int32(optType)
@@ -1574,7 +1574,11 @@ func GetWarrant(ctx context.Context, c *Client, market constant.Market, code str
 			InLinePriceStatus:  w.InLinePriceStatus,
 		})
 	}
-	return result, nil
+	return &WarrantResult{
+		Items:    result,
+		LastPage: resp.LastPage,
+		AllCount: resp.AllCount,
+	}, nil
 }
 
 // RequestRehab requests rehabilitation (复权) data.

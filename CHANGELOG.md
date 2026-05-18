@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **GetBroker** — `BrokerResult` wrapper now exposes S2C `Security` and `Name` fields; return type changed from `([]Broker, []Broker, error)` to `(*BrokerResult, error)` with `.Bids` and `.Asks` slices
+- **PlaceOrder** — `PlaceOrderResult` (both `pkg/trd` and `client`) now exposes S2C `Header` (`*trdcommon.TrdHeader`)
+- **GetOwnerPlate** — return type changed from `map[string][]*OwnerPlateInfo` to `map[string]*OwnerPlateEntry`, exposing security display name via `.Name`
+- **GetWarrant** — return type changed from `([]*WarrantData, error)` to `(*WarrantResult, error)` with `.Items`, `.LastPage`, `.AllCount`
 
 ## [v0.8.9] - 2026-05-18
 

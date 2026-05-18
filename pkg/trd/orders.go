@@ -87,6 +87,7 @@ type PlaceOrderRequest struct {
 
 // PlaceOrderResponse is the response containing the newly placed order ID.
 type PlaceOrderResponse struct {
+	Header    *trdcommon.TrdHeader
 	OrderID   uint64
 	OrderIDEx string
 }
@@ -196,6 +197,7 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 	}
 
 	return &PlaceOrderResponse{
+		Header:    s2c.GetHeader(),
 		OrderID:   s2c.GetOrderID(),
 		OrderIDEx: s2c.GetOrderIDEx(),
 	}, nil

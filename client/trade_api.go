@@ -66,7 +66,7 @@ func PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.Tr
 	if err != nil {
 		return nil, err
 	}
-	return &PlaceOrderResult{OrderID: resp.OrderID, OrderIDEx: resp.OrderIDEx}, nil
+	return &PlaceOrderResult{Header: resp.Header, OrderID: resp.OrderID, OrderIDEx: resp.OrderIDEx}, nil
 }
 
 // ModifyOrder modifies or cancels an existing order.

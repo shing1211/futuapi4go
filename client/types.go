@@ -7,6 +7,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 )
 
 // Quote represents a real-time quote.
@@ -125,8 +126,9 @@ type Account struct {
 
 // PlaceOrderResult represents a place order result.
 type PlaceOrderResult struct {
-	OrderID   uint64 `json:"orderID"`
-	OrderIDEx string `json:"orderIDEx"`
+	Header    *trdcommon.TrdHeader `json:"header,omitempty"`
+	OrderID   uint64              `json:"orderID"`
+	OrderIDEx string              `json:"orderIDEx"`
 }
 
 // Position represents a position.
@@ -446,11 +448,17 @@ type UserSecurityGroup struct {
 	GroupType int32 `json:"groupType"`
 }
 
+// OwnerPlateEntry wraps a security's plate list with its display name.
+type OwnerPlateEntry struct {
+	Name   string            `json:"name"`
+	Plates []*OwnerPlateInfo `json:"plates"`
+}
+
 // OwnerPlateInfo represents a plate that owns a security.
 type OwnerPlateInfo struct {
 	Code      string `json:"code"`
 	Name      string `json:"name"`
-	PlateType int32  `json:"plateType"`
+	PlateType int32 `json:"plateType"`
 }
 
 // SubInfo represents subscription info.
@@ -540,6 +548,13 @@ type WarrantData struct {
 	UpperStrikePrice   float64 `json:"upperStrikePrice"`
 	LowerStrikePrice   float64 `json:"lowerStrikePrice"`
 	InLinePriceStatus  int32 `json:"inLinePriceStatus"`
+}
+
+// WarrantResult wraps warrant data with response metadata.
+type WarrantResult struct {
+	Items    []*WarrantData `json:"items"`
+	LastPage bool           `json:"lastPage"`
+	AllCount int32          `json:"allCount"`
 }
 
 // Snapshot represents security snapshot data.
