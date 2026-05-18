@@ -5,6 +5,24 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.2] - 2026-05-18
+
+### Added
+
+- **GetFlowSummary nil guard** — `GetFlowSummary` list iteration now skips nil items (`pkg/trd/position.go`)
+- **ParsePushKLine nil check** — `ParsePushKLine` now guards against `KLList[0]` being nil before dereferencing (`client/push.go`)
+- **ReadResponse timer drain** — `ReadResponse` now drains the timer channel to prevent goroutine leak (`internal/client/conn.go`)
+- **Conn.Close() TOCTOU fix** — `Conn.Close()` now uses mutex lock and sets `conn = nil` after close to prevent race (`internal/client/conn.go`)
+- **Retry context check** — `retry.Do` now checks `ctx.Done()` before returning a non-recoverable error, ensuring context cancellation is respected
+- **ConnectWithRSA logError** — All failure paths in `ConnectWithRSA` now use `logError` instead of `logInfo` for consistency
+- **WithTradeEnv shallow copy documentation** — `WithTradeEnv` and `WithTradeMarket` GoDoc now warn that returned client shares the underlying connection
+
+### Changed
+
+- **PlaceOrder price validation** — `PlaceOrder` now returns error (not warning) for `price<=0` on non-market order types
+- **GetHistoryOrderFillList defensive copy** — `FilterConditions` is now copied locally before mutation to avoid modifying input struct
+- **AGENTS.md retry warning** — Added checklist item warning against using `retry.Do()` with non-idempotent trading operations (`PlaceOrder`, `ModifyOrder`, `CancelOrder`)
+
 ## [v0.9.1] - 2026-05-18
 
 ### Fixed
