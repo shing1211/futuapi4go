@@ -5,6 +5,22 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.8.8] - 2026-05-18
+
+### Added
+
+- **GetQuote** — `Quote` now exposes `OptionExData`, `FutureExData`, `WarrantExData` (raw proto types) — full option/futures/warrant extended data available
+- **GetSecuritySnapshot** — `Snapshot` now exposes all 7 extended data types: `EquityExData`, `WarrantExData`, `OptionExData`, `IndexExData`, `PlateExData`, `FutureExData`, `TrustExData`
+- **GetIpoList** — `IpoData` now exposes `CnExData`, `HkExData`, `UsExData` — market-specific IPO data available
+- **GetStaticInfo / GetReference / GetPlateSecurity / GetUserSecurity** — `StaticInfo` now exposes `Security`, `WarrantExData`, `OptionExData`, `FutureExData`
+- **StockFilter** — `StockFilterResult` now exposes `BaseDataList`, `AccumulateDataList`, `FinancialDataList`, `CustomIndicatorDataList` raw data fields — all proto fields are preserved
+- **GetOwnerPlate** — added new `OwnerPlateInfo` struct with `Code`, `Name`, `PlateType`
+
+### Changed
+
+- **QuerySubInfo** — `SubInfo` now includes `TotalUsedQuota` and `RemainQuota` fields
+- **GetOptionExpirationDate** — `OptionExpiration` now includes `StrikeTimestamp` and `Cycle` fields
+
 ## [v0.8.7] - 2026-05-17
 
 ### Added

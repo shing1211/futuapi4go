@@ -2,7 +2,12 @@
 // This allows external projects to use the SDK.
 package client
 
-import "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+import (
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
+)
 
 // Quote represents a real-time quote.
 type Quote struct {
@@ -29,6 +34,11 @@ type Quote struct {
 	PreMarket       *PreAfterMarketData `json:"preMarket,omitempty"`
 	AfterMarket     *PreAfterMarketData `json:"afterMarket,omitempty"`
 	Overnight       *PreAfterMarketData `json:"overnight,omitempty"`
+
+	// Extended market data (raw proto types)
+	OptionExData  *qotcommon.OptionBasicQotExData  `json:"optionExData,omitempty"`
+	FutureExData  *qotcommon.FutureBasicQotExData  `json:"futureExData,omitempty"`
+	WarrantExData *qotcommon.WarrantBasicQotExData `json:"warrantExData,omitempty"`
 }
 
 // PreAfterMarketData represents pre-market, after-market, or overnight trading data.
@@ -290,6 +300,10 @@ type StaticInfo struct {
 	Delisting     bool    `json:"delisting"`
 	ListTimestamp float64 `json:"listTimestamp"`
 	ExchType      int32   `json:"exchType"`
+	Security      *qotcommon.Security               `json:"security,omitempty"`
+	WarrantExData *qotcommon.WarrantStaticExData     `json:"warrantExData,omitempty"`
+	OptionExData  *qotcommon.OptionStaticExData      `json:"optionExData,omitempty"`
+	FutureExData  *qotcommon.FutureStaticExData      `json:"futureExData,omitempty"`
 }
 
 // MarketStateResult wraps market state response with security info.
@@ -334,9 +348,11 @@ type CapitalDistribution struct {
 
 // OptionExpiration represents option expiration date.
 type OptionExpiration struct {
-	Date string `json:"date"`
-	Days int32 `json:"days"`
-	Desc string `json:"desc"`
+	Date           string  `json:"date"`
+	Days           int32   `json:"days"`
+	Desc           string  `json:"desc"`
+	StrikeTimestamp float64 `json:"strikeTimestamp,omitempty"`
+	Cycle          int32   `json:"cycle,omitempty"`
 }
 
 // FutureInfo represents futures info.
@@ -377,10 +393,13 @@ type Plate struct {
 
 // IpoData represents IPO data.
 type IpoData struct {
-	Code          string `json:"code"`
-	Name          string `json:"name"`
-	ListDate      string `json:"listDate"`
+	Code          string  `json:"code"`
+	Name          string  `json:"name"`
+	ListDate      string  `json:"listDate"`
 	ListTimestamp float64 `json:"listTimestamp"`
+	CnExData *qotgetipolist.CNIpoExData `json:"cnExData,omitempty"`
+	HkExData *qotgetipolist.HKIpoExData `json:"hkExData,omitempty"`
+	UsExData *qotgetipolist.USIpoExData `json:"usExData,omitempty"`
 }
 
 // UserSecurityGroup represents user security group.
@@ -389,23 +408,38 @@ type UserSecurityGroup struct {
 	GroupType int32 `json:"groupType"`
 }
 
+// OwnerPlateInfo represents a plate that owns a security.
+type OwnerPlateInfo struct {
+	Code      string `json:"code"`
+	Name      string `json:"name"`
+	PlateType int32  `json:"plateType"`
+}
+
 // SubInfo represents subscription info.
 type SubInfo struct {
 	IsSub    bool `json:"isSub"`
 	SubTypes []int32 `json:"subTypes"`
 	Security string `json:"security"`
+	TotalUsedQuota int32 `json:"totalUsedQuota,omitempty"`
+	RemainQuota    int32 `json:"remainQuota,omitempty"`
 }
 
 // StockFilterResult represents a single stock filter result.
 type StockFilterResult struct {
 	Security   *qotcommon.Security `json:"security"`
-	Name       string `json:"name"`
-	CurPrice   float64 `json:"curPrice"`
-	ChangeRate float64 `json:"changeRate"`
-	Volume     int64 `json:"volume"`
-	Turnover   float64 `json:"turnover"`
-	HighPrice  float64 `json:"highPrice"`
-	LowPrice   float64 `json:"lowPrice"`
+	Name       string              `json:"name"`
+	CurPrice   float64             `json:"curPrice"`
+	ChangeRate float64             `json:"changeRate"`
+	Volume     int64               `json:"volume"`
+	Turnover   float64             `json:"turnover"`
+	HighPrice  float64             `json:"highPrice"`
+	LowPrice   float64             `json:"lowPrice"`
+
+	// Raw data lists — contain ALL fields returned by the server
+	BaseDataList            []*qotstockfilter.BaseData            `json:"baseDataList,omitempty"`
+	AccumulateDataList      []*qotstockfilter.AccumulateData      `json:"accumulateDataList,omitempty"`
+	FinancialDataList       []*qotstockfilter.FinancialData       `json:"financialDataList,omitempty"`
+	CustomIndicatorDataList []*qotstockfilter.CustomIndicatorData `json:"customIndicatorDataList,omitempty"`
 }
 
 // OptChainItem represents a pair of call and put options at the same strike price.
@@ -515,6 +549,15 @@ type Snapshot struct {
 	PreMarket               *PreAfterMarketData `json:"preMarket,omitempty"`
 	AfterMarket             *PreAfterMarketData `json:"afterMarket,omitempty"`
 	Overnight               *PreAfterMarketData `json:"overnight,omitempty"`
+
+	// Extended snapshot data (raw proto types)
+	EquityExData  *qotgetsecuritysnapshot.EquitySnapshotExData  `json:"equityExData,omitempty"`
+	WarrantExData *qotgetsecuritysnapshot.WarrantSnapshotExData `json:"warrantExData,omitempty"`
+	OptionExData  *qotgetsecuritysnapshot.OptionSnapshotExData  `json:"optionExData,omitempty"`
+	IndexExData   *qotgetsecuritysnapshot.IndexSnapshotExData   `json:"indexExData,omitempty"`
+	PlateExData   *qotgetsecuritysnapshot.PlateSnapshotExData   `json:"plateExData,omitempty"`
+	FutureExData  *qotgetsecuritysnapshot.FutureSnapshotExData  `json:"futureExData,omitempty"`
+	TrustExData   *qotgetsecuritysnapshot.TrustSnapshotExData   `json:"trustExData,omitempty"`
 }
 
 // CodeChangeInfo represents information about a code change.

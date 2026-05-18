@@ -7,6 +7,7 @@ import (
 
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/qot"
@@ -60,6 +61,9 @@ func GetQuote(ctx context.Context, c *Client, market constant.Market, code strin
 		PreMarket:       mapPreAfterMarketData(q.PreMarket),
 		AfterMarket:     mapPreAfterMarketData(q.AfterMarket),
 		Overnight:       mapPreAfterMarketData(q.Overnight),
+		OptionExData:    q.OptionExData,
+		FutureExData:    q.FutureExData,
+		WarrantExData:   q.WarrantExData,
 	}, nil
 }
 
@@ -465,6 +469,10 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 			Delisting:     delisting,
 			ListTimestamp: listTimestamp,
 			ExchType:      exchType,
+			Security:      s.GetBasic().GetSecurity(),
+			WarrantExData: s.GetWarrantExData(),
+			OptionExData:  s.GetOptionExData(),
+			FutureExData:  s.GetFutureExData(),
 		}
 	}
 	return infos, nil
@@ -529,6 +537,13 @@ func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon
 			PreMarket:               mapPreAfterMarketData(basic.PreMarket),
 			AfterMarket:             mapPreAfterMarketData(basic.AfterMarket),
 			Overnight:               mapPreAfterMarketData(basic.Overnight),
+			EquityExData:            s.GetEquityExData(),
+			WarrantExData:           s.GetWarrantExData(),
+			OptionExData:            s.GetOptionExData(),
+			IndexExData:             s.GetIndexExData(),
+			PlateExData:             s.GetPlateExData(),
+			FutureExData:            s.GetFutureExData(),
+			TrustExData:             s.GetTrustExData(),
 		})
 	}
 	return result, nil
@@ -673,12 +688,62 @@ func GetIpoList(ctx context.Context, c *Client, market constant.Market) ([]IpoDa
 		if ip.Basic.Security != nil && ip.Basic.Security.Code != nil {
 			code = *ip.Basic.Security.Code
 		}
-		ipos = append(ipos, IpoData{
+		ipo := IpoData{
 			Code:          code,
 			Name:          ip.Basic.Name,
 			ListDate:      ip.Basic.ListTime,
 			ListTimestamp: ip.Basic.ListTimestamp,
-		})
+		}
+		if ip.CnExData != nil {
+			d := ip.CnExData
+			ipo.CnExData = &qotgetipolist.CNIpoExData{
+				ApplyCode:              &d.ApplyCode,
+				IssueSize:              &d.IssueSize,
+				OnlineIssueSize:        &d.OnlineIssueSize,
+				ApplyUpperLimit:        &d.ApplyUpperLimit,
+				ApplyLimitMarketValue:  &d.ApplyLimitMarketValue,
+				IsEstimateIpoPrice:     &d.IsEstimateIpoPrice,
+				IpoPrice:               &d.IpoPrice,
+				IndustryPeRate:         &d.IndustryPeRate,
+				IsEstimateWinningRatio: &d.IsEstimateWinningRatio,
+				WinningRatio:           &d.WinningRatio,
+				IssuePeRate:            &d.IssuePeRate,
+				IsHasWon:               &d.IsHasWon,
+				WinningNumData:         d.WinningNumDataList,
+			}
+			if d.ApplyTime != "" {
+				ipo.CnExData.ApplyTime = &d.ApplyTime
+			}
+			if d.ApplyTimestamp != 0 {
+				ipo.CnExData.ApplyTimestamp = &d.ApplyTimestamp
+			}
+			if d.WinningTime != "" {
+				ipo.CnExData.WinningTime = &d.WinningTime
+			}
+			if d.WinningTimestamp != 0 {
+				ipo.CnExData.WinningTimestamp = &d.WinningTimestamp
+			}
+		}
+		if ip.HkExData != nil {
+			d := ip.HkExData
+			ipo.HkExData = &qotgetipolist.HKIpoExData{
+				IpoPriceMin:       &d.IpoPriceMin,
+				IpoPriceMax:       &d.IpoPriceMax,
+				ListPrice:         &d.ListPrice,
+				LotSize:           &d.LotSize,
+				EntrancePrice:     &d.EntrancePrice,
+				IsSubscribeStatus: &d.IsSubscribeStatus,
+			}
+		}
+		if ip.UsExData != nil {
+			d := ip.UsExData
+			ipo.UsExData = &qotgetipolist.USIpoExData{
+				IpoPriceMin: &d.IpoPriceMin,
+				IpoPriceMax: &d.IpoPriceMax,
+				IssueSize:   &d.IssueSize,
+			}
+		}
+		ipos = append(ipos, ipo)
 	}
 	return ipos, nil
 }
@@ -722,9 +787,13 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 			secType = *s.Basic.SecType
 		}
 		infos = append(infos, StaticInfo{
-			Code: code,
-			Name: name,
-			Type: secType,
+			Code:          code,
+			Name:          name,
+			Type:          secType,
+			Security:      s.GetBasic().GetSecurity(),
+			WarrantExData: s.GetWarrantExData(),
+			OptionExData:  s.GetOptionExData(),
+			FutureExData:  s.GetFutureExData(),
 		})
 	}
 	return infos, nil
@@ -822,7 +891,7 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Mark
 }
 
 // GetOwnerPlate retrieves owner plates.
-func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) ([]string, error) {
+func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) (map[string][]*OwnerPlateInfo, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -833,15 +902,21 @@ func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code 
 		return nil, err
 	}
 
-	plates := make([]string, 0)
-	for _, p := range resp.OwnerPlateList {
-		for _, pi := range p.PlateInfoList {
-			if pi.Name != nil {
-				plates = append(plates, *pi.Name)
-			}
+	result := make(map[string][]*OwnerPlateInfo)
+	for _, securityPlate := range resp.OwnerPlateList {
+		sec := securityPlate.GetSecurity()
+		code := sec.GetCode()
+		var plates []*OwnerPlateInfo
+		for _, plateInfo := range securityPlate.GetPlateInfoList() {
+			plates = append(plates, &OwnerPlateInfo{
+				Code:      plateInfo.GetPlate().GetCode(),
+				Name:      plateInfo.GetName(),
+				PlateType: plateInfo.GetPlateType(),
+			})
 		}
+		result[code] = plates
 	}
-	return plates, nil
+	return result, nil
 }
 
 // RequestHistoryKL requests historical K-line data with automatic pagination.
@@ -971,9 +1046,13 @@ func GetReference(ctx context.Context, c *Client, market constant.Market, code s
 			secType = *s.Basic.SecType
 		}
 		infos = append(infos, StaticInfo{
-			Code: code,
-			Name: name,
-			Type: secType,
+			Code:          code,
+			Name:          name,
+			Type:          secType,
+			Security:      s.GetBasic().GetSecurity(),
+			WarrantExData: s.GetWarrantExData(),
+			OptionExData:  s.GetOptionExData(),
+			FutureExData:  s.GetFutureExData(),
 		})
 	}
 	return infos, nil
@@ -1040,6 +1119,10 @@ func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, pl
 			Delisting:     delisting,
 			ListTimestamp: listTimestamp,
 			ExchType:      exchType,
+			Security:      s.GetBasic().GetSecurity(),
+			WarrantExData: s.GetWarrantExData(),
+			OptionExData:  s.GetOptionExData(),
+			FutureExData:  s.GetFutureExData(),
 		})
 	}
 	return infos, nil
@@ -1063,9 +1146,11 @@ func GetOptionExpirationDate(ctx context.Context, c *Client, market constant.Mar
 			continue
 		}
 		expirations = append(expirations, OptionExpiration{
-			Date: e.StrikeTime,
-			Days: e.OptionExpiryDateDistance,
-			Desc: fmt.Sprintf("Cycle %d", e.Cycle),
+			Date:           e.StrikeTime,
+			Days:           e.OptionExpiryDateDistance,
+			Desc:           fmt.Sprintf("Cycle %d", e.Cycle),
+			StrikeTimestamp: e.StrikeTimestamp,
+			Cycle:          e.Cycle,
 		})
 	}
 	return expirations, nil
@@ -1115,9 +1200,11 @@ func GetSubInfo(ctx context.Context, c *Client) (*SubInfo, error) {
 	}
 
 	return &SubInfo{
-		IsSub:    len(resp.ConnSubInfoList) > 0,
-		SubTypes: types,
-		Security: fmt.Sprintf("Used: %d, Remain: %d", quota, resp.RemainQuota),
+		IsSub:          len(resp.ConnSubInfoList) > 0,
+		SubTypes:       types,
+		Security:       fmt.Sprintf("Used: %d, Remain: %d", resp.TotalUsedQuota, resp.RemainQuota),
+		TotalUsedQuota: resp.TotalUsedQuota,
+		RemainQuota:    resp.RemainQuota,
 	}, nil
 }
 
@@ -1287,8 +1374,12 @@ func StockFilter(ctx context.Context, c *Client, market constant.Market, begin, 
 			continue
 		}
 		r := &StockFilterResult{
-			Security: d.Security,
-			Name:     d.Name,
+			Security:                d.Security,
+			Name:                    d.Name,
+			BaseDataList:            d.BaseDataList,
+			AccumulateDataList:      d.AccumulateDataList,
+			FinancialDataList:       d.FinancialDataList,
+			CustomIndicatorDataList: d.CustomIndicatorDataList,
 		}
 		for _, base := range d.BaseDataList {
 			if base == nil {
