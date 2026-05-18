@@ -117,7 +117,7 @@ func mapRehabInfo(r *qotcommon.Rehab) *RehabInfo {
 }
 
 // GetKLines retrieves K-line (candlestick) data.
-func GetKLines(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, num int) ([]KLine, error) {
+func GetKLines(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, num int) (*KLinesResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -149,7 +149,18 @@ func GetKLines(ctx context.Context, c *Client, market constant.Market, code stri
 			Timestamp:    kl.Timestamp,
 		}
 	}
-	return klines, nil
+
+	result := &KLinesResult{
+		Items: klines,
+	}
+	if resp.Security != nil {
+		result.Security = resp.Security
+	}
+	if resp.Name != "" {
+		result.Name = resp.Name
+	}
+
+	return result, nil
 }
 
 // Subscribe subscribes to real-time market data.
@@ -920,18 +931,20 @@ func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code 
 }
 
 // RequestHistoryKL requests historical K-line data with automatic pagination.
-func RequestHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string) ([]KLine, error) {
+func RequestHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string) (*KLinesResult, error) {
 	return RequestHistoryKLWithLimit(ctx, c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
 }
 
 // RequestHistoryKLWithLimit requests historical K-line data with a configurable page size.
-func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string, maxPerPage int32) ([]KLine, error) {
+func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string, maxPerPage int32) (*KLinesResult, error) {
 	marketPtr := int32(market)
 	klTypePtr := int32(klType)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
 	var allKLines []KLine
 	var nextReqKey []byte
+	var security *qotcommon.Security
+	var name string
 
 	for {
 		resp, err := qot.RequestHistoryKL(ctx, c.inner, &qot.RequestHistoryKLRequest{
@@ -943,7 +956,14 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 			NextReqKey:  nextReqKey,
 		})
 		if err != nil {
-			return allKLines, err
+			return nil, err
+		}
+
+		if security == nil && resp.Security != nil {
+			security = resp.Security
+		}
+		if name == "" && resp.Name != "" {
+			name = resp.Name
 		}
 
 		for _, kl := range resp.KLList {
@@ -972,11 +992,15 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 		time.Sleep(HistoryKLPaginationDelay)
 	}
 
-	return allKLines, nil
+	return &KLinesResult{
+		Items:    allKLines,
+		Security: security,
+		Name:     name,
+	}, nil
 }
 
 // GetHistoryKL requests historical K-line data.
-func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, rehabType constant.RehabType, startDate, endDate string, maxNum int32) ([]KLine, error) {
+func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, rehabType constant.RehabType, startDate, endDate string, maxNum int32) (*KLinesResult, error) {
 	marketPtr := int32(market)
 	klTypePtr := int32(klType)
 	rehabTypePtr := int32(rehabType)
@@ -1012,7 +1036,12 @@ func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code s
 			Timestamp:    kl.Timestamp,
 		}
 	}
-	return klines, nil
+
+	return &KLinesResult{
+		Items:           klines,
+		NextKLTime:      resp.NextKLTime,
+		NextKLTimestamp: resp.NextKLTimestamp,
+	}, nil
 }
 
 // GetReference retrieves related/reference securities.

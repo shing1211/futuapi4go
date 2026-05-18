@@ -70,6 +70,15 @@ type KLine struct {
 	Timestamp    float64 `json:"timestamp"`
 }
 
+// KLinesResult wraps K-line data with response metadata from the server.
+type KLinesResult struct {
+	Items           []KLine              `json:"items"`
+	Security        *qotcommon.Security  `json:"security,omitempty"`
+	Name            string               `json:"name,omitempty"`
+	NextKLTime      string               `json:"nextKLTime,omitempty"`
+	NextKLTimestamp float64              `json:"nextKLTimestamp,omitempty"`
+}
+
 // Account represents a trading account.
 type Account struct {
 	AccID             uint64 `json:"accID"`

@@ -7,6 +7,12 @@
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
+> **⚠️ Under Active Development**  
+> This SDK is under active development. While functional against real Futu OpenD instances,
+> some proto response fields may still be unmapped. APIs and types may change between minor
+> versions. Audit `client/types.go` against the [Futu Proto Reference](https://openapi.futunn.com/mds/Futu-API-Doc-zh-Proto.md)
+> for your specific use case before relying on any field.
+
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for [Futu OpenAPI](https://www.futunn.com/en/overview) — market data, trading, and real-time push. All communication via Protocol Buffers over TCP.
 
 - 79 protobuf types covering every Futu OpenAPI service
@@ -292,4 +298,4 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history and [ENHANCEMENT_PLAN.m
 
 Apache License 2.0 — see [LICENSE](LICENSE).
 
-> **Trading Disclaimer**: This SDK is a software utility. Trading financial instruments carries significant risk. Always test thoroughly in simulate mode before using real funds.
+> **Trading Disclaimer**: Trading financial instruments carries significant risk. Always test thoroughly in simulate mode before using real funds.
