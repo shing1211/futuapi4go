@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.8.9] - 2026-05-18
+
+### Added
+
+- **GetOrderBook** — `OrderBookResult` wrapper now exposes S2C `Security` and `Name` fields
+- **GetTicker** — `TickerResult` wrapper now exposes S2C `Security` and `Name` fields
+- **GetRT** — `RTResult` wrapper now exposes S2C `Security` and `Name` fields
+
+### Changed
+
+- **GetOrderBook** return type changed from `*OrderBook` to `*OrderBookResult` (use `.Items` to access `[]OrderBook`)
+- **GetTicker** return type changed from `[]Ticker` to `*TickerResult` (use `.Items` to access `[]Ticker`)
+- **GetRT** return type changed from `[]RT` to `*RTResult` (use `.Items` to access `[]RT`)
+
 ## [v0.8.8] - 2026-05-18
 
 ### Added

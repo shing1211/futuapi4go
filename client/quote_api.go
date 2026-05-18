@@ -295,7 +295,7 @@ func RegQotPush(ctx context.Context, c *Client, market constant.Market, code str
 }
 
 // GetOrderBook retrieves order book data.
-func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code string, num int) (*OrderBook, error) {
+func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code string, num int) (*OrderBookResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -329,11 +329,15 @@ func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code s
 		}
 		book.Asks[i] = OrderBookItem{Price: a.Price, Volume: a.Volume, OrderCount: a.OrderCount, DetailList: details}
 	}
-	return book, nil
+	return &OrderBookResult{
+		Items:    []OrderBook{*book},
+		Security: resp.Security,
+		Name:     resp.Name,
+	}, nil
 }
 
 // GetTicker retrieves ticker data.
-func GetTicker(ctx context.Context, c *Client, market constant.Market, code string, num int) ([]Ticker, error) {
+func GetTicker(ctx context.Context, c *Client, market constant.Market, code string, num int) (*TickerResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -368,11 +372,15 @@ func GetTicker(ctx context.Context, c *Client, market constant.Market, code stri
 			PushDataType: t.PushDataType,
 		}
 	}
-	return tickers, nil
+	return &TickerResult{
+		Items:    tickers,
+		Security: resp.Security,
+		Name:     resp.Name,
+	}, nil
 }
 
 // GetRT retrieves real-time data.
-func GetRT(ctx context.Context, c *Client, market constant.Market, code string) ([]RT, error) {
+func GetRT(ctx context.Context, c *Client, market constant.Market, code string) (*RTResult, error) {
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -383,19 +391,23 @@ func GetRT(ctx context.Context, c *Client, market constant.Market, code string) 
 
 	rtData := make([]RT, len(resp.RTList))
 	for i, r := range resp.RTList {
-	rtData[i] = RT{
-		Time:      r.Time,
-		Minute:    r.Minute,
-		IsBlank:   r.IsBlank,
-		Price:     r.Price,
-		Volume:    r.Volume,
-		LastClose: r.LastClosePrice,
-		AvgPrice:  r.AvgPrice,
-		Turnover:  r.Turnover,
-		Timestamp: r.Timestamp,
+		rtData[i] = RT{
+			Time:      r.Time,
+			Minute:    r.Minute,
+			IsBlank:   r.IsBlank,
+			Price:     r.Price,
+			Volume:    r.Volume,
+			LastClose: r.LastClosePrice,
+			AvgPrice:  r.AvgPrice,
+			Turnover:  r.Turnover,
+			Timestamp: r.Timestamp,
+		}
 	}
-	}
-	return rtData, nil
+	return &RTResult{
+		Items:    rtData,
+		Security: resp.Security,
+		Name:     resp.Name,
+	}, nil
 }
 
 // GetBroker retrieves broker data.

@@ -79,6 +79,27 @@ type KLinesResult struct {
 	NextKLTimestamp float64              `json:"nextKLTimestamp,omitempty"`
 }
 
+// OrderBookResult wraps order book data with response metadata.
+type OrderBookResult struct {
+	Items    []OrderBook         `json:"items"`
+	Security *qotcommon.Security `json:"security,omitempty"`
+	Name     string              `json:"name,omitempty"`
+}
+
+// TickerResult wraps ticker data with response metadata.
+type TickerResult struct {
+	Items    []Ticker            `json:"items"`
+	Security *qotcommon.Security `json:"security,omitempty"`
+	Name     string              `json:"name,omitempty"`
+}
+
+// RTResult wraps real-time data with response metadata.
+type RTResult struct {
+	Items    []RT                `json:"items"`
+	Security *qotcommon.Security `json:"security,omitempty"`
+	Name     string              `json:"name,omitempty"`
+}
+
 // Account represents a trading account.
 type Account struct {
 	AccID             uint64 `json:"accID"`
