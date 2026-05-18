@@ -815,10 +815,40 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 		if s.Basic.SecType != nil {
 			secType = *s.Basic.SecType
 		}
+		listTime := ""
+		if s.Basic.ListTime != nil {
+			listTime = *s.Basic.ListTime
+		}
+		lotSize := int32(0)
+		if s.Basic.LotSize != nil {
+			lotSize = *s.Basic.LotSize
+		}
+		id := int64(0)
+		if s.Basic.Id != nil {
+			id = *s.Basic.Id
+		}
+		delisting := false
+		if s.Basic.Delisting != nil {
+			delisting = *s.Basic.Delisting
+		}
+		listTimestamp := float64(0)
+		if s.Basic.ListTimestamp != nil {
+			listTimestamp = *s.Basic.ListTimestamp
+		}
+		exchType := int32(0)
+		if s.Basic.ExchType != nil {
+			exchType = *s.Basic.ExchType
+		}
 		infos = append(infos, StaticInfo{
 			Code:          code,
 			Name:          name,
 			Type:          secType,
+			ListTime:      listTime,
+			LotSize:       lotSize,
+			Id:            id,
+			Delisting:     delisting,
+			ListTimestamp: listTimestamp,
+			ExchType:      exchType,
 			Security:      s.GetBasic().GetSecurity(),
 			WarrantExData: s.GetWarrantExData(),
 			OptionExData:  s.GetOptionExData(),

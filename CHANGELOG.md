@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **PlaceOrder** — `PlaceOrderResult` (both `pkg/trd` and `client`) now exposes S2C `Header` (`*trdcommon.TrdHeader`)
 - **GetOwnerPlate** — return type changed from `map[string][]*OwnerPlateInfo` to `map[string]*OwnerPlateEntry`, exposing security display name via `.Name`
 - **GetWarrant** — return type changed from `([]*WarrantData, error)` to `(*WarrantResult, error)` with `.Items`, `.LastPage`, `.AllCount`
+- **GetUserSecurity** — now maps all 10 `SecurityStaticBasic` fields: `ListTime`, `LotSize`, `Id`, `Delisting`, `ListTimestamp`, `ExchType` (previously only `Code`, `Name`, `Type`)
 
 ## [v0.8.9] - 2026-05-18
 
