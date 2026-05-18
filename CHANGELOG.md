@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **GetOwnerPlate** — return type changed from `map[string][]*OwnerPlateInfo` to `map[string]*OwnerPlateEntry`, exposing security display name via `.Name`
 - **GetWarrant** — return type changed from `([]*WarrantData, error)` to `(*WarrantResult, error)` with `.Items`, `.LastPage`, `.AllCount`
 - **GetUserSecurity** — now maps all 10 `SecurityStaticBasic` fields: `ListTime`, `LotSize`, `Id`, `Delisting`, `ListTimestamp`, `ExchType` (previously only `Code`, `Name`, `Type`)
+- **ReconfirmOrder** — both `pkg/trd.ReconfirmOrderResponse` and `client.ReconfirmOrderResult` now expose `JpAccType` from S2C `TrdHeader`
 
 ## [v0.8.9] - 2026-05-18
 

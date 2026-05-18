@@ -346,6 +346,7 @@ type ReconfirmOrderResponse struct {
 	AccID     uint64
 	TrdEnv    int32
 	TrdMarket int32
+	JpAccType int32
 	OrderID   uint64
 }
 
@@ -398,6 +399,7 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 		AccID:     s2c.GetHeader().GetAccID(),
 		TrdEnv:    s2c.GetHeader().GetTrdEnv(),
 		TrdMarket: s2c.GetHeader().GetTrdMarket(),
+		JpAccType: s2c.GetHeader().GetJpAccType(),
 		OrderID:   s2c.GetOrderID(),
 	}, nil
 }

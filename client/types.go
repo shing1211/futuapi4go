@@ -766,8 +766,9 @@ type PriceReminderItemInfo struct {
 // ReconfirmOrderResult represents an order reconfirmation result.
 type ReconfirmOrderResult struct {
 	AccID     uint64 `json:"accID"`
-	TrdEnv    int32 `json:"trdEnv"`
-	TrdMarket int32 `json:"trdMarket"`
+	TrdEnv    int32  `json:"trdEnv"`
+	TrdMarket int32  `json:"trdMarket"`
+	JpAccType int32  `json:"jpAccType,omitempty"`
 	OrderID   uint64 `json:"orderID"`
 }
 

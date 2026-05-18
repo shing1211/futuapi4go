@@ -607,6 +607,7 @@ func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constan
 		AccID:     resp.AccID,
 		TrdEnv:    resp.TrdEnv,
 		TrdMarket: resp.TrdMarket,
+		JpAccType: resp.JpAccType,
 		OrderID:   resp.OrderID,
 	}, nil
 }
