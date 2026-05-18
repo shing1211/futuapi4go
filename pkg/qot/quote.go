@@ -54,23 +54,7 @@ import (
 
 // wrapError standardizes error messages for proto response failures
 func wrapError(funcName string, retType int32, retMsg string) error {
-	var code constant.ErrorCode
-	switch retType {
-	case 0:
-		code = constant.ErrCodeSuccess
-	case -1:
-		code = constant.ErrCodeInvalidParams
-	case -100:
-		code = constant.ErrCodeTimeout
-	case -200:
-		code = constant.ErrCodeDisconnected
-	case -400:
-		code = constant.ErrCodeUnknown
-	case -500:
-		code = constant.ErrCodeInvalidParams
-	default:
-		code = constant.ErrCodeUnknown
-	}
+	code := constant.ErrorCode(retType)
 	return constant.NewFutuError(code, funcName, retMsg)
 }
 

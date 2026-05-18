@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.1] - 2026-05-18
+
+### Fixed
+
+- **CancelAllOrder** — `ModifyOrder` validation no longer rejects `OrderID==0` when `ForAll=true`; `OrderID` is zeroed in the proto when `ForAll` is set
+- **Proto nil-chain panic** — `ModifyOrder` and `ReconfirmOrder` now guard against `s2c.GetHeader()` returning nil before accessing AccID/TrdEnv/TrdMarket fields
+- **readLoop goroutine leak** — `Conn.readOne()` now sets a read deadline (`SetReadDeadline`) before each read operation using `apiTimeout`, preventing unbounded hangs
+- **PlaceOrder price validation** — `PlaceOrder` now rejects `price<=0` for non-market order types (was only a warning)
+- **GetDelayStatistics bypass** — `GetDelayStatistics` now calls `EnsureConnected()` before raw socket I/O, consistent with other APIs
+
+### Changed
+
+- **wrapError** — simplified to direct `constant.ErrorCode(retType)` mapping; all error codes are already defined in `pkg/constant/errors.go` so the switch is redundant
+
 ## [v0.9.0] - 2026-05-18
 
 ### Added

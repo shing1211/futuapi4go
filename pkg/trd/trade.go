@@ -118,7 +118,7 @@ func putPlaceOrderC2S(c *trdplaceorder.C2S) {
 
 // wrapError standardizes error messages for proto response failures
 func wrapError(funcName string, retType int32, retMsg string) error {
-	var code constant.ErrorCode
+	code := constant.ErrorCode(retType)
 	switch retType {
 	case 0:
 		code = constant.ErrCodeSuccess
@@ -126,14 +126,48 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 		code = constant.ErrCodeInvalidParams
 	case -100:
 		code = constant.ErrCodeTimeout
+	case -101:
+		code = constant.ErrCodeNetworkError
+	case -102:
+		code = constant.ErrCodeProtocolErr
+	case -103:
+		code = constant.ErrCodeServerBusy
 	case -200:
 		code = constant.ErrCodeDisconnected
+	case -201:
+		code = constant.ErrCodeAccNotFound
+	case -202:
+		code = constant.ErrCodeAccDisabled
+	case -203:
+		code = constant.ErrCodeAccLocked
+	case -204:
+		code = constant.ErrCodeAccAuthFail
+	case -301:
+		code = constant.ErrCodeInsufficientBalance
+	case -302:
+		code = constant.ErrCodeMarketClosed
+	case -303:
+		code = constant.ErrCodeOrderRejected
+	case -304:
+		code = constant.ErrCodePriceOutOfRange
+	case -305:
+		code = constant.ErrCodeQtyTooLarge
+	case -306:
+		code = constant.ErrCodeTradingDisabled
+	case -307:
+		code = constant.ErrCodeInvalidSecurity
+	case -308:
+		code = constant.ErrCodeNoPermission
 	case -400:
 		code = constant.ErrCodeUnknown
-	case -500:
-		code = constant.ErrCodeInvalidParams
+	case -401:
+		code = constant.ErrCodeAlreadySubbed
+	case -402:
+		code = constant.ErrCodeNotSubbed
 	default:
-		code = constant.ErrCodeUnknown
+		if retType > 0 {
+			code = constant.ErrCodeUnknown
+		}
 	}
 	return constant.NewFutuError(code, funcName, retMsg)
 }

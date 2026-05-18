@@ -335,6 +335,10 @@ func appendVarint(buf []byte, v uint64) []byte {
 //
 // Note: This function uses proto2 wire format for compatibility with OpenD's C++ protobuf parser.
 func GetDelayStatistics(ctx context.Context, c *futuapi.Client, req *GetDelayStatisticsRequest) (*GetDelayStatisticsResponse, error) {
+	if err := c.EnsureConnected(); err != nil {
+		return nil, fmt.Errorf("GetDelayStatistics: %w", err)
+	}
+
 	c2s := &getdelaystatistics.C2S{}
 	if req != nil {
 		if len(req.TypeList) > 0 {

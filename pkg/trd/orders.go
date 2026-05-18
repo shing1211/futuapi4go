@@ -113,6 +113,9 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 	if req.TrdSide <= 0 {
 		return nil, fmt.Errorf("invalid trade side: must be buy/sell/other valid type")
 	}
+	if req.OrderType != constant.OrderType_Market && req.OrderType != constant.OrderType_AbsoluteLimit && req.Price <= 0 {
+		return nil, fmt.Errorf("invalid price: must be positive for non-market order types")
+	}
 
 	trdEnv := int32(req.TrdEnv)
 	trdMarket := int32(req.TrdMarket)
@@ -241,8 +244,8 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 	if req.AccID == 0 {
 		return nil, fmt.Errorf("invalid account ID: must be non-zero")
 	}
-	if req.OrderID == 0 && req.OrderIDEx == "" {
-		return nil, fmt.Errorf("order ID or OrderIDEx must be provided")
+	if req.OrderID == 0 && req.OrderIDEx == "" && !req.ForAll {
+		return nil, fmt.Errorf("order ID or OrderIDEx must be provided, or ForAll must be true")
 	}
 	if req.ModifyOrderOp <= 0 {
 		return nil, fmt.Errorf("invalid modify operation: must be valid order operation type")
@@ -261,6 +264,9 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 	}
 
 	orderID := req.OrderID
+	if req.ForAll {
+		orderID = 0
+	}
 	c2s := &trdmodifyorder.C2S{
 		Header:        header,
 		OrderID:       &orderID,
@@ -321,11 +327,15 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 	if s2c == nil {
 		return nil, wrapError("ModifyOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
+	respHeader := s2c.GetHeader()
+	if respHeader == nil {
+		return nil, wrapError("ModifyOrder", int32(common.RetType_RetType_Unknown), "s2c header is nil")
+	}
 
 	return &ModifyOrderResponse{
-		AccID:     s2c.GetHeader().GetAccID(),
-		TrdEnv:    s2c.GetHeader().GetTrdEnv(),
-		TrdMarket: s2c.GetHeader().GetTrdMarket(),
+		AccID:     respHeader.GetAccID(),
+		TrdEnv:    respHeader.GetTrdEnv(),
+		TrdMarket: respHeader.GetTrdMarket(),
 		OrderID:   s2c.GetOrderID(),
 		OrderIDEx: s2c.GetOrderIDEx(),
 	}, nil
@@ -394,12 +404,16 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 	if s2c == nil {
 		return nil, wrapError("ReconfirmOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
+	respHeader := s2c.GetHeader()
+	if respHeader == nil {
+		return nil, wrapError("ReconfirmOrder", int32(common.RetType_RetType_Unknown), "s2c header is nil")
+	}
 
 	return &ReconfirmOrderResponse{
-		AccID:     s2c.GetHeader().GetAccID(),
-		TrdEnv:    s2c.GetHeader().GetTrdEnv(),
-		TrdMarket: s2c.GetHeader().GetTrdMarket(),
-		JpAccType: s2c.GetHeader().GetJpAccType(),
+		AccID:     respHeader.GetAccID(),
+		TrdEnv:    respHeader.GetTrdEnv(),
+		TrdMarket: respHeader.GetTrdMarket(),
+		JpAccType: respHeader.GetJpAccType(),
 		OrderID:   s2c.GetOrderID(),
 	}, nil
 }

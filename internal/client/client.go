@@ -675,7 +675,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	// Determine which PEM to use for RSA encrypt
 	rsaEncryptPEM := rsaPublicKeyPEM
 	if useEncryption && rsaEncryptPEM == "" {
-		rsaEncryptPEM = c.opts.RSAPrivateKey // RSAEncrypt extracts public key from private key PEM
+		rsaEncryptPEM = string(c.opts.RSAPrivateKey) // RSAEncrypt extracts public key from private key PEM
 	}
 
 	if c.opts.TLSConfig != nil {
@@ -777,7 +777,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	rspBody := respPkt.Body
 	if useEncryption {
 		c.logInfo("[%s] ConnectWithRSA: RSA decrypting InitConnect response body (%d bytes)...", c.ts(), len(rspBody))
-		decryptedBody, err := RSADecrypt(c.opts.RSAPrivateKey, rspBody)
+		decryptedBody, err := RSADecrypt(string(c.opts.RSAPrivateKey), rspBody)
 		if err != nil {
 			c.conn.Close()
 			c.logInfo("[%s] ConnectWithRSA: RSA decrypt FAILED: %v", c.ts(), err)

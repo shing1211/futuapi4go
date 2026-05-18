@@ -205,6 +205,12 @@ func (c *Conn) readOne() (*Packet, error) {
 		return nil, NewErrorWithWrap(CodeNotConnected, "read packet", ErrNotConnected)
 	}
 
+	if c.apiTimeout > 0 {
+		if err := c.conn.SetReadDeadline(time.Now().Add(c.apiTimeout)); err != nil {
+			return nil, fmt.Errorf("set read deadline: %w", err)
+		}
+	}
+
 	header := make([]byte, HeaderLen)
 	n, err := io.ReadFull(c.conn, header)
 	if err != nil {
