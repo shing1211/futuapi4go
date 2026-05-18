@@ -67,7 +67,12 @@ func Do(ctx context.Context, cfg Config, fn func() error) error {
 		lastErr = err
 
 		if !cfg.IsRecoverable(err) {
-			return err
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return err
+			}
 		}
 
 		select {

@@ -750,7 +750,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	writeStart := time.Now()
 	if err := c.conn.WritePacketWithSHA1(ProtoID_InitConnect, serialNo, body, plainSHA1); err != nil {
 		c.conn.Close()
-		c.logInfo("[%s] ConnectWithRSA: WritePacket FAILED: %v", c.ts(), err)
+		c.logError("[%s] ConnectWithRSA: WritePacket FAILED: %v", c.ts(), err)
 		return fmt.Errorf("write packet: %w", err)
 	}
 	c.logInfo("[%s] ConnectWithRSA: WritePacket OK (%v)", c.ts(), time.Since(writeStart))
@@ -768,7 +768,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	respPkt, err := c.conn.ReadResponse(serialNo, apiTimeout)
 	if err != nil {
 		c.conn.Close()
-		c.logInfo("[%s] ConnectWithRSA: ReadResponse FAILED after %v: %v", c.ts(), time.Since(respStart), err)
+		c.logError("[%s] ConnectWithRSA: ReadResponse FAILED after %v: %v", c.ts(), time.Since(respStart), err)
 		return fmt.Errorf("read response: %w", err)
 	}
 	c.logInfo("[%s] ConnectWithRSA: ReadResponse OK (%v), body=%d bytes, protoID=%d", c.ts(), time.Since(respStart), len(respPkt.Body), respPkt.Header.ProtoID)
@@ -780,7 +780,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		decryptedBody, err := RSADecrypt(string(c.opts.RSAPrivateKey), rspBody)
 		if err != nil {
 			c.conn.Close()
-			c.logInfo("[%s] ConnectWithRSA: RSA decrypt FAILED: %v", c.ts(), err)
+			c.logError("[%s] ConnectWithRSA: RSA decrypt FAILED: %v", c.ts(), err)
 			return fmt.Errorf("RSA decrypt init connect response: %w", err)
 		}
 		rspBody = decryptedBody
@@ -790,21 +790,21 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	var rsp initconnect.Response
 	if err := proto.Unmarshal(rspBody, &rsp); err != nil {
 		c.conn.Close()
-		c.logInfo("[%s] ConnectWithRSA: Unmarshal response FAILED: %v", c.ts(), err)
+		c.logError("[%s] ConnectWithRSA: Unmarshal response FAILED: %v", c.ts(), err)
 		return fmt.Errorf("unmarshal response: %w", err)
 	}
 	c.logInfo("[%s] ConnectWithRSA: Response unmarshaled, retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
 
 	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
 		c.conn.Close()
-		c.logInfo("[%s] ConnectWithRSA: Server returned error: retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
+		c.logError("[%s] ConnectWithRSA: Server returned error: retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
 		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
 	}
 
 	s2c := rsp.GetS2C()
 	if s2c == nil {
 		c.conn.Close()
-		c.logInfo("[%s] ConnectWithRSA: S2C is nil!", c.ts())
+		c.logError("[%s] ConnectWithRSA: S2C is nil!", c.ts())
 		return errors.New("init connect: s2c is nil")
 	}
 
@@ -1031,15 +1031,13 @@ func (c *Client) reconnect() {
 		select {
 		case <-c.ctx.Done():
 			return
-		default:
+		case <-time.After(interval):
 		}
 
 		c.logInfo("reconnect attempt %d/%d...\n", attempt, maxRetries)
-		time.Sleep(interval)
 
 		var err error
 		if isWS {
-			// Reconnect via WebSocket; store security key on options before connecting
 			c.opts.WSSecretKey = wsKey
 			err = c.connectWebSocket(wsAddr, wsTLS)
 		} else {
@@ -1048,6 +1046,11 @@ func (c *Client) reconnect() {
 		if err != nil {
 			c.logWarn("reconnect failed: %v\n", err)
 			interval = time.Duration(float64(interval) * backoff)
+			select {
+			case <-c.ctx.Done():
+				return
+			default:
+			}
 			continue
 		}
 

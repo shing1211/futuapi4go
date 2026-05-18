@@ -1,6 +1,10 @@
 package client
 
-import "github.com/shing1211/futuapi4go/pkg/push"
+import (
+	"fmt"
+
+	"github.com/shing1211/futuapi4go/pkg/push"
+)
 
 // Push ProtoID constants (re-exported from pkg/push for convenience).
 const (
@@ -47,6 +51,9 @@ func ParsePushKLine(body []byte) (*PushKLine, error) {
 		return nil, err
 	}
 	kl := data.KLList[0]
+	if kl == nil {
+		return nil, fmt.Errorf("ParsePushKLine: first KLList element is nil")
+	}
 	return &PushKLine{
 		Market:    data.Security.GetMarket(),
 		Code:      data.Security.GetCode(),

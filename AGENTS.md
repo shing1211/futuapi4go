@@ -106,6 +106,7 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 - [ ] Use `wrapError()` helper for all proto API errors
 - [ ] Error messages include function name for debugging
 - [ ] `FutuError` type used with `Unwrap()` support
+- [ ] **Do NOT use `retry.Do()` with trading operations** (`PlaceOrder`, `ModifyOrder`, `CancelOrder`) — non-idempotent order operations must never be retried
 
 ### Memory & Performance
 - [ ] Buffered I/O used for packet reads/writes

@@ -126,8 +126,12 @@ func (c *Conn) SetTLSConfig(cfg *tls.Config) {
 }
 
 func (c *Conn) Close() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	if c.conn != nil {
-		return c.conn.Close()
+		err := c.conn.Close()
+		c.conn = nil
+		return err
 	}
 	return nil
 }
@@ -266,7 +270,12 @@ func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, erro
 	}()
 
 	timer := time.NewTimer(timeout)
-	defer timer.Stop()
+	stopped := timer.Stop()
+	defer func() {
+		if !stopped {
+			<-timer.C
+		}
+	}()
 
 	select {
 	case pkt := <-ch:

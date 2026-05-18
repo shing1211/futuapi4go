@@ -666,6 +666,9 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 	flowSummaryList := s2c.GetFlowSummaryInfoList()
 	result := make([]*FlowSummaryInfo, 0, len(flowSummaryList))
 	for _, item := range flowSummaryList {
+		if item == nil {
+			continue
+		}
 		result = append(result, flowSummaryInfoFromProto(item))
 	}
 	return &GetFlowSummaryResponse{

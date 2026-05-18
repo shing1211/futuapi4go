@@ -67,12 +67,17 @@ func (c *Client) GetTradeEnv() constant.TrdEnv {
 	return c.trdEnv
 }
 
+// WithTradeEnv returns a new Client with the specified trading environment.
+// Note: The returned client shares the same underlying connection as the original.
+// Changing trade environment on one client affects both.
 func (c *Client) WithTradeEnv(trdEnv constant.TrdEnv) *Client {
 	clone := *c
 	clone.trdEnv = trdEnv
 	return &clone
 }
 
+// WithTradeMarket returns a new Client with the specified trading market.
+// Note: The returned client shares the same underlying connection as the original.
 func (c *Client) WithTradeMarket(market constant.TrdMarket) *Client {
 	clone := *c
 	clone.trdMkt = market

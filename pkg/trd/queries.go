@@ -472,20 +472,21 @@ func GetHistoryOrderFillList(ctx context.Context, c *futuapi.Client, req *GetHis
 		TrdMarket: &trdMarket,
 	}
 
+	filterConditions := req.FilterConditions
+	if filterConditions == nil {
+		filterConditions = &trdcommon.TrdFilterConditions{}
+	}
+	if filterConditions.GetBeginTime() == "" {
+		begin := time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
+		filterConditions.BeginTime = &begin
+	}
+	if filterConditions.GetEndTime() == "" {
+		end := time.Now().Format("2006-01-02 15:04:05")
+		filterConditions.EndTime = &end
+	}
 	c2s := &trdgethistoryorderfilllist.C2S{
 		Header:           header,
-		FilterConditions: req.FilterConditions,
-	}
-	if c2s.FilterConditions == nil {
-		c2s.FilterConditions = &trdcommon.TrdFilterConditions{}
-	}
-	if c2s.FilterConditions.GetBeginTime() == "" {
-		begin := time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
-		c2s.FilterConditions.BeginTime = &begin
-	}
-	if c2s.FilterConditions.GetEndTime() == "" {
-		end := time.Now().Format("2006-01-02 15:04:05")
-		c2s.FilterConditions.EndTime = &end
+		FilterConditions: filterConditions,
 	}
 
 	pkt := &trdgethistoryorderfilllist.Request{C2S: c2s}
