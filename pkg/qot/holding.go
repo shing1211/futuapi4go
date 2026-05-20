@@ -27,6 +27,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestrehab"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // GetHoldingChangeListRequest defines parameters for GetHoldingChangeList.
@@ -66,18 +67,18 @@ func GetHoldingChangeList(ctx context.Context, c *futuapi.Client, req *GetHoldin
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHoldingChangeList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHoldingChangeList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetHoldingChangeList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetHoldingChangeListResponse{
-		Security:          s2c.GetSecurity(),
-		HoldingChangeList: s2c.GetHoldingChangeList(),
+		Security:          s2c.Security,
+		HoldingChangeList: s2c.HoldingChangeList,
 	}, nil
 }
 
@@ -111,17 +112,17 @@ func RequestRehab(ctx context.Context, c *futuapi.Client, req *RequestRehabReque
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("RequestRehab", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("RequestRehab", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("RequestRehab", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &RequestRehabResponse{
-		RehabList: s2c.GetRehabList(),
+		RehabList: s2c.RehabList,
 	}, nil
 }
 
@@ -156,16 +157,16 @@ func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*Ge
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetRehab", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetRehab", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetRehab", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetRehabResponse{
-		SecurityRehabList: s2c.GetSecurityRehabList(),
+		SecurityRehabList: s2c.SecurityRehabList,
 	}, nil
 }

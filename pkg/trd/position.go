@@ -28,6 +28,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmarginratio"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetmaxtrdqtys"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetpositionlist"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // AccCashInfo represents per-currency cash information (futures accounts).
@@ -136,54 +137,54 @@ func GetFunds(ctx context.Context, c *futuapi.Client, req *GetFundsRequest) (*Ge
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetFunds", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetFunds", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetFunds", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	f := s2c.GetFunds()
+	f := s2c.Funds
 	if f == nil {
 		return nil, fmt.Errorf("GetFunds: funds is nil")
 	}
 	return &GetFundsResponse{
 		Funds: &Funds{
-			Power:             f.GetPower(),
-			TotalAssets:       f.GetTotalAssets(),
-			Cash:              f.GetCash(),
-			MarketVal:         f.GetMarketVal(),
-			FrozenCash:        f.GetFrozenCash(),
-			DebtCash:          f.GetDebtCash(),
-			AvlWithdrawalCash: f.GetAvlWithdrawalCash(),
-			Currency:          f.GetCurrency(),
-			AvailableFunds:    f.GetAvailableFunds(),
-			UnrealizedPL:      f.GetUnrealizedPL(),
-			RealizedPL:        f.GetRealizedPL(),
-			RiskLevel:         f.GetRiskLevel(),
-			InitialMargin:     f.GetInitialMargin(),
-			MaintenanceMargin: f.GetMaintenanceMargin(),
-			MaxPowerShort:     f.GetMaxPowerShort(),
-			NetCashPower:      f.GetNetCashPower(),
-			LongMv:            f.GetLongMv(),
-			ShortMv:           f.GetShortMv(),
-			PendingAsset:      f.GetPendingAsset(),
-			MaxWithdrawal:     f.GetMaxWithdrawal(),
-			RiskStatus:        f.GetRiskStatus(),
-			MarginCallMargin:  f.GetMarginCallMargin(),
-			IsPDT:             f.GetIsPdt(),
-			PDTSeq:            f.GetPdtSeq(),
-			BeginningDTBP:     f.GetBeginningDTBP(),
-			RemainingDTBP:     f.GetRemainingDTBP(),
-			DtCallAmount:      f.GetDtCallAmount(),
-			DtStatus:          f.GetDtStatus(),
-			CashInfoList:      accCashInfoListToGo(f.GetCashInfoList()),
-			MarketInfoList:    accMarketInfoListToGo(f.GetMarketInfoList()),
-			SecuritiesAssets:  f.GetSecuritiesAssets(),
-			FundAssets:        f.GetFundAssets(),
-			BondAssets:        f.GetBondAssets(),
+			Power:             util.ProtoFloat64(f.Power),
+			TotalAssets:       util.ProtoFloat64(f.TotalAssets),
+			Cash:              util.ProtoFloat64(f.Cash),
+			MarketVal:         util.ProtoFloat64(f.MarketVal),
+			FrozenCash:        util.ProtoFloat64(f.FrozenCash),
+			DebtCash:          util.ProtoFloat64(f.DebtCash),
+			AvlWithdrawalCash: util.ProtoFloat64(f.AvlWithdrawalCash),
+			Currency:          util.ProtoInt32(f.Currency),
+			AvailableFunds:    util.ProtoFloat64(f.AvailableFunds),
+			UnrealizedPL:      util.ProtoFloat64(f.UnrealizedPL),
+			RealizedPL:        util.ProtoFloat64(f.RealizedPL),
+			RiskLevel:         util.ProtoInt32(f.RiskLevel),
+			InitialMargin:     util.ProtoFloat64(f.InitialMargin),
+			MaintenanceMargin: util.ProtoFloat64(f.MaintenanceMargin),
+			MaxPowerShort:     util.ProtoFloat64(f.MaxPowerShort),
+			NetCashPower:      util.ProtoFloat64(f.NetCashPower),
+			LongMv:            util.ProtoFloat64(f.LongMv),
+			ShortMv:           util.ProtoFloat64(f.ShortMv),
+			PendingAsset:      util.ProtoFloat64(f.PendingAsset),
+			MaxWithdrawal:     util.ProtoFloat64(f.MaxWithdrawal),
+			RiskStatus:        util.ProtoInt32(f.RiskStatus),
+			MarginCallMargin:  util.ProtoFloat64(f.MarginCallMargin),
+			IsPDT:             util.ProtoBool(f.IsPdt),
+			PDTSeq:            util.ProtoStr(f.PdtSeq),
+			BeginningDTBP:     util.ProtoFloat64(f.BeginningDTBP),
+			RemainingDTBP:     util.ProtoFloat64(f.RemainingDTBP),
+			DtCallAmount:      util.ProtoFloat64(f.DtCallAmount),
+			DtStatus:          util.ProtoInt32(f.DtStatus),
+			CashInfoList:      accCashInfoListToGo(f.CashInfoList),
+			MarketInfoList:    accMarketInfoListToGo(f.MarketInfoList),
+			SecuritiesAssets:  util.ProtoFloat64(f.SecuritiesAssets),
+			FundAssets:        util.ProtoFloat64(f.FundAssets),
+			BondAssets:        util.ProtoFloat64(f.BondAssets),
 		},
 	}, nil
 }
@@ -195,10 +196,10 @@ func accCashInfoListToGo(in []*trdcommon.AccCashInfo) []AccCashInfo {
 			continue
 		}
 		out = append(out, AccCashInfo{
-			Currency:         c.GetCurrency(),
-			Cash:             c.GetCash(),
-			AvailableBalance: c.GetAvailableBalance(),
-			NetCashPower:     c.GetNetCashPower(),
+			Currency:         util.ProtoInt32(c.Currency),
+			Cash:             util.ProtoFloat64(c.Cash),
+			AvailableBalance: util.ProtoFloat64(c.AvailableBalance),
+			NetCashPower:     util.ProtoFloat64(c.NetCashPower),
 		})
 	}
 	return out
@@ -211,8 +212,8 @@ func accMarketInfoListToGo(in []*trdcommon.AccMarketInfo) []AccMarketInfo {
 			continue
 		}
 		out = append(out, AccMarketInfo{
-			TrdMarket: m.GetTrdMarket(),
-			Assets:    m.GetAssets(),
+			TrdMarket: util.ProtoInt32(m.TrdMarket),
+			Assets:    util.ProtoFloat64(m.Assets),
 		})
 	}
 	return out
@@ -306,49 +307,49 @@ func GetPositionList(ctx context.Context, c *futuapi.Client, req *GetPositionLis
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetPositionList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetPositionList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetPositionList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPositionListResponse{
-		PositionList: make([]*Position, 0, len(s2c.GetPositionList())),
+		PositionList: make([]*Position, 0, len(s2c.PositionList)),
 	}
 
-	for _, p := range s2c.GetPositionList() {
+	for _, p := range s2c.PositionList {
 		if p == nil {
 			continue
 		}
 		result.PositionList = append(result.PositionList, &Position{
-			PositionID:       p.GetPositionID(),
-			PositionSide:     p.GetPositionSide(),
-			Code:             p.GetCode(),
-			Name:             p.GetName(),
-			Qty:              p.GetQty(),
-			CanSellQty:       p.GetCanSellQty(),
-			Price:            p.GetPrice(),
-			CostPrice:        p.GetCostPrice(),
-			Val:              p.GetVal(),
-			PlVal:            p.GetPlVal(),
-			PlRatio:          p.GetPlRatio(),
-			SecMarket:        p.GetSecMarket(),
-			TdPlVal:          p.GetTdPlVal(),
-			TdTrdVal:         p.GetTdTrdVal(),
-			TdBuyVal:         p.GetTdBuyVal(),
-			TdBuyQty:         p.GetTdBuyQty(),
-			TdSellVal:        p.GetTdSellVal(),
-			TdSellQty:        p.GetTdSellQty(),
-			UnrealizedPL:     p.GetUnrealizedPL(),
-			RealizedPL:       p.GetRealizedPL(),
-			Currency:         p.GetCurrency(),
-			TrdMarket:        p.GetTrdMarket(),
-			DilutedCostPrice: p.GetDilutedCostPrice(),
-			AverageCostPrice: p.GetAverageCostPrice(),
-			AveragePlRatio:   p.GetAveragePlRatio(),
+			PositionID:       util.ProtoUint64(p.PositionID),
+			PositionSide:     util.ProtoInt32(p.PositionSide),
+			Code:             util.ProtoStr(p.Code),
+			Name:             util.ProtoStr(p.Name),
+			Qty:              util.ProtoFloat64(p.Qty),
+			CanSellQty:       util.ProtoFloat64(p.CanSellQty),
+			Price:            util.ProtoFloat64(p.Price),
+			CostPrice:        util.ProtoFloat64(p.CostPrice),
+			Val:              util.ProtoFloat64(p.Val),
+			PlVal:            util.ProtoFloat64(p.PlVal),
+			PlRatio:          util.ProtoFloat64(p.PlRatio),
+			SecMarket:        util.ProtoInt32(p.SecMarket),
+			TdPlVal:          util.ProtoFloat64(p.TdPlVal),
+			TdTrdVal:         util.ProtoFloat64(p.TdTrdVal),
+			TdBuyVal:         util.ProtoFloat64(p.TdBuyVal),
+			TdBuyQty:         util.ProtoFloat64(p.TdBuyQty),
+			TdSellVal:        util.ProtoFloat64(p.TdSellVal),
+			TdSellQty:        util.ProtoFloat64(p.TdSellQty),
+			UnrealizedPL:     util.ProtoFloat64(p.UnrealizedPL),
+			RealizedPL:       util.ProtoFloat64(p.RealizedPL),
+			Currency:         util.ProtoInt32(p.Currency),
+			TrdMarket:        util.ProtoInt32(p.TrdMarket),
+			DilutedCostPrice: util.ProtoFloat64(p.DilutedCostPrice),
+			AverageCostPrice: util.ProtoFloat64(p.AverageCostPrice),
+			AveragePlRatio:   util.ProtoFloat64(p.AveragePlRatio),
 		})
 	}
 
@@ -419,37 +420,37 @@ func GetMarginRatio(ctx context.Context, c *futuapi.Client, req *GetMarginRatioR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetMarginRatio", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetMarginRatio", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetMarginRatio", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetMarginRatioResponse{
-		MarginRatioInfoList: make([]*MarginRatioInfo, 0, len(s2c.GetMarginRatioInfoList())),
+		MarginRatioInfoList: make([]*MarginRatioInfo, 0, len(s2c.MarginRatioInfoList)),
 	}
 
-	for _, m := range s2c.GetMarginRatioInfoList() {
+	for _, m := range s2c.MarginRatioInfoList {
 		if m == nil {
 			continue
 		}
 		result.MarginRatioInfoList = append(result.MarginRatioInfoList, &MarginRatioInfo{
-			Security:        m.GetSecurity(),
-			IsLongPermit:    m.GetIsLongPermit(),
-			IsShortPermit:   m.GetIsShortPermit(),
-			ShortPoolRemain: m.GetShortPoolRemain(),
-			ShortFeeRate:    m.GetShortFeeRate(),
-			AlertLongRatio:  m.GetAlertLongRatio(),
-			AlertShortRatio: m.GetAlertShortRatio(),
-			ImLongRatio:     m.GetImLongRatio(),
-			ImShortRatio:    m.GetImShortRatio(),
-			McmLongRatio:    m.GetMcmLongRatio(),
-			McmShortRatio:   m.GetMcmShortRatio(),
-			MmLongRatio:     m.GetMmLongRatio(),
-			MmShortRatio:    m.GetMmShortRatio(),
+			Security:        m.Security,
+			IsLongPermit:    util.ProtoBool(m.IsLongPermit),
+			IsShortPermit:   util.ProtoBool(m.IsShortPermit),
+			ShortPoolRemain: util.ProtoFloat64(m.ShortPoolRemain),
+			ShortFeeRate:    util.ProtoFloat64(m.ShortFeeRate),
+			AlertLongRatio:  util.ProtoFloat64(m.AlertLongRatio),
+			AlertShortRatio: util.ProtoFloat64(m.AlertShortRatio),
+			ImLongRatio:     util.ProtoFloat64(m.ImLongRatio),
+			ImShortRatio:    util.ProtoFloat64(m.ImShortRatio),
+			McmLongRatio:    util.ProtoFloat64(m.McmLongRatio),
+			McmShortRatio:   util.ProtoFloat64(m.McmShortRatio),
+			MmLongRatio:     util.ProtoFloat64(m.MmLongRatio),
+			MmShortRatio:    util.ProtoFloat64(m.MmShortRatio),
 		})
 	}
 
@@ -549,29 +550,29 @@ func GetMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetMaxTrdQtysReq
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetMaxTrdQtys", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetMaxTrdQtys", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetMaxTrdQtys", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	m := s2c.GetMaxTrdQtys()
+	m := s2c.MaxTrdQtys
 	if m == nil {
 		return nil, fmt.Errorf("GetMaxTrdQtys: maxTrdQtys is nil")
 	}
 	return &GetMaxTrdQtysResponse{
 		MaxTrdQtys: &MaxTrdQtysInfo{
-			MaxCashBuy:          m.GetMaxCashBuy(),
-			MaxCashAndMarginBuy: m.GetMaxCashAndMarginBuy(),
-			MaxPositionSell:     m.GetMaxPositionSell(),
-			MaxSellShort:        m.GetMaxSellShort(),
-			MaxBuyBack:          m.GetMaxBuyBack(),
-			LongRequiredIM:      m.GetLongRequiredIM(),
-			ShortRequiredIM:     m.GetShortRequiredIM(),
-			Session:             m.GetSession(),
+			MaxCashBuy:          util.ProtoFloat64(m.MaxCashBuy),
+			MaxCashAndMarginBuy: util.ProtoFloat64(m.MaxCashAndMarginBuy),
+			MaxPositionSell:     util.ProtoFloat64(m.MaxPositionSell),
+			MaxSellShort:        util.ProtoFloat64(m.MaxSellShort),
+			MaxBuyBack:          util.ProtoFloat64(m.MaxBuyBack),
+			LongRequiredIM:      util.ProtoFloat64(m.LongRequiredIM),
+			ShortRequiredIM:     util.ProtoFloat64(m.ShortRequiredIM),
+			Session:             util.ProtoInt32(m.Session),
 		},
 	}, nil
 }
@@ -603,14 +604,14 @@ func flowSummaryInfoFromProto(f *trdflowsummary.FlowSummaryInfo) *FlowSummaryInf
 		return nil
 	}
 	return &FlowSummaryInfo{
-		CashFlowID:        f.GetCashFlowID(),
-		ClearingDate:      f.GetClearingDate(),
-		SettlementDate:    f.GetSettlementDate(),
-		Currency:          f.GetCurrency(),
-		CashFlowType:      f.GetCashFlowType(),
-		CashFlowDirection: f.GetCashFlowDirection(),
-		CashFlowAmount:    f.GetCashFlowAmount(),
-		CashFlowRemark:    f.GetCashFlowRemark(),
+		CashFlowID:        util.ProtoUint64(f.CashFlowID),
+		ClearingDate:      util.ProtoStr(f.ClearingDate),
+		SettlementDate:    util.ProtoStr(f.SettlementDate),
+		Currency:          util.ProtoInt32(f.Currency),
+		CashFlowType:      util.ProtoStr(f.CashFlowType),
+		CashFlowDirection: util.ProtoInt32(f.CashFlowDirection),
+		CashFlowAmount:    util.ProtoFloat64(f.CashFlowAmount),
+		CashFlowRemark:    util.ProtoStr(f.CashFlowRemark),
 	}
 }
 
@@ -654,16 +655,16 @@ func GetFlowSummary(ctx context.Context, c *futuapi.Client, req *GetFlowSummaryR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetFlowSummary", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetFlowSummary", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetFlowSummary", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	flowSummaryList := s2c.GetFlowSummaryInfoList()
+	flowSummaryList := s2c.FlowSummaryInfoList
 	result := make([]*FlowSummaryInfo, 0, len(flowSummaryList))
 	for _, item := range flowSummaryList {
 		if item == nil {

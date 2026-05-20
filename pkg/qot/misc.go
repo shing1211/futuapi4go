@@ -27,6 +27,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsuspend"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesttradedate"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -69,17 +70,17 @@ func RequestTradeDate(ctx context.Context, c *futuapi.Client, req *RequestTradeD
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("RequestTradeDate", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("RequestTradeDate", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("RequestTradeDate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &RequestTradeDateResponse{
-		TradeDateList: s2c.GetTradeDateList(),
+		TradeDateList: s2c.TradeDateList,
 	}, nil
 }
 
@@ -129,34 +130,34 @@ func GetSuspend(ctx context.Context, c *futuapi.Client, req *GetSuspendRequest) 
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetSuspend", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetSuspend", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetSuspend", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetSuspendResponse{
-		SecuritySuspendList: make([]*SecuritySuspendInfo, 0, len(s2c.GetSecuritySuspendList())),
+		SecuritySuspendList: make([]*SecuritySuspendInfo, 0, len(s2c.SecuritySuspendList)),
 	}
 
-	for _, ss := range s2c.GetSecuritySuspendList() {
+	for _, ss := range s2c.SecuritySuspendList {
 		if ss == nil {
 			continue
 		}
 		info := &SecuritySuspendInfo{
-			Security:    ss.GetSecurity(),
-			SuspendList: make([]*SuspendInfo, 0, len(ss.GetSuspendList())),
+			Security:    ss.Security,
+			SuspendList: make([]*SuspendInfo, 0, len(ss.SuspendList)),
 		}
-		for _, s := range ss.GetSuspendList() {
+		for _, s := range ss.SuspendList {
 			if s == nil {
 				continue
 			}
 			info.SuspendList = append(info.SuspendList, &SuspendInfo{
-				Time:      s.GetTime(),
-				Timestamp: s.GetTimestamp(),
+				Time:      util.ProtoStr(s.Time),
+				Timestamp: util.ProtoFloat64(s.Timestamp),
 			})
 		}
 		result.SecuritySuspendList = append(result.SecuritySuspendList, info)
@@ -212,33 +213,33 @@ func GetCodeChange(ctx context.Context, c *futuapi.Client, req *GetCodeChangeReq
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetCodeChange", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetCodeChange", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetCodeChange", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetCodeChangeResponse{
-		CodeChangeList: make([]*CodeChangeInfo, 0, len(s2c.GetCodeChangeList())),
+		CodeChangeList: make([]*CodeChangeInfo, 0, len(s2c.CodeChangeList)),
 	}
 
-	for _, cc := range s2c.GetCodeChangeList() {
+	for _, cc := range s2c.CodeChangeList {
 		if cc == nil {
 			continue
 		}
 		result.CodeChangeList = append(result.CodeChangeList, &CodeChangeInfo{
-			Type:               cc.GetType(),
-			Security:           cc.GetSecurity(),
-			RelatedSecurity:    cc.GetRelatedSecurity(),
-			PublicTime:         cc.GetPublicTime(),
-			PublicTimestamp:    cc.GetPublicTimestamp(),
-			EffectiveTime:      cc.GetEffectiveTime(),
-			EffectiveTimestamp: cc.GetEffectiveTimestamp(),
-			EndTime:            cc.GetEndTime(),
-			EndTimestamp:       cc.GetEndTimestamp(),
+			Type:               util.ProtoInt32(cc.Type),
+			Security:           cc.Security,
+			RelatedSecurity:    cc.RelatedSecurity,
+			PublicTime:         util.ProtoStr(cc.PublicTime),
+			PublicTimestamp:    util.ProtoFloat64(cc.PublicTimestamp),
+			EffectiveTime:      util.ProtoStr(cc.EffectiveTime),
+			EffectiveTimestamp: util.ProtoFloat64(cc.EffectiveTimestamp),
+			EndTime:            util.ProtoStr(cc.EndTime),
+			EndTimestamp:       util.ProtoFloat64(cc.EndTimestamp),
 		})
 	}
 
@@ -282,27 +283,27 @@ func GetMarketState(ctx context.Context, c *futuapi.Client, req *GetMarketStateR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetMarketState", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetMarketState", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetMarketState", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetMarketStateResponse{
-		MarketInfoList: make([]*MarketStateInfo, 0, len(s2c.GetMarketInfoList())),
+		MarketInfoList: make([]*MarketStateInfo, 0, len(s2c.MarketInfoList)),
 	}
 
-	for _, mi := range s2c.GetMarketInfoList() {
+	for _, mi := range s2c.MarketInfoList {
 		if mi == nil {
 			continue
 		}
 		result.MarketInfoList = append(result.MarketInfoList, &MarketStateInfo{
-			Security:    mi.GetSecurity(),
-			Name:        mi.GetName(),
-			MarketState: mi.GetMarketState(),
+			Security:    mi.Security,
+			Name:        util.ProtoStr(mi.Name),
+			MarketState: util.ProtoInt32(mi.MarketState),
 		})
 	}
 

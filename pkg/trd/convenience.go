@@ -9,6 +9,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdmodifyorder"
+	"github.com/shing1211/futuapi4go/pkg/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -43,8 +44,8 @@ func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, marke
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("CancelAllOrders", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("CancelAllOrders", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return &CancelAllOrdersResult{

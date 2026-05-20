@@ -27,8 +27,8 @@ func ParsePushQuote(body []byte) (*PushQuote, error) {
 		return nil, err
 	}
 	return &PushQuote{
-		Market:       data.Security.GetMarket(),
-		Code:         data.Security.GetCode(),
+		Market:       getInt32(data.Security.Market),
+		Code:         getStr(data.Security.Code),
 		Name:         data.Name,
 		CurPrice:     data.CurPrice,
 		OpenPrice:    data.OpenPrice,
@@ -55,8 +55,8 @@ func ParsePushKLine(body []byte) (*PushKLine, error) {
 		return nil, fmt.Errorf("ParsePushKLine: first KLList element is nil")
 	}
 	return &PushKLine{
-		Market:    data.Security.GetMarket(),
-		Code:      data.Security.GetCode(),
+		Market:    getInt32(data.Security.Market),
+		Code:      getStr(data.Security.Code),
 		Name:      data.Name,
 		KLType:    data.KlType,
 		RehabType: data.RehabType,
@@ -85,24 +85,24 @@ func ParsePushOrderBook(body []byte) (*PushOrderBook, error) {
 		return nil, err
 	}
 	ob := &PushOrderBook{
-		Market:         data.Security.GetMarket(),
-		Code:           data.Security.GetCode(),
+		Market:         getInt32(data.Security.Market),
+		Code:           getStr(data.Security.Code),
 		Name:           data.Name,
 		SvrRecvTimeBid: data.SvrRecvTimeBid,
 		SvrRecvTimeAsk: data.SvrRecvTimeAsk,
 	}
 	for _, b := range data.OrderBookBidList {
 		ob.Bids = append(ob.Bids, OBItem{
-			Price:      b.GetPrice(),
-			Volume:     b.GetVolume(),
-			OrderCount: int64(b.GetOrederCount()),
+			Price:      getFloat64(b.Price),
+			Volume:     getInt64(b.Volume),
+			OrderCount: int64(getInt32(b.OrederCount)),
 		})
 	}
 	for _, a := range data.OrderBookAskList {
 		ob.Asks = append(ob.Asks, OBItem{
-			Price:      a.GetPrice(),
-			Volume:     a.GetVolume(),
-			OrderCount: int64(a.GetOrederCount()),
+			Price:      getFloat64(a.Price),
+			Volume:     getInt64(a.Volume),
+			OrderCount: int64(getInt32(a.OrederCount)),
 		})
 	}
 	return ob, nil
@@ -116,21 +116,21 @@ func ParsePushTicker(body []byte) (*PushTicker, error) {
 	}
 	t := data.TickerList[0]
 	return &PushTicker{
-		Market:       data.Security.GetMarket(),
-		Code:         data.Security.GetCode(),
+		Market:       getInt32(data.Security.Market),
+		Code:         getStr(data.Security.Code),
 		Name:         data.Name,
-		Time:         t.GetTime(),
-		Price:        t.GetPrice(),
-		Volume:       t.GetVolume(),
-		Turnover:     t.GetTurnover(),
-		Side:         t.GetDir(),
-		Sequence:     t.GetSequence(),
-		Dir:          t.GetDir(),
-		RecvTime:     t.GetRecvTime(),
-		Type:         t.GetType(),
-		TypeSign:     t.GetTypeSign(),
-		Timestamp:    t.GetTimestamp(),
-		PushDataType: t.GetPushDataType(),
+		Time:         getStr(t.Time),
+		Price:        getFloat64(t.Price),
+		Volume:       getInt64(t.Volume),
+		Turnover:     getFloat64(t.Turnover),
+		Side:         getInt32(t.Dir),
+		Sequence:     getInt64(t.Sequence),
+		Dir:          getInt32(t.Dir),
+		RecvTime:     getFloat64(t.RecvTime),
+		Type:         getInt32(t.Type),
+		TypeSign:     getInt32(t.TypeSign),
+		Timestamp:    getFloat64(t.Timestamp),
+		PushDataType: getInt32(t.PushDataType),
 	}, nil
 }
 
@@ -142,18 +142,18 @@ func ParsePushRT(body []byte) (*PushRT, error) {
 	}
 	rt := data.RTList[0]
 	return &PushRT{
-		Market:        data.Security.GetMarket(),
-		Code:          data.Security.GetCode(),
+		Market:        getInt32(data.Security.Market),
+		Code:          getStr(data.Security.Code),
 		Name:          data.Name,
-		Time:          rt.GetTime(),
-		Price:         rt.GetPrice(),
-		Volume:        rt.GetVolume(),
-		AvgPrice:       rt.GetAvgPrice(),
-		Turnover:      rt.GetTurnover(),
-		Minute:        rt.GetMinute(),
-		IsBlank:       rt.GetIsBlank(),
-		Timestamp:     rt.GetTimestamp(),
-		LastClosePrice: rt.GetLastClosePrice(),
+		Time:          getStr(rt.Time),
+		Price:         getFloat64(rt.Price),
+		Volume:        getInt64(rt.Volume),
+		AvgPrice:       getFloat64(rt.AvgPrice),
+		Turnover:      getFloat64(rt.Turnover),
+		Minute:        getInt32(rt.Minute),
+		IsBlank:       getBool(rt.IsBlank),
+		Timestamp:     getFloat64(rt.Timestamp),
+		LastClosePrice: getFloat64(rt.LastClosePrice),
 	}, nil
 }
 
@@ -164,24 +164,24 @@ func ParsePushBroker(body []byte) (*PushBroker, error) {
 		return nil, err
 	}
 	ob := &PushBroker{
-		Market: data.Security.GetMarket(),
-		Code:   data.Security.GetCode(),
+		Market: getInt32(data.Security.Market),
+		Code:   getStr(data.Security.Code),
 		Name:   data.Name,
 	}
 	for _, a := range data.AskBrokerList {
 		ob.Asks = append(ob.Asks, BrokerItem{
-			Volume:   a.GetVolume(),
-			BrokerID: int32(a.GetId()),
-			Name:     a.GetName(),
-			Pos:      a.GetPos(),
+			Volume:   getInt64(a.Volume),
+			BrokerID: int32(getInt64(a.Id)),
+			Name:     getStr(a.Name),
+			Pos:      getInt32(a.Pos),
 		})
 	}
 	for _, b := range data.BidBrokerList {
 		ob.Bids = append(ob.Bids, BrokerItem{
-			Volume:   b.GetVolume(),
-			BrokerID: int32(b.GetId()),
-			Name:     b.GetName(),
-			Pos:      b.GetPos(),
+			Volume:   getInt64(b.Volume),
+			BrokerID: int32(getInt64(b.Id)),
+			Name:     getStr(b.Name),
+			Pos:      getInt32(b.Pos),
 		})
 	}
 	return ob, nil
@@ -194,8 +194,8 @@ func ParsePushPriceReminder(body []byte) (*PushPriceReminder, error) {
 		return nil, err
 	}
 	return &PushPriceReminder{
-		Market:       data.Security.GetMarket(),
-		Code:         data.Security.GetCode(),
+		Market:       getInt32(data.Security.Market),
+		Code:         getStr(data.Security.Code),
 		Name:         data.Name,
 		Price:        data.Price,
 		ChangeRate:   data.ChangeRate,
@@ -216,9 +216,9 @@ func ParsePushTrdNotify(body []byte) (*PushTrdNotify, error) {
 		return nil, err
 	}
 	return &PushTrdNotify{
-		AccID:     data.Header.GetAccID(),
-		TrdEnv:    data.Header.GetTrdEnv(),
-		TrdMarket: data.Header.GetTrdMarket(),
+		AccID:     getUint64(data.Header.AccID),
+		TrdEnv:    getInt32(data.Header.TrdEnv),
+		TrdMarket: getInt32(data.Header.TrdMarket),
 		Type:      data.Type,
 	}, nil
 }
@@ -230,14 +230,14 @@ func ParsePushOrderUpdate(body []byte) (*PushOrderUpdate, error) {
 		return nil, err
 	}
 	return &PushOrderUpdate{
-		OrderID:     data.Order.GetOrderID(),
-		OrderIDEx:   data.Order.GetOrderIDEx(),
-		Code:        data.Order.GetCode(),
-		SecMarket:   data.Order.GetSecMarket(),
-		TrdSide:     data.Order.GetTrdSide(),
-		Qty:         data.Order.GetQty(),
-		Price:       data.Order.GetPrice(),
-		OrderStatus: data.Order.GetOrderStatus(),
+		OrderID:     getUint64(data.Order.OrderID),
+		OrderIDEx:   getStr(data.Order.OrderIDEx),
+		Code:        getStr(data.Order.Code),
+		SecMarket:   getInt32(data.Order.SecMarket),
+		TrdSide:     getInt32(data.Order.TrdSide),
+		Qty:         getFloat64(data.Order.Qty),
+		Price:       getFloat64(data.Order.Price),
+		OrderStatus: getInt32(data.Order.OrderStatus),
 	}, nil
 }
 
@@ -248,15 +248,15 @@ func ParsePushOrderFill(body []byte) (*PushOrderFill, error) {
 		return nil, err
 	}
 	return &PushOrderFill{
-		OrderID:        data.OrderFill.GetOrderID(),
-		OrderIDEx:      data.OrderFill.GetOrderIDEx(),
-		Code:           data.OrderFill.GetCode(),
-		SecMarket:      data.OrderFill.GetSecMarket(),
-		TrdSide:        data.OrderFill.GetTrdSide(),
-		Qty:            data.OrderFill.GetQty(),
-		Price:          data.OrderFill.GetPrice(),
-		FillID:         data.OrderFill.GetFillID(),
-		FillIDEx:       data.OrderFill.GetFillIDEx(),
-		FillCreateTime: data.OrderFill.GetCreateTime(),
+		OrderID:        getUint64(data.OrderFill.OrderID),
+		OrderIDEx:      getStr(data.OrderFill.OrderIDEx),
+		Code:           getStr(data.OrderFill.Code),
+		SecMarket:      getInt32(data.OrderFill.SecMarket),
+		TrdSide:        getInt32(data.OrderFill.TrdSide),
+		Qty:            getFloat64(data.OrderFill.Qty),
+		Price:          getFloat64(data.OrderFill.Price),
+		FillID:         getUint64(data.OrderFill.FillID),
+		FillIDEx:       getStr(data.OrderFill.FillIDEx),
+		FillCreateTime: getStr(data.OrderFill.CreateTime),
 	}, nil
 }

@@ -7,6 +7,7 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -27,8 +28,8 @@ func GetTechnicalUnusual(ctx context.Context, c *futuapi.Client, req *skillwrapa
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetTechnicalUnusual", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetTechnicalUnusual", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return &rsp, nil
@@ -48,8 +49,8 @@ func GetFinancialUnusual(ctx context.Context, c *futuapi.Client, req *skillwrapa
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetFinancialUnusual", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetFinancialUnusual", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return &rsp, nil
@@ -69,8 +70,8 @@ func GetDerivativeUnusual(ctx context.Context, c *futuapi.Client, req *skillwrap
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetDerivativeUnusual", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetDerivativeUnusual", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return &rsp, nil

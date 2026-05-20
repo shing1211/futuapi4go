@@ -48,6 +48,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/util"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
 )
@@ -139,46 +140,46 @@ func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcomm
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetBasicQot", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetBasicQot", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetBasicQot", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	result := make([]*BasicQot, 0, len(s2c.GetBasicQotList()))
-	for _, bq := range s2c.GetBasicQotList() {
+	result := make([]*BasicQot, 0, len(s2c.BasicQotList))
+	for _, bq := range s2c.BasicQotList {
 		if bq == nil {
 			continue
 		}
 		result = append(result, &BasicQot{
-			Security:       bq.GetSecurity(),
-			Name:           bq.GetName(),
-			IsSuspended:    bq.GetIsSuspended(),
-			UpdateTime:     bq.GetUpdateTime(),
-			HighPrice:      bq.GetHighPrice(),
-			OpenPrice:      bq.GetOpenPrice(),
-			LowPrice:       bq.GetLowPrice(),
-			CurPrice:       bq.GetCurPrice(),
-			LastClosePrice: bq.GetLastClosePrice(),
-			Volume:         bq.GetVolume(),
-			Turnover:       bq.GetTurnover(),
-			TurnoverRate:   bq.GetTurnoverRate(),
-			Amplitude:      bq.GetAmplitude(),
-			ListTime:        bq.GetListTime(),
-			PriceSpread:     bq.GetPriceSpread(),
-			DarkStatus:      bq.GetDarkStatus(),
-			ListTimestamp:   bq.GetListTimestamp(),
-			UpdateTimestamp: bq.GetUpdateTimestamp(),
-			SecStatus:       bq.GetSecStatus(),
-			OptionExData:   bq.GetOptionExData(),
-			PreMarket:       bq.GetPreMarket(),
-			AfterMarket:     bq.GetAfterMarket(),
-			FutureExData:   bq.GetFutureExData(),
-			Overnight:       bq.GetOvernight(),
-			WarrantExData:  bq.GetWarrantExData(),
+			Security:       bq.Security,
+			Name:           util.ProtoStr(bq.Name),
+			IsSuspended:    util.ProtoBool(bq.IsSuspended),
+			UpdateTime:     util.ProtoStr(bq.UpdateTime),
+			HighPrice:      util.ProtoFloat64(bq.HighPrice),
+			OpenPrice:      util.ProtoFloat64(bq.OpenPrice),
+			LowPrice:       util.ProtoFloat64(bq.LowPrice),
+			CurPrice:       util.ProtoFloat64(bq.CurPrice),
+			LastClosePrice: util.ProtoFloat64(bq.LastClosePrice),
+			Volume:         util.ProtoInt64(bq.Volume),
+			Turnover:       util.ProtoFloat64(bq.Turnover),
+			TurnoverRate:   util.ProtoFloat64(bq.TurnoverRate),
+			Amplitude:      util.ProtoFloat64(bq.Amplitude),
+			ListTime:        util.ProtoStr(bq.ListTime),
+			PriceSpread:     util.ProtoFloat64(bq.PriceSpread),
+			DarkStatus:      util.ProtoInt32(bq.DarkStatus),
+			ListTimestamp:   util.ProtoFloat64(bq.ListTimestamp),
+			UpdateTimestamp: util.ProtoFloat64(bq.UpdateTimestamp),
+			SecStatus:       util.ProtoInt32(bq.SecStatus),
+			OptionExData:   bq.OptionExData,
+			PreMarket:       bq.PreMarket,
+			AfterMarket:     bq.AfterMarket,
+			FutureExData:   bq.FutureExData,
+			Overnight:       bq.Overnight,
+			WarrantExData:  bq.WarrantExData,
 		})
 	}
 
@@ -241,39 +242,39 @@ func GetKL(ctx context.Context, c *futuapi.Client, req *GetKLRequest) (*GetKLRes
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetKL", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetKL", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetKLResponse{
-		Security: s2c.GetSecurity(),
-		Name:     s2c.GetName(),
-		KLList:   make([]*KLine, 0, len(s2c.GetKlList())),
+		Security: s2c.Security,
+		Name:     util.ProtoStr(s2c.Name),
+		KLList:   make([]*KLine, 0, len(s2c.KlList)),
 	}
 
-	for _, kl := range s2c.GetKlList() {
+	for _, kl := range s2c.KlList {
 		if kl == nil {
 			continue
 		}
 		result.KLList = append(result.KLList, &KLine{
-			Time:           kl.GetTime(),
-			IsBlank:        kl.GetIsBlank(),
-			HighPrice:      kl.GetHighPrice(),
-			OpenPrice:      kl.GetOpenPrice(),
-			LowPrice:       kl.GetLowPrice(),
-			ClosePrice:     kl.GetClosePrice(),
-			LastClosePrice: kl.GetLastClosePrice(),
-			Volume:         kl.GetVolume(),
-			Turnover:       kl.GetTurnover(),
-			TurnoverRate:   kl.GetTurnoverRate(),
-			Pe:             kl.GetPe(),
-			ChangeRate:     kl.GetChangeRate(),
-			Timestamp:      kl.GetTimestamp(),
+			Time:           util.ProtoStr(kl.Time),
+			IsBlank:        util.ProtoBool(kl.IsBlank),
+			HighPrice:      util.ProtoFloat64(kl.HighPrice),
+			OpenPrice:      util.ProtoFloat64(kl.OpenPrice),
+			LowPrice:       util.ProtoFloat64(kl.LowPrice),
+			ClosePrice:     util.ProtoFloat64(kl.ClosePrice),
+			LastClosePrice: util.ProtoFloat64(kl.LastClosePrice),
+			Volume:         util.ProtoInt64(kl.Volume),
+			Turnover:       util.ProtoFloat64(kl.Turnover),
+			TurnoverRate:   util.ProtoFloat64(kl.TurnoverRate),
+			Pe:             util.ProtoFloat64(kl.Pe),
+			ChangeRate:     util.ProtoFloat64(kl.ChangeRate),
+			Timestamp:      util.ProtoFloat64(kl.Timestamp),
 		})
 	}
 

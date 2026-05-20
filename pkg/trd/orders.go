@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"google.golang.org/protobuf/proto"
+	"github.com/shing1211/futuapi4go/pkg/util"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
@@ -190,19 +191,19 @@ func PlaceOrder(ctx context.Context, c *futuapi.Client, req *PlaceOrderRequest) 
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("PlaceOrder", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("PlaceOrder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("PlaceOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &PlaceOrderResponse{
-		Header:    s2c.GetHeader(),
-		OrderID:   s2c.GetOrderID(),
-		OrderIDEx: s2c.GetOrderIDEx(),
+		Header:    s2c.Header,
+		OrderID:   util.ProtoUint64(s2c.OrderID),
+		OrderIDEx: util.ProtoStr(s2c.OrderIDEx),
 	}, nil
 }
 
@@ -319,25 +320,25 @@ func ModifyOrder(ctx context.Context, c *futuapi.Client, req *ModifyOrderRequest
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("ModifyOrder", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("ModifyOrder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("ModifyOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
-	respHeader := s2c.GetHeader()
+	respHeader := s2c.Header
 	if respHeader == nil {
 		return nil, wrapError("ModifyOrder", int32(common.RetType_RetType_Unknown), "s2c header is nil")
 	}
 
 	return &ModifyOrderResponse{
-		AccID:     respHeader.GetAccID(),
-		TrdEnv:    respHeader.GetTrdEnv(),
-		TrdMarket: respHeader.GetTrdMarket(),
-		OrderID:   s2c.GetOrderID(),
-		OrderIDEx: s2c.GetOrderIDEx(),
+		AccID:     util.ProtoUint64(respHeader.AccID),
+		TrdEnv:    util.ProtoInt32(respHeader.TrdEnv),
+		TrdMarket: util.ProtoInt32(respHeader.TrdMarket),
+		OrderID:   util.ProtoUint64(s2c.OrderID),
+		OrderIDEx: util.ProtoStr(s2c.OrderIDEx),
 	}, nil
 }
 
@@ -396,24 +397,24 @@ func ReconfirmOrder(ctx context.Context, c *futuapi.Client, req *ReconfirmOrderR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("ReconfirmOrder", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("ReconfirmOrder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("ReconfirmOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
-	respHeader := s2c.GetHeader()
+	respHeader := s2c.Header
 	if respHeader == nil {
 		return nil, wrapError("ReconfirmOrder", int32(common.RetType_RetType_Unknown), "s2c header is nil")
 	}
 
 	return &ReconfirmOrderResponse{
-		AccID:     respHeader.GetAccID(),
-		TrdEnv:    respHeader.GetTrdEnv(),
-		TrdMarket: respHeader.GetTrdMarket(),
-		JpAccType: respHeader.GetJpAccType(),
-		OrderID:   s2c.GetOrderID(),
+		AccID:     util.ProtoUint64(respHeader.AccID),
+		TrdEnv:    util.ProtoInt32(respHeader.TrdEnv),
+		TrdMarket: util.ProtoInt32(respHeader.TrdMarket),
+		JpAccType: util.ProtoInt32(respHeader.JpAccType),
+		OrderID:   util.ProtoUint64(s2c.OrderID),
 	}, nil
 }

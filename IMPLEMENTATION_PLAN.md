@@ -43,9 +43,14 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 ### 2.4 `pkg/trd/convenience.go` Validation
 `QuickBuy/QuickSell` validate `accID != 0`, `code != ""`, `qty > 0`, `price > 0`. `QuickMarketBuy/QuickMarketSell` validate `accID != 0`, `code != ""`, `qty > 0`. `GetPositions/GetTodayFills/GetTodayOrders/GetAccountFunds` validate `accID != 0`.
 
-## Phase 3: Proto Safety Improvements
-- Replace `GetXxx()` with direct field access (1,287 instances)
-- Incremental: one file at a time with tests
+## Phase 3: Proto Safety Improvements — DONE
+
+- Replaced all `GetXxx()` method calls on protobuf messages in SDK source code with nil-safe direct field access using `util.ProtoStr/ProtoInt32/ProtoFloat64/ProtoBool/ProtoInt64/ProtoUint64/ProtoFloat32` helpers
+- Added `pkg/util/proto_helpers.go` with the helper functions
+- Processed ~30 files across `client/`, `pkg/trd/`, `pkg/qot/`, `pkg/sys/`, `pkg/push/`
+- ~1,200+ GetXxx() calls replaced
+- Known exclusions: `c.inner.GetConnID()`, `c.inner.GetServerVer()`, `c.inner.GetLoginUserID()` are NOT proto getters (internal client methods)
+- Detail plan: `PHASE3_PROTO_SAFETY_PLAN.md`
 
 ## Phase 4: Missing High-Level API Coverage
 - Add `client/` wrappers for `RequestHistoryKLQuota`, `GetUserSecurityGroup`, etc.

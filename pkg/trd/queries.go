@@ -28,6 +28,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // GetOrderListRequest is the request to retrieve order list.
@@ -80,52 +81,52 @@ func GetOrderList(ctx context.Context, c *futuapi.Client, req *GetOrderListReque
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOrderList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOrderList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOrderList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderListResponse{
-		OrderList: make([]*Order, 0, len(s2c.GetOrderList())),
+		OrderList: make([]*Order, 0, len(s2c.OrderList)),
 	}
 
-	for _, o := range s2c.GetOrderList() {
+	for _, o := range s2c.OrderList {
 		if o == nil {
 			continue
 		}
 		result.OrderList = append(result.OrderList, &Order{
-			OrderID:         o.GetOrderID(),
-			OrderIDEx:       o.GetOrderIDEx(),
-			Code:            o.GetCode(),
-			Name:            o.GetName(),
-			TrdSide:         o.GetTrdSide(),
-			OrderType:       o.GetOrderType(),
-			OrderStatus:     o.GetOrderStatus(),
-			Price:           o.GetPrice(),
-			Qty:             o.GetQty(),
-			FillQty:         o.GetFillQty(),
-			FillAvgPrice:    o.GetFillAvgPrice(),
-			CreateTime:      o.GetCreateTime(),
-			UpdateTime:      o.GetUpdateTime(),
-			LastErrMsg:      o.GetLastErrMsg(),
-			SecMarket:       o.GetSecMarket(),
-			CreateTimestamp: o.GetCreateTimestamp(),
-			UpdateTimestamp: o.GetUpdateTimestamp(),
-			Remark:          o.GetRemark(),
-			TimeInForce:     o.GetTimeInForce(),
-			FillOutsideRTH:  o.GetFillOutsideRTH(),
-			AuxPrice:        o.GetAuxPrice(),
-			TrailType:       o.GetTrailType(),
-			TrailValue:      o.GetTrailValue(),
-			TrailSpread:     o.GetTrailSpread(),
-			Currency:        o.GetCurrency(),
-			TrdMarket:       o.GetTrdMarket(),
-			Session:         o.GetSession(),
-			JpAccType:       o.GetJpAccType(),
+			OrderID:         util.ProtoUint64(o.OrderID),
+			OrderIDEx:       util.ProtoStr(o.OrderIDEx),
+			Code:            util.ProtoStr(o.Code),
+			Name:            util.ProtoStr(o.Name),
+			TrdSide:         util.ProtoInt32(o.TrdSide),
+			OrderType:       util.ProtoInt32(o.OrderType),
+			OrderStatus:     util.ProtoInt32(o.OrderStatus),
+			Price:           util.ProtoFloat64(o.Price),
+			Qty:             util.ProtoFloat64(o.Qty),
+			FillQty:         util.ProtoFloat64(o.FillQty),
+			FillAvgPrice:    util.ProtoFloat64(o.FillAvgPrice),
+			CreateTime:      util.ProtoStr(o.CreateTime),
+			UpdateTime:      util.ProtoStr(o.UpdateTime),
+			LastErrMsg:      util.ProtoStr(o.LastErrMsg),
+			SecMarket:       util.ProtoInt32(o.SecMarket),
+			CreateTimestamp: util.ProtoFloat64(o.CreateTimestamp),
+			UpdateTimestamp: util.ProtoFloat64(o.UpdateTimestamp),
+			Remark:          util.ProtoStr(o.Remark),
+			TimeInForce:     util.ProtoInt32(o.TimeInForce),
+			FillOutsideRTH:  util.ProtoBool(o.FillOutsideRTH),
+			AuxPrice:        util.ProtoFloat64(o.AuxPrice),
+			TrailType:       util.ProtoInt32(o.TrailType),
+			TrailValue:      util.ProtoFloat64(o.TrailValue),
+			TrailSpread:     util.ProtoFloat64(o.TrailSpread),
+			Currency:        util.ProtoInt32(o.Currency),
+			TrdMarket:       util.ProtoInt32(o.TrdMarket),
+			Session:         util.ProtoInt32(o.Session),
+			JpAccType:       util.ProtoInt32(o.JpAccType),
 		})
 	}
 
@@ -202,42 +203,42 @@ func GetOrderFillList(ctx context.Context, c *futuapi.Client, req *GetOrderFillL
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOrderFillList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOrderFillList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOrderFillList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderFillListResponse{
-		OrderFillList: make([]*OrderFill, 0, len(s2c.GetOrderFillList())),
+		OrderFillList: make([]*OrderFill, 0, len(s2c.OrderFillList)),
 	}
 
-	for _, f := range s2c.GetOrderFillList() {
+	for _, f := range s2c.OrderFillList {
 		if f == nil {
 			continue
 		}
 		result.OrderFillList = append(result.OrderFillList, &OrderFill{
-			FillID:            f.GetFillID(),
-			FillIDEx:          f.GetFillIDEx(),
-			OrderID:           f.GetOrderID(),
-			OrderIDEx:         f.GetOrderIDEx(),
-			Code:              f.GetCode(),
-			Name:              f.GetName(),
-			TrdSide:           f.GetTrdSide(),
-			Price:             f.GetPrice(),
-			Qty:               f.GetQty(),
-			CreateTime:        f.GetCreateTime(),
-			CounterBrokerID:   f.GetCounterBrokerID(),
-			CounterBrokerName: f.GetCounterBrokerName(),
-			SecMarket:         f.GetSecMarket(),
-			CreateTimestamp:   f.GetCreateTimestamp(),
-			UpdateTimestamp:   f.GetUpdateTimestamp(),
-			Status:            f.GetStatus(),
-			TrdMarket:         f.GetTrdMarket(),
-			JpAccType:         f.GetJpAccType(),
+			FillID:            util.ProtoUint64(f.FillID),
+			FillIDEx:          util.ProtoStr(f.FillIDEx),
+			OrderID:           util.ProtoUint64(f.OrderID),
+			OrderIDEx:         util.ProtoStr(f.OrderIDEx),
+			Code:              util.ProtoStr(f.Code),
+			Name:              util.ProtoStr(f.Name),
+			TrdSide:           util.ProtoInt32(f.TrdSide),
+			Price:             util.ProtoFloat64(f.Price),
+			Qty:               util.ProtoFloat64(f.Qty),
+			CreateTime:        util.ProtoStr(f.CreateTime),
+			CounterBrokerID:   util.ProtoInt32(f.CounterBrokerID),
+			CounterBrokerName: util.ProtoStr(f.CounterBrokerName),
+			SecMarket:         util.ProtoInt32(f.SecMarket),
+			CreateTimestamp:   util.ProtoFloat64(f.CreateTimestamp),
+			UpdateTimestamp:   util.ProtoFloat64(f.UpdateTimestamp),
+			Status:            util.ProtoInt32(f.Status),
+			TrdMarket:         util.ProtoInt32(f.TrdMarket),
+			JpAccType:         util.ProtoInt32(f.JpAccType),
 		})
 	}
 
@@ -304,35 +305,35 @@ func GetOrderFee(ctx context.Context, c *futuapi.Client, req *GetOrderFeeRequest
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOrderFee", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOrderFee", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOrderFee", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderFeeResponse{
-		OrderFeeList: make([]*OrderFeeInfo, 0, len(s2c.GetOrderFeeList())),
+		OrderFeeList: make([]*OrderFeeInfo, 0, len(s2c.OrderFeeList)),
 	}
 
-	for _, f := range s2c.GetOrderFeeList() {
+	for _, f := range s2c.OrderFeeList {
 		if f == nil {
 			continue
 		}
 		feeInfo := &OrderFeeInfo{
-			OrderIDEx: f.GetOrderIDEx(),
-			FeeAmount: f.GetFeeAmount(),
-			FeeList:   make([]*OrderFeeItemInfo, 0, len(f.GetFeeList())),
+			OrderIDEx: util.ProtoStr(f.OrderIDEx),
+			FeeAmount: util.ProtoFloat64(f.FeeAmount),
+			FeeList:   make([]*OrderFeeItemInfo, 0, len(f.FeeList)),
 		}
-		for _, item := range f.GetFeeList() {
+		for _, item := range f.FeeList {
 			if item == nil {
 				continue
 			}
 			feeInfo.FeeList = append(feeInfo.FeeList, &OrderFeeItemInfo{
-				Title: item.GetTitle(),
-				Value: item.GetValue(),
+				Title: util.ProtoStr(item.Title),
+				Value: util.ProtoFloat64(item.Value),
 			})
 		}
 		result.OrderFeeList = append(result.OrderFeeList, feeInfo)
@@ -390,49 +391,49 @@ func GetHistoryOrderList(ctx context.Context, c *futuapi.Client, req *GetHistory
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryOrderList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHistoryOrderList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetHistoryOrderList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	orderList := make([]*Order, 0, len(s2c.GetOrderList()))
-	for _, o := range s2c.GetOrderList() {
+	orderList := make([]*Order, 0, len(s2c.OrderList))
+	for _, o := range s2c.OrderList {
 		if o == nil {
 			continue
 		}
 		orderList = append(orderList, &Order{
-			OrderID:         o.GetOrderID(),
-			OrderIDEx:       o.GetOrderIDEx(),
-			Code:            o.GetCode(),
-			Name:            o.GetName(),
-			TrdSide:         o.GetTrdSide(),
-			OrderType:       o.GetOrderType(),
-			OrderStatus:     o.GetOrderStatus(),
-			Price:           o.GetPrice(),
-			Qty:             o.GetQty(),
-			FillQty:         o.GetFillQty(),
-			FillAvgPrice:    o.GetFillAvgPrice(),
-			CreateTime:      o.GetCreateTime(),
-			UpdateTime:      o.GetUpdateTime(),
-			LastErrMsg:      o.GetLastErrMsg(),
-			SecMarket:       o.GetSecMarket(),
-			CreateTimestamp: o.GetCreateTimestamp(),
-			UpdateTimestamp: o.GetUpdateTimestamp(),
-			Remark:          o.GetRemark(),
-			TimeInForce:     o.GetTimeInForce(),
-			FillOutsideRTH:  o.GetFillOutsideRTH(),
-			AuxPrice:        o.GetAuxPrice(),
-			TrailType:       o.GetTrailType(),
-			TrailValue:      o.GetTrailValue(),
-			TrailSpread:     o.GetTrailSpread(),
-			Currency:        o.GetCurrency(),
-			TrdMarket:       o.GetTrdMarket(),
-			Session:         o.GetSession(),
-			JpAccType:       o.GetJpAccType(),
+			OrderID:         util.ProtoUint64(o.OrderID),
+			OrderIDEx:       util.ProtoStr(o.OrderIDEx),
+			Code:            util.ProtoStr(o.Code),
+			Name:            util.ProtoStr(o.Name),
+			TrdSide:         util.ProtoInt32(o.TrdSide),
+			OrderType:       util.ProtoInt32(o.OrderType),
+			OrderStatus:     util.ProtoInt32(o.OrderStatus),
+			Price:           util.ProtoFloat64(o.Price),
+			Qty:             util.ProtoFloat64(o.Qty),
+			FillQty:         util.ProtoFloat64(o.FillQty),
+			FillAvgPrice:    util.ProtoFloat64(o.FillAvgPrice),
+			CreateTime:      util.ProtoStr(o.CreateTime),
+			UpdateTime:      util.ProtoStr(o.UpdateTime),
+			LastErrMsg:      util.ProtoStr(o.LastErrMsg),
+			SecMarket:       util.ProtoInt32(o.SecMarket),
+			CreateTimestamp: util.ProtoFloat64(o.CreateTimestamp),
+			UpdateTimestamp: util.ProtoFloat64(o.UpdateTimestamp),
+			Remark:          util.ProtoStr(o.Remark),
+			TimeInForce:     util.ProtoInt32(o.TimeInForce),
+			FillOutsideRTH:  util.ProtoBool(o.FillOutsideRTH),
+			AuxPrice:        util.ProtoFloat64(o.AuxPrice),
+			TrailType:       util.ProtoInt32(o.TrailType),
+			TrailValue:      util.ProtoFloat64(o.TrailValue),
+			TrailSpread:     util.ProtoFloat64(o.TrailSpread),
+			Currency:        util.ProtoInt32(o.Currency),
+			TrdMarket:       util.ProtoInt32(o.TrdMarket),
+			Session:         util.ProtoInt32(o.Session),
+			JpAccType:       util.ProtoInt32(o.JpAccType),
 		})
 	}
 	return &GetHistoryOrderListResponse{
@@ -476,11 +477,11 @@ func GetHistoryOrderFillList(ctx context.Context, c *futuapi.Client, req *GetHis
 	if filterConditions == nil {
 		filterConditions = &trdcommon.TrdFilterConditions{}
 	}
-	if filterConditions.GetBeginTime() == "" {
+	if util.ProtoStr(filterConditions.BeginTime) == "" {
 		begin := time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
 		filterConditions.BeginTime = &begin
 	}
-	if filterConditions.GetEndTime() == "" {
+	if util.ProtoStr(filterConditions.EndTime) == "" {
 		end := time.Now().Format("2006-01-02 15:04:05")
 		filterConditions.EndTime = &end
 	}
@@ -496,39 +497,39 @@ func GetHistoryOrderFillList(ctx context.Context, c *futuapi.Client, req *GetHis
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryOrderFillList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHistoryOrderFillList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetHistoryOrderFillList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	list := make([]*OrderFill, 0, len(s2c.GetOrderFillList()))
-	for _, f := range s2c.GetOrderFillList() {
+	list := make([]*OrderFill, 0, len(s2c.OrderFillList))
+	for _, f := range s2c.OrderFillList {
 		if f == nil {
 			continue
 		}
 		list = append(list, &OrderFill{
-			FillID:            f.GetFillID(),
-			FillIDEx:          f.GetFillIDEx(),
-			OrderID:           f.GetOrderID(),
-			OrderIDEx:         f.GetOrderIDEx(),
-			Code:              f.GetCode(),
-			Name:              f.GetName(),
-			TrdSide:           f.GetTrdSide(),
-			Price:             f.GetPrice(),
-			Qty:               f.GetQty(),
-			CreateTime:        f.GetCreateTime(),
-			CounterBrokerID:   f.GetCounterBrokerID(),
-			CounterBrokerName: f.GetCounterBrokerName(),
-			SecMarket:         f.GetSecMarket(),
-			CreateTimestamp:   f.GetCreateTimestamp(),
-			UpdateTimestamp:   f.GetUpdateTimestamp(),
-			Status:            f.GetStatus(),
-			TrdMarket:         f.GetTrdMarket(),
-			JpAccType:         f.GetJpAccType(),
+			FillID:            util.ProtoUint64(f.FillID),
+			FillIDEx:          util.ProtoStr(f.FillIDEx),
+			OrderID:           util.ProtoUint64(f.OrderID),
+			OrderIDEx:         util.ProtoStr(f.OrderIDEx),
+			Code:              util.ProtoStr(f.Code),
+			Name:              util.ProtoStr(f.Name),
+			TrdSide:           util.ProtoInt32(f.TrdSide),
+			Price:             util.ProtoFloat64(f.Price),
+			Qty:               util.ProtoFloat64(f.Qty),
+			CreateTime:        util.ProtoStr(f.CreateTime),
+			CounterBrokerID:   util.ProtoInt32(f.CounterBrokerID),
+			CounterBrokerName: util.ProtoStr(f.CounterBrokerName),
+			SecMarket:         util.ProtoInt32(f.SecMarket),
+			CreateTimestamp:   util.ProtoFloat64(f.CreateTimestamp),
+			UpdateTimestamp:   util.ProtoFloat64(f.UpdateTimestamp),
+			Status:            util.ProtoInt32(f.Status),
+			TrdMarket:         util.ProtoInt32(f.TrdMarket),
+			JpAccType:         util.ProtoInt32(f.JpAccType),
 		})
 	}
 

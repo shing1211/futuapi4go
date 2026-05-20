@@ -22,6 +22,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdnotify"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorder"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdupdateorderfill"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -54,16 +55,16 @@ func ParseSystemNotify(body []byte) (*SystemNotify, error) {
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &SystemNotify{
-		Type:          s2c.GetType(),
+		Type:          util.ProtoInt32(s2c.Type),
 		Event:         s2c.GetEvent(),
-		ProgramStatus: s2c.GetProgramStatus(),
+		ProgramStatus: s2c.ProgramStatus,
 		ConnectStatus: s2c.GetConnectStatus(),
-		QotRight:      s2c.GetQotRight(),
+		QotRight:      s2c.QotRight,
 		ApiLevel:      s2c.GetApiLevel(),
 		ApiQuota:      s2c.GetApiQuota(),
 		UsedQuota:     s2c.GetUsedQuota(),
@@ -85,13 +86,13 @@ func ParseUpdateOrder(body []byte) (*UpdateOrder, error) {
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &UpdateOrder{
-		Header: s2c.GetHeader(),
-		Order:  s2c.GetOrder(),
+		Header: s2c.Header,
+		Order:  s2c.Order,
 	}, nil
 }
 
@@ -110,13 +111,13 @@ func ParseUpdateOrderFill(body []byte) (*UpdateOrderFill, error) {
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &UpdateOrderFill{
-		Header:    s2c.GetHeader(),
-		OrderFill: s2c.GetOrderFill(),
+		Header:    s2c.Header,
+		OrderFill: s2c.OrderFill,
 	}, nil
 }
 
@@ -135,12 +136,12 @@ func ParseTrdNotify(body []byte) (*TrdNotify, error) {
 	if err := proto.Unmarshal(body, &rsp); err != nil {
 		return nil, err
 	}
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &TrdNotify{
-		Header: s2c.GetHeader(),
-		Type:   s2c.GetType(),
+		Header: s2c.Header,
+		Type:   util.ProtoInt32(s2c.Type),
 	}, nil
 }

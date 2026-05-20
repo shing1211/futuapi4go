@@ -40,7 +40,7 @@ func GetGlobalState(ctx context.Context, c *Client) (*GlobalState, error) {
 		ProgramStatusDesc: func() string {
 			ps := resp.ProgramStatus
 			if ps != nil {
-				return ps.GetStrExtDesc()
+				return getStr(ps.StrExtDesc)
 			}
 			return ""
 		}(),

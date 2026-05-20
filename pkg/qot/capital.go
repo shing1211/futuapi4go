@@ -25,6 +25,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitaldistribution"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // GetCapitalFlowRequest defines parameters for GetCapitalFlow.
@@ -83,34 +84,34 @@ func GetCapitalFlow(ctx context.Context, c *futuapi.Client, req *GetCapitalFlowR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetCapitalFlow", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetCapitalFlow", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetCapitalFlow", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetCapitalFlowResponse{
-		FlowItemList:       make([]*CapitalFlowItem, 0, len(s2c.GetFlowItemList())),
-		LastValidTime:      s2c.GetLastValidTime(),
-		LastValidTimestamp: s2c.GetLastValidTimestamp(),
+		FlowItemList:       make([]*CapitalFlowItem, 0, len(s2c.FlowItemList)),
+		LastValidTime:      util.ProtoStr(s2c.LastValidTime),
+		LastValidTimestamp: util.ProtoFloat64(s2c.LastValidTimestamp),
 	}
 
-	for _, f := range s2c.GetFlowItemList() {
+	for _, f := range s2c.FlowItemList {
 		if f == nil {
 			continue
 		}
 		result.FlowItemList = append(result.FlowItemList, &CapitalFlowItem{
-			InFlow:      f.GetInFlow(),
-			Time:        f.GetTime(),
-			Timestamp:   f.GetTimestamp(),
-			MainInFlow:  f.GetMainInFlow(),
-			SuperInFlow: f.GetSuperInFlow(),
-			BigInFlow:   f.GetBigInFlow(),
-			MidInFlow:   f.GetMidInFlow(),
-			SmlInFlow:   f.GetSmlInFlow(),
+			InFlow:      util.ProtoFloat64(f.InFlow),
+			Time:        util.ProtoStr(f.Time),
+			Timestamp:   util.ProtoFloat64(f.Timestamp),
+			MainInFlow:  util.ProtoFloat64(f.MainInFlow),
+			SuperInFlow: util.ProtoFloat64(f.SuperInFlow),
+			BigInFlow:   util.ProtoFloat64(f.BigInFlow),
+			MidInFlow:   util.ProtoFloat64(f.MidInFlow),
+			SmlInFlow:   util.ProtoFloat64(f.SmlInFlow),
 		})
 	}
 
@@ -153,27 +154,27 @@ func GetCapitalDistribution(ctx context.Context, c *futuapi.Client, security *qo
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetCapitalDistribution", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetCapitalDistribution", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetCapitalDistribution", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetCapitalDistributionResponse{
 		CapitalDistribution: &CapitalDistribution{
-			CapitalInSuper:  s2c.GetCapitalInSuper(),
-			CapitalInBig:    s2c.GetCapitalInBig(),
-			CapitalInMid:    s2c.GetCapitalInMid(),
-			CapitalInSmall:  s2c.GetCapitalInSmall(),
-			CapitalOutSuper: s2c.GetCapitalOutSuper(),
-			CapitalOutBig:   s2c.GetCapitalOutBig(),
-			CapitalOutMid:   s2c.GetCapitalOutMid(),
-			CapitalOutSmall: s2c.GetCapitalOutSmall(),
-			UpdateTime:      s2c.GetUpdateTime(),
-			UpdateTimestamp: s2c.GetUpdateTimestamp(),
+			CapitalInSuper:  util.ProtoFloat64(s2c.CapitalInSuper),
+			CapitalInBig:    util.ProtoFloat64(s2c.CapitalInBig),
+			CapitalInMid:    util.ProtoFloat64(s2c.CapitalInMid),
+			CapitalInSmall:  util.ProtoFloat64(s2c.CapitalInSmall),
+			CapitalOutSuper: util.ProtoFloat64(s2c.CapitalOutSuper),
+			CapitalOutBig:   util.ProtoFloat64(s2c.CapitalOutBig),
+			CapitalOutMid:   util.ProtoFloat64(s2c.CapitalOutMid),
+			CapitalOutSmall: util.ProtoFloat64(s2c.CapitalOutSmall),
+			UpdateTime:      util.ProtoStr(s2c.UpdateTime),
+			UpdateTimestamp: util.ProtoFloat64(s2c.UpdateTimestamp),
 		},
 	}, nil
 }

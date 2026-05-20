@@ -26,6 +26,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetwarrant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -93,32 +94,32 @@ func StockFilter(ctx context.Context, c *futuapi.Client, req *StockFilterRequest
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("StockFilter", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("StockFilter", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("StockFilter", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &StockFilterResponse{
-		LastPage: s2c.GetLastPage(),
-		AllCount: s2c.GetAllCount(),
-		DataList: make([]*StockFilterData, 0, len(s2c.GetDataList())),
+		LastPage: util.ProtoBool(s2c.LastPage),
+		AllCount: util.ProtoInt32(s2c.AllCount),
+		DataList: make([]*StockFilterData, 0, len(s2c.DataList)),
 	}
 
-	for _, d := range s2c.GetDataList() {
+	for _, d := range s2c.DataList {
 		if d == nil {
 			continue
 		}
 		result.DataList = append(result.DataList, &StockFilterData{
-			Security:                d.GetSecurity(),
-			Name:                    d.GetName(),
-			BaseDataList:            d.GetBaseDataList(),
-			AccumulateDataList:      d.GetAccumulateDataList(),
-			FinancialDataList:       d.GetFinancialDataList(),
-			CustomIndicatorDataList: d.GetCustomIndicatorDataList(),
+			Security:                d.Security,
+			Name:                    util.ProtoStr(d.Name),
+			BaseDataList:            d.BaseDataList,
+			AccumulateDataList:      d.AccumulateDataList,
+			FinancialDataList:       d.FinancialDataList,
+			CustomIndicatorDataList: d.CustomIndicatorDataList,
 		})
 	}
 
@@ -325,71 +326,71 @@ func GetWarrant(ctx context.Context, c *futuapi.Client, req *GetWarrantRequest) 
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetWarrant", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetWarrant", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetWarrant", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetWarrantResponse{
-		LastPage:        s2c.GetLastPage(),
-		AllCount:        s2c.GetAllCount(),
-		WarrantDataList: make([]*WarrantData, 0, len(s2c.GetWarrantDataList())),
+		LastPage:        util.ProtoBool(s2c.LastPage),
+		AllCount:        util.ProtoInt32(s2c.AllCount),
+		WarrantDataList: make([]*WarrantData, 0, len(s2c.WarrantDataList)),
 	}
 
-	for _, w := range s2c.GetWarrantDataList() {
+	for _, w := range s2c.WarrantDataList {
 		if w == nil {
 			continue
 		}
 		result.WarrantDataList = append(result.WarrantDataList, &WarrantData{
-			Stock:              w.GetStock(),
-			Owner:              w.GetOwner(),
-			Type:               w.GetType(),
-			Issuer:             w.GetIssuer(),
-			MaturityTime:       w.GetMaturityTime(),
-			MaturityTimestamp:  w.GetMaturityTimestamp(),
-			ListTime:           w.GetListTime(),
-			ListTimestamp:      w.GetListTimestamp(),
-			LastTradeTime:      w.GetLastTradeTime(),
-			LastTradeTimestamp: w.GetLastTradeTimestamp(),
-			RecoveryPrice:      w.GetRecoveryPrice(),
-			ConversionRatio:    w.GetConversionRatio(),
-			LotSize:            w.GetLotSize(),
-			StrikePrice:        w.GetStrikePrice(),
-			LastClosePrice:     w.GetLastClosePrice(),
-			Name:               w.GetName(),
-			CurPrice:           w.GetCurPrice(),
-			PriceChangeVal:     w.GetPriceChangeVal(),
-			ChangeRate:         w.GetChangeRate(),
-			Status:             w.GetStatus(),
-			BidPrice:           w.GetBidPrice(),
-			AskPrice:           w.GetAskPrice(),
-			BidVol:             w.GetBidVol(),
-			AskVol:             w.GetAskVol(),
-			Volume:             w.GetVolume(),
-			Turnover:           w.GetTurnover(),
-			Score:              w.GetScore(),
-			Premium:            w.GetPremium(),
-			BreakEvenPoint:     w.GetBreakEvenPoint(),
-			Leverage:           w.GetLeverage(),
-			Ipop:               w.GetIpop(),
-			PriceRecoveryRatio: w.GetPriceRecoveryRatio(),
-			ConversionPrice:    w.GetConversionPrice(),
-			StreetRate:         w.GetStreetRate(),
-			StreetVol:          w.GetStreetVol(),
-			Amplitude:          w.GetAmplitude(),
-			IssueSize:          w.GetIssueSize(),
-			HighPrice:          w.GetHighPrice(),
-			LowPrice:           w.GetLowPrice(),
-			ImpliedVolatility:  w.GetImpliedVolatility(),
-			Delta:              w.GetDelta(),
-			EffectiveLeverage:  w.GetEffectiveLeverage(),
-			UpperStrikePrice:   w.GetUpperStrikePrice(),
-			LowerStrikePrice:   w.GetLowerStrikePrice(),
-			InLinePriceStatus:  w.GetInLinePriceStatus(),
+			Stock:              w.Stock,
+			Owner:              w.Owner,
+			Type:               util.ProtoInt32(w.Type),
+			Issuer:             util.ProtoInt32(w.Issuer),
+			MaturityTime:       util.ProtoStr(w.MaturityTime),
+			MaturityTimestamp:  util.ProtoFloat64(w.MaturityTimestamp),
+			ListTime:           util.ProtoStr(w.ListTime),
+			ListTimestamp:      util.ProtoFloat64(w.ListTimestamp),
+			LastTradeTime:      util.ProtoStr(w.LastTradeTime),
+			LastTradeTimestamp: util.ProtoFloat64(w.LastTradeTimestamp),
+			RecoveryPrice:      util.ProtoFloat64(w.RecoveryPrice),
+			ConversionRatio:    util.ProtoFloat64(w.ConversionRatio),
+			LotSize:            util.ProtoInt32(w.LotSize),
+			StrikePrice:        util.ProtoFloat64(w.StrikePrice),
+			LastClosePrice:     util.ProtoFloat64(w.LastClosePrice),
+			Name:               util.ProtoStr(w.Name),
+			CurPrice:           util.ProtoFloat64(w.CurPrice),
+			PriceChangeVal:     util.ProtoFloat64(w.PriceChangeVal),
+			ChangeRate:         util.ProtoFloat64(w.ChangeRate),
+			Status:             util.ProtoInt32(w.Status),
+			BidPrice:           util.ProtoFloat64(w.BidPrice),
+			AskPrice:           util.ProtoFloat64(w.AskPrice),
+			BidVol:             util.ProtoInt64(w.BidVol),
+			AskVol:             util.ProtoInt64(w.AskVol),
+			Volume:             util.ProtoInt64(w.Volume),
+			Turnover:           util.ProtoFloat64(w.Turnover),
+			Score:              util.ProtoFloat64(w.Score),
+			Premium:            util.ProtoFloat64(w.Premium),
+			BreakEvenPoint:     util.ProtoFloat64(w.BreakEvenPoint),
+			Leverage:           util.ProtoFloat64(w.Leverage),
+			Ipop:               util.ProtoFloat64(w.Ipop),
+			PriceRecoveryRatio: util.ProtoFloat64(w.PriceRecoveryRatio),
+			ConversionPrice:    util.ProtoFloat64(w.ConversionPrice),
+			StreetRate:         util.ProtoFloat64(w.StreetRate),
+			StreetVol:          util.ProtoInt64(w.StreetVol),
+			Amplitude:          util.ProtoFloat64(w.Amplitude),
+			IssueSize:          util.ProtoInt64(w.IssueSize),
+			HighPrice:          util.ProtoFloat64(w.HighPrice),
+			LowPrice:           util.ProtoFloat64(w.LowPrice),
+			ImpliedVolatility:  util.ProtoFloat64(w.ImpliedVolatility),
+			Delta:              util.ProtoFloat64(w.Delta),
+			EffectiveLeverage:  util.ProtoFloat64(w.EffectiveLeverage),
+			UpperStrikePrice:   util.ProtoFloat64(w.UpperStrikePrice),
+			LowerStrikePrice:   util.ProtoFloat64(w.LowerStrikePrice),
+			InLinePriceStatus:  util.ProtoInt32(w.InLinePriceStatus),
 		})
 	}
 
@@ -428,16 +429,16 @@ func GetReference(ctx context.Context, c *futuapi.Client, req *GetReferenceReque
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetReference", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetReference", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetReference", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetReferenceResponse{
-		StaticInfoList: s2c.GetStaticInfoList(),
+		StaticInfoList: s2c.StaticInfoList,
 	}, nil
 }

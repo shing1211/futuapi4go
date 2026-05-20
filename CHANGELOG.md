@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Input validation for system APIs** — `TestCmd` validates `cmd` non-empty; `Verification` validates `req != nil` (`client/system_api.go`)
 - **Input validation for convenience trade APIs** — `QuickBuy/QuickSell` validate `accID`, `code`, `qty`, `price`; `QuickMarketBuy/QuickMarketSell` validate `accID`, `code`, `qty`; `GetPositions/GetTodayFills/GetTodayOrders/GetAccountFunds` validate `accID` (`pkg/trd/convenience.go`)
 
+### Changed
+
+- **Proto safety: Replace GetXxx() with direct field access** — All `GetXxx()` method calls on protobuf messages in SDK source files (`client/`, `pkg/trd/`, `pkg/qot/`, `pkg/sys/`, `pkg/push/`) have been replaced with nil-safe direct field access using `util.ProtoStr/ProtoInt32/ProtoFloat64/ProtoBool/ProtoInt64/ProtoUint64/ProtoFloat32` helpers. This eliminates the hidden nil-dereference veneer of proto getters and makes nil-safety explicit. (~1,200+ replacements across ~30 files) (`PHASE3_PROTO_SAFETY_PLAN.md`)
+
 ## [v0.9.2] - 2026-05-18
 
 ### Added

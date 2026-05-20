@@ -28,6 +28,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotregqotpush"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -121,8 +122,8 @@ func Subscribe(ctx context.Context, c *futuapi.Client, req *SubscribeRequest) er
 		return err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return wrapError("Subscribe", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return wrapError("Subscribe", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return nil
@@ -164,8 +165,8 @@ func RegQotPush(ctx context.Context, c *futuapi.Client, req *RegQotPushRequest) 
 		return err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return wrapError("RegQotPush", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return wrapError("RegQotPush", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return nil
@@ -189,19 +190,19 @@ func GetSubInfo(ctx context.Context, c *futuapi.Client) (*GetSubInfoResponse, er
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetSubInfo", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetSubInfo", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetSubInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetSubInfoResponse{
-		ConnSubInfoList: s2c.GetConnSubInfoList(),
-		TotalUsedQuota:  s2c.GetTotalUsedQuota(),
-		RemainQuota:     s2c.GetRemainQuota(),
+		ConnSubInfoList: s2c.ConnSubInfoList,
+		TotalUsedQuota:  util.ProtoInt32(s2c.TotalUsedQuota),
+		RemainQuota:     util.ProtoInt32(s2c.RemainQuota),
 	}, nil
 }
 
@@ -235,17 +236,17 @@ func GetSecuritySnapshot(ctx context.Context, c *futuapi.Client, req *GetSecurit
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetSecuritySnapshot", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetSecuritySnapshot", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetSecuritySnapshot", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetSecuritySnapshotResponse{
-		SnapshotList: s2c.GetSnapshotList(),
+		SnapshotList: s2c.SnapshotList,
 	}, nil
 }
 
@@ -283,16 +284,16 @@ func GetStaticInfo(ctx context.Context, c *futuapi.Client, req *GetStaticInfoReq
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetStaticInfo", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetStaticInfo", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetStaticInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetStaticInfoResponse{
-		StaticInfoList: s2c.GetStaticInfoList(),
+		StaticInfoList: s2c.StaticInfoList,
 	}, nil
 }

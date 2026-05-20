@@ -30,6 +30,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistoryklpoints"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistorykl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryklquota"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // RequestHistoryKLRequest defines parameters for RequestHistoryKL.
@@ -93,40 +94,40 @@ func RequestHistoryKL(ctx context.Context, c *futuapi.Client, req *RequestHistor
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("RequestHistoryKL", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("RequestHistoryKL", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("RequestHistoryKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &RequestHistoryKLResponse{
-		Security:   s2c.GetSecurity(),
-		Name:       s2c.GetName(),
-		NextReqKey: s2c.GetNextReqKey(),
-		KLList:     make([]*KLine, 0, len(s2c.GetKlList())),
+		Security:   s2c.Security,
+		Name:       util.ProtoStr(s2c.Name),
+		NextReqKey: s2c.NextReqKey,
+		KLList:     make([]*KLine, 0, len(s2c.KlList)),
 	}
 
-	for _, kl := range s2c.GetKlList() {
+	for _, kl := range s2c.KlList {
 		if kl == nil {
 			continue
 		}
 		result.KLList = append(result.KLList, &KLine{
-			Time:           kl.GetTime(),
-			IsBlank:        kl.GetIsBlank(),
-			HighPrice:      kl.GetHighPrice(),
-			OpenPrice:      kl.GetOpenPrice(),
-			LowPrice:       kl.GetLowPrice(),
-			ClosePrice:     kl.GetClosePrice(),
-			LastClosePrice: kl.GetLastClosePrice(),
-			Volume:         kl.GetVolume(),
-			Turnover:       kl.GetTurnover(),
-			TurnoverRate:   kl.GetTurnoverRate(),
-			Pe:             kl.GetPe(),
-			ChangeRate:     kl.GetChangeRate(),
-			Timestamp:      kl.GetTimestamp(),
+			Time:           util.ProtoStr(kl.Time),
+			IsBlank:        util.ProtoBool(kl.IsBlank),
+			HighPrice:      util.ProtoFloat64(kl.HighPrice),
+			OpenPrice:      util.ProtoFloat64(kl.OpenPrice),
+			LowPrice:       util.ProtoFloat64(kl.LowPrice),
+			ClosePrice:     util.ProtoFloat64(kl.ClosePrice),
+			LastClosePrice: util.ProtoFloat64(kl.LastClosePrice),
+			Volume:         util.ProtoInt64(kl.Volume),
+			Turnover:       util.ProtoFloat64(kl.Turnover),
+			TurnoverRate:   util.ProtoFloat64(kl.TurnoverRate),
+			Pe:             util.ProtoFloat64(kl.Pe),
+			ChangeRate:     util.ProtoFloat64(kl.ChangeRate),
+			Timestamp:      util.ProtoFloat64(kl.Timestamp),
 		})
 	}
 
@@ -183,40 +184,40 @@ func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLReque
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryKL", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHistoryKL", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetHistoryKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetHistoryKLResponse{
-		Security:        s2c.GetSecurity(),
-		NextKLTime:      s2c.GetNextKLTime(),
-		NextKLTimestamp: s2c.GetNextKLTimestamp(),
-		KLList:          make([]*KLine, 0, len(s2c.GetKlList())),
+		Security:        s2c.Security,
+		NextKLTime:      util.ProtoStr(s2c.NextKLTime),
+		NextKLTimestamp: util.ProtoFloat64(s2c.NextKLTimestamp),
+		KLList:          make([]*KLine, 0, len(s2c.KlList)),
 	}
 
-	for _, kl := range s2c.GetKlList() {
+	for _, kl := range s2c.KlList {
 		if kl == nil {
 			continue
 		}
 		result.KLList = append(result.KLList, &KLine{
-			Time:           kl.GetTime(),
-			IsBlank:        kl.GetIsBlank(),
-			HighPrice:      kl.GetHighPrice(),
-			OpenPrice:      kl.GetOpenPrice(),
-			LowPrice:       kl.GetLowPrice(),
-			ClosePrice:     kl.GetClosePrice(),
-			LastClosePrice: kl.GetLastClosePrice(),
-			Volume:         kl.GetVolume(),
-			Turnover:       kl.GetTurnover(),
-			TurnoverRate:   kl.GetTurnoverRate(),
-			Pe:             kl.GetPe(),
-			ChangeRate:     kl.GetChangeRate(),
-			Timestamp:      kl.GetTimestamp(),
+			Time:           util.ProtoStr(kl.Time),
+			IsBlank:        util.ProtoBool(kl.IsBlank),
+			HighPrice:      util.ProtoFloat64(kl.HighPrice),
+			OpenPrice:      util.ProtoFloat64(kl.OpenPrice),
+			LowPrice:       util.ProtoFloat64(kl.LowPrice),
+			ClosePrice:     util.ProtoFloat64(kl.ClosePrice),
+			LastClosePrice: util.ProtoFloat64(kl.LastClosePrice),
+			Volume:         util.ProtoInt64(kl.Volume),
+			Turnover:       util.ProtoFloat64(kl.Turnover),
+			TurnoverRate:   util.ProtoFloat64(kl.TurnoverRate),
+			Pe:             util.ProtoFloat64(kl.Pe),
+			ChangeRate:     util.ProtoFloat64(kl.ChangeRate),
+			Timestamp:      util.ProtoFloat64(kl.Timestamp),
 		})
 	}
 
@@ -306,16 +307,16 @@ func GetHistoryKLPoints(ctx context.Context, c *futuapi.Client, req *GetHistoryK
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryKLPoints", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetHistoryKLPoints", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetHistoryKLPoints", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	klPointList := s2c.GetKlPointList()
+	klPointList := s2c.KlPointList
 	if klPointList == nil {
 		return &GetHistoryKLPointsResponse{}, nil
 	}
@@ -333,14 +334,14 @@ func GetHistoryKLPoints(ctx context.Context, c *futuapi.Client, req *GetHistoryK
 				continue
 			}
 			parsedKLList = append(parsedKLList, &HistoryPointsKL{
-				Status:  DataStatus(kl.GetStatus()),
+				Status:  DataStatus(util.ProtoInt32(kl.Status)),
 				ReqTime: kl.GetReqTime(),
 				KL:     kl.GetKl(),
 			})
 		}
 
 		result = append(result, &SecurityHistoryKLPoints{
-			Security: shkp.GetSecurity(),
+			Security: shkp.Security,
 			KLList:   parsedKLList,
 		})
 	}
@@ -382,22 +383,22 @@ func RequestHistoryKLQuota(ctx context.Context, c *futuapi.Client, req *RequestH
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("RequestHistoryKLQuota", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("RequestHistoryKLQuota", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("RequestHistoryKLQuota", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &RequestHistoryKLQuotaResponse{
-		UsedQuota:   s2c.GetUsedQuota(),
-		RemainQuota: s2c.GetRemainQuota(),
-		DetailList:  make([]*qotrequesthistoryklquota.DetailItem, 0, len(s2c.GetDetailList())),
+		UsedQuota:   util.ProtoInt32(s2c.UsedQuota),
+		RemainQuota: util.ProtoInt32(s2c.RemainQuota),
+		DetailList:  make([]*qotrequesthistoryklquota.DetailItem, 0, len(s2c.DetailList)),
 	}
 
-	for _, d := range s2c.GetDetailList() {
+	for _, d := range s2c.DetailList {
 		if d == nil {
 			continue
 		}

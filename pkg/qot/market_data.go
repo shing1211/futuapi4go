@@ -27,6 +27,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // OrderBook represents a price level in the order book.
@@ -80,64 +81,64 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOrderBook", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOrderBook", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOrderBook", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOrderBookResponse{
-		Security:                s2c.GetSecurity(),
-		Name:                    s2c.GetName(),
-		SvrRecvTimeBid:          s2c.GetSvrRecvTimeBid(),
-		SvrRecvTimeBidTimestamp: s2c.GetSvrRecvTimeBidTimestamp(),
-		SvrRecvTimeAsk:          s2c.GetSvrRecvTimeAsk(),
-		SvrRecvTimeAskTimestamp: s2c.GetSvrRecvTimeAskTimestamp(),
+		Security:                s2c.Security,
+		Name:                    util.ProtoStr(s2c.Name),
+		SvrRecvTimeBid:          util.ProtoStr(s2c.SvrRecvTimeBid),
+		SvrRecvTimeBidTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeBidTimestamp),
+		SvrRecvTimeAsk:          util.ProtoStr(s2c.SvrRecvTimeAsk),
+		SvrRecvTimeAskTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeAskTimestamp),
 	}
 
-	for _, ob := range s2c.GetOrderBookAskList() {
+	for _, ob := range s2c.OrderBookAskList {
 		if ob == nil {
 			continue
 		}
-		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
-		for _, d := range ob.GetDetailList() {
+		details := make([]*OrderBookDetail, 0, len(ob.DetailList))
+		for _, d := range ob.DetailList {
 			if d == nil {
 				continue
 			}
 			details = append(details, &OrderBookDetail{
-				OrderID: d.GetOrderID(),
-				Volume:  d.GetVolume(),
+				OrderID: util.ProtoInt64(d.OrderID),
+				Volume:  util.ProtoInt64(d.Volume),
 			})
 		}
 		result.OrderBookAskList = append(result.OrderBookAskList, &OrderBook{
-			Price:      ob.GetPrice(),
-			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrederCount(),
+			Price:      util.ProtoFloat64(ob.Price),
+			Volume:     util.ProtoInt64(ob.Volume),
+			OrderCount: util.ProtoInt32(ob.OrederCount),
 			DetailList: details,
 		})
 	}
 
-	for _, ob := range s2c.GetOrderBookBidList() {
+	for _, ob := range s2c.OrderBookBidList {
 		if ob == nil {
 			continue
 		}
-		details := make([]*OrderBookDetail, 0, len(ob.GetDetailList()))
-		for _, d := range ob.GetDetailList() {
+		details := make([]*OrderBookDetail, 0, len(ob.DetailList))
+		for _, d := range ob.DetailList {
 			if d == nil {
 				continue
 			}
 			details = append(details, &OrderBookDetail{
-				OrderID: d.GetOrderID(),
-				Volume:  d.GetVolume(),
+				OrderID: util.ProtoInt64(d.OrderID),
+				Volume:  util.ProtoInt64(d.Volume),
 			})
 		}
 		result.OrderBookBidList = append(result.OrderBookBidList, &OrderBook{
-			Price:      ob.GetPrice(),
-			Volume:     ob.GetVolume(),
-			OrderCount: ob.GetOrederCount(),
+			Price:      util.ProtoFloat64(ob.Price),
+			Volume:     util.ProtoInt64(ob.Volume),
+			OrderCount: util.ProtoInt32(ob.OrederCount),
 			DetailList: details,
 		})
 	}
@@ -194,37 +195,37 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetTicker", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetTicker", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetTicker", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetTickerResponse{
-		Security:   s2c.GetSecurity(),
-		Name:       s2c.GetName(),
-		TickerList: make([]*Ticker, 0, len(s2c.GetTickerList())),
+		Security:   s2c.Security,
+		Name:       util.ProtoStr(s2c.Name),
+		TickerList: make([]*Ticker, 0, len(s2c.TickerList)),
 	}
 
-	for _, t := range s2c.GetTickerList() {
+	for _, t := range s2c.TickerList {
 		if t == nil {
 			continue
 		}
 		result.TickerList = append(result.TickerList, &Ticker{
-			Time:        t.GetTime(),
-			Sequence:    t.GetSequence(),
-			Dir:         t.GetDir(),
-			Price:       t.GetPrice(),
-			Volume:      t.GetVolume(),
-			Turnover:    t.GetTurnover(),
+			Time:        util.ProtoStr(t.Time),
+Sequence:     util.ProtoInt64(t.Sequence),
+			Dir:         util.ProtoInt32(t.Dir),
+			Price:       util.ProtoFloat64(t.Price),
+			Volume:      util.ProtoInt64(t.Volume),
+			Turnover:    util.ProtoFloat64(t.Turnover),
 			RecvTime:    t.GetRecvTime(),
-			Type:        t.GetType(),
-			TypeSign:    t.GetTypeSign(),
-			Timestamp:   t.GetTimestamp(),
-			PushDataType: t.GetPushDataType(),
+			Type:        util.ProtoInt32(t.Type),
+			TypeSign:    util.ProtoInt32(t.TypeSign),
+			Timestamp:   util.ProtoFloat64(t.Timestamp),
+			PushDataType: util.ProtoInt32(t.PushDataType),
 		})
 	}
 
@@ -275,35 +276,35 @@ func GetRT(ctx context.Context, c *futuapi.Client, req *GetRTRequest) (*GetRTRes
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetRT", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetRT", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetRT", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetRTResponse{
-		Security: s2c.GetSecurity(),
-		Name:     s2c.GetName(),
-		RTList:   make([]*RT, 0, len(s2c.GetRtList())),
+		Security: s2c.Security,
+		Name:     util.ProtoStr(s2c.Name),
+		RTList:   make([]*RT, 0, len(s2c.RtList)),
 	}
 
-	for _, rt := range s2c.GetRtList() {
+	for _, rt := range s2c.RtList {
 		if rt == nil {
 			continue
 		}
 		result.RTList = append(result.RTList, &RT{
-			Time:           rt.GetTime(),
-			Minute:         rt.GetMinute(),
-			IsBlank:        rt.GetIsBlank(),
-			Price:          rt.GetPrice(),
-			LastClosePrice: rt.GetLastClosePrice(),
-			AvgPrice:       rt.GetAvgPrice(),
-			Volume:         rt.GetVolume(),
-			Turnover:       rt.GetTurnover(),
-			Timestamp:      rt.GetTimestamp(),
+			Time:           util.ProtoStr(rt.Time),
+			Minute:         util.ProtoInt32(rt.Minute),
+			IsBlank:        util.ProtoBool(rt.IsBlank),
+			Price:          util.ProtoFloat64(rt.Price),
+			LastClosePrice: util.ProtoFloat64(rt.LastClosePrice),
+			AvgPrice:       util.ProtoFloat64(rt.AvgPrice),
+			Volume:         util.ProtoInt64(rt.Volume),
+			Turnover:       util.ProtoFloat64(rt.Turnover),
+			Timestamp:      util.ProtoFloat64(rt.Timestamp),
 		})
 	}
 
@@ -352,45 +353,45 @@ func GetBroker(ctx context.Context, c *futuapi.Client, req *GetBrokerRequest) (*
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetBroker", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetBroker", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetBroker", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetBrokerResponse{
-		Security:      s2c.GetSecurity(),
-		Name:          s2c.GetName(),
-		AskBrokerList: make([]*Broker, 0, len(s2c.GetBrokerAskList())),
-		BidBrokerList: make([]*Broker, 0, len(s2c.GetBrokerBidList())),
+		Security:      s2c.Security,
+		Name:          util.ProtoStr(s2c.Name),
+		AskBrokerList: make([]*Broker, 0, len(s2c.BrokerAskList)),
+		BidBrokerList: make([]*Broker, 0, len(s2c.BrokerBidList)),
 	}
 
-	for _, b := range s2c.GetBrokerAskList() {
+	for _, b := range s2c.BrokerAskList {
 		if b == nil {
 			continue
 		}
 		result.AskBrokerList = append(result.AskBrokerList, &Broker{
-			ID:      b.GetId(),
-			Name:    b.GetName(),
-			Pos:     b.GetPos(),
-			Volume:  b.GetVolume(),
-			OrderID: b.GetOrderID(),
+			ID:      util.ProtoInt64(b.Id),
+			Name:    util.ProtoStr(b.Name),
+			Pos:     util.ProtoInt32(b.Pos),
+			Volume:  util.ProtoInt64(b.Volume),
+			OrderID: util.ProtoInt64(b.OrderID),
 		})
 	}
 
-	for _, b := range s2c.GetBrokerBidList() {
+	for _, b := range s2c.BrokerBidList {
 		if b == nil {
 			continue
 		}
 		result.BidBrokerList = append(result.BidBrokerList, &Broker{
-			ID:      b.GetId(),
-			Name:    b.GetName(),
-			Pos:     b.GetPos(),
-			Volume:  b.GetVolume(),
-			OrderID: b.GetOrderID(),
+			ID:      util.ProtoInt64(b.Id),
+			Name:    util.ProtoStr(b.Name),
+			Pos:     util.ProtoInt32(b.Pos),
+			Volume:  util.ProtoInt64(b.Volume),
+			OrderID: util.ProtoInt64(b.OrderID),
 		})
 	}
 

@@ -23,6 +23,7 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/util"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetpricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecurity"
@@ -53,19 +54,19 @@ func GetUserSecurity(ctx context.Context, c *futuapi.Client, groupName string) (
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetUserSecurity", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetUserSecurity", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetUserSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetUserSecurityResponse{
-		StaticInfoList: make([]*qotcommon.SecurityStaticInfo, 0, len(s2c.GetStaticInfoList())),
+		StaticInfoList: make([]*qotcommon.SecurityStaticInfo, 0, len(s2c.StaticInfoList)),
 	}
-	for _, si := range s2c.GetStaticInfoList() {
+	for _, si := range s2c.StaticInfoList {
 		if si == nil {
 			continue
 		}
@@ -107,26 +108,26 @@ func GetUserSecurityGroup(ctx context.Context, c *futuapi.Client, req *GetUserSe
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetUserSecurityGroup", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetUserSecurityGroup", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetUserSecurityGroup", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetUserSecurityGroupResponse{
-		GroupList: make([]*UserSecurityGroupData, 0, len(s2c.GetGroupList())),
+		GroupList: make([]*UserSecurityGroupData, 0, len(s2c.GroupList)),
 	}
 
-	for _, g := range s2c.GetGroupList() {
+	for _, g := range s2c.GroupList {
 		if g == nil {
 			continue
 		}
 		result.GroupList = append(result.GroupList, &UserSecurityGroupData{
-			GroupName: g.GetGroupName(),
-			GroupType: g.GetGroupType(),
+			GroupName: util.ProtoStr(g.GroupName),
+			GroupType: util.ProtoInt32(g.GroupType),
 		})
 	}
 
@@ -171,18 +172,18 @@ func ModifyUserSecurity(ctx context.Context, c *futuapi.Client, req *ModifyUserS
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("ModifyUserSecurity", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("ModifyUserSecurity", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("ModifyUserSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &ModifyUserSecurityResponse{
-		RetType: rsp.GetRetType(),
-		RetMsg:  rsp.GetRetMsg(),
+		RetType: util.ProtoInt32(rsp.RetType),
+		RetMsg:  util.ProtoStr(rsp.RetMsg),
 	}, nil
 }
 
@@ -243,17 +244,17 @@ func SetPriceReminder(ctx context.Context, c *futuapi.Client, req *SetPriceRemin
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("SetPriceReminder", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("SetPriceReminder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("SetPriceReminder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &SetPriceReminderResponse{
-		Key: s2c.GetKey(),
+		Key: util.ProtoInt64(s2c.Key),
 	}, nil
 }
 
@@ -298,40 +299,40 @@ func GetPriceReminder(ctx context.Context, c *futuapi.Client, security *qotcommo
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetPriceReminder", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetPriceReminder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetPriceReminder", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPriceReminderResponse{
-		PriceReminderList: make([]*PriceReminderInfo, 0, len(s2c.GetPriceReminderList())),
+		PriceReminderList: make([]*PriceReminderInfo, 0, len(s2c.PriceReminderList)),
 	}
 
-	for _, pr := range s2c.GetPriceReminderList() {
+	for _, pr := range s2c.PriceReminderList {
 		if pr == nil {
 			continue
 		}
 		info := &PriceReminderInfo{
-			Security: pr.GetSecurity(),
-			Name:     pr.GetName(),
-			ItemList: make([]*PriceReminderItemInfo, 0, len(pr.GetItemList())),
+			Security: pr.Security,
+			Name:     util.ProtoStr(pr.Name),
+			ItemList: make([]*PriceReminderItemInfo, 0, len(pr.ItemList)),
 		}
-		for _, item := range pr.GetItemList() {
+		for _, item := range pr.ItemList {
 			if item == nil {
 				continue
 			}
 			info.ItemList = append(info.ItemList, &PriceReminderItemInfo{
-				Key:                 item.GetKey(),
-				Type:                item.GetType(),
-				Value:               item.GetValue(),
-				Note:                item.GetNote(),
-				Freq:                item.GetFreq(),
-				IsEnable:            item.GetIsEnable(),
-				ReminderSessionList: item.GetReminderSessionList(),
+				Key:                 util.ProtoInt64(item.Key),
+				Type:                util.ProtoInt32(item.Type),
+				Value:               util.ProtoFloat64(item.Value),
+				Note:                util.ProtoStr(item.Note),
+				Freq:                util.ProtoInt32(item.Freq),
+				IsEnable:            util.ProtoBool(item.IsEnable),
+				ReminderSessionList: item.ReminderSessionList,
 			})
 		}
 		result.PriceReminderList = append(result.PriceReminderList, info)
@@ -426,74 +427,74 @@ func GetIpoList(ctx context.Context, c *futuapi.Client, req *GetIpoListRequest) 
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetIpoList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetIpoList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetIpoList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetIpoListResponse{
-		IpoList: make([]*IpoData, 0, len(s2c.GetIpoList())),
+		IpoList: make([]*IpoData, 0, len(s2c.IpoList)),
 	}
 
-	for _, ipo := range s2c.GetIpoList() {
+	for _, ipo := range s2c.IpoList {
 		if ipo == nil {
 			continue
 		}
 		ipoData := &IpoData{}
 
-		if basic := ipo.GetBasic(); basic != nil {
+		if basic := ipo.Basic; basic != nil {
 			ipoData.Basic = &BasicIpoData{
-				Security:      basic.GetSecurity(),
-				Name:          basic.GetName(),
-				ListTime:      basic.GetListTime(),
-				ListTimestamp: basic.GetListTimestamp(),
+				Security:      basic.Security,
+				Name:          util.ProtoStr(basic.Name),
+				ListTime:      util.ProtoStr(basic.ListTime),
+				ListTimestamp: util.ProtoFloat64(basic.ListTimestamp),
 			}
 		}
 
-		if cnEx := ipo.GetCnExData(); cnEx != nil {
+		if cnEx := ipo.CnExData; cnEx != nil {
 			ipoData.CnExData = &CNIpoExData{
-				ApplyCode:              cnEx.GetApplyCode(),
-				IssueSize:              cnEx.GetIssueSize(),
-				OnlineIssueSize:        cnEx.GetOnlineIssueSize(),
-				ApplyUpperLimit:        cnEx.GetApplyUpperLimit(),
-				ApplyLimitMarketValue:  cnEx.GetApplyLimitMarketValue(),
-				IsEstimateIpoPrice:     cnEx.GetIsEstimateIpoPrice(),
-				IpoPrice:               cnEx.GetIpoPrice(),
-				IndustryPeRate:         cnEx.GetIndustryPeRate(),
-				IsEstimateWinningRatio: cnEx.GetIsEstimateWinningRatio(),
-				WinningRatio:           cnEx.GetWinningRatio(),
-				IssuePeRate:            cnEx.GetIssuePeRate(),
-				ApplyTime:              cnEx.GetApplyTime(),
-				ApplyTimestamp:         cnEx.GetApplyTimestamp(),
-				WinningTime:            cnEx.GetWinningTime(),
-				WinningTimestamp:       cnEx.GetWinningTimestamp(),
-				IsHasWon:               cnEx.GetIsHasWon(),
-				WinningNumDataList:     cnEx.GetWinningNumData(),
+				ApplyCode:              util.ProtoStr(cnEx.ApplyCode),
+				IssueSize:              util.ProtoInt64(cnEx.IssueSize),
+				OnlineIssueSize:        util.ProtoInt64(cnEx.OnlineIssueSize),
+				ApplyUpperLimit:        util.ProtoInt64(cnEx.ApplyUpperLimit),
+				ApplyLimitMarketValue:  util.ProtoInt64(cnEx.ApplyLimitMarketValue),
+				IsEstimateIpoPrice:     util.ProtoBool(cnEx.IsEstimateIpoPrice),
+				IpoPrice:               util.ProtoFloat64(cnEx.IpoPrice),
+				IndustryPeRate:         util.ProtoFloat64(cnEx.IndustryPeRate),
+				IsEstimateWinningRatio: util.ProtoBool(cnEx.IsEstimateWinningRatio),
+				WinningRatio:           util.ProtoFloat64(cnEx.WinningRatio),
+				IssuePeRate:            util.ProtoFloat64(cnEx.IssuePeRate),
+				ApplyTime:              util.ProtoStr(cnEx.ApplyTime),
+				ApplyTimestamp:         util.ProtoFloat64(cnEx.ApplyTimestamp),
+				WinningTime:            util.ProtoStr(cnEx.WinningTime),
+				WinningTimestamp:       util.ProtoFloat64(cnEx.WinningTimestamp),
+				IsHasWon:               util.ProtoBool(cnEx.IsHasWon),
+				WinningNumDataList:     cnEx.WinningNumData,
 			}
 		}
 
-		if hkEx := ipo.GetHkExData(); hkEx != nil {
+		if hkEx := ipo.HkExData; hkEx != nil {
 			ipoData.HkExData = &HKIpoExData{
-				IpoPriceMin:       hkEx.GetIpoPriceMin(),
-				IpoPriceMax:       hkEx.GetIpoPriceMax(),
-				ListPrice:         hkEx.GetListPrice(),
-				LotSize:           hkEx.GetLotSize(),
-				EntrancePrice:     hkEx.GetEntrancePrice(),
-				IsSubscribeStatus: hkEx.GetIsSubscribeStatus(),
-				ApplyEndTime:      hkEx.GetApplyEndTime(),
-				ApplyEndTimestamp: hkEx.GetApplyEndTimestamp(),
+				IpoPriceMin:       util.ProtoFloat64(hkEx.IpoPriceMin),
+				IpoPriceMax:       util.ProtoFloat64(hkEx.IpoPriceMax),
+				ListPrice:         util.ProtoFloat64(hkEx.ListPrice),
+				LotSize:           util.ProtoInt32(hkEx.LotSize),
+				EntrancePrice:     util.ProtoFloat64(hkEx.EntrancePrice),
+				IsSubscribeStatus: util.ProtoBool(hkEx.IsSubscribeStatus),
+				ApplyEndTime:      util.ProtoStr(hkEx.ApplyEndTime),
+				ApplyEndTimestamp: util.ProtoFloat64(hkEx.ApplyEndTimestamp),
 			}
 		}
 
-		if usEx := ipo.GetUsExData(); usEx != nil {
+		if usEx := ipo.UsExData; usEx != nil {
 			ipoData.UsExData = &USIpoExData{
-				IpoPriceMin: usEx.GetIpoPriceMin(),
-				IpoPriceMax: usEx.GetIpoPriceMax(),
-				IssueSize:   usEx.GetIssueSize(),
+				IpoPriceMin: util.ProtoFloat64(usEx.IpoPriceMin),
+				IpoPriceMax: util.ProtoFloat64(usEx.IpoPriceMax),
+				IssueSize:   util.ProtoInt64(usEx.IssueSize),
 			}
 		}
 

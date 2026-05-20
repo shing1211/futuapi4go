@@ -45,6 +45,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/testcmd"
 	"github.com/shing1211/futuapi4go/pkg/pb/usedquota"
 	"github.com/shing1211/futuapi4go/pkg/pb/verification"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // wrapError standardizes error messages for proto response failures
@@ -105,34 +106,34 @@ func GetGlobalState(ctx context.Context, c *futuapi.Client) (*GetGlobalStateResp
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetGlobalState", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetGlobalState", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetGlobalState", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	return &GetGlobalStateResponse{
-		ConnID:         s2c.GetConnID(),
-		ServerVer:      s2c.GetServerVer(),
-		ServerBuildNo:  s2c.GetServerBuildNo(),
-		Time:           s2c.GetTime(),
-		LocalTime:      s2c.GetLocalTime(),
-		QotLogined:     s2c.GetQotLogined(),
-		TrdLogined:     s2c.GetTrdLogined(),
-		QotSvrIpAddr:   s2c.GetQotSvrIpAddr(),
-		TrdSvrIpAddr:   s2c.GetTrdSvrIpAddr(),
-		MarketHK:       s2c.GetMarketHK(),
-		MarketUS:       s2c.GetMarketUS(),
-		MarketSH:       s2c.GetMarketSH(),
-		MarketSZ:       s2c.GetMarketSZ(),
-		MarketHKFuture: s2c.GetMarketHKFuture(),
-		MarketUSFuture: s2c.GetMarketUSFuture(),
-		MarketSGFuture: s2c.GetMarketSGFuture(),
-		MarketJPFuture: s2c.GetMarketJPFuture(),
-		ProgramStatus:  s2c.GetProgramStatus(),
+return &GetGlobalStateResponse{
+		ConnID:         util.ProtoUint64(s2c.ConnID),
+		ServerVer:      util.ProtoInt32(s2c.ServerVer),
+		ServerBuildNo:  util.ProtoInt32(s2c.ServerBuildNo),
+		Time:           util.ProtoInt64(s2c.Time),
+		LocalTime:      util.ProtoFloat64(s2c.LocalTime),
+		QotLogined:     util.ProtoBool(s2c.QotLogined),
+		TrdLogined:     util.ProtoBool(s2c.TrdLogined),
+		QotSvrIpAddr:   util.ProtoStr(s2c.QotSvrIpAddr),
+		TrdSvrIpAddr:   util.ProtoStr(s2c.TrdSvrIpAddr),
+		MarketHK:       util.ProtoInt32(s2c.MarketHK),
+		MarketUS:       util.ProtoInt32(s2c.MarketUS),
+		MarketSH:       util.ProtoInt32(s2c.MarketSH),
+		MarketSZ:       util.ProtoInt32(s2c.MarketSZ),
+		MarketHKFuture: util.ProtoInt32(s2c.MarketHKFuture),
+		MarketUSFuture: util.ProtoInt32(s2c.MarketUSFuture),
+		MarketSGFuture: util.ProtoInt32(s2c.MarketSGFuture),
+		MarketJPFuture: util.ProtoInt32(s2c.MarketJPFuture),
+		ProgramStatus:  s2c.ProgramStatus,
 	}, nil
 }
 
@@ -193,49 +194,49 @@ func GetUserInfo(ctx context.Context, c *futuapi.Client, req *GetUserInfoRequest
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetUserInfo", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetUserInfo", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetUserInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetUserInfoResponse{
-		UserID:                s2c.GetUserID(),
-		NickName:              s2c.GetNickName(),
-		AvatarUrl:             s2c.GetAvatarUrl(),
-		ApiLevel:              s2c.GetApiLevel(),
-		IsNeedAgreeDisclaimer: s2c.GetIsNeedAgreeDisclaimer(),
-		ShQotRight:            s2c.GetShQotRight(),
-		SzQotRight:            s2c.GetSzQotRight(),
-		Extra:                 s2c.GetExtra(),
-		HkQotRight:            s2c.GetHkQotRight(),
-		UsQotRight:            s2c.GetUsQotRight(),
-		CnQotRight:            s2c.GetCnQotRight(),
-		SubQuota:              s2c.GetSubQuota(),
-		HistoryKLQuota:        s2c.GetHistoryKLQuota(),
-		HkOptionQotRight:      s2c.GetHkOptionQotRight(),
-		HasUSOptionQotRight:   s2c.GetHasUSOptionQotRight(),
-		HkFutureQotRight:      s2c.GetHkFutureQotRight(),
-		UsFutureQotRight:      s2c.GetUsFutureQotRight(),
-		UsOptionQotRight:      s2c.GetUsOptionQotRight(),
-		WebKey:                s2c.GetWebKey(),
-		WebJumpUrlHead:        s2c.GetWebJumpUrlHead(),
-		UserAttribution:       s2c.GetUserAttribution(),
-		UpdateWhatsNew:        s2c.GetUpdateWhatsNew(),
-		UpdateType:            s2c.GetUpdateType(),
-		UsIndexQotRight:       s2c.GetUsIndexQotRight(),
-		UsOtcQotRight:         s2c.GetUsOtcQotRight(),
-		UsCMEFutureQotRight:   s2c.GetUsCMEFutureQotRight(),
-		UsCBOTFutureQotRight:  s2c.GetUsCBOTFutureQotRight(),
-		UsNYMEXFutureQotRight: s2c.GetUsNYMEXFutureQotRight(),
-		UsCOMEXFutureQotRight: s2c.GetUsCOMEXFutureQotRight(),
-		UsCBOEFutureQotRight:  s2c.GetUsCBOEFutureQotRight(),
-		SgFutureQotRight:      s2c.GetSgFutureQotRight(),
-		JpFutureQotRight:      s2c.GetJpFutureQotRight(),
-		IsAppNNOrMM:           s2c.GetIsAppNNOrMM(),
+		UserID:                util.ProtoInt64(s2c.UserID),
+		NickName:              util.ProtoStr(s2c.NickName),
+		AvatarUrl:             util.ProtoStr(s2c.AvatarUrl),
+		ApiLevel:              util.ProtoStr(s2c.ApiLevel),
+		IsNeedAgreeDisclaimer: util.ProtoBool(s2c.IsNeedAgreeDisclaimer),
+		ShQotRight:            util.ProtoInt32(s2c.ShQotRight),
+		SzQotRight:            util.ProtoInt32(s2c.SzQotRight),
+		Extra:                 util.ProtoInt32(s2c.Extra),
+		HkQotRight:            util.ProtoInt32(s2c.HkQotRight),
+		UsQotRight:            util.ProtoInt32(s2c.UsQotRight),
+		CnQotRight:            util.ProtoInt32(s2c.CnQotRight),
+		SubQuota:              util.ProtoInt32(s2c.SubQuota),
+		HistoryKLQuota:        util.ProtoInt32(s2c.HistoryKLQuota),
+		HkOptionQotRight:      util.ProtoInt32(s2c.HkOptionQotRight),
+		HasUSOptionQotRight:   util.ProtoBool(s2c.HasUSOptionQotRight),
+		HkFutureQotRight:      util.ProtoInt32(s2c.HkFutureQotRight),
+		UsFutureQotRight:      util.ProtoInt32(s2c.UsFutureQotRight),
+		UsOptionQotRight:      util.ProtoInt32(s2c.UsOptionQotRight),
+		WebKey:                util.ProtoStr(s2c.WebKey),
+		WebJumpUrlHead:        util.ProtoStr(s2c.WebJumpUrlHead),
+		UserAttribution:       util.ProtoInt32(s2c.UserAttribution),
+		UpdateWhatsNew:        util.ProtoStr(s2c.UpdateWhatsNew),
+		UpdateType:            util.ProtoInt32(s2c.UpdateType),
+		UsIndexQotRight:       util.ProtoInt32(s2c.UsIndexQotRight),
+		UsOtcQotRight:         util.ProtoInt32(s2c.UsOtcQotRight),
+		UsCMEFutureQotRight:   util.ProtoInt32(s2c.UsCMEFutureQotRight),
+		UsCBOTFutureQotRight:  util.ProtoInt32(s2c.UsCBOTFutureQotRight),
+		UsNYMEXFutureQotRight: util.ProtoInt32(s2c.UsNYMEXFutureQotRight),
+		UsCOMEXFutureQotRight: util.ProtoInt32(s2c.UsCOMEXFutureQotRight),
+		UsCBOEFutureQotRight:  util.ProtoInt32(s2c.UsCBOEFutureQotRight),
+		SgFutureQotRight:      util.ProtoInt32(s2c.SgFutureQotRight),
+		JpFutureQotRight:      util.ProtoInt32(s2c.JpFutureQotRight),
+		IsAppNNOrMM:           util.ProtoBool(s2c.IsAppNNOrMM),
 	}, nil
 }
 
@@ -296,7 +297,7 @@ type PlaceOrderDelayStatistics struct {
 func marshalGetDelayStatisticsRequestProto2(c2s *getdelaystatistics.C2S) ([]byte, error) {
 	buf := make([]byte, 0, 64)
 
-	for _, v := range c2s.GetTypeList() {
+	for _, v := range c2s.TypeList {
 		buf = append(buf, 8)
 		buf = appendVarint(buf, uint64(v))
 	}
@@ -306,7 +307,7 @@ func marshalGetDelayStatisticsRequestProto2(c2s *getdelaystatistics.C2S) ([]byte
 		buf = appendVarint(buf, uint64(*c2s.QotPushStage))
 	}
 
-	for _, v := range c2s.GetSegmentList() {
+	for _, v := range c2s.SegmentList {
 		buf = append(buf, 24)
 		buf = appendVarint(buf, uint64(v))
 	}
@@ -377,67 +378,67 @@ func GetDelayStatistics(ctx context.Context, c *futuapi.Client, req *GetDelaySta
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetDelayStatistics", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetDelayStatistics", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetDelayStatistics", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-	qotList := make([]*QotPushDelayStatistics, 0, len(s2c.GetQotPushStatisticsList()))
-	for _, item := range s2c.GetQotPushStatisticsList() {
+	qotList := make([]*QotPushDelayStatistics, 0, len(s2c.QotPushStatisticsList))
+	for _, item := range s2c.QotPushStatisticsList {
 		if item == nil {
 			continue
 		}
-		items := make([]*DelayStatisticsItem, 0, len(item.GetItemList()))
-		for _, it := range item.GetItemList() {
+		items := make([]*DelayStatisticsItem, 0, len(item.ItemList))
+		for _, it := range item.ItemList {
 			if it == nil {
 				continue
 			}
 			items = append(items, &DelayStatisticsItem{
-				Begin:           it.GetBegin(),
-				End:             it.GetEnd(),
-				Count:           it.GetCount(),
-				Proportion:      it.GetProportion(),
-				CumulativeRatio: it.GetCumulativeRatio(),
+				Begin:           util.ProtoInt32(it.Begin),
+				End:             util.ProtoInt32(it.End),
+				Count:           util.ProtoInt32(it.Count),
+				Proportion:      util.ProtoFloat32(it.Proportion),
+				CumulativeRatio: util.ProtoFloat32(it.CumulativeRatio),
 			})
 		}
 		qotList = append(qotList, &QotPushDelayStatistics{
-			QotPushType: item.GetQotPushType(),
+			QotPushType: util.ProtoInt32(item.QotPushType),
 			ItemList:    items,
-			DelayAvg:    item.GetDelayAvg(),
-			Count:       item.GetCount(),
+			DelayAvg:    util.ProtoFloat32(item.DelayAvg),
+			Count:       util.ProtoInt32(item.Count),
 		})
 	}
 
-	reqReplyList := make([]*ReqReplyDelayStatistics, 0, len(s2c.GetReqReplyStatisticsList()))
-	for _, item := range s2c.GetReqReplyStatisticsList() {
+	reqReplyList := make([]*ReqReplyDelayStatistics, 0, len(s2c.ReqReplyStatisticsList))
+	for _, item := range s2c.ReqReplyStatisticsList {
 		if item == nil {
 			continue
 		}
 		reqReplyList = append(reqReplyList, &ReqReplyDelayStatistics{
-			ProtoID:      item.GetProtoID(),
-			Count:        item.GetCount(),
-			TotalCostAvg: item.GetTotalCostAvg(),
-			OpenDCostAvg: item.GetOpenDCostAvg(),
-			NetDelayAvg:  item.GetNetDelayAvg(),
-			IsLocalReply: item.GetIsLocalReply(),
+			ProtoID:      util.ProtoInt32(item.ProtoID),
+			Count:        util.ProtoInt32(item.Count),
+			TotalCostAvg: util.ProtoFloat32(item.TotalCostAvg),
+			OpenDCostAvg: util.ProtoFloat32(item.OpenDCostAvg),
+			NetDelayAvg:  util.ProtoFloat32(item.NetDelayAvg),
+			IsLocalReply: util.ProtoBool(item.IsLocalReply),
 		})
 	}
 
-	placeOrderList := make([]*PlaceOrderDelayStatistics, 0, len(s2c.GetPlaceOrderStatisticsList()))
-	for _, item := range s2c.GetPlaceOrderStatisticsList() {
+	placeOrderList := make([]*PlaceOrderDelayStatistics, 0, len(s2c.PlaceOrderStatisticsList))
+	for _, item := range s2c.PlaceOrderStatisticsList {
 		if item == nil {
 			continue
 		}
 		placeOrderList = append(placeOrderList, &PlaceOrderDelayStatistics{
-			OrderID:    item.GetOrderID(),
-			TotalCost:  item.GetTotalCost(),
-			OpenDCost:  item.GetOpenDCost(),
-			NetDelay:   item.GetNetDelay(),
-			UpdateCost: item.GetUpdateCost(),
+			OrderID:    util.ProtoStr(item.OrderID),
+			TotalCost:  util.ProtoFloat32(item.TotalCost),
+			OpenDCost:  util.ProtoFloat32(item.OpenDCost),
+			NetDelay:   util.ProtoFloat32(item.NetDelay),
+			UpdateCost: util.ProtoFloat32(item.UpdateCost),
 		})
 	}
 
@@ -479,8 +480,8 @@ func Verification(ctx context.Context, c *futuapi.Client, req *VerificationReque
 		return err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return wrapError("Verification", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return wrapError("Verification", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
 	return nil
@@ -503,18 +504,18 @@ func GetUsedQuota(ctx context.Context, c *futuapi.Client) (*GetUsedQuotaResponse
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetUsedQuota", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetUsedQuota", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetUsedQuota", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetUsedQuotaResponse{
-		UsedSubQuota:   s2c.GetUsedSubQuota(),
-		UsedKLineQuota: s2c.GetUsedKLineQuota(),
+		UsedSubQuota:   util.ProtoInt32(s2c.UsedSubQuota),
+		UsedKLineQuota: util.ProtoInt32(s2c.UsedKLineQuota),
 	}, nil
 }
 
@@ -557,17 +558,17 @@ func TestCmd(ctx context.Context, c *futuapi.Client, req *TestCmdRequest) (*Test
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("TestCmd", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("TestCmd", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("TestCmd", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &TestCmdResponse{
-		Cmd:    s2c.GetCmd(),
-		Result: s2c.GetResult(),
+		Cmd:    util.ProtoStr(s2c.Cmd),
+		Result: util.ProtoStr(s2c.Result),
 	}, nil
 }

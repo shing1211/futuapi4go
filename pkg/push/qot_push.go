@@ -41,6 +41,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateticker"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -91,37 +92,37 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
-	if s2c == nil || len(s2c.GetBasicQotList()) == 0 {
+	s2c := resp.S2C
+	if s2c == nil || len(s2c.BasicQotList) == 0 {
 		return nil, nil
 	}
-	bq := s2c.GetBasicQotList()[0]
+	bq := s2c.BasicQotList[0]
 	return &UpdateBasicQot{
-		Security:        bq.GetSecurity(),
-		Name:            bq.GetName(),
-		CurPrice:        bq.GetCurPrice(),
-		OpenPrice:       bq.GetOpenPrice(),
-		HighPrice:       bq.GetHighPrice(),
-		LowPrice:        bq.GetLowPrice(),
-		Volume:          bq.GetVolume(),
-		Turnover:        bq.GetTurnover(),
-		IsSuspended:     bq.GetIsSuspended(),
-		LastClosePrice:  bq.GetLastClosePrice(),
-		UpdateTime:      bq.GetUpdateTime(),
-		UpdateTimestamp: bq.GetUpdateTimestamp(),
-		ListTime:        bq.GetListTime(),
-		PriceSpread:     bq.GetPriceSpread(),
-		TurnoverRate:    bq.GetTurnoverRate(),
-		Amplitude:       bq.GetAmplitude(),
-		DarkStatus:      bq.GetDarkStatus(),
-		OptionExData:    bq.GetOptionExData(),
-		ListTimestamp:   bq.GetListTimestamp(),
-		PreMarket:       bq.GetPreMarket(),
-		AfterMarket:     bq.GetAfterMarket(),
-		SecStatus:       bq.GetSecStatus(),
-		FutureExData:    bq.GetFutureExData(),
-		WarrantExData:   bq.GetWarrantExData(),
-		Overnight:       bq.GetOvernight(),
+		Security:        bq.Security,
+		Name:            util.ProtoStr(bq.Name),
+		CurPrice:        util.ProtoFloat64(bq.CurPrice),
+		OpenPrice:       util.ProtoFloat64(bq.OpenPrice),
+		HighPrice:       util.ProtoFloat64(bq.HighPrice),
+		LowPrice:        util.ProtoFloat64(bq.LowPrice),
+		Volume:          util.ProtoInt64(bq.Volume),
+		Turnover:        util.ProtoFloat64(bq.Turnover),
+		IsSuspended:     util.ProtoBool(bq.IsSuspended),
+		LastClosePrice:  util.ProtoFloat64(bq.LastClosePrice),
+		UpdateTime:      util.ProtoStr(bq.UpdateTime),
+		UpdateTimestamp: util.ProtoFloat64(bq.UpdateTimestamp),
+		ListTime:        util.ProtoStr(bq.ListTime),
+		PriceSpread:     util.ProtoFloat64(bq.PriceSpread),
+		TurnoverRate:    util.ProtoFloat64(bq.TurnoverRate),
+		Amplitude:       util.ProtoFloat64(bq.Amplitude),
+		DarkStatus:      util.ProtoInt32(bq.DarkStatus),
+		OptionExData:    bq.OptionExData,
+		ListTimestamp:   util.ProtoFloat64(bq.ListTimestamp),
+		PreMarket:       bq.PreMarket,
+		AfterMarket:     bq.AfterMarket,
+		SecStatus:       util.ProtoInt32(bq.SecStatus),
+		FutureExData:    bq.FutureExData,
+		WarrantExData:   bq.WarrantExData,
+		Overnight:       bq.Overnight,
 	}, nil
 }
 
@@ -160,37 +161,37 @@ func ParseUpdateKL(body []byte) (*UpdateKL, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
-	if s2c == nil || s2c.GetKlList() == nil {
+	s2c := resp.S2C
+	if s2c == nil || s2c.KlList == nil {
 		return nil, nil
 	}
-	s2cList := s2c.GetKlList()
+	s2cList := s2c.KlList
 	klList := make([]*PushKLine, 0, len(s2cList))
 	for _, kl := range s2cList {
 		if kl == nil {
 			continue
 		}
 		klList = append(klList, &PushKLine{
-			Time:           kl.GetTime(),
-			IsBlank:        kl.GetIsBlank(),
-			HighPrice:      kl.GetHighPrice(),
-			OpenPrice:      kl.GetOpenPrice(),
-			LowPrice:       kl.GetLowPrice(),
-			ClosePrice:     kl.GetClosePrice(),
-			LastClosePrice: kl.GetLastClosePrice(),
-			Volume:         kl.GetVolume(),
-			Turnover:       kl.GetTurnover(),
-			TurnoverRate:   kl.GetTurnoverRate(),
-			Pe:             kl.GetPe(),
-			ChangeRate:     kl.GetChangeRate(),
-			Timestamp:      kl.GetTimestamp(),
+			Time:           util.ProtoStr(kl.Time),
+			IsBlank:        util.ProtoBool(kl.IsBlank),
+			HighPrice:      util.ProtoFloat64(kl.HighPrice),
+			OpenPrice:      util.ProtoFloat64(kl.OpenPrice),
+			LowPrice:       util.ProtoFloat64(kl.LowPrice),
+			ClosePrice:     util.ProtoFloat64(kl.ClosePrice),
+			LastClosePrice: util.ProtoFloat64(kl.LastClosePrice),
+			Volume:         util.ProtoInt64(kl.Volume),
+			Turnover:       util.ProtoFloat64(kl.Turnover),
+			TurnoverRate:   util.ProtoFloat64(kl.TurnoverRate),
+			Pe:             util.ProtoFloat64(kl.Pe),
+			ChangeRate:     util.ProtoFloat64(kl.ChangeRate),
+			Timestamp:      util.ProtoFloat64(kl.Timestamp),
 		})
 	}
 	return &UpdateKL{
-		RehabType: s2c.GetRehabType(),
-		KlType:    s2c.GetKlType(),
-		Security:  s2c.GetSecurity(),
-		Name:      s2c.GetName(),
+		RehabType: util.ProtoInt32(s2c.RehabType),
+		KlType:    util.ProtoInt32(s2c.KlType),
+		Security:  s2c.Security,
+		Name:      util.ProtoStr(s2c.Name),
 		KLList:    klList,
 	}, nil
 }
@@ -216,19 +217,19 @@ func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
+	s2c := resp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &UpdateOrderBook{
-		Security:                s2c.GetSecurity(),
-		Name:                    s2c.GetName(),
-		OrderBookAskList:        s2c.GetOrderBookAskList(),
-		OrderBookBidList:        s2c.GetOrderBookBidList(),
-		SvrRecvTimeBid:          s2c.GetSvrRecvTimeBid(),
-		SvrRecvTimeBidTimestamp: s2c.GetSvrRecvTimeBidTimestamp(),
-		SvrRecvTimeAsk:          s2c.GetSvrRecvTimeAsk(),
-		SvrRecvTimeAskTimestamp: s2c.GetSvrRecvTimeAskTimestamp(),
+		Security:                s2c.Security,
+		Name:                    util.ProtoStr(s2c.Name),
+		OrderBookAskList:        s2c.OrderBookAskList,
+		OrderBookBidList:        s2c.OrderBookBidList,
+		SvrRecvTimeBid:          util.ProtoStr(s2c.SvrRecvTimeBid),
+		SvrRecvTimeBidTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeBidTimestamp),
+		SvrRecvTimeAsk:          util.ProtoStr(s2c.SvrRecvTimeAsk),
+		SvrRecvTimeAskTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeAskTimestamp),
 	}, nil
 }
 
@@ -248,14 +249,14 @@ func ParseUpdateTicker(body []byte) (*UpdateTicker, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
-	if s2c == nil || len(s2c.GetTickerList()) == 0 {
+	s2c := resp.S2C
+	if s2c == nil || len(s2c.TickerList) == 0 {
 		return nil, nil
 	}
 	return &UpdateTicker{
-		Security:   s2c.GetSecurity(),
-		Name:       s2c.GetName(),
-		TickerList: s2c.GetTickerList(),
+		Security:   s2c.Security,
+		Name:       util.ProtoStr(s2c.Name),
+		TickerList: s2c.TickerList,
 	}, nil
 }
 
@@ -275,14 +276,14 @@ func ParseUpdateRT(body []byte) (*UpdateRT, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
-	if s2c == nil || len(s2c.GetRtList()) == 0 {
+	s2c := resp.S2C
+	if s2c == nil || len(s2c.RtList) == 0 {
 		return nil, nil
 	}
 	return &UpdateRT{
-		Security: s2c.GetSecurity(),
-		Name:     s2c.GetName(),
-		RTList:   s2c.GetRtList(),
+		Security: s2c.Security,
+		Name:     util.ProtoStr(s2c.Name),
+		RTList:   s2c.RtList,
 	}, nil
 }
 
@@ -303,15 +304,15 @@ func ParseUpdateBroker(body []byte) (*UpdateBroker, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
+	s2c := resp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &UpdateBroker{
-		Security:      s2c.GetSecurity(),
-		Name:          s2c.GetName(),
-		AskBrokerList: s2c.GetBrokerAskList(),
-		BidBrokerList: s2c.GetBrokerBidList(),
+		Security:      s2c.Security,
+		Name:          util.ProtoStr(s2c.Name),
+		AskBrokerList: s2c.BrokerAskList,
+		BidBrokerList: s2c.BrokerBidList,
 	}, nil
 }
 
@@ -339,20 +340,20 @@ func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 	if err := proto.Unmarshal(body, &resp); err != nil {
 		return nil, err
 	}
-	s2c := resp.GetS2C()
+	s2c := resp.S2C
 	if s2c == nil {
 		return nil, nil
 	}
 	return &UpdatePriceReminder{
-		Security:     s2c.GetSecurity(),
-		Name:         s2c.GetName(),
-		Price:        s2c.GetPrice(),
-		ChangeRate:   s2c.GetChangeRate(),
-		MarketStatus: s2c.GetMarketStatus(),
-		Content:      s2c.GetContent(),
-		Note:         s2c.GetNote(),
-		Key:          s2c.GetKey(),
-		Type:         s2c.GetType(),
+		Security:     s2c.Security,
+		Name:         util.ProtoStr(s2c.Name),
+		Price:        util.ProtoFloat64(s2c.Price),
+		ChangeRate:   util.ProtoFloat64(s2c.ChangeRate),
+		MarketStatus: util.ProtoInt32(s2c.MarketStatus),
+		Content:      util.ProtoStr(s2c.Content),
+		Note:         util.ProtoStr(s2c.Note),
+		Key:          util.ProtoInt64(s2c.Key),
+		Type:         util.ProtoInt32(s2c.Type),
 		SetValue:     s2c.GetSetValue(),
 		CurValue:     s2c.GetCurValue(),
 	}, nil

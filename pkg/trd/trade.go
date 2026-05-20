@@ -46,6 +46,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -189,35 +190,35 @@ func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory constant.Trd
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetAccList", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetAccList", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetAccList", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetAccListResponse{
-		AccList: make([]*Acc, 0, len(s2c.GetAccList())),
+		AccList: make([]*Acc, 0, len(s2c.AccList)),
 	}
 
-	for _, acc := range s2c.GetAccList() {
+	for _, acc := range s2c.AccList {
 		if acc == nil {
 			continue
 		}
 		result.AccList = append(result.AccList, &Acc{
-			TrdEnv:            acc.GetTrdEnv(),
-			AccID:             acc.GetAccID(),
-			AccType:           acc.GetAccType(),
-			CardNum:           acc.GetCardNum(),
-			AccStatus:         acc.GetAccStatus(),
-			TrdMarketAuthList: acc.GetTrdMarketAuthList(),
-			SecurityFirm:      acc.GetSecurityFirm(),
-			SimAccType:        acc.GetSimAccType(),
-			UniCardNum:        acc.GetUniCardNum(),
-			AccRole:           acc.GetAccRole(),
-			JpAccType:         acc.GetJpAccType(),
+			TrdEnv:            util.ProtoInt32(acc.TrdEnv),
+			AccID:             util.ProtoUint64(acc.AccID),
+			AccType:           util.ProtoInt32(acc.AccType),
+			CardNum:           util.ProtoStr(acc.CardNum),
+			AccStatus:         util.ProtoInt32(acc.AccStatus),
+			TrdMarketAuthList: acc.TrdMarketAuthList,
+			SecurityFirm:      util.ProtoInt32(acc.SecurityFirm),
+			SimAccType:        util.ProtoInt32(acc.SimAccType),
+			UniCardNum:        util.ProtoStr(acc.UniCardNum),
+			AccRole:           util.ProtoInt32(acc.AccRole),
+			JpAccType:         acc.JpAccType,
 		})
 	}
 

@@ -75,14 +75,14 @@ func mapPreAfterMarketData(d *qotcommon.PreAfterMarketData) *PreAfterMarketData 
 		return nil
 	}
 	return &PreAfterMarketData{
-		Price:      d.GetPrice(),
-		HighPrice:  d.GetHighPrice(),
-		LowPrice:   d.GetLowPrice(),
-		Volume:     d.GetVolume(),
-		Turnover:   d.GetTurnover(),
-		ChangeVal:  d.GetChangeVal(),
-		ChangeRate: d.GetChangeRate(),
-		Amplitude:  d.GetAmplitude(),
+		Price:      getFloat64(d.Price),
+		HighPrice:  getFloat64(d.HighPrice),
+		LowPrice:   getFloat64(d.LowPrice),
+		Volume:     getInt64(d.Volume),
+		Turnover:   getFloat64(d.Turnover),
+		ChangeVal:  getFloat64(d.ChangeVal),
+		ChangeRate: getFloat64(d.ChangeRate),
+		Amplitude:  getFloat64(d.Amplitude),
 	}
 }
 
@@ -92,7 +92,7 @@ func mapRehabInfo(r *qotcommon.Rehab) *RehabInfo {
 	}
 	return &RehabInfo{
 		Time:           getStr(r.Time),
-		CompanyActFlag: r.GetCompanyActFlag(),
+		CompanyActFlag: getInt64(r.CompanyActFlag),
 		FwdFactorA:     getFloat64(r.FwdFactorA),
 		FwdFactorB:     getFloat64(r.FwdFactorB),
 		BwdFactorA:     getFloat64(r.BwdFactorA),
@@ -542,6 +542,10 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 				exchType = *s.Basic.ExchType
 			}
 		}
+		var security *qotcommon.Security
+		if s.Basic != nil {
+			security = s.Basic.Security
+		}
 		infos[i] = StaticInfo{
 			Code:          code,
 			Name:          name,
@@ -552,10 +556,10 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 			Delisting:     delisting,
 			ListTimestamp: listTimestamp,
 			ExchType:      exchType,
-			Security:      s.GetBasic().GetSecurity(),
-			WarrantExData: s.GetWarrantExData(),
-			OptionExData:  s.GetOptionExData(),
-			FutureExData:  s.GetFutureExData(),
+			Security:      security,
+			WarrantExData: s.WarrantExData,
+			OptionExData:  s.OptionExData,
+			FutureExData:  s.FutureExData,
 		}
 	}
 	return infos, nil
@@ -623,13 +627,13 @@ func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon
 			PreMarket:               mapPreAfterMarketData(basic.PreMarket),
 			AfterMarket:             mapPreAfterMarketData(basic.AfterMarket),
 			Overnight:               mapPreAfterMarketData(basic.Overnight),
-			EquityExData:            s.GetEquityExData(),
-			WarrantExData:           s.GetWarrantExData(),
-			OptionExData:            s.GetOptionExData(),
-			IndexExData:             s.GetIndexExData(),
-			PlateExData:             s.GetPlateExData(),
-			FutureExData:            s.GetFutureExData(),
-			TrustExData:             s.GetTrustExData(),
+			EquityExData:            s.EquityExData,
+			WarrantExData:           s.WarrantExData,
+			OptionExData:            s.OptionExData,
+			IndexExData:             s.IndexExData,
+			PlateExData:             s.PlateExData,
+			FutureExData:            s.FutureExData,
+			TrustExData:             s.TrustExData,
 		})
 	}
 	return result, nil
@@ -744,7 +748,7 @@ func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, e
 				}
 				tt := make([]TradeTime, len(f.TradeTimeList))
 				for j, t := range f.TradeTimeList {
-					tt[j] = TradeTime{Begin: t.GetBegin(), End: t.GetEnd()}
+					tt[j] = TradeTime{Begin: getFloat64(t.Begin), End: getFloat64(t.End)}
 				}
 				return tt
 			}(),
@@ -930,10 +934,10 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 			Delisting:     delisting,
 			ListTimestamp: listTimestamp,
 			ExchType:      exchType,
-			Security:      s.GetBasic().GetSecurity(),
-			WarrantExData: s.GetWarrantExData(),
-			OptionExData:  s.GetOptionExData(),
-			FutureExData:  s.GetFutureExData(),
+			Security:      s.Basic.Security,
+			WarrantExData: s.WarrantExData,
+			OptionExData:  s.OptionExData,
+			FutureExData:  s.FutureExData,
 		})
 	}
 	return infos, nil
@@ -1056,14 +1060,14 @@ func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code 
 
 	result := make(map[string]*OwnerPlateEntry)
 	for _, securityPlate := range resp.OwnerPlateList {
-		sec := securityPlate.GetSecurity()
-		code := sec.GetCode()
-		entry := &OwnerPlateEntry{Name: securityPlate.GetName()}
-		for _, plateInfo := range securityPlate.GetPlateInfoList() {
+		sec := securityPlate.Security
+		code := getStr(sec.Code)
+		entry := &OwnerPlateEntry{Name: getStr(securityPlate.Name)}
+		for _, plateInfo := range securityPlate.PlateInfoList {
 			entry.Plates = append(entry.Plates, &OwnerPlateInfo{
-				Code:      plateInfo.GetPlate().GetCode(),
-				Name:      plateInfo.GetName(),
-				PlateType: plateInfo.GetPlateType(),
+				Code:      getStr(plateInfo.Plate.Code),
+				Name:      getStr(plateInfo.Name),
+				PlateType: getInt32(plateInfo.PlateType),
 			})
 		}
 		result[code] = entry
@@ -1255,10 +1259,10 @@ func GetReference(ctx context.Context, c *Client, market constant.Market, code s
 			Code:          code,
 			Name:          name,
 			Type:          secType,
-			Security:      s.GetBasic().GetSecurity(),
-			WarrantExData: s.GetWarrantExData(),
-			OptionExData:  s.GetOptionExData(),
-			FutureExData:  s.GetFutureExData(),
+			Security:      s.Basic.Security,
+			WarrantExData: s.WarrantExData,
+			OptionExData:  s.OptionExData,
+			FutureExData:  s.FutureExData,
 		})
 	}
 	return infos, nil
@@ -1328,10 +1332,10 @@ func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, pl
 			Delisting:     delisting,
 			ListTimestamp: listTimestamp,
 			ExchType:      exchType,
-			Security:      s.GetBasic().GetSecurity(),
-			WarrantExData: s.GetWarrantExData(),
-			OptionExData:  s.GetOptionExData(),
-			FutureExData:  s.GetFutureExData(),
+			Security:      s.Basic.Security,
+			WarrantExData: s.WarrantExData,
+			OptionExData:  s.OptionExData,
+			FutureExData:  s.FutureExData,
 		})
 	}
 	return infos, nil
@@ -1639,8 +1643,8 @@ func StockFilter(ctx context.Context, c *Client, market constant.Market, begin, 
 			if base == nil {
 				continue
 			}
-			fieldName := base.GetFieldName()
-			value := base.GetValue()
+			fieldName := getInt32(base.FieldName)
+			value := getFloat64(base.Value)
 			switch qotstockfilter.StockField(fieldName) {
 			case qotstockfilter.StockField_StockField_CurPrice:
 				r.CurPrice = value
@@ -1842,8 +1846,8 @@ func GetRehab(ctx context.Context, c *Client, market constant.Market, code strin
 		if sr == nil {
 			continue
 		}
-		if sr.GetSecurity().GetCode() == code {
-			rehabList = sr.GetRehabList()
+		if getStr(sr.Security.Code) == code {
+			rehabList = sr.RehabList
 			break
 		}
 	}

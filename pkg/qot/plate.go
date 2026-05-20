@@ -26,6 +26,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplatesecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
@@ -71,27 +72,27 @@ func GetPlateSet(ctx context.Context, c *futuapi.Client, req *GetPlateSetRequest
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetPlateSet", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetPlateSet", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetPlateSet", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetPlateSetResponse{
-		PlateSetList: make([]*Plate, 0, len(s2c.GetPlateInfoList())),
+		PlateSetList: make([]*Plate, 0, len(s2c.PlateInfoList)),
 	}
 
-	for _, p := range s2c.GetPlateInfoList() {
+	for _, p := range s2c.PlateInfoList {
 		if p == nil {
 			continue
 		}
 		result.PlateSetList = append(result.PlateSetList, &Plate{
-			Plate:     p.GetPlate(),
-			Name:      p.GetName(),
-			PlateType: p.GetPlateType(),
+			Plate:     p.Plate,
+			Name:      util.ProtoStr(p.Name),
+			PlateType: util.ProtoInt32(p.PlateType),
 		})
 	}
 
@@ -136,17 +137,17 @@ func GetPlateSecurity(ctx context.Context, c *futuapi.Client, req *GetPlateSecur
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetPlateSecurity", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetPlateSecurity", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetPlateSecurity", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetPlateSecurityResponse{
-		StaticInfoList: s2c.GetStaticInfoList(),
+		StaticInfoList: s2c.StaticInfoList,
 	}, nil
 }
 
@@ -180,16 +181,16 @@ func GetOwnerPlate(ctx context.Context, c *futuapi.Client, req *GetOwnerPlateReq
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOwnerPlate", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOwnerPlate", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOwnerPlate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	return &GetOwnerPlateResponse{
-		OwnerPlateList: s2c.GetOwnerPlateList(),
+		OwnerPlateList: s2c.OwnerPlateList,
 	}, nil
 }

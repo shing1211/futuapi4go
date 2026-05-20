@@ -26,6 +26,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
 	qotgetoptionexpirationdate "github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionexpirationdate"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // GetOptionExpirationDateRequest defines parameters for GetOptionExpirationDate.
@@ -68,28 +69,28 @@ func GetOptionExpirationDate(ctx context.Context, c *futuapi.Client, req *GetOpt
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOptionExpirationDate", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionExpirationDate", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOptionExpirationDate", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetOptionExpirationDateResponse{
-		DateList: make([]*OptionExpirationDateInfo, 0, len(s2c.GetDateList())),
+		DateList: make([]*OptionExpirationDateInfo, 0, len(s2c.DateList)),
 	}
 
-	for _, d := range s2c.GetDateList() {
+	for _, d := range s2c.DateList {
 		if d == nil {
 			continue
 		}
 		result.DateList = append(result.DateList, &OptionExpirationDateInfo{
-			StrikeTime:               d.GetStrikeTime(),
-			StrikeTimestamp:          d.GetStrikeTimestamp(),
-			OptionExpiryDateDistance: d.GetOptionExpiryDateDistance(),
-			Cycle:                    d.GetCycle(),
+			StrikeTime:               util.ProtoStr(d.StrikeTime),
+			StrikeTimestamp:          util.ProtoFloat64(d.StrikeTimestamp),
+			OptionExpiryDateDistance: util.ProtoInt32(d.OptionExpiryDateDistance),
+			Cycle:                    util.ProtoInt32(d.Cycle),
 		})
 	}
 
@@ -151,11 +152,11 @@ func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainR
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetOptionChain", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionChain", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetOptionChain", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
@@ -169,21 +170,21 @@ func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainR
 			continue
 		}
 		oc := &OptionChain{
-			StrikeTime:      chain.GetStrikeTime(),
-			StrikeTimestamp: chain.GetStrikeTimestamp(),
-			Option:          make([]*OptionItem, 0, len(chain.GetOption())),
+			StrikeTime:      util.ProtoStr(chain.StrikeTime),
+			StrikeTimestamp: util.ProtoFloat64(chain.StrikeTimestamp),
+			Option:          make([]*OptionItem, 0, len(chain.Option)),
 		}
 
-		for _, opt := range chain.GetOption() {
+		for _, opt := range chain.Option {
 			if opt == nil {
 				continue
 			}
 			item := &OptionItem{}
-			if opt.GetCall() != nil {
-				item.Call = opt.GetCall()
+			if opt.Call != nil {
+				item.Call = opt.Call
 			}
-			if opt.GetPut() != nil {
-				item.Put = opt.GetPut()
+			if opt.Put != nil {
+				item.Put = opt.Put
 			}
 			oc.Option = append(oc.Option, item)
 		}
@@ -246,42 +247,42 @@ func GetFutureInfo(ctx context.Context, c *futuapi.Client, req *GetFutureInfoReq
 		return nil, err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetFutureInfo", rsp.GetRetType(), rsp.GetRetMsg())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetFutureInfo", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		return nil, wrapError("GetFutureInfo", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
 	result := &GetFutureInfoResponse{
-		FutureInfoList: make([]*FutureInfo, 0, len(s2c.GetFutureInfoList())),
+		FutureInfoList: make([]*FutureInfo, 0, len(s2c.FutureInfoList)),
 	}
 
-	for _, fi := range s2c.GetFutureInfoList() {
+	for _, fi := range s2c.FutureInfoList {
 		if fi == nil {
 			continue
 		}
 		result.FutureInfoList = append(result.FutureInfoList, &FutureInfo{
-			Name:               fi.GetName(),
-			Security:           fi.GetSecurity(),
-			LastTradeTime:      fi.GetLastTradeTime(),
-			LastTradeTimestamp: fi.GetLastTradeTimestamp(),
-			Owner:              fi.GetOwner(),
-			OwnerOther:         fi.GetOwnerOther(),
-			Exchange:           fi.GetExchange(),
-			ContractType:       fi.GetContractType(),
-			ContractSize:       fi.GetContractSize(),
-			ContractSizeUnit:   fi.GetContractSizeUnit(),
-			QuoteCurrency:      fi.GetQuoteCurrency(),
-			MinVar:             fi.GetMinVar(),
-			MinVarUnit:         fi.GetMinVarUnit(),
-			QuoteUnit:          fi.GetQuoteUnit(),
+			Name:               util.ProtoStr(fi.Name),
+			Security:           fi.Security,
+			LastTradeTime:      util.ProtoStr(fi.LastTradeTime),
+			LastTradeTimestamp: util.ProtoFloat64(fi.LastTradeTimestamp),
+			Owner:              fi.Owner,
+			OwnerOther:         util.ProtoStr(fi.OwnerOther),
+			Exchange:           util.ProtoStr(fi.Exchange),
+			ContractType:       util.ProtoStr(fi.ContractType),
+			ContractSize:       util.ProtoFloat64(fi.ContractSize),
+			ContractSizeUnit:   util.ProtoStr(fi.ContractSizeUnit),
+			QuoteCurrency:      util.ProtoStr(fi.QuoteCurrency),
+			MinVar:             util.ProtoFloat64(fi.MinVar),
+			MinVarUnit:         util.ProtoStr(fi.MinVarUnit),
+			QuoteUnit:          util.ProtoStr(fi.QuoteUnit),
 			TradeTimeList:      fi.GetTradeTime(),
-			TimeZone:           fi.GetTimeZone(),
-			ExchangeFormatUrl:  fi.GetExchangeFormatUrl(),
-			Origin:             fi.GetOrigin(),
+			TimeZone:           util.ProtoStr(fi.TimeZone),
+			ExchangeFormatUrl:  util.ProtoStr(fi.ExchangeFormatUrl),
+			Origin:             fi.Origin,
 		})
 	}
 
