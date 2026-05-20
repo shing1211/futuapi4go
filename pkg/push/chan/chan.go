@@ -63,6 +63,7 @@ package chanpkg
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"sync"
 
 	"github.com/shing1211/futuapi4go/client"
@@ -143,7 +144,12 @@ func subscribeOne[T any](ctx context.Context, cli *client.Client, protoID uint32
 		}
 
 		data, err := parseFn(body)
-		if err != nil || data == nil {
+		if err != nil {
+			slog.Warn("push parse failed", "protoID", pid, "error", err)
+			return
+		}
+		if data == nil {
+			slog.Debug("push parse returned nil", "protoID", pid)
 			return
 		}
 

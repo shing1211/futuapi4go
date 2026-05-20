@@ -871,7 +871,7 @@ func GetMarketState(ctx context.Context, c *Client, market constant.Market, code
 	}
 
 	if len(resp.MarketInfoList) == 0 {
-		return nil, nil
+		return &MarketStateResult{Code: code}, nil
 	}
 
 	info := resp.MarketInfoList[0]
@@ -931,7 +931,7 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Mark
 	}
 
 	if resp.CapitalDistribution == nil {
-		return nil, nil
+		return &CapitalDistribution{}, nil
 	}
 
 	cd := resp.CapitalDistribution

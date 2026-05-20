@@ -3,6 +3,8 @@ package client
 import (
 	"sync"
 
+	"log/slog"
+
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 )
 
@@ -117,8 +119,7 @@ func (c *Client) ensurePushHandler() {
 			}
 		}
 		if err != nil {
-			// Callback error is intentionally swallowed — push handlers
-			// must not block the read loop.
+			slog.Warn("push callback error", "error", err)
 		}
 	})
 }

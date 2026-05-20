@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Retry on trading operations** — `Request()` and `RequestContext()` now skip retry for non-idempotent trading proto IDs (`PlaceOrder`, `ModifyOrder`, `UnlockTrade`, `ReconfirmOrder`) to prevent duplicate orders when `retryConfig` is set (`internal/client/client.go`)
+- **GetMarketState nil ambiguity** — `GetMarketState` now returns `&MarketStateResult{Code: code}` instead of `(nil, nil)` when no market info is available, allowing callers to distinguish "no data" from errors (`client/quote_api.go`)
+- **GetCapitalDistribution nil ambiguity** — `GetCapitalDistribution` now returns `&CapitalDistribution{}` instead of `(nil, nil)` when capital distribution data is nil (`client/quote_api.go`)
+- **Push channel parse error logging** — `subscribeOne` handler in channel-based push now logs parse errors via `slog.Warn` and nil data via `slog.Debug` instead of silently dropping them (`pkg/push/chan/chan.go`)
+- **Push callback error logging** — Push callback errors are now logged via `slog.Warn` before being intentionally swallowed, improving debuggability without blocking the read loop (`client/push_callbacks.go`)
+- **WithEnvConfig file read error masking** — `WithEnvConfig` now uses `os.Stat` to distinguish "file not found" from "file exists but unreadable"; read errors are logged via `slog.Warn` instead of silently falling back to raw value (`client/client.go`)
+
 ## [v0.9.2] - 2026-05-18
 
 ### Added

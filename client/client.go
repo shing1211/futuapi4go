@@ -19,6 +19,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -406,15 +407,27 @@ func WithOnStateChange(fn func(oldState, newState futuapi.ConnState)) Option {
 func WithEnvConfig() Option {
 	return func(o *futuapi.ClientOptions) {
 		if v := os.Getenv("FUTU_RSA_PUBLIC_KEY"); v != "" {
-			if data, err := os.ReadFile(v); err == nil {
-				o.RSAPublicKey = string(data)
+			if info, err := os.Stat(v); err == nil && !info.IsDir() {
+				data, err := os.ReadFile(v)
+				if err != nil {
+					slog.Warn("FUTU_RSA_PUBLIC_KEY: file exists but cannot be read", "path", v, "error", err)
+					o.RSAPublicKey = v
+				} else {
+					o.RSAPublicKey = string(data)
+				}
 			} else {
 				o.RSAPublicKey = v
 			}
 		}
 		if v := os.Getenv("FUTU_RSA_PRIVATE_KEY"); v != "" {
-			if data, err := os.ReadFile(v); err == nil {
-				o.RSAPrivateKey = string(data)
+			if info, err := os.Stat(v); err == nil && !info.IsDir() {
+				data, err := os.ReadFile(v)
+				if err != nil {
+					slog.Warn("FUTU_RSA_PRIVATE_KEY: file exists but cannot be read", "path", v, "error", err)
+					o.RSAPrivateKey = v
+				} else {
+					o.RSAPrivateKey = string(data)
+				}
 			} else {
 				o.RSAPrivateKey = v
 			}

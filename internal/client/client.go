@@ -125,6 +125,11 @@ const (
 	ProtoID_GetGlobalState = 1002
 	ProtoID_KeepAlive      = 1004
 	ProtoID_SkillWrapAPI   = 8001
+
+	ProtoID_Trd_UnlockTrade    = 2005
+	ProtoID_Trd_PlaceOrder     = 2202
+	ProtoID_Trd_ModifyOrder    = 2205
+	ProtoID_Trd_ReconfirmOrder = 2209
 )
 
 const (
@@ -1334,7 +1339,7 @@ func (c *Client) Request(protoID uint32, req proto.Message, rsp proto.Message) e
 		return c.requestInternal(protoID, req, rsp)
 	}
 	var err error
-	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 {
+	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 && !isTradingProto(protoID) {
 		err = retry.Do(context.Background(), *c.retryConfig, fn)
 	} else {
 		err = fn()
@@ -1355,7 +1360,7 @@ func (c *Client) RequestContext(ctx context.Context, protoID uint32, req proto.M
 		return c.requestContextInternal(ctx, protoID, req, rsp)
 	}
 	var err error
-	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 {
+	if c.retryConfig != nil && c.retryConfig.MaxAttempts > 0 && !isTradingProto(protoID) {
 		err = retry.Do(ctx, *c.retryConfig, fn)
 	} else {
 		err = fn()
@@ -1366,6 +1371,11 @@ func (c *Client) RequestContext(ctx context.Context, protoID uint32, req proto.M
 
 func isControlProto(protoID uint32) bool {
 	return protoID == ProtoID_InitConnect || protoID == ProtoID_KeepAlive || protoID == ProtoID_GetGlobalState
+}
+
+func isTradingProto(protoID uint32) bool {
+	return protoID == ProtoID_Trd_PlaceOrder || protoID == ProtoID_Trd_ModifyOrder ||
+		protoID == ProtoID_Trd_UnlockTrade || protoID == ProtoID_Trd_ReconfirmOrder
 }
 
 func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Message) error {
