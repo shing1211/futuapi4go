@@ -54,6 +54,18 @@ func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, marke
 
 // QuickBuy places a limit buy order in a single call.
 func QuickBuy(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64, price float64) (*PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickBuy: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickBuy: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickBuy: qty must be positive")
+	}
+	if price <= 0 {
+		return nil, fmt.Errorf("QuickBuy: price must be positive")
+	}
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -68,6 +80,18 @@ func QuickBuy(ctx context.Context, c *futuapi.Client, accID uint64, market const
 
 // QuickSell places a limit sell order in a single call.
 func QuickSell(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64, price float64) (*PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickSell: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickSell: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickSell: qty must be positive")
+	}
+	if price <= 0 {
+		return nil, fmt.Errorf("QuickSell: price must be positive")
+	}
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -82,6 +106,15 @@ func QuickSell(ctx context.Context, c *futuapi.Client, accID uint64, market cons
 
 // QuickMarketBuy places a market buy order (no price) in a single call.
 func QuickMarketBuy(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64) (*PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickMarketBuy: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickMarketBuy: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickMarketBuy: qty must be positive")
+	}
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -96,6 +129,15 @@ func QuickMarketBuy(ctx context.Context, c *futuapi.Client, accID uint64, market
 
 // QuickMarketSell places a market sell order (no price) in a single call.
 func QuickMarketSell(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv, code string, qty float64) (*PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickMarketSell: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickMarketSell: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickMarketSell: qty must be positive")
+	}
 	return PlaceOrder(ctx, c, &PlaceOrderRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -120,6 +162,9 @@ type PositionDetail struct {
 
 // GetPositions returns a simplified list of all positions for the given account.
 func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]PositionDetail, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetPositions: accID is required")
+	}
 	req := &GetPositionListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
@@ -149,6 +194,9 @@ func GetPositions(ctx context.Context, c *futuapi.Client, accID uint64) ([]Posit
 // GetTodayFills returns today's order fills for the given account, market, and
 // environment.
 func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderFillListResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetTodayFills: accID is required")
+	}
 	req := &GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -160,6 +208,9 @@ func GetTodayFills(ctx context.Context, c *futuapi.Client, accID uint64, market 
 // GetTodayOrders returns today's orders for the given account, market, and
 // environment.
 func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetOrderListResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetTodayOrders: accID is required")
+	}
 	req := &GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -171,6 +222,9 @@ func GetTodayOrders(ctx context.Context, c *futuapi.Client, accID uint64, market
 // GetAccountFunds returns the account funds (buying power, cash, etc.) for the
 // given account, market, and environment.
 func GetAccountFunds(ctx context.Context, c *futuapi.Client, accID uint64, market constant.TrdMarket, env constant.TrdEnv) (*GetFundsResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetAccountFunds: accID is required")
+	}
 	req := &GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: market,

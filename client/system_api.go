@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/sys"
@@ -187,6 +188,9 @@ func GetDerivativeUnusual(ctx context.Context, c *Client, req *skillwrapapi.Deri
 
 // TestCmd sends a test command to OpenD for internal diagnostics.
 func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*TestCmdResult, error) {
+	if cmd == "" {
+		return nil, fmt.Errorf("TestCmd: cmd is required")
+	}
 	p := ""
 	if len(params) > 0 {
 		p = params[0]
@@ -206,6 +210,9 @@ func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*Tes
 
 // Verification submits a verification request (e.g., SMS or email verification).
 func Verification(ctx context.Context, c *Client, req *sys.VerificationRequest) error {
+	if req == nil {
+		return fmt.Errorf("Verification: req is required")
+	}
 	return sys.Verification(ctx, c.inner, req)
 }
 

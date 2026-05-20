@@ -41,6 +41,9 @@ func GetAccountList(ctx context.Context, c *Client) ([]Account, error) {
 
 // UnlockTrading unlocks trading with the given password (MD5 hash).
 func UnlockTrading(ctx context.Context, c *Client, pwdMD5 string) error {
+	if pwdMD5 == "" {
+		return fmt.Errorf("UnlockTrading: pwdMD5 is required")
+	}
 	return trd.UnlockTrade(ctx, c.inner, &trd.UnlockTradeRequest{
 		Unlock: true,
 		PwdMD5: constant.SensitiveString(pwdMD5),
@@ -49,6 +52,15 @@ func UnlockTrading(ctx context.Context, c *Client, pwdMD5 string) error {
 
 // PlaceOrder places a trading order.
 func PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, side constant.TrdSide, orderType constant.OrderType, price float64, qty float64, secMarket constant.TrdSecMarket) (*PlaceOrderResult, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("PlaceOrder: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("PlaceOrder: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("PlaceOrder: qty must be positive")
+	}
 	if secMarket == 0 {
 		secMarket = constant.TrdSecMarket(inferSecMarket(code))
 	}
@@ -71,6 +83,12 @@ func PlaceOrder(ctx context.Context, c *Client, accID uint64, market constant.Tr
 
 // ModifyOrder modifies or cancels an existing order.
 func ModifyOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, modifyOp constant.ModifyOrderOp, price float64, qty float64) (*trd.ModifyOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("ModifyOrder: accID is required")
+	}
+	if orderID == 0 && modifyOp != constant.ModifyOrderOp_Cancel {
+		return nil, fmt.Errorf("ModifyOrder: orderID is required")
+	}
 	return trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
@@ -84,6 +102,9 @@ func ModifyOrder(ctx context.Context, c *Client, accID uint64, market constant.T
 
 // CancelAllOrder cancels all pending orders for the specified account and market.
 func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, trdEnv constant.TrdEnv) error {
+	if accID == 0 {
+		return fmt.Errorf("CancelAllOrder: accID is required")
+	}
 	_, err := trd.ModifyOrder(ctx, c.inner, &trd.ModifyOrderRequest{
 		AccID:         accID,
 		TrdMarket:     market,
@@ -99,6 +120,9 @@ func CancelAllOrder(ctx context.Context, c *Client, accID uint64, market constan
 
 // GetPositionList retrieves the current positions.
 func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetPositionList: accID is required")
+	}
 	resp, err := trd.GetPositionList(ctx, c.inner, &trd.GetPositionListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
@@ -144,6 +168,9 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 
 // GetAccountInfo retrieves full account information including multi-currency cash and per-market assets.
 func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) (*Funds, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetAccountInfo: accID is required")
+	}
 	resp, err := trd.GetFunds(ctx, c.inner, &trd.GetFundsRequest{
 		AccID:     accID,
 		TrdMarket: market,
@@ -208,6 +235,9 @@ func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constan
 
 // GetFunds retrieves account funds for a specific account.
 func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetFunds: accID is required")
+	}
 	accounts, err := GetAccountList(ctx, c)
 	if err != nil {
 		return nil, err
@@ -235,6 +265,12 @@ func GetFunds(ctx context.Context, c *Client, accID uint64) (*Funds, error) {
 
 // GetMaxTrdQtys retrieves maximum tradable quantities.
 func GetMaxTrdQtys(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64, secMarket constant.TrdSecMarket) (*MaxTrdQtysInfo, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetMaxTrdQtys: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("GetMaxTrdQtys: code is required")
+	}
 	if secMarket == 0 {
 		secMarket = constant.TrdSecMarket(inferSecMarket(code))
 	}
@@ -265,6 +301,12 @@ func GetMaxTrdQtys(ctx context.Context, c *Client, accID uint64, market constant
 
 // GetOrderFee retrieves order fee information.
 func GetOrderFee(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderIDExList []string) ([]*OrderFeeInfo, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetOrderFee: accID is required")
+	}
+	if len(orderIDExList) == 0 {
+		return nil, fmt.Errorf("GetOrderFee: orderIDExList is required")
+	}
 	resp, err := trd.GetOrderFee(ctx, c.inner, &trd.GetOrderFeeRequest{
 		AccID:         accID,
 		TrdMarket:     market,
@@ -295,6 +337,12 @@ func GetOrderFee(ctx context.Context, c *Client, accID uint64, market constant.T
 
 // GetMarginRatio retrieves margin ratio for securities.
 func GetMarginRatio(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, securities []*qotcommon.Security) ([]*MarginRatioInfo, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetMarginRatio: accID is required")
+	}
+	if len(securities) == 0 {
+		return nil, fmt.Errorf("GetMarginRatio: securities is required")
+	}
 	resp, err := trd.GetMarginRatio(ctx, c.inner, &trd.GetMarginRatioRequest{
 		AccID:        accID,
 		TrdMarket:    market,
@@ -331,6 +379,9 @@ func GetMarginRatio(ctx context.Context, c *Client, accID uint64, market constan
 
 // GetOrderList retrieves active orders.
 func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetOrderList: accID is required")
+	}
 	resp, err := trd.GetOrderList(ctx, c.inner, &trd.GetOrderListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
@@ -378,6 +429,9 @@ func GetOrderList(ctx context.Context, c *Client, accID uint64) ([]Order, error)
 
 // GetHistoryOrderList retrieves historical orders.
 func GetHistoryOrderList(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, startDate, endDate string) ([]Order, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetHistoryOrderList: accID is required")
+	}
 	var fc *trdcommon.TrdFilterConditions
 	if startDate != "" || endDate != "" {
 		fc = &trdcommon.TrdFilterConditions{
@@ -436,6 +490,9 @@ func GetHistoryOrderList(ctx context.Context, c *Client, accID uint64, market co
 
 // GetOrderFillList retrieves order fills (executions).
 func GetOrderFillList(ctx context.Context, c *Client, accID uint64) ([]OrderFill, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetOrderFillList: accID is required")
+	}
 	resp, err := trd.GetOrderFillList(ctx, c.inner, &trd.GetOrderFillListRequest{
 		AccID:     accID,
 		TrdMarket: constant.TrdMarket_None,
@@ -473,6 +530,9 @@ func GetOrderFillList(ctx context.Context, c *Client, accID uint64) ([]OrderFill
 
 // GetHistoryOrderFillList retrieves historical order fills.
 func GetHistoryOrderFillList(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) ([]OrderFill, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetHistoryOrderFillList: accID is required")
+	}
 	resp, err := trd.GetHistoryOrderFillList(ctx, c.inner, &trd.GetHistoryOrderFillListRequest{
 		AccID:            accID,
 		TrdMarket:        market,
@@ -514,6 +574,9 @@ func GetHistoryOrderFillList(ctx context.Context, c *Client, accID uint64, marke
 
 // GetFlowSummary retrieves account cash flow entries.
 func GetFlowSummary(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, clearingDate string, direction trdflowsummary.TrdCashFlowDirection) ([]*FlowSummaryInfo, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetFlowSummary: accID is required")
+	}
 	if clearingDate == "" {
 		clearingDate = time.Now().Format("2006-01-02")
 	}
@@ -549,6 +612,12 @@ func GetFlowSummary(ctx context.Context, c *Client, accID uint64, market constan
 
 // GetAccTradingInfo retrieves maximum tradable quantities and margin info for a security.
 func GetAccTradingInfo(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, orderType constant.OrderType, price float64) (*AccTradingInfo, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetAccTradingInfo: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("GetAccTradingInfo: code is required")
+	}
 	secMarket := constant.MarketToTrdSecMarket[int32(market)]
 	resp, err := trd.GetMaxTrdQtys(ctx, c.inner, &trd.GetMaxTrdQtysRequest{
 		AccID:     accID,
@@ -580,6 +649,9 @@ func GetAccTradingInfo(ctx context.Context, c *Client, accID uint64, market cons
 
 // SubAccPush subscribes to account push notifications.
 func SubAccPush(ctx context.Context, c *Client, accIDList []uint64) error {
+	if len(accIDList) == 0 {
+		return fmt.Errorf("SubAccPush: accIDList is required")
+	}
 	return trd.SubAccPush(ctx, c.inner, &trd.SubAccPushRequest{
 		AccIDList: accIDList,
 	})
@@ -587,6 +659,12 @@ func SubAccPush(ctx context.Context, c *Client, accIDList []uint64) error {
 
 // ReconfirmOrder reconfirms an order requiring additional verification.
 func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, orderID uint64, reason int32) (*ReconfirmOrderResult, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("ReconfirmOrder: accID is required")
+	}
+	if orderID == 0 {
+		return nil, fmt.Errorf("ReconfirmOrder: orderID is required")
+	}
 	connID := c.inner.GetConnID()
 	serialNo := c.inner.NextSerialNo()
 	resp, err := trd.ReconfirmOrder(ctx, c.inner, &trd.ReconfirmOrderRequest{

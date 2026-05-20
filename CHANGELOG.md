@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Push callback error logging** — Push callback errors are now logged via `slog.Warn` before being intentionally swallowed, improving debuggability without blocking the read loop (`client/push_callbacks.go`)
 - **WithEnvConfig file read error masking** — `WithEnvConfig` now uses `os.Stat` to distinguish "file not found" from "file exists but unreadable"; read errors are logged via `slog.Warn` instead of silently falling back to raw value (`client/client.go`)
 
+### Added
+
+- **Input validation for all public quote APIs** — Every function in `client/quote_api.go` now validates required parameters at entry: `code`, `num`, `securities`, `subTypes`, `codes`, `groupName`, `plateCode`, `startDate`/`endDate`, `beginTime`/`endTime`, `times`, `begin`, `maxPerPage`, `maxNum`, `market.IsValid()` where applicable (`client/quote_api.go`)
+- **Input validation for all public trade APIs** — Every function in `client/trade_api.go` now validates `accID`, `code`, `qty`, `pwdMD5`, `orderIDExList`, `securities`, `accIDList` where applicable (`client/trade_api.go`)
+- **Input validation for system APIs** — `TestCmd` validates `cmd` non-empty; `Verification` validates `req != nil` (`client/system_api.go`)
+- **Input validation for convenience trade APIs** — `QuickBuy/QuickSell` validate `accID`, `code`, `qty`, `price`; `QuickMarketBuy/QuickMarketSell` validate `accID`, `code`, `qty`; `GetPositions/GetTodayFills/GetTodayOrders/GetAccountFunds` validate `accID` (`pkg/trd/convenience.go`)
+
 ## [v0.9.2] - 2026-05-18
 
 ### Added

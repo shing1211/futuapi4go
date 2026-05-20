@@ -2,7 +2,7 @@
 
 *Generated: 2026-05-20*
 
-## Phase 1: Bug Fixes (High Priority) — CURRENT
+## Phase 1: Bug Fixes (High Priority) — DONE
 
 ### 1.1 Retry on Trading Operations (CRITICAL)
 - **File**: `internal/client/client.go:1325-1365`
@@ -29,10 +29,19 @@
 - **Bug**: If file exists but is unreadable, error is silently swallowed.
 - **Fix**: Distinguish file-not-found from read errors.
 
-## Phase 2: Input Validation (Next)
-- Add validation to all `client/quote_api.go` functions (28 functions)
-- Add validation to all `client/trade_api.go` functions (17 functions)
-- Add validation to `pkg/qot/` lower-level functions
+## Phase 2: Input Validation — DONE
+
+### 2.1 `client/quote_api.go` Validation (46 functions)
+Every function accepting `code` validates `len(code) > 0`. Every function accepting `num` validates `num > 0`. Every function accepting `market` validates it's a known constant. Date range functions validate `startDate`/`endDate` or `beginTime`/`endTime` non-empty. Slice params (`securities`, `subTypes`, `codes`, `times`) validated non-empty. `maxPerPage`/`maxNum` validated > 0.
+
+### 2.2 `client/trade_api.go` Validation (18 functions)
+Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validates `pwdMD5` non-empty. `ModifyOrder` validates `orderID != 0`. `SubAccPush` validates `accIDList` non-empty. `GetOrderFee` validates `orderIDExList` non-empty. `GetMarginRatio` validates `securities` non-empty.
+
+### 2.3 `client/system_api.go` Validation
+`TestCmd` validates `cmd` non-empty. `Verification` validates `req != nil`.
+
+### 2.4 `pkg/trd/convenience.go` Validation
+`QuickBuy/QuickSell` validate `accID != 0`, `code != ""`, `qty > 0`, `price > 0`. `QuickMarketBuy/QuickMarketSell` validate `accID != 0`, `code != ""`, `qty > 0`. `GetPositions/GetTodayFills/GetTodayOrders/GetAccountFunds` validate `accID != 0`.
 
 ## Phase 3: Proto Safety Improvements
 - Replace `GetXxx()` with direct field access (1,287 instances)

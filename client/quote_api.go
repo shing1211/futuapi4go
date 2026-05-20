@@ -25,6 +25,9 @@ var HistoryKLPaginationDelay = DefaultHistoryKLDelay
 
 // GetQuote retrieves the current quote for a security.
 func GetQuote(ctx context.Context, c *Client, market constant.Market, code string) (*Quote, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetQuote: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -118,6 +121,12 @@ func mapRehabInfo(r *qotcommon.Rehab) *RehabInfo {
 
 // GetKLines retrieves K-line (candlestick) data.
 func GetKLines(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, num int) (*KLinesResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetKLines: code is required")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("GetKLines: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -165,6 +174,12 @@ func GetKLines(ctx context.Context, c *Client, market constant.Market, code stri
 
 // Subscribe subscribes to real-time market data.
 func Subscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error {
+	if code == "" {
+		return fmt.Errorf("Subscribe: code is required")
+	}
+	if len(subTypes) == 0 {
+		return fmt.Errorf("Subscribe: subTypes is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -185,6 +200,12 @@ func Subscribe(ctx context.Context, c *Client, market constant.Market, code stri
 
 // Unsubscribe unsubscribes from real-time market data.
 func Unsubscribe(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType) error {
+	if code == "" {
+		return fmt.Errorf("Unsubscribe: code is required")
+	}
+	if len(subTypes) == 0 {
+		return fmt.Errorf("Unsubscribe: subTypes is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -217,6 +238,9 @@ func SubscribeSymbols(ctx context.Context, c *Client, market constant.Market, co
 	if len(codes) == 0 {
 		return fmt.Errorf("SubscribeSymbols: no codes provided")
 	}
+	if len(subTypes) == 0 {
+		return fmt.Errorf("SubscribeSymbols: subTypes is required")
+	}
 
 	securities := make([]*qotcommon.Security, len(codes))
 	marketPtr := int32(market)
@@ -243,6 +267,9 @@ func SubscribeSymbols(ctx context.Context, c *Client, market constant.Market, co
 func UnsubscribeSymbols(ctx context.Context, c *Client, market constant.Market, codes []string, subTypes []constant.SubType) error {
 	if len(codes) == 0 {
 		return fmt.Errorf("UnsubscribeSymbols: no codes provided")
+	}
+	if len(subTypes) == 0 {
+		return fmt.Errorf("UnsubscribeSymbols: subTypes is required")
 	}
 
 	securities := make([]*qotcommon.Security, len(codes))
@@ -272,6 +299,9 @@ func QuerySubscription(ctx context.Context, c *Client) (*qot.GetSubInfoResponse,
 
 // RegQotPush registers or unregisters real-time push notifications for a security.
 func RegQotPush(ctx context.Context, c *Client, market constant.Market, code string, subTypes []constant.SubType, rehabTypes []constant.RehabType, isReg bool, isFirstPush bool) error {
+	if code == "" {
+		return fmt.Errorf("RegQotPush: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -296,6 +326,12 @@ func RegQotPush(ctx context.Context, c *Client, market constant.Market, code str
 
 // GetOrderBook retrieves order book data.
 func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code string, num int) (*OrderBookResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOrderBook: code is required")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("GetOrderBook: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -338,6 +374,12 @@ func GetOrderBook(ctx context.Context, c *Client, market constant.Market, code s
 
 // GetTicker retrieves ticker data.
 func GetTicker(ctx context.Context, c *Client, market constant.Market, code string, num int) (*TickerResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetTicker: code is required")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("GetTicker: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -381,6 +423,9 @@ func GetTicker(ctx context.Context, c *Client, market constant.Market, code stri
 
 // GetRT retrieves real-time data.
 func GetRT(ctx context.Context, c *Client, market constant.Market, code string) (*RTResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetRT: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -412,6 +457,12 @@ func GetRT(ctx context.Context, c *Client, market constant.Market, code string) 
 
 // GetBroker retrieves broker data.
 func GetBroker(ctx context.Context, c *Client, market constant.Market, code string, num int) (*BrokerResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetBroker: code is required")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("GetBroker: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -441,6 +492,9 @@ func GetBroker(ctx context.Context, c *Client, market constant.Market, code stri
 
 // GetStaticInfo retrieves static security info.
 func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code string) ([]StaticInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetStaticInfo: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -509,6 +563,9 @@ func GetStaticInfo(ctx context.Context, c *Client, market constant.Market, code 
 
 // GetSecuritySnapshot returns snapshot data for the given securities.
 func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon.Security) ([]*Snapshot, error) {
+	if len(securities) == 0 {
+		return nil, fmt.Errorf("GetSecuritySnapshot: securities is required")
+	}
 	resp, err := qot.GetSecuritySnapshot(ctx, c.inner, &qot.GetSecuritySnapshotRequest{
 		SecurityList: securities,
 	})
@@ -580,6 +637,12 @@ func GetSecuritySnapshot(ctx context.Context, c *Client, securities []*qotcommon
 
 // GetTradeDate retrieves trade dates.
 func GetTradeDate(ctx context.Context, c *Client, market constant.Market, startDate, endDate string) ([]string, error) {
+	if startDate == "" {
+		return nil, fmt.Errorf("GetTradeDate: startDate is required")
+	}
+	if endDate == "" {
+		return nil, fmt.Errorf("GetTradeDate: endDate is required")
+	}
 	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
 		Market:    int32(market),
 		BeginTime: startDate,
@@ -600,6 +663,12 @@ func GetTradeDate(ctx context.Context, c *Client, market constant.Market, startD
 
 // RequestTradeDate requests trade dates for a specific security.
 func RequestTradeDate(ctx context.Context, c *Client, market constant.Market, startDate, endDate string, code string) ([]string, error) {
+	if startDate == "" {
+		return nil, fmt.Errorf("RequestTradeDate: startDate is required")
+	}
+	if endDate == "" {
+		return nil, fmt.Errorf("RequestTradeDate: endDate is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -627,6 +696,9 @@ func RequestTradeDate(ctx context.Context, c *Client, market constant.Market, st
 
 // GetFutureInfo retrieves futures information.
 func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetFutureInfo: code is required")
+	}
 	marketPtr := int32(2) // HK Future
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -683,6 +755,9 @@ func GetFutureInfo(ctx context.Context, c *Client, code string) ([]FutureInfo, e
 
 // GetPlateSet retrieves plate set (板块) list.
 func GetPlateSet(ctx context.Context, c *Client, market constant.Market) ([]Plate, error) {
+	if !market.IsValid() {
+		return nil, fmt.Errorf("GetPlateSet: invalid market")
+	}
 	marketPtr := int32(market)
 	resp, err := qot.GetPlateSet(ctx, c.inner, &qot.GetPlateSetRequest{Market: marketPtr})
 	if err != nil {
@@ -702,6 +777,9 @@ func GetPlateSet(ctx context.Context, c *Client, market constant.Market) ([]Plat
 
 // GetIpoList retrieves IPO list.
 func GetIpoList(ctx context.Context, c *Client, market constant.Market) ([]IpoData, error) {
+	if !market.IsValid() {
+		return nil, fmt.Errorf("GetIpoList: invalid market")
+	}
 	marketPtr := int32(market)
 	resp, err := qot.GetIpoList(ctx, c.inner, &qot.GetIpoListRequest{Market: marketPtr})
 	if err != nil {
@@ -793,6 +871,9 @@ func GetUserSecurityGroup(ctx context.Context, c *Client) ([]UserSecurityGroup, 
 
 // GetUserSecurity retrieves user security list by group name.
 func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]StaticInfo, error) {
+	if groupName == "" {
+		return nil, fmt.Errorf("GetUserSecurity: groupName is required")
+	}
 	resp, err := qot.GetUserSecurity(ctx, c.inner, groupName)
 	if err != nil {
 		return nil, err
@@ -860,6 +941,9 @@ func GetUserSecurity(ctx context.Context, c *Client, groupName string) ([]Static
 
 // GetMarketState retrieves market state (trading status).
 func GetMarketState(ctx context.Context, c *Client, market constant.Market, code string) (*MarketStateResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetMarketState: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -884,6 +968,9 @@ func GetMarketState(ctx context.Context, c *Client, market constant.Market, code
 
 // GetCapitalFlow retrieves capital flow data.
 func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code string, periodType ...constant.CapitalFlowPeriodType) (*CapitalFlowResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCapitalFlow: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -922,6 +1009,9 @@ func GetCapitalFlow(ctx context.Context, c *Client, market constant.Market, code
 
 // GetCapitalDistribution retrieves capital distribution.
 func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Market, code string) (*CapitalDistribution, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCapitalDistribution: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -951,6 +1041,9 @@ func GetCapitalDistribution(ctx context.Context, c *Client, market constant.Mark
 
 // GetOwnerPlate retrieves owner plates.
 func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code string) (map[string]*OwnerPlateEntry, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOwnerPlate: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -980,11 +1073,32 @@ func GetOwnerPlate(ctx context.Context, c *Client, market constant.Market, code 
 
 // RequestHistoryKL requests historical K-line data with automatic pagination.
 func RequestHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string) (*KLinesResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("RequestHistoryKL: code is required")
+	}
+	if startDate == "" {
+		return nil, fmt.Errorf("RequestHistoryKL: startDate is required")
+	}
+	if endDate == "" {
+		return nil, fmt.Errorf("RequestHistoryKL: endDate is required")
+	}
 	return RequestHistoryKLWithLimit(ctx, c, market, code, klType, startDate, endDate, DefaultHistoryKLPageSize)
 }
 
 // RequestHistoryKLWithLimit requests historical K-line data with a configurable page size.
 func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, startDate, endDate string, maxPerPage int32) (*KLinesResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("RequestHistoryKLWithLimit: code is required")
+	}
+	if startDate == "" {
+		return nil, fmt.Errorf("RequestHistoryKLWithLimit: startDate is required")
+	}
+	if endDate == "" {
+		return nil, fmt.Errorf("RequestHistoryKLWithLimit: endDate is required")
+	}
+	if maxPerPage <= 0 {
+		return nil, fmt.Errorf("RequestHistoryKLWithLimit: maxPerPage must be greater than 0")
+	}
 	marketPtr := int32(market)
 	klTypePtr := int32(klType)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
@@ -1049,6 +1163,18 @@ func RequestHistoryKLWithLimit(ctx context.Context, c *Client, market constant.M
 
 // GetHistoryKL requests historical K-line data.
 func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code string, klType constant.KLType, rehabType constant.RehabType, startDate, endDate string, maxNum int32) (*KLinesResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetHistoryKL: code is required")
+	}
+	if startDate == "" {
+		return nil, fmt.Errorf("GetHistoryKL: startDate is required")
+	}
+	if endDate == "" {
+		return nil, fmt.Errorf("GetHistoryKL: endDate is required")
+	}
+	if maxNum <= 0 {
+		return nil, fmt.Errorf("GetHistoryKL: maxNum must be greater than 0")
+	}
 	marketPtr := int32(market)
 	klTypePtr := int32(klType)
 	rehabTypePtr := int32(rehabType)
@@ -1094,6 +1220,9 @@ func GetHistoryKL(ctx context.Context, c *Client, market constant.Market, code s
 
 // GetReference retrieves related/reference securities.
 func GetReference(ctx context.Context, c *Client, market constant.Market, code string, refType qotgetreference.ReferenceType) ([]StaticInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetReference: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -1137,6 +1266,9 @@ func GetReference(ctx context.Context, c *Client, market constant.Market, code s
 
 // GetPlateSecurity retrieves securities in a plate.
 func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, plateCode string) ([]StaticInfo, error) {
+	if plateCode == "" {
+		return nil, fmt.Errorf("GetPlateSecurity: plateCode is required")
+	}
 	marketPtr := int32(market)
 	plate := &qotcommon.Security{Market: &marketPtr, Code: &plateCode}
 
@@ -1207,6 +1339,9 @@ func GetPlateSecurity(ctx context.Context, c *Client, market constant.Market, pl
 
 // GetOptionExpirationDate retrieves option expiration dates.
 func GetOptionExpirationDate(ctx context.Context, c *Client, market constant.Market, code string) ([]OptionExpiration, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOptionExpirationDate: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 
@@ -1235,6 +1370,12 @@ func GetOptionExpirationDate(ctx context.Context, c *Client, market constant.Mar
 
 // ModifyUserSecurity adds/removes securities from user group.
 func ModifyUserSecurity(ctx context.Context, c *Client, groupName string, op int32, market constant.Market, codes []string) error {
+	if groupName == "" {
+		return fmt.Errorf("ModifyUserSecurity: groupName is required")
+	}
+	if len(codes) == 0 {
+		return fmt.Errorf("ModifyUserSecurity: codes is required")
+	}
 	marketPtr := int32(market)
 	securities := make([]*qotcommon.Security, len(codes))
 	for i, code := range codes {
@@ -1287,6 +1428,12 @@ func GetSubInfo(ctx context.Context, c *Client) (*SubInfo, error) {
 
 // SetPriceReminder creates/updates/deletes a price reminder.
 func SetPriceReminder(ctx context.Context, c *Client, market constant.Market, code string, op constant.PriceReminderOp, reminderType constant.PriceReminderType, freq constant.PriceReminderFreq, value float64, note string) (int64, error) {
+	if code == "" {
+		return 0, fmt.Errorf("SetPriceReminder: code is required")
+	}
+	if op == constant.PriceReminderOp_Add && value <= 0 {
+		return 0, fmt.Errorf("SetPriceReminder: value must be greater than 0 for Set operation")
+	}
 	marketPtr := int32(market)
 	reminderTypePtr := int32(reminderType)
 	freqPtr := int32(freq)
@@ -1307,6 +1454,9 @@ func SetPriceReminder(ctx context.Context, c *Client, market constant.Market, co
 
 // GetPriceReminder retrieves price reminders for a security.
 func GetPriceReminder(ctx context.Context, c *Client, market constant.Market, code string) ([]*PriceReminderInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetPriceReminder: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.GetPriceReminder(ctx, c.inner, sec, marketPtr)
@@ -1344,6 +1494,15 @@ func GetPriceReminder(ctx context.Context, c *Client, market constant.Market, co
 
 // GetSuspend retrieves suspension information for securities.
 func GetSuspend(ctx context.Context, c *Client, securities []*qotcommon.Security, beginTime, endTime string) ([]*SuspendInfo, error) {
+	if len(securities) == 0 {
+		return nil, fmt.Errorf("GetSuspend: securities is required")
+	}
+	if beginTime == "" {
+		return nil, fmt.Errorf("GetSuspend: beginTime is required")
+	}
+	if endTime == "" {
+		return nil, fmt.Errorf("GetSuspend: endTime is required")
+	}
 	resp, err := qot.GetSuspend(ctx, c.inner, &qot.GetSuspendRequest{
 		SecurityList: securities,
 		BeginTime:    beginTime,
@@ -1373,6 +1532,9 @@ func GetSuspend(ctx context.Context, c *Client, securities []*qotcommon.Security
 
 // GetCodeChange returns code change information for the given securities.
 func GetCodeChange(ctx context.Context, c *Client, securities []*qotcommon.Security) ([]*CodeChangeInfo, error) {
+	if len(securities) == 0 {
+		return nil, fmt.Errorf("GetCodeChange: securities is required")
+	}
 	resp, err := qot.GetCodeChange(ctx, c.inner, &qot.GetCodeChangeRequest{
 		SecurityList: securities,
 	})
@@ -1402,6 +1564,15 @@ func GetCodeChange(ctx context.Context, c *Client, securities []*qotcommon.Secur
 
 // GetHoldingChangeList retrieves holding change list.
 func GetHoldingChangeList(ctx context.Context, c *Client, market constant.Market, code string, holderCategory constant.HolderCategory, beginTime, endTime string) ([]*HoldingChangeInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetHoldingChangeList: code is required")
+	}
+	if beginTime == "" {
+		return nil, fmt.Errorf("GetHoldingChangeList: beginTime is required")
+	}
+	if endTime == "" {
+		return nil, fmt.Errorf("GetHoldingChangeList: endTime is required")
+	}
 	marketPtr := int32(market)
 	holderCatPtr := int32(holderCategory)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
@@ -1435,6 +1606,12 @@ func GetHoldingChangeList(ctx context.Context, c *Client, market constant.Market
 
 // StockFilter filters stocks based on basic criteria.
 func StockFilter(ctx context.Context, c *Client, market constant.Market, begin, num int32) ([]*StockFilterResult, error) {
+	if begin < 0 {
+		return nil, fmt.Errorf("StockFilter: begin must be >= 0")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("StockFilter: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	resp, err := qot.StockFilter(ctx, c.inner, &qot.StockFilterRequest{
 		Market: marketPtr,
@@ -1480,6 +1657,9 @@ func StockFilter(ctx context.Context, c *Client, market constant.Market, begin, 
 
 // GetOptionChain returns the option chain for the given underlying security.
 func GetOptionChain(ctx context.Context, c *Client, market constant.Market, code string, indexOptionType constant.IndexOptionType, optType constant.OptionType, condition int32, beginTime, endTime string) ([]*OptChain, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOptionChain: code is required")
+	}
 	if beginTime == "" {
 		beginTime = time.Now().Format("2006-01-02")
 	}
@@ -1530,6 +1710,15 @@ func GetOptionChain(ctx context.Context, c *Client, market constant.Market, code
 
 // GetWarrant returns the list of warrants for the given underlying security.
 func GetWarrant(ctx context.Context, c *Client, market constant.Market, code string, begin, num int32, sortField constant.WarrantSortField, ascend bool, optType constant.WarrantType, issuer qotcommon.Issuer, status constant.WarrantStatus) (*WarrantResult, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetWarrant: code is required")
+	}
+	if begin < 0 {
+		return nil, fmt.Errorf("GetWarrant: begin must be >= 0")
+	}
+	if num <= 0 {
+		return nil, fmt.Errorf("GetWarrant: num must be greater than 0")
+	}
 	marketPtr := int32(market)
 	owner := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	optTypePtr := int32(optType)
@@ -1613,6 +1802,9 @@ func GetWarrant(ctx context.Context, c *Client, market constant.Market, code str
 
 // RequestRehab requests rehabilitation (复权) data.
 func RequestRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("RequestRehab: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.RequestRehab(ctx, c.inner, &qot.RequestRehabRequest{
@@ -1633,6 +1825,9 @@ func RequestRehab(ctx context.Context, c *Client, market constant.Market, code s
 // Unlike RequestRehab (which may use cached data), GetRehab always fetches
 // fresh rehabilitation data from the server.
 func GetRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetRehab: code is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	resp, err := qot.GetRehab(ctx, c.inner, &qot.GetRehabRequest{
@@ -1662,6 +1857,12 @@ func GetRehab(ctx context.Context, c *Client, market constant.Market, code strin
 
 // GetHistoryKLPoints retrieves K-line data at specific time points for a security.
 func GetHistoryKLPoints(ctx context.Context, c *Client, market constant.Market, code string, times []string, klType constant.KLType, rehabType constant.RehabType, noDataMode qot.NoDataMode) (*qot.GetHistoryKLPointsResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetHistoryKLPoints: code is required")
+	}
+	if len(times) == 0 {
+		return nil, fmt.Errorf("GetHistoryKLPoints: times is required")
+	}
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	return qot.GetHistoryKLPoints(ctx, c.inner, &qot.GetHistoryKLPointsRequest{
@@ -1675,6 +1876,12 @@ func GetHistoryKLPoints(ctx context.Context, c *Client, market constant.Market, 
 
 // GetTradeDates retrieves trade dates for a market within a date range.
 func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endTime string) ([]TradeDate, error) {
+	if beginTime == "" {
+		return nil, fmt.Errorf("GetTradeDates: beginTime is required")
+	}
+	if endTime == "" {
+		return nil, fmt.Errorf("GetTradeDates: endTime is required")
+	}
 	resp, err := qot.GetTradeDate(ctx, c.inner, &qot.GetTradeDateRequest{
 		Market:    market,
 		BeginTime: beginTime,
