@@ -14,7 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **25 new fundamental data APIs** (Protocol IDs 3227-3251): GetFinancialsStatements, GetResearchAnalystConsensus, GetValuationDetail, GetCorporateActionsDividends, GetShareholdersOverview, and 20 more market data APIs
+- **25 new fundamental data APIs** (Protocol IDs 3227-3251): GetFinancialsStatements, GetFinancialsRevenueBreakdown, GetResearchAnalystConsensus, GetResearchRatingSummary, GetResearchMorningstarReport, GetValuationDetail, GetValuationPlateStockList, GetCorporateActionsDividends, GetCorporateActionsBuybacks, GetCorporateActionsStockSplits, GetShareholdersOverview, GetShareholdersHoldingChanges, GetShareholdersHolderDetail, GetShareholdersInstitutional, GetInsiderHolderList, GetInsiderTradeList, GetCompanyProfile, GetCompanyExecutives, GetCompanyExecutiveBackground, GetCompanyOperationalEfficiency, GetTopTenBuySellBrokers, GetDailyShortVolume, GetShortInterest, GetOptionVolatility, GetOptionExerciseProbability
+- **9 new pkg/qot/ files**: financials.go, research.go, valuation.go, corporate.go, shareholders.go, insider.go, company.go, shortselling.go, option_extra.go
+- **26 new client/quote_api.go wrappers** including previously missing RequestHistoryKLQuota
+- **26 new client/fluent_api.go QuoteAPI methods**
+- **8 new client/trade_api.go convenience wrappers**: QuickBuy, QuickSell, QuickMarketBuy, QuickMarketSell, GetPositions, GetTodayFills, GetTodayOrders, GetAccountFunds
 - **Enhanced Qot_StockFilter** — PatternFilter and CustomIndicatorFilter support
 - **New StockField enums** — CustomIndicatorField, PatternField, SortDir, RelativePosition, FinancialStatementsType, F10Type, FinancialQuarter
 

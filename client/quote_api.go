@@ -1886,3 +1886,327 @@ func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endT
 	}
 	return dates, nil
 }
+
+func GetFinancialsStatements(ctx context.Context, c *Client, market constant.Market, code string, statementType, financialType int32, currencyCode, nextKey string, num int32) (*qot.GetFinancialsStatementsResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetFinancialsStatements: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetFinancialsStatements(ctx, c.inner, &qot.GetFinancialsStatementsRequest{
+		Security:       sec,
+		StatementType:  statementType,
+		FinancialType:  financialType,
+		CurrencyCode:   currencyCode,
+		NextKey:        nextKey,
+		Num:            num,
+	})
+}
+
+func GetFinancialsRevenueBreakdown(ctx context.Context, c *Client, market constant.Market, code string, date uint32, financialType int32, currencyCode string) (*qot.GetFinancialsRevenueBreakdownResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetFinancialsRevenueBreakdown: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetFinancialsRevenueBreakdown(ctx, c.inner, &qot.GetFinancialsRevenueBreakdownRequest{
+		Security:      sec,
+		Date:          date,
+		FinancialType: financialType,
+		CurrencyCode:  currencyCode,
+	})
+}
+
+func GetResearchAnalystConsensus(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetResearchAnalystConsensusResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetResearchAnalystConsensus: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetResearchAnalystConsensus(ctx, c.inner, &qot.GetResearchAnalystConsensusRequest{Security: sec})
+}
+
+func GetResearchRatingSummary(ctx context.Context, c *Client, market constant.Market, code string, ratingDimensionType qotcommon.ResearchRatingDimensionType, uid string, nextKey string, num int32) (*qot.GetResearchRatingSummaryResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetResearchRatingSummary: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetResearchRatingSummary(ctx, c.inner, &qot.GetResearchRatingSummaryRequest{
+		Security:            sec,
+		RatingDimensionType: &ratingDimensionType,
+		Uid:                 uid,
+		NextKey:             nextKey,
+		Num:                 num,
+	})
+}
+
+func GetResearchMorningstarReport(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetResearchMorningstarReportResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetResearchMorningstarReport: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetResearchMorningstarReport(ctx, c.inner, &qot.GetResearchMorningstarReportRequest{Security: sec})
+}
+
+func GetValuationDetail(ctx context.Context, c *Client, market constant.Market, code string, valuationType, intervalType int32) (*qot.GetValuationDetailResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetValuationDetail: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetValuationDetail(ctx, c.inner, &qot.GetValuationDetailRequest{
+		Security:      sec,
+		ValuationType: valuationType,
+		IntervalType:  intervalType,
+	})
+}
+
+func GetValuationPlateStockList(ctx context.Context, c *Client, market constant.Market, code string, filterMarket constant.Market, filterCode string, valuationType int32, nextKey string, num, sortType, sortId int32) (*qot.GetValuationPlateStockListResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetValuationPlateStockList: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	req := &qot.GetValuationPlateStockListRequest{
+		Security:      sec,
+		ValuationType: valuationType,
+		NextKey:       nextKey,
+		Num:           num,
+		SortType:      sortType,
+		SortId:        sortId,
+	}
+	if filterCode != "" {
+		filterMarketPtr := int32(filterMarket)
+		req.FilterSecurity = &qotcommon.Security{Market: &filterMarketPtr, Code: &filterCode}
+	}
+	return qot.GetValuationPlateStockList(ctx, c.inner, req)
+}
+
+func GetCorporateActionsDividends(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetCorporateActionsDividendsResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCorporateActionsDividends: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCorporateActionsDividends(ctx, c.inner, &qot.GetCorporateActionsDividendsRequest{Security: sec})
+}
+
+func GetCorporateActionsBuybacks(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetCorporateActionsBuybacksResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCorporateActionsBuybacks: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCorporateActionsBuybacks(ctx, c.inner, &qot.GetCorporateActionsBuybacksRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetCorporateActionsStockSplits(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetCorporateActionsStockSplitsResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCorporateActionsStockSplits: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCorporateActionsStockSplits(ctx, c.inner, &qot.GetCorporateActionsStockSplitsRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetShareholdersOverview(ctx context.Context, c *Client, market constant.Market, code string, periodId int32) (*qot.GetShareholdersOverviewResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetShareholdersOverview: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetShareholdersOverview(ctx, c.inner, &qot.GetShareholdersOverviewRequest{Security: sec, PeriodId: periodId})
+}
+
+func GetShareholdersHoldingChanges(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num, sortType, sortColumn, filterType int32) (*qot.GetShareholdersHoldingChangesResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetShareholdersHoldingChanges: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetShareholdersHoldingChanges(ctx, c.inner, &qot.GetShareholdersHoldingChangesRequest{
+		Security:   sec,
+		NextKey:    nextKey,
+		Num:        num,
+		SortType:   sortType,
+		SortColumn: sortColumn,
+		FilterType: filterType,
+	})
+}
+
+func GetShareholdersHolderDetail(ctx context.Context, c *Client, market constant.Market, code string, requestType int32, nextKey string, num, sortColumn, sortType, periodId, holderId int32) (*qot.GetShareholdersHolderDetailResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetShareholdersHolderDetail: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetShareholdersHolderDetail(ctx, c.inner, &qot.GetShareholdersHolderDetailRequest{
+		Security:    sec,
+		RequestType: requestType,
+		NextKey:     nextKey,
+		Num:         num,
+		SortColumn:  sortColumn,
+		SortType:    sortType,
+		PeriodId:    periodId,
+		HolderId:    holderId,
+	})
+}
+
+func GetShareholdersInstitutional(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetShareholdersInstitutionalResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetShareholdersInstitutional: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetShareholdersInstitutional(ctx, c.inner, &qot.GetShareholdersInstitutionalRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetInsiderHolderList(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetInsiderHolderListResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetInsiderHolderList: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetInsiderHolderList(ctx, c.inner, &qot.GetInsiderHolderListRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetInsiderTradeList(ctx context.Context, c *Client, market constant.Market, code string, holderId int64, nextKey string, num int32) (*qot.GetInsiderTradeListResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetInsiderTradeList: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetInsiderTradeList(ctx, c.inner, &qot.GetInsiderTradeListRequest{
+		Security: sec,
+		HolderId: holderId,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetCompanyProfile(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetCompanyProfileResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCompanyProfile: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCompanyProfile(ctx, c.inner, &qot.GetCompanyProfileRequest{Security: sec})
+}
+
+func GetCompanyExecutives(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetCompanyExecutivesResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCompanyExecutives: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCompanyExecutives(ctx, c.inner, &qot.GetCompanyExecutivesRequest{Security: sec})
+}
+
+func GetCompanyExecutiveBackground(ctx context.Context, c *Client, market constant.Market, code string, leaderName string) (*qot.GetCompanyExecutiveBackgroundResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCompanyExecutiveBackground: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCompanyExecutiveBackground(ctx, c.inner, &qot.GetCompanyExecutiveBackgroundRequest{
+		Security:   sec,
+		LeaderName: leaderName,
+	})
+}
+
+func GetCompanyOperationalEfficiency(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32, currencyCode string, financialType int32) (*qot.GetCompanyOperationalEfficiencyResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetCompanyOperationalEfficiency: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetCompanyOperationalEfficiency(ctx, c.inner, &qot.GetCompanyOperationalEfficiencyRequest{
+		Security:      sec,
+		NextKey:       nextKey,
+		Num:           num,
+		CurrencyCode:  currencyCode,
+		FinancialType:  financialType,
+	})
+}
+
+func GetTopTenBuySellBrokers(ctx context.Context, c *Client, market constant.Market, code string, daysBefore int32) (*qot.GetTopTenBuySellBrokersResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetTopTenBuySellBrokers: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetTopTenBuySellBrokers(ctx, c.inner, &qot.GetTopTenBuySellBrokersRequest{
+		Security:   sec,
+		DaysBefore: daysBefore,
+	})
+}
+
+func GetDailyShortVolume(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetDailyShortVolumeResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetDailyShortVolume: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetDailyShortVolume(ctx, c.inner, &qot.GetDailyShortVolumeRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetShortInterest(ctx context.Context, c *Client, market constant.Market, code string, nextKey string, num int32) (*qot.GetShortInterestResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetShortInterest: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetShortInterest(ctx, c.inner, &qot.GetShortInterestRequest{
+		Security: sec,
+		NextKey:  nextKey,
+		Num:      num,
+	})
+}
+
+func GetOptionVolatility(ctx context.Context, c *Client, market constant.Market, code string, queryTimePeriod qotcommon.OptionVolatilityTimePeriodType, hvTimePeriod int32) (*qot.GetOptionVolatilityResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOptionVolatility: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetOptionVolatility(ctx, c.inner, &qot.GetOptionVolatilityRequest{
+		Security:         sec,
+		QueryTimePeriod:  queryTimePeriod,
+		HvTimePeriod:     hvTimePeriod,
+	})
+}
+
+func GetOptionExerciseProbability(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetOptionExerciseProbabilityResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetOptionExerciseProbability: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetOptionExerciseProbability(ctx, c.inner, &qot.GetOptionExerciseProbabilityRequest{Security: sec})
+}
+
+func GetHistoryKLQuota(ctx context.Context, c *Client) (*qot.RequestHistoryKLQuotaResponse, error) {
+	return qot.RequestHistoryKLQuota(ctx, c.inner, &qot.RequestHistoryKLQuotaRequest{})
+}

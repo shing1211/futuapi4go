@@ -112,6 +112,110 @@ func (api *QuoteAPI) GetPriceReminder(ctx context.Context, security *qotcommon.S
 	return qot.GetPriceReminder(ctx, api.client, security, market)
 }
 
+func (api *QuoteAPI) GetFinancialsStatements(ctx context.Context, req *qot.GetFinancialsStatementsRequest) (*qot.GetFinancialsStatementsResponse, error) {
+	return qot.GetFinancialsStatements(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetFinancialsRevenueBreakdown(ctx context.Context, req *qot.GetFinancialsRevenueBreakdownRequest) (*qot.GetFinancialsRevenueBreakdownResponse, error) {
+	return qot.GetFinancialsRevenueBreakdown(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetResearchAnalystConsensus(ctx context.Context, req *qot.GetResearchAnalystConsensusRequest) (*qot.GetResearchAnalystConsensusResponse, error) {
+	return qot.GetResearchAnalystConsensus(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetResearchRatingSummary(ctx context.Context, req *qot.GetResearchRatingSummaryRequest) (*qot.GetResearchRatingSummaryResponse, error) {
+	return qot.GetResearchRatingSummary(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetResearchMorningstarReport(ctx context.Context, req *qot.GetResearchMorningstarReportRequest) (*qot.GetResearchMorningstarReportResponse, error) {
+	return qot.GetResearchMorningstarReport(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetValuationDetail(ctx context.Context, req *qot.GetValuationDetailRequest) (*qot.GetValuationDetailResponse, error) {
+	return qot.GetValuationDetail(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetValuationPlateStockList(ctx context.Context, req *qot.GetValuationPlateStockListRequest) (*qot.GetValuationPlateStockListResponse, error) {
+	return qot.GetValuationPlateStockList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCorporateActionsDividends(ctx context.Context, req *qot.GetCorporateActionsDividendsRequest) (*qot.GetCorporateActionsDividendsResponse, error) {
+	return qot.GetCorporateActionsDividends(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCorporateActionsBuybacks(ctx context.Context, req *qot.GetCorporateActionsBuybacksRequest) (*qot.GetCorporateActionsBuybacksResponse, error) {
+	return qot.GetCorporateActionsBuybacks(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCorporateActionsStockSplits(ctx context.Context, req *qot.GetCorporateActionsStockSplitsRequest) (*qot.GetCorporateActionsStockSplitsResponse, error) {
+	return qot.GetCorporateActionsStockSplits(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShareholdersOverview(ctx context.Context, req *qot.GetShareholdersOverviewRequest) (*qot.GetShareholdersOverviewResponse, error) {
+	return qot.GetShareholdersOverview(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShareholdersHoldingChanges(ctx context.Context, req *qot.GetShareholdersHoldingChangesRequest) (*qot.GetShareholdersHoldingChangesResponse, error) {
+	return qot.GetShareholdersHoldingChanges(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShareholdersHolderDetail(ctx context.Context, req *qot.GetShareholdersHolderDetailRequest) (*qot.GetShareholdersHolderDetailResponse, error) {
+	return qot.GetShareholdersHolderDetail(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShareholdersInstitutional(ctx context.Context, req *qot.GetShareholdersInstitutionalRequest) (*qot.GetShareholdersInstitutionalResponse, error) {
+	return qot.GetShareholdersInstitutional(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInsiderHolderList(ctx context.Context, req *qot.GetInsiderHolderListRequest) (*qot.GetInsiderHolderListResponse, error) {
+	return qot.GetInsiderHolderList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInsiderTradeList(ctx context.Context, req *qot.GetInsiderTradeListRequest) (*qot.GetInsiderTradeListResponse, error) {
+	return qot.GetInsiderTradeList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCompanyProfile(ctx context.Context, req *qot.GetCompanyProfileRequest) (*qot.GetCompanyProfileResponse, error) {
+	return qot.GetCompanyProfile(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCompanyExecutives(ctx context.Context, req *qot.GetCompanyExecutivesRequest) (*qot.GetCompanyExecutivesResponse, error) {
+	return qot.GetCompanyExecutives(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCompanyExecutiveBackground(ctx context.Context, req *qot.GetCompanyExecutiveBackgroundRequest) (*qot.GetCompanyExecutiveBackgroundResponse, error) {
+	return qot.GetCompanyExecutiveBackground(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetCompanyOperationalEfficiency(ctx context.Context, req *qot.GetCompanyOperationalEfficiencyRequest) (*qot.GetCompanyOperationalEfficiencyResponse, error) {
+	return qot.GetCompanyOperationalEfficiency(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetTopTenBuySellBrokers(ctx context.Context, req *qot.GetTopTenBuySellBrokersRequest) (*qot.GetTopTenBuySellBrokersResponse, error) {
+	return qot.GetTopTenBuySellBrokers(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetDailyShortVolume(ctx context.Context, req *qot.GetDailyShortVolumeRequest) (*qot.GetDailyShortVolumeResponse, error) {
+	return qot.GetDailyShortVolume(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShortInterest(ctx context.Context, req *qot.GetShortInterestRequest) (*qot.GetShortInterestResponse, error) {
+	return qot.GetShortInterest(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionVolatility(ctx context.Context, req *qot.GetOptionVolatilityRequest) (*qot.GetOptionVolatilityResponse, error) {
+	return qot.GetOptionVolatility(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionExerciseProbability(ctx context.Context, req *qot.GetOptionExerciseProbabilityRequest) (*qot.GetOptionExerciseProbabilityResponse, error) {
+	return qot.GetOptionExerciseProbability(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetHistoryKLQuota(ctx context.Context, req *qot.RequestHistoryKLQuotaRequest) (*qot.RequestHistoryKLQuotaResponse, error) {
+	return qot.RequestHistoryKLQuota(ctx, api.client, req)
+}
+
 // TradeAPI provides a fluent API for trading operations.
 // Use client.Trade() to get an instance.
 type TradeAPI struct {
@@ -190,12 +294,10 @@ func (api *TradeAPI) GetMarginRatio(ctx context.Context, req *trd.GetMarginRatio
 	return trd.GetMarginRatio(ctx, api.client, req)
 }
 
-// GetFlowSummary retrieves flow summary.
 func (api *TradeAPI) GetFlowSummary(ctx context.Context, req *trd.GetFlowSummaryRequest) (*trd.GetFlowSummaryResponse, error) {
 	return trd.GetFlowSummary(ctx, api.client, req)
 }
 
-// NewOrderBuilder creates a new order for building with the client's trading environment.
 func (api *TradeAPI) NewOrder(accID uint64, market constant.TrdMarket) *trd.OrderBuilder {
 	return trd.NewOrder(accID, market, api.trdEnv)
 }

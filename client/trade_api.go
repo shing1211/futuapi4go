@@ -689,3 +689,89 @@ func ReconfirmOrder(ctx context.Context, c *Client, accID uint64, market constan
 		OrderID:   resp.OrderID,
 	}, nil
 }
+
+func QuickBuy(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, qty, price float64) (*trd.PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickBuy: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickBuy: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickBuy: qty must be positive")
+	}
+	if price <= 0 {
+		return nil, fmt.Errorf("QuickBuy: price must be positive")
+	}
+	return trd.QuickBuy(ctx, c.inner, accID, market, c.trdEnv, code, qty, price)
+}
+
+func QuickSell(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, qty, price float64) (*trd.PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickSell: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickSell: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickSell: qty must be positive")
+	}
+	if price <= 0 {
+		return nil, fmt.Errorf("QuickSell: price must be positive")
+	}
+	return trd.QuickSell(ctx, c.inner, accID, market, c.trdEnv, code, qty, price)
+}
+
+func QuickMarketBuy(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, qty float64) (*trd.PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickMarketBuy: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickMarketBuy: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickMarketBuy: qty must be positive")
+	}
+	return trd.QuickMarketBuy(ctx, c.inner, accID, market, c.trdEnv, code, qty)
+}
+
+func QuickMarketSell(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket, code string, qty float64) (*trd.PlaceOrderResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("QuickMarketSell: accID is required")
+	}
+	if code == "" {
+		return nil, fmt.Errorf("QuickMarketSell: code is required")
+	}
+	if qty <= 0 {
+		return nil, fmt.Errorf("QuickMarketSell: qty must be positive")
+	}
+	return trd.QuickMarketSell(ctx, c.inner, accID, market, c.trdEnv, code, qty)
+}
+
+func GetPositions(ctx context.Context, c *Client, accID uint64) ([]trd.PositionDetail, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetPositions: accID is required")
+	}
+	return trd.GetPositions(ctx, c.inner, accID)
+}
+
+func GetTodayFills(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) (*trd.GetOrderFillListResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetTodayFills: accID is required")
+	}
+	return trd.GetTodayFills(ctx, c.inner, accID, market, c.trdEnv)
+}
+
+func GetTodayOrders(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) (*trd.GetOrderListResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetTodayOrders: accID is required")
+	}
+	return trd.GetTodayOrders(ctx, c.inner, accID, market, c.trdEnv)
+}
+
+func GetAccountFunds(ctx context.Context, c *Client, accID uint64, market constant.TrdMarket) (*trd.GetFundsResponse, error) {
+	if accID == 0 {
+		return nil, fmt.Errorf("GetAccountFunds: accID is required")
+	}
+	return trd.GetAccountFunds(ctx, c.inner, accID, market, c.trdEnv)
+}

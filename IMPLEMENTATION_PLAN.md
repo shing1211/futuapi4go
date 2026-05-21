@@ -64,7 +64,31 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 - Known exclusions: `c.inner.GetConnID()`, `c.inner.GetServerVer()`, `c.inner.GetLoginUserID()` are NOT proto getters (internal client methods)
 - Detail plan: `PHASE3_PROTO_SAFETY_PLAN.md`
 
-## Phase 4: Missing High-Level API Coverage — FUTURE
+## Phase 4: Missing High-Level API Coverage — DONE
+
+### Implemented (25 new quote APIs + 34 new client wrappers)
+
+**9 new pkg/qot/ files** with 25 API implementations:
+- `pkg/qot/financials.go`: GetFinancialsStatements (3227), GetFinancialsRevenueBreakdown (3228)
+- `pkg/qot/research.go`: GetResearchAnalystConsensus (3229), GetResearchRatingSummary (3230), GetResearchMorningstarReport (3231)
+- `pkg/qot/valuation.go`: GetValuationDetail (3232), GetValuationPlateStockList (3233)
+- `pkg/qot/corporate.go`: GetCorporateActionsDividends (3234), GetCorporateActionsBuybacks (3235), GetCorporateActionsStockSplits (3236)
+- `pkg/qot/shareholders.go`: GetShareholdersOverview (3237), GetShareholdersHoldingChanges (3238), GetShareholdersHolderDetail (3239), GetShareholdersInstitutional (3240)
+- `pkg/qot/insider.go`: GetInsiderHolderList (3241), GetInsiderTradeList (3242)
+- `pkg/qot/company.go`: GetCompanyProfile (3243), GetCompanyExecutives (3244), GetCompanyExecutiveBackground (3245), GetCompanyOperationalEfficiency (3246)
+- `pkg/qot/shortselling.go`: GetTopTenBuySellBrokers (3247), GetDailyShortVolume (3248), GetShortInterest (3249)
+- `pkg/qot/option_extra.go`: GetOptionVolatility (3250), GetOptionExerciseProbability (3251)
+
+**Client layer additions**:
+- 26 new `client/quote_api.go` wrappers (25 new + 1 missing existing: RequestHistoryKLQuota)
+- 26 new `client/fluent_api.go` QuoteAPI methods
+- 8 new `client/trade_api.go` convenience wrappers (QuickBuy, QuickSell, QuickMarketBuy, QuickMarketSell, GetPositions, GetTodayFills, GetTodayOrders, GetAccountFunds)
+
+**Deferred** (5 screening APIs — no ProtoID assigned yet):
+- Qot_StockScreen.proto, Qot_WarrantScreen.proto, Qot_OptionScreen.proto
+- Qot_GetFinancialsEarningsPriceMove.proto, Qot_GetFinancialsEarningsPriceHistory.proto
+
+### Old Phase 4 text (superseded):
 - Add `client/` wrappers for `RequestHistoryKLQuota`, `GetUserSecurityGroup`, etc.
 - Add fluent API methods for missing functions
 
