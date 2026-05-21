@@ -43,7 +43,7 @@ go test -bench=. -benchmem ./internal/client/...
 ## Adding a New API
 
 1. Confirm the proto in `api/proto/`
-2. Run `./scripts/regen-all-protos.ps1`
+2. Run `./scripts/regen-all-protos.sh`
 3. Add the wrapper function in `pkg/qot/` or `pkg/trd/`:
    - Context as FIRST parameter
    - Input validation at entry
@@ -172,7 +172,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `ENHANCEMENT_PLAN.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.8.5)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.11.0)
 
 ---
 
@@ -189,7 +189,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 3. Race detection: Always run with `-race` flag for concurrent code
 
 ### Proto Issues
-1. Did you regenerate protos after proto file change? `./scripts/regen-all-protos.ps1`
+1. Did you regenerate protos after proto file change? `./scripts/regen-all-protos.sh`
 2. Check import paths match package structure
 
 ---

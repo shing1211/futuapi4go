@@ -21,10 +21,8 @@ import (
 	"fmt"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
-	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrehab"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetholdingchangelist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestrehab"
 	"github.com/shing1211/futuapi4go/pkg/util"
@@ -127,46 +125,23 @@ func RequestRehab(ctx context.Context, c *futuapi.Client, req *RequestRehabReque
 }
 
 // GetRehabRequest defines parameters for GetRehab.
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgetrehab no longer exists.
+// Use RequestRehab instead.
 type GetRehabRequest struct {
 	Security *qotcommon.Security
 }
 
 // GetRehabResponse is the response type for GetRehab.
+// Deprecated: Removed in Futu v10.6 proto.
 type GetRehabResponse struct {
-	SecurityRehabList []*qotgetrehab.SecurityRehab
+	SecurityRehabList any //nolint:revive // deprecated type
 }
 
 // GetRehab returns rehabilitation (复权) data for the given security.
-// Uses Qot_GetRehab (ProtoID 3102) which supports multiple securities.
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgetrehab no longer exists.
+// Use RequestRehab instead.
 func GetRehab(ctx context.Context, c *futuapi.Client, req *GetRehabRequest) (*GetRehabResponse, error) {
-	if req == nil {
-		return nil, fmt.Errorf("GetRehab: request is nil")
-	}
-	if req.Security == nil {
-		return nil, fmt.Errorf("security is required")
-	}
-
-	c2s := &qotgetrehab.C2S{
-		SecurityList: []*qotcommon.Security{req.Security},
-	}
-
-	pkt := &qotgetrehab.Request{C2S: c2s}
-	var rsp qotgetrehab.Response
-
-	if err := c.RequestContext(ctx, constant.ProtoID_Qot_GetRehab, pkt, &rsp); err != nil {
-		return nil, err
-	}
-
-	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetRehab", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
-	}
-
-	s2c := rsp.S2C
-	if s2c == nil {
-		return nil, wrapError("GetRehab", int32(common.RetType_RetType_Unknown), "s2c is nil")
-	}
-
-	return &GetRehabResponse{
-		SecurityRehabList: s2c.SecurityRehabList,
-	}, nil
+	_ = req
+	_ = c
+	return nil, fmt.Errorf("GetRehab: removed in Futu v10.6 — use RequestRehab instead")
 }

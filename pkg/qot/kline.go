@@ -20,14 +20,10 @@ import (
 	"context"
 	"fmt"
 
-	"google.golang.org/protobuf/proto"
-
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistorykl"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgethistoryklpoints"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistorykl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryklquota"
 	"github.com/shing1211/futuapi4go/pkg/util"
@@ -154,79 +150,22 @@ type GetHistoryKLResponse struct {
 }
 
 // GetHistoryKL returns historical K-line data for the given security.
-// Deprecated: Use RequestHistoryKL for paginated requests via NextReqKey.
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgethistorykl no longer exists.
+// Use RequestHistoryKL for paginated requests via NextReqKey.
 func GetHistoryKL(ctx context.Context, c *futuapi.Client, req *GetHistoryKLRequest) (*GetHistoryKLResponse, error) {
-	if req == nil {
-		return nil, fmt.Errorf("GetHistoryKL: request is nil")
-	}
-	if req.Security == nil {
-		return nil, fmt.Errorf("GetHistoryKL: security is required")
-	}
-
-	c2s := &qotgethistorykl.C2S{
-		RehabType: &req.RehabType,
-		KlType:    &req.KlType,
-		Security:  req.Security,
-		BeginTime: &req.BeginTime,
-		EndTime:   &req.EndTime,
-	}
-	if req.MaxAckKLNum != 0 {
-		c2s.MaxAckKLNum = &req.MaxAckKLNum
-	}
-	if req.NeedKLFieldsFlag != 0 {
-		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
-	}
-
-	pkt := &qotgethistorykl.Request{C2S: c2s}
-	var rsp qotgethistorykl.Response
-
-	if err := c.RequestContext(ctx, ProtoID_GetHistoryKL, pkt, &rsp); err != nil {
-		return nil, err
-	}
-
-	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryKL", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
-	}
-
-	s2c := rsp.S2C
-	if s2c == nil {
-		return nil, wrapError("GetHistoryKL", int32(common.RetType_RetType_Unknown), "s2c is nil")
-	}
-
-	result := &GetHistoryKLResponse{
-		Security:        s2c.Security,
-		NextKLTime:      util.ProtoStr(s2c.NextKLTime),
-		NextKLTimestamp: util.ProtoFloat64(s2c.NextKLTimestamp),
-		KLList:          make([]*KLine, 0, len(s2c.KlList)),
-	}
-
-	for _, kl := range s2c.KlList {
-		if kl == nil {
-			continue
-		}
-		result.KLList = append(result.KLList, &KLine{
-			Time:           util.ProtoStr(kl.Time),
-			IsBlank:        util.ProtoBool(kl.IsBlank),
-			HighPrice:      util.ProtoFloat64(kl.HighPrice),
-			OpenPrice:      util.ProtoFloat64(kl.OpenPrice),
-			LowPrice:       util.ProtoFloat64(kl.LowPrice),
-			ClosePrice:     util.ProtoFloat64(kl.ClosePrice),
-			LastClosePrice: util.ProtoFloat64(kl.LastClosePrice),
-			Volume:         util.ProtoInt64(kl.Volume),
-			Turnover:       util.ProtoFloat64(kl.Turnover),
-			TurnoverRate:   util.ProtoFloat64(kl.TurnoverRate),
-			Pe:             util.ProtoFloat64(kl.Pe),
-			ChangeRate:     util.ProtoFloat64(kl.ChangeRate),
-			Timestamp:      util.ProtoFloat64(kl.Timestamp),
-		})
-	}
-
-	return result, nil
+	// The underlying Qot_GetHistoryKL proto was removed in Futu v10.6.
+	// This function is kept as a stub to avoid breaking existing callers.
+	return nil, fmt.Errorf("GetHistoryKL: removed in Futu v10.6 — use RequestHistoryKL instead")
 }
+
+type noopGetHistoryKLResponse struct{}
+
+func (noopGetHistoryKLResponse) GetCachedSchema() any { return nil }
 
 
 // NoDataMode specifies how to return data when the requested time point is empty.
-type NoDataMode = qotgethistoryklpoints.NoDataMode
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgethistoryklpoints no longer exists.
+type NoDataMode = int32
 
 const (
 	NoDataMode_Null     NoDataMode = 0
@@ -235,7 +174,8 @@ const (
 )
 
 // DataStatus indicates the status and source of the data returned for a time point.
-type DataStatus = qotgethistoryklpoints.DataStatus
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgethistoryklpoints no longer exists.
+type DataStatus = int32
 
 const (
 	DataStatus_Null     DataStatus = 0
@@ -275,85 +215,15 @@ type GetHistoryKLPointsResponse struct {
 }
 
 // GetHistoryKLPoints retrieves historical K-line data at specific time points.
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgethistoryklpoints no longer exists.
 func GetHistoryKLPoints(ctx context.Context, c *futuapi.Client, req *GetHistoryKLPointsRequest) (*GetHistoryKLPointsResponse, error) {
-	if req == nil {
-		return nil, fmt.Errorf("GetHistoryKLPoints: request is nil")
-	}
-	if len(req.Securities) == 0 {
-		return nil, fmt.Errorf("GetHistoryKLPoints: securities is required")
-	}
-	if len(req.Times) == 0 {
-		return nil, fmt.Errorf("GetHistoryKLPoints: times is required")
-	}
-
-	c2s := &qotgethistoryklpoints.C2S{
-		RehabType: func() *int32 { v := int32(req.RehabType); return &v }(),
-		KlType:    func() *int32 { v := int32(req.KLType); return &v }(),
-		NoDataMode: func() *int32 { v := int32(req.NoDataMode); return &v }(),
-		SecurityList: req.Securities,
-		TimeList:    req.Times,
-	}
-	if req.MaxReqSecuritiesNum > 0 {
-		c2s.MaxReqSecurityNum = &req.MaxReqSecuritiesNum
-	}
-	if req.NeedKLFieldsFlag > 0 {
-		c2s.NeedKLFieldsFlag = &req.NeedKLFieldsFlag
-	}
-
-	pkt := &qotgethistoryklpoints.Request{C2S: c2s}
-	var rsp qotgethistoryklpoints.Response
-
-	if err := c.RequestContext(ctx, constant.ProtoID_Qot_GetHistoryKLPoints, pkt, &rsp); err != nil {
-		return nil, err
-	}
-
-	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("GetHistoryKLPoints", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
-	}
-
-	s2c := rsp.S2C
-	if s2c == nil {
-		return nil, wrapError("GetHistoryKLPoints", int32(common.RetType_RetType_Unknown), "s2c is nil")
-	}
-
-	klPointList := s2c.KlPointList
-	if klPointList == nil {
-		return &GetHistoryKLPointsResponse{}, nil
-	}
-
-	result := make([]*SecurityHistoryKLPoints, 0, len(klPointList))
-	for _, shkp := range klPointList {
-		if shkp == nil {
-			continue
-		}
-
-		klList := shkp.GetKlList()
-		parsedKLList := make([]*HistoryPointsKL, 0, len(klList))
-		for _, kl := range klList {
-			if kl == nil {
-				continue
-			}
-			parsedKLList = append(parsedKLList, &HistoryPointsKL{
-				Status:  DataStatus(util.ProtoInt32(kl.Status)),
-				ReqTime: kl.GetReqTime(),
-				KL:     kl.GetKl(),
-			})
-		}
-
-		result = append(result, &SecurityHistoryKLPoints{
-			Security: shkp.Security,
-			KLList:   parsedKLList,
-		})
-	}
-
-	return &GetHistoryKLPointsResponse{
-		KLPointList: result,
-		HasNext:   s2c.GetHasNext(),
-	}, nil
+	// The underlying Qot_GetHistoryKLPoints proto was removed in Futu v10.6.
+	return nil, fmt.Errorf("GetHistoryKLPoints: removed in Futu v10.6")
 }
 
-var _ proto.Message = (*qotgethistoryklpoints.Request)(nil)
-var _ proto.Message = (*qotgethistoryklpoints.Response)(nil)
+type noopGetHistoryKLPointsResponse struct{}
+
+func (noopGetHistoryKLPointsResponse) GetCachedSchema() any { return nil }
 
 // RequestHistoryKLQuotaRequest defines parameters for RequestHistoryKLQuota.
 type RequestHistoryKLQuotaRequest struct {

@@ -134,6 +134,31 @@ const (
 	ProtoID_Qot_GetOptionExpirationDate = 3224 // 获取期权到期日
 	ProtoID_Qot_GetTradeDate            = 3225 // 获取交易日
 	ProtoID_Qot_GetRehab                = 3102 // 获取复权信息
+	ProtoID_Qot_GetFinancialsStatements  = 3227 // 获取财务报表
+	ProtoID_Qot_GetFinancialsRevenueBreakdown = 3228 // 获取营收 breakdown
+	ProtoID_Qot_GetResearchAnalystConsensus   = 3229 // 获取研究分析师共识
+	ProtoID_Qot_GetResearchRatingSummary      = 3230 // 获取研究评级摘要
+	ProtoID_Qot_GetResearchMorningstarReport  = 3231 // 获取晨星研究报告
+	ProtoID_Qot_GetValuationDetail           = 3232 // 获取估值详情
+	ProtoID_Qot_GetValuationPlateStockList    = 3233 // 获取估值板块股票列表
+	ProtoID_Qot_GetCorporateActionsDividends  = 3234 // 获取股息红利
+	ProtoID_Qot_GetCorporateActionsBuybacks   = 3235 // 获取回购
+	ProtoID_Qot_GetCorporateActionsStockSplits = 3236 // 获取拆股
+	ProtoID_Qot_GetShareholdersOverview        = 3237 // 获取股东概况
+	ProtoID_Qot_GetShareholdersHoldingChanges = 3238 // 获取股东持股变动
+	ProtoID_Qot_GetShareholdersHolderDetail   = 3239 // 获取股东详情
+	ProtoID_Qot_GetShareholdersInstitutional   = 3240 // 获取机构股东
+	ProtoID_Qot_GetInsiderHolderList          = 3241 // 获取内部人列表
+	ProtoID_Qot_GetInsiderTradeList           = 3242 // 获取内部人交易列表
+	ProtoID_Qot_GetCompanyProfile             = 3243 // 获取公司概况
+	ProtoID_Qot_GetCompanyExecutives           = 3244 // 获取公司高管
+	ProtoID_Qot_GetCompanyExecutiveBackground  = 3245 // 获取高管背景
+	ProtoID_Qot_GetCompanyOperationalEfficiency = 3246 // 获取经营效率
+	ProtoID_Qot_GetTopTenBuySellBrokers        = 3247 // 获取十大买卖券商
+	ProtoID_Qot_GetDailyShortVolume           = 3248 // 获取每日short volume
+	ProtoID_Qot_GetShortInterest              = 3249 // 获取做空利息
+	ProtoID_Qot_GetOptionVolatility           = 3250 // 获取期权波动率
+	ProtoID_Qot_GetOptionExerciseProbability  = 3251 // 获取期权行权概率
 )
 
 // AllPushIDs returns all push notification ProtoIDs

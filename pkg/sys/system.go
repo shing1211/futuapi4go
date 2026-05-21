@@ -42,7 +42,6 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/getdelaystatistics"
 	"github.com/shing1211/futuapi4go/pkg/pb/getglobalstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/getuserinfo"
-	"github.com/shing1211/futuapi4go/pkg/pb/testcmd"
 	"github.com/shing1211/futuapi4go/pkg/pb/usedquota"
 	"github.com/shing1211/futuapi4go/pkg/pb/verification"
 	"github.com/shing1211/futuapi4go/pkg/util"
@@ -535,40 +534,12 @@ type TestCmdResponse struct {
 }
 
 // TestCmd sends a test command to OpenD for internal diagnostics.
-// Returns the command result or an error if the request fails.
+// Deprecated: Removed in Futu v10.6 proto — proto package testcmd no longer exists.
 func TestCmd(ctx context.Context, c *futuapi.Client, req *TestCmdRequest) (*TestCmdResponse, error) {
-	if req == nil {
-		return nil, fmt.Errorf("TestCmd: request is nil")
-	}
-	if req.Cmd == "" {
-		return nil, fmt.Errorf("TestCmd: cmd is required")
-	}
-
-	c2s := &testcmd.C2S{
-		Cmd: &req.Cmd,
-	}
-	if req.Params != "" {
-		c2s.Params = &req.Params
-	}
-
-	pkt := &testcmd.Request{C2S: c2s}
-	var rsp testcmd.Response
-
-	if err := c.RequestContext(ctx, ProtoID_TestCmd, pkt, &rsp); err != nil {
-		return nil, err
-	}
-
-	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
-		return nil, wrapError("TestCmd", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
-	}
-
-	s2c := rsp.S2C
-	if s2c == nil {
-		return nil, wrapError("TestCmd", int32(common.RetType_RetType_Unknown), "s2c is nil")
-	}
-
-	return &TestCmdResponse{
-		Cmd:    util.ProtoStr(s2c.Cmd),
-		Result: util.ProtoStr(s2c.Result),
-	}, nil
+	// The underlying TestCmd proto was removed in Futu v10.6.
+	return nil, fmt.Errorf("TestCmd: removed in Futu v10.6")
 }
+
+type noopTestCmdResponse struct{}
+
+func (noopTestCmdResponse) GetCachedSchema() any { return nil }

@@ -25,7 +25,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
-	qotgetoptionexpirationdate "github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionexpirationdate"
+	getoptionexpirationdate "github.com/shing1211/futuapi4go/pkg/pb/getoptionexpirationdate"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
@@ -57,13 +57,13 @@ func GetOptionExpirationDate(ctx context.Context, c *futuapi.Client, req *GetOpt
 		return nil, fmt.Errorf("owner security is required")
 	}
 
-	c2s := &qotgetoptionexpirationdate.C2S{
+	c2s := &getoptionexpirationdate.C2S{
 		Owner:           req.Owner,
 		IndexOptionType: &req.IndexOptionType,
 	}
 
-	pkt := &qotgetoptionexpirationdate.Request{C2S: c2s}
-	var rsp qotgetoptionexpirationdate.Response
+	pkt := &getoptionexpirationdate.Request{C2S: c2s}
+	var rsp getoptionexpirationdate.Response
 
 	if err := c.RequestContext(ctx, ProtoID_GetOptionExpirationDate, pkt, &rsp); err != nil {
 		return nil, err

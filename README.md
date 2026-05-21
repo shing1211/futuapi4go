@@ -3,8 +3,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.10.0-00ADD8?style=flat-square" alt="Version">
-  <img src="https://img.shields.io/badge/Futu%20Proto-v10.5.6508-blue?style=flat-square" alt="Futu Proto Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.11.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Futu%20Proto-v10.6.6608-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
 > **⚠️ Under Active Development**  
@@ -15,7 +15,7 @@
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for [Futu OpenAPI](https://www.futunn.com/en/overview) — market data, trading, and real-time push. All communication via Protocol Buffers over TCP.
 
-- 79 protobuf types covering every Futu OpenAPI service
+- 104 protobuf types covering every Futu OpenAPI service
 - One-liner connect with automatic env config (`NewClientFromEnv`)
 - Real-time push via channels or typed callbacks
 - Fluent API: `cli.Quote().GetBasicQot()`, `cli.Trade().PlaceOrder()`
@@ -177,7 +177,7 @@ For complete, runnable examples covering every API surface — including real-ti
 | `pkg/market` | Market hours, trading calendar, session detection |
 | `pkg/metrics` | Client-side performance metrics collection |
 | `pkg/option` | Options chain querying, code parsing, Greeks helpers |
-| `pkg/pb/*` | 79 protobuf types (v10.5.6508) |
+| `pkg/pb/*` | 104 protobuf types (v10.6.6608) |
 | `pkg/ratelimit` | API rate limiting (token bucket per protoID) |
 | `pkg/retry` | Configurable retry with exponential backoff |
 | `pkg/trd/audit.go` | Trade audit logging |

@@ -18,6 +18,7 @@ enum TrdCategory
 	TrdCategory_Unknown = 0; //未知品类
 	TrdCategory_Security = 1; //证券
 	TrdCategory_Future = 2; //期货
+	TrdCategory_Crypto = 3; //加密货币
 }
 
 //交易市场，是大的市场，不是具体品种
@@ -30,6 +31,7 @@ enum TrdMarket
 	TrdMarket_HKCC = 4; //香港A股通市场
 	TrdMarket_Futures = 5; //期货市场
 	TrdMarket_SG = 6; //期货市场
+	TrdMarket_Crypto = 7; //加密货币市场
     TrdMarket_AU = 8; //澳洲市场
     TrdMarket_Futures_Simulate_HK = 10; // 模拟交易期货市场
     TrdMarket_Futures_Simulate_US = 11;
@@ -59,6 +61,7 @@ enum TrdSecMarket
     TrdSecMarket_MY = 71; // 马来西亚
     TrdSecMarket_CA = 81; // 加拿大
     TrdSecMarket_FX = 91; // 外汇
+	TrdSecMarket_CC = 101; // 加密货币市场
 }
 
 //交易方向
@@ -212,19 +215,7 @@ enum TimeInForce
 {
 	TimeInForce_DAY = 0;       // 当日有效
 	TimeInForce_GTC = 1;       // 撤单前有效，最多持续90自然日。
-}
-
-//券商
-enum SecurityFirm
-{
-    SecurityFirm_Unknown = 0;        //未知
-    SecurityFirm_FutuSecurities = 1; //富途证券（香港）
-	SecurityFirm_FutuInc = 2;        //富途证券（美国）
-	SecurityFirm_FutuSG = 3;         //富途证券（新加坡）
-	SecurityFirm_FutuAU = 4;         //富途证券（澳洲）
-	SecurityFirm_FutuCA = 5;         //富途证券（加拿大）
-	SecurityFirm_FutuMY = 6;         //富途证券（马来西亚）
-	SecurityFirm_FutuJP = 7;         //富途证券（日本）
+	TimeInForce_IOC = 2;       // 立即执行，否则取消
 }
 
 //模拟交易账户类型
@@ -235,6 +226,7 @@ enum SimAccType
 	SimAccType_Option = 2;      //期权模拟账户（仅用于交易期权，不支持交易股票证券类产品）
     SimAccType_Futures = 3;     //期货模拟账户
     SimAccType_StockAndOption = 4;  //股票和期权模拟账户（支持交易股票和期权）
+	SimAccType_Competition = 5; // 比赛账户
 }
 
 //风险状态，共分 9 个等级，LEVEL1是最安全，LEVEL9是最危险
@@ -295,6 +287,18 @@ enum TrdAssetCategory
 	TrdAssetCategory_US = 2;	    //外国
 }
 
+enum ExposureLevel
+{
+	ExposureLevel_Unknown = 0;      // 未知
+	ExposureLevel_Normal = 1;       // 正常
+	ExposureLevel_NearLimit = 2;    // 即将用尽
+	ExposureLevel_Restricted = 3;   // 受限
+	ExposureLevel_Safe = 4;         // 安全
+	ExposureLevel_Moderate = 5;     // 适中
+	ExposureLevel_Warning = 6;      // 预警
+	ExposureLevel_MarginCall = 7;   // 危险
+}
+
 //账户现金信息，目前仅用于期货账户
 message AccCashInfo
 {
@@ -328,12 +332,13 @@ message TrdAcc
 	repeated int32 trdMarketAuthList = 3; //业务账户支持的交易市场权限，即此账户能交易那些市场, 可拥有多个交易市场权限，目前仅单个，取值参见TrdMarket的枚举定义
 	optional int32 accType = 4;   //账户类型，取值见TrdAccType
 	optional string cardNum = 5;  //卡号
-	optional int32 securityFirm = 6; //所属券商，取值见SecurityFirm
+	optional int32 securityFirm = 6; //所属券商，取值见Trd_Common.SecurityFirm
 	optional int32 simAccType = 7; //模拟交易账号类型，取值见SimAccType
     optional string uniCardNum = 8;  //所属综合账户卡号
     optional int32 accStatus = 9; //账号状态，取值见TrdAccStatus
 	optional int32 accRole = 10; //账号分类，是不是主账号，取值见TrdAccRole
 	repeated int32 jpAccType = 11; //JP子账户类型，取值见 TrdSubAccType
+	optional string competitionAccName = 12; // 比赛账户名称
 }
 
 //账户资金结构
@@ -370,13 +375,19 @@ message Funds
 	optional double beginningDTBP = 26;		//初始日内交易购买力
 	optional double remainingDTBP = 27;		//剩余日内交易购买力
 	optional double dtCallAmount = 28;		//日内交易待缴金额
-	optional int32 dtStatus = 29;				//日内交易限制情况，取值见DTStatus
+	optional int32 dtStatus = 29;				//日内交易限制情况，取值见 DTStatus
 	
 	optional double securitiesAssets = 30; // 证券资产净值
 	optional double fundAssets = 31; // 基金资产净值
 	optional double bondAssets = 32; // 债券资产净值
     
     repeated AccMarketInfo marketInfoList = 33; //分市场资产信息
+	
+	optional double cryptoMv = 34; //加密货币市值
+	optional int32	exposureLevel = 35; //取值见ExposureLevel
+	optional double exposureLimit = 36; //持仓限额
+	optional double usedLimit = 37; //已用持仓限额
+	optional double remainingLimit = 38; //剩余持仓限额
 }
 
 //账户持仓结构
@@ -506,4 +517,17 @@ message TrdFilterConditions
 	optional string endTime = 4; //结束时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传，对持仓无效，拉历史数据必须填
 	repeated string orderIDExList = 5; // 服务器订单ID，可以用来替代orderID，二选一
     optional int32 filterMarket = 6; //指定交易市场, 参见TrdMarket的枚举定义
+}
+
+//券商
+enum SecurityFirm
+{
+    SecurityFirm_Unknown = 0;        //未知
+    SecurityFirm_FutuSecurities = 1; //富途证券（香港）
+	SecurityFirm_FutuInc = 2;        //富途证券（美国）
+	SecurityFirm_FutuSG = 3;         //富途证券（新加坡）
+	SecurityFirm_FutuAU = 4;         //富途证券（澳洲）
+	SecurityFirm_FutuCA = 5;         //富途证券（加拿大）
+	SecurityFirm_FutuMY = 6;         //富途证券（马来西亚）
+	SecurityFirm_FutuJP = 7;         //富途证券（日本）
 }

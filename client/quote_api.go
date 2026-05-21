@@ -1828,35 +1828,14 @@ func RequestRehab(ctx context.Context, c *Client, market constant.Market, code s
 // GetRehab returns rehabilitation (复权) data for the given security.
 // Unlike RequestRehab (which may use cached data), GetRehab always fetches
 // fresh rehabilitation data from the server.
+// Deprecated: Removed in Futu v10.6 proto — proto package qotgetrehab no longer exists.
+// Use RequestRehab instead.
 func GetRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
-	if code == "" {
-		return nil, fmt.Errorf("GetRehab: code is required")
-	}
-	marketPtr := int32(market)
-	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
-	resp, err := qot.GetRehab(ctx, c.inner, &qot.GetRehabRequest{
-		Security: sec,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	var rehabList []*qotcommon.Rehab
-	for _, sr := range resp.SecurityRehabList {
-		if sr == nil {
-			continue
-		}
-		if getStr(sr.Security.Code) == code {
-			rehabList = sr.RehabList
-			break
-		}
-	}
-
-	result := make([]*RehabInfo, 0, len(rehabList))
-	for _, r := range rehabList {
-		result = append(result, mapRehabInfo(r))
-	}
-	return result, nil
+	_ = ctx
+	_ = c
+	_ = market
+	_ = code
+	return nil, fmt.Errorf("GetRehab: removed in Futu v10.6 — use RequestRehab instead")
 }
 
 // GetHistoryKLPoints retrieves K-line data at specific time points for a security.

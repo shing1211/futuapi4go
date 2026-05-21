@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 )
 
@@ -172,40 +171,27 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 }
 
 // GetTechnicalUnusual queries technical unusual stocks via SkillWrapAPI.
-func GetTechnicalUnusual(ctx context.Context, c *Client, req *skillwrapapi.TechnicalUnusualReq) (*skillwrapapi.TechnicalUnusualRsp, error) {
-	return sys.GetTechnicalUnusual(ctx, c.inner, req)
+// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
+func GetTechnicalUnusual(ctx context.Context, c *Client, req any) (any, error) {
+	return nil, fmt.Errorf("GetTechnicalUnusual: removed in Futu v10.6")
 }
 
 // GetFinancialUnusual queries financial unusual stocks via SkillWrapAPI.
-func GetFinancialUnusual(ctx context.Context, c *Client, req *skillwrapapi.FinancialUnusualReq) (*skillwrapapi.FinancialUnusualRsp, error) {
-	return sys.GetFinancialUnusual(ctx, c.inner, req)
+// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
+func GetFinancialUnusual(ctx context.Context, c *Client, req any) (any, error) {
+	return nil, fmt.Errorf("GetFinancialUnusual: removed in Futu v10.6")
 }
 
 // GetDerivativeUnusual queries derivative unusual stocks via SkillWrapAPI.
-func GetDerivativeUnusual(ctx context.Context, c *Client, req *skillwrapapi.DerivativeUnusualReq) (*skillwrapapi.DerivativeUnusualRsp, error) {
-	return sys.GetDerivativeUnusual(ctx, c.inner, req)
+// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
+func GetDerivativeUnusual(ctx context.Context, c *Client, req any) (any, error) {
+	return nil, fmt.Errorf("GetDerivativeUnusual: removed in Futu v10.6")
 }
 
 // TestCmd sends a test command to OpenD for internal diagnostics.
+// Deprecated: Removed in Futu v10.6 proto — proto package testcmd no longer exists.
 func TestCmd(ctx context.Context, c *Client, cmd string, params ...string) (*TestCmdResult, error) {
-	if cmd == "" {
-		return nil, fmt.Errorf("TestCmd: cmd is required")
-	}
-	p := ""
-	if len(params) > 0 {
-		p = params[0]
-	}
-	resp, err := sys.TestCmd(ctx, c.inner, &sys.TestCmdRequest{
-		Cmd:    cmd,
-		Params: p,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &TestCmdResult{
-		Cmd:    resp.Cmd,
-		Result: resp.Result,
-	}, nil
+	return nil, fmt.Errorf("TestCmd: removed in Futu v10.6")
 }
 
 // Verification submits a verification request (e.g., SMS or email verification).

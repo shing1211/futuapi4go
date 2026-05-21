@@ -5,6 +5,23 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Futu Protocol upgrade v10.5.6508 → v10.6.6608** — All proto files replaced (104 files, 5 removed), Go bindings regenerated
+- **clientVer updated** from 1005 to 1066 (`internal/client/client.go`)
+
+### Added
+
+- **25 new fundamental data APIs** (Protocol IDs 3227-3251): GetFinancialsStatements, GetResearchAnalystConsensus, GetValuationDetail, GetCorporateActionsDividends, GetShareholdersOverview, and 20 more market data APIs
+- **Enhanced Qot_StockFilter** — PatternFilter and CustomIndicatorFilter support
+- **New StockField enums** — CustomIndicatorField, PatternField, SortDir, RelativePosition, FinancialStatementsType, F10Type, FinancialQuarter
+
+### Removed
+
+- **5 deprecated APIs removed by Futu**: GetHistoryKL (replaced by RequestHistoryKL), GetHistoryKLPoints, GetRehab (replaced by RequestRehab), GetTechnicalUnusual, TestCmd
+
 ## [v0.10.0] - 2026-05-21
 
 ### Fixed
