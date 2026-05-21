@@ -207,7 +207,7 @@ Before ending a work session, confirm:
 
 ---
 
-*Last updated: 2026-05-17*
+*Last updated: 2026-05-21*
 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence

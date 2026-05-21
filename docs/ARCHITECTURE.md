@@ -1,6 +1,6 @@
 # futuapi4go Architecture
 
-> **Version:** v0.9.0 | **Futu Protocol:** v10.5.6508 | **Updated:** 2026-05-18
+> **Version:** v0.10.0 | **Futu Protocol:** v10.5.6508 | **Updated:** 2026-05-21
 
 ---
 

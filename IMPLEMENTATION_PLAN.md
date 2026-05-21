@@ -1,8 +1,20 @@
 # Implementation Plan — futuapi4go
 
-*Generated: 2026-05-20*
+*Generated: 2026-05-20 | Updated: 2026-05-21*
 
 ## Phase 1: Bug Fixes (High Priority) — DONE
+
+### 1.1 Retry on Trading Operations (CRITICAL) — DONE
+
+### 1.2 `return nil, nil` Ambiguity in Quote APIs — DONE
+
+### 1.3 Silent Error Dropping in Push Channel Handler — DONE
+
+### 1.4 Silent Error Dropping in Push Callbacks — DONE
+
+### 1.5 `WithEnvConfig` File Read Error Masking — DONE
+
+## Phase 2: Input Validation — DONE (Phase 3 complete)
 
 ### 1.1 Retry on Trading Operations (CRITICAL)
 - **File**: `internal/client/client.go:1325-1365`
@@ -52,17 +64,17 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 - Known exclusions: `c.inner.GetConnID()`, `c.inner.GetServerVer()`, `c.inner.GetLoginUserID()` are NOT proto getters (internal client methods)
 - Detail plan: `PHASE3_PROTO_SAFETY_PLAN.md`
 
-## Phase 4: Missing High-Level API Coverage
+## Phase 4: Missing High-Level API Coverage — FUTURE
 - Add `client/` wrappers for `RequestHistoryKLQuota`, `GetUserSecurityGroup`, etc.
 - Add fluent API methods for missing functions
 
-## Phase 5: Advanced Features
+## Phase 5: Advanced Features — FUTURE
 - Connection pool health check improvements
 - Middleware/interceptor pattern
 - Observability integration (metrics, tracing)
 - Request/response logging with sensitive data redaction
 
-## Phase 6: Architecture Improvements
+## Phase 6: Architecture Improvements — FUTURE
 - PoolType-aware routing
 - Error category improvements (Transient vs Permanent)
 - Deprecate `Request()` in favor of `RequestContext()`

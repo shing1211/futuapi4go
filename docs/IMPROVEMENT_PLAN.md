@@ -1,6 +1,6 @@
 # futuapi4go Robustness Improvement Plan
 
-> **Generated:** 2026-05-18 | **Version:** v0.9.0 | **Audit Scope:** Full SDK (318 files, 15,272 symbols, 32,662 relationships)
+> **Generated:** 2026-05-18 | **Updated:** 2026-05-21 | **Version:** v0.10.0 | **Status:** Substantially complete — all HIGH/MED priority fixes done, LOW polish items L01-L14 done
 >
 > **Related:** [DESIGN.md](DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
 

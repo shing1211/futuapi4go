@@ -1,6 +1,6 @@
 # FutuAPI4Go SDK — Implementation Complete
 
-> **Version:** v0.8.5 | **Date:** 2026-05-17 | **Status:** COMPLETE
+> **Version:** v0.10.0 | **Date:** 2026-05-21 | **Status:** COMPLETE
 
 ## Overview
 
