@@ -11,6 +11,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotstockfilter"
 	"github.com/shing1211/futuapi4go/pkg/qot"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // History KL pagination constants.
@@ -1865,7 +1866,7 @@ func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endT
 	if endTime == "" {
 		return nil, fmt.Errorf("GetTradeDates: endTime is required")
 	}
-	resp, err := qot.GetTradeDate(ctx, c.inner, &qot.GetTradeDateRequest{
+	resp, err := qot.RequestTradeDate(ctx, c.inner, &qot.RequestTradeDateRequest{
 		Market:    market,
 		BeginTime: beginTime,
 		EndTime:   endTime,
@@ -1879,9 +1880,9 @@ func GetTradeDates(ctx context.Context, c *Client, market int32, beginTime, endT
 			continue
 		}
 		dates = append(dates, TradeDate{
-			Time:          d.Time,
-			Timestamp:     d.Timestamp,
-			TradeDateType: d.TradeDateType,
+			Time:          util.ProtoStr(d.Time),
+			Timestamp:     util.ProtoFloat64(d.Timestamp),
+			TradeDateType: util.ProtoInt32(d.TradeDateType),
 		})
 	}
 	return dates, nil
@@ -2209,4 +2210,28 @@ func GetOptionExerciseProbability(ctx context.Context, c *Client, market constan
 
 func GetHistoryKLQuota(ctx context.Context, c *Client) (*qot.RequestHistoryKLQuotaResponse, error) {
 	return qot.RequestHistoryKLQuota(ctx, c.inner, &qot.RequestHistoryKLQuotaRequest{})
+}
+
+// GetFinancialsEarningsPriceMove retrieves earnings price move data.
+func GetFinancialsEarningsPriceMove(ctx context.Context, c *Client, market constant.Market, code string, periodCount int32) (*qot.GetFinancialsEarningsPriceMoveResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetFinancialsEarningsPriceMove: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	req := &qot.GetFinancialsEarningsPriceMoveRequest{
+		Security:    sec,
+		PeriodCount: periodCount,
+	}
+	return qot.GetFinancialsEarningsPriceMove(ctx, c.inner, req)
+}
+
+// GetFinancialsEarningsPriceHistory retrieves earnings price history data.
+func GetFinancialsEarningsPriceHistory(ctx context.Context, c *Client, market constant.Market, code string) (*qot.GetFinancialsEarningsPriceHistoryResponse, error) {
+	if code == "" {
+		return nil, fmt.Errorf("GetFinancialsEarningsPriceHistory: code is required")
+	}
+	marketPtr := int32(market)
+	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
+	return qot.GetFinancialsEarningsPriceHistory(ctx, c.inner, &qot.GetFinancialsEarningsPriceHistoryRequest{Security: sec})
 }

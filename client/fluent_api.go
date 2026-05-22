@@ -216,6 +216,14 @@ func (api *QuoteAPI) GetHistoryKLQuota(ctx context.Context, req *qot.RequestHist
 	return qot.RequestHistoryKLQuota(ctx, api.client, req)
 }
 
+func (api *QuoteAPI) GetFinancialsEarningsPriceMove(ctx context.Context, req *qot.GetFinancialsEarningsPriceMoveRequest) (*qot.GetFinancialsEarningsPriceMoveResponse, error) {
+	return qot.GetFinancialsEarningsPriceMove(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetFinancialsEarningsPriceHistory(ctx context.Context, req *qot.GetFinancialsEarningsPriceHistoryRequest) (*qot.GetFinancialsEarningsPriceHistoryResponse, error) {
+	return qot.GetFinancialsEarningsPriceHistory(ctx, api.client, req)
+}
+
 // TradeAPI provides a fluent API for trading operations.
 // Use client.Trade() to get an instance.
 type TradeAPI struct {

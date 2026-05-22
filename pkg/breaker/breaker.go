@@ -67,20 +67,18 @@ func (s State) String() string {
 }
 
 type Breaker struct {
-	mu       sync.RWMutex
-	state    State
-	failures int
-
-	threshold   int
-	cooldown    time.Duration
-	halfOpenMax int
-
-	lastFailure time.Time
-	openTime    time.Time
-
-	onOpen   func()
-	onClose  func()
-	onChange func(State, State)
+	mu               sync.RWMutex
+	state            State
+	failures         int
+	threshold        int
+	cooldown         time.Duration
+	halfOpenMax      int
+	halfOpenInFlight int
+	openTime         time.Time
+	lastFailure      time.Time
+	onOpen           func()
+	onClose          func()
+	onChange         func(State, State)
 }
 
 type Config struct {
@@ -166,7 +164,11 @@ func (b *Breaker) Allow() bool {
 		return false
 
 	case StateHalfOpen:
-		return true
+		if b.halfOpenInFlight < b.halfOpenMax {
+			b.halfOpenInFlight++
+			return true
+		}
+		return false
 
 	default:
 		return false
@@ -182,11 +184,12 @@ func (b *Breaker) RecordSuccess() {
 		if b.failures > 0 {
 			b.failures--
 		}
-
 	case StateHalfOpen:
+		if b.halfOpenInFlight > 0 {
+			b.halfOpenInFlight--
+		}
 		b.transitionTo(StateClosed)
-
-	case StateOpen:
+	default:
 	}
 }
 
@@ -202,10 +205,11 @@ func (b *Breaker) RecordFailure() {
 		if b.failures >= b.threshold {
 			b.transitionTo(StateOpen)
 		}
-
 	case StateHalfOpen:
+		if b.halfOpenInFlight > 0 {
+			b.halfOpenInFlight--
+		}
 		b.transitionTo(StateOpen)
-
 	case StateOpen:
 	}
 }

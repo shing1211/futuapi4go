@@ -92,11 +92,45 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 - Add `client/` wrappers for `RequestHistoryKLQuota`, `GetUserSecurityGroup`, etc.
 - Add fluent API methods for missing functions
 
-## Phase 5: Advanced Features — FUTURE
-- Connection pool health check improvements
-- Middleware/interceptor pattern
-- Observability integration (metrics, tracing)
-- Request/response logging with sensitive data redaction
+## Phase 5: Bug Fixes, Missing APIs & Architecture Hardening — DONE
+
+*Detailed plan: PHASE5_BUGFIX_HARDENING_PLAN.md*
+
+### Step 1: Fix ProtoID Mismatch (P0 — CRITICAL)
+- `ProtoID_Qot_GetTradeDate = 3225` was WRONG — 3225 = `Qot_GetFinancialsEarningsPriceMove`
+- Removed duplicate `ProtoID_Qot_GetTradeDate`, updated `trade_date.go` to use `ProtoID_Qot_RequestTradeDate` (3219) with official `Qot_RequestTradeDate` proto types
+- Added `ProtoID_Qot_GetFinancialsEarningsPriceMove = 3225` and `ProtoID_Qot_GetFinancialsEarningsPriceHistory = 3226`
+
+### Step 2: Implement 2 Missing APIs (P0)
+- `GetFinancialsEarningsPriceMove` (ProtoID 3225) — earnings price move data with 15+ fields
+- `GetFinancialsEarningsPriceHistory` (ProtoID 3226) — earnings price history data with 20+ fields incl. volatility metrics, option IV crush
+- Added proto wrappers, client wrappers, fluent API methods
+
+### Step 3: Fix Proto Safety Violations (P1)
+- Fixed 7 violations in `pkg/qot/` (trade_date, option_extra, shortselling, options, market_data)
+- Fixed 2 violations in `pkg/push/` (qot_push)
+- Fixed 20+ violations in `internal/client/client.go` (InitConnect/keepAlive sections)
+
+### Step 4: Fix Concurrency & Nil Deref Bugs (P1)
+- Logger race in `New()` — now uses `SetLogger()` with mutex protection
+- `SetTracer()` race — switched to `sync/atomic.Value`
+- `Conn.LocalAddr()/RemoteAddr()` — nil dereference when `c.conn == nil`
+
+### Step 5: Fix AES Padding, Breaker, Pool Contention (P2)
+- `aesCBCDecrypt` now strips PKCS#7 padding after decryption
+- Breaker `halfOpenMax` now enforced in `Allow()` with `halfOpenInFlight` counter
+- Pool contention — identified but deferred (complex TCP dial refactor)
+
+### Step 6: Dead Code / Unwired Packages (P2)
+- Documented in PHASE5 plan; integration deferred as non-critical
+
+### Step 7: Middleware/Interceptor Pattern (P3)
+- Deferred to future phase; RequestContext refactoring non-trivial
+
+### Step 8: Documentation & Release
+- Updated CHANGELOG.md with all Phase 5 items
+- Updated IMPLEMENTATION_PLAN.md
+- Committed and pushed to origin/main and gitee/main
 
 ## Phase 6: Architecture Improvements — FUTURE
 - PoolType-aware routing

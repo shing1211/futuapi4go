@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **CRITICAL: ProtoID mismatch** — `ProtoID_Qot_GetTradeDate = 3225` was incorrect; 3225 is officially `Qot_GetFinancialsEarningsPriceMove`. Removed duplicate constant, updated `GetTradeDate` to use correct `ProtoID_Qot_RequestTradeDate` (3219) with official `Qot_RequestTradeDate` proto types
+- **Proto safety violations** — Replaced remaining `GetXxx()` calls on scalar proto fields in `pkg/qot/trade_date.go`, `pkg/qot/options.go`, `pkg/qot/market_data.go`, `pkg/push/qot_push.go`, `internal/client/client.go` with nil-safe `util.ProtoXxx()` helpers
+- **Logger race in `New()`** — Global `logger` variable now written via `SetLogger()` which acquires `loggerMu`
+- **`SetTracer()` race** — `defaultTracer` switched from unprotected global to `sync/atomic.Value`
+- **`Conn.LocalAddr()/RemoteAddr()` nil dereference** — Added nil guard for `c.conn` before calling methods
+- **AES CBC PKCS#7 unpadding** — `aesCBCDecrypt` now properly strips PKCS#7 padding after decryption
+- **Breaker `halfOpenMax` enforcement** — `Allow()` now tracks `halfOpenInFlight` and enforces the configured limit
+- **`GetTradeDates` client wrapper** — Changed from deprecated `GetTradeDate` to `RequestTradeDate` (correct ProtoID 3219)
+
+### Added
+
+- **`GetFinancialsEarningsPriceMove`** (ProtoID 3225) — Wrapper in `pkg/qot/financials.go`, client wrapper in `client/quote_api.go`, fluent API method in `client/fluent_api.go`
+- **`GetFinancialsEarningsPriceHistory`** (ProtoID 3226) — Wrapper in `pkg/qot/financials.go`, client wrapper in `client/quote_api.go`, fluent API method in `client/fluent_api.go`
+
 ### Changed
 
 - **Futu Protocol upgrade v10.5.6508 → v10.6.6608** — All proto files replaced (104 files, 5 removed), Go bindings regenerated

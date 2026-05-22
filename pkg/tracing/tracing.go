@@ -2,7 +2,35 @@ package tracing
 
 import (
 	"context"
+	"sync/atomic"
 )
+
+var defaultTracer atomic.Value
+
+func init() {
+	defaultTracer.Store(NoopTracer{})
+}
+
+func SetTracer(t Tracer) {
+	if t != nil {
+		defaultTracer.Store(t)
+	}
+}
+
+func GetTracer() Tracer {
+	return defaultTracer.Load().(Tracer)
+}
+
+func StartSpan(ctx context.Context, name string, attrs ...Attribute) (context.Context, Span) {
+	return GetTracer().Start(ctx, name, attrs...)
+}
+
+func SpanFromContext(ctx context.Context) Span {
+	if s, ok := ctx.Value(spanKey).(Span); ok {
+		return s
+	}
+	return noopSpan{}
+}
 
 type Span interface {
 	SetAttribute(key string, value interface{})
@@ -32,29 +60,6 @@ type NoopTracer struct{}
 
 func (NoopTracer) Start(ctx context.Context, _ string, _ ...Attribute) (context.Context, Span) {
 	return ctx, noopSpan{}
-}
-
-var defaultTracer Tracer = NoopTracer{}
-
-func SetTracer(t Tracer) {
-	if t != nil {
-		defaultTracer = t
-	}
-}
-
-func GetTracer() Tracer {
-	return defaultTracer
-}
-
-func StartSpan(ctx context.Context, name string, attrs ...Attribute) (context.Context, Span) {
-	return defaultTracer.Start(ctx, name, attrs...)
-}
-
-func SpanFromContext(ctx context.Context) Span {
-	if s, ok := ctx.Value(spanKey).(Span); ok {
-		return s
-	}
-	return noopSpan{}
 }
 
 type contextKey struct{}

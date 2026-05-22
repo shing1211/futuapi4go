@@ -354,7 +354,7 @@ func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 		Note:         util.ProtoStr(s2c.Note),
 		Key:          util.ProtoInt64(s2c.Key),
 		Type:         util.ProtoInt32(s2c.Type),
-		SetValue:     s2c.GetSetValue(),
-		CurValue:     s2c.GetCurValue(),
+		SetValue:     util.ProtoFloat64(s2c.SetValue),
+		CurValue:     util.ProtoFloat64(s2c.CurValue),
 	}, nil
 }

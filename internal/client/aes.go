@@ -137,6 +137,14 @@ func aesCBCDecrypt(key []byte, iv []byte, ciphertext []byte) ([]byte, error) {
 	mode := cipher.NewCBCDecrypter(block, iv)
 	plaintext := make([]byte, len(ciphertext))
 	mode.CryptBlocks(plaintext, ciphertext)
+
+	if len(plaintext) > 0 {
+		padLen := int(plaintext[len(plaintext)-1])
+		if padLen > 0 && padLen <= 16 && padLen <= len(plaintext) {
+			plaintext = plaintext[:len(plaintext)-padLen]
+		}
+	}
+
 	return plaintext, nil
 }
 

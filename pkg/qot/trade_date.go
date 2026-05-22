@@ -7,7 +7,7 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgettradedate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesttradedate"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
@@ -32,14 +32,14 @@ func GetTradeDate(ctx context.Context, c *futuapi.Client, req *GetTradeDateReque
 		return nil, fmt.Errorf("GetTradeDate: request is nil")
 	}
 
-	c2s := &qotgettradedate.C2S{
+	c2s := &qotrequesttradedate.C2S{
 		Market:    &req.Market,
 		BeginTime: &req.BeginTime,
 		EndTime:   &req.EndTime,
 	}
 
-	var rsp qotgettradedate.Response
-	if err := c.RequestContext(ctx, constant.ProtoID_Qot_GetTradeDate, &qotgettradedate.Request{C2S: c2s}, &rsp); err != nil {
+	var rsp qotrequesttradedate.Response
+	if err := c.RequestContext(ctx, constant.ProtoID_Qot_RequestTradeDate, &qotrequesttradedate.Request{C2S: c2s}, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func GetTradeDate(ctx context.Context, c *futuapi.Client, req *GetTradeDateReque
 		result.TradeDateList = append(result.TradeDateList, &TradeDateInfo{
 			Time:          util.ProtoStr(td.Time),
 			Timestamp:     util.ProtoFloat64(td.Timestamp),
-			TradeDateType: td.GetTradeDateType(),
+			TradeDateType: util.ProtoInt32(td.TradeDateType),
 		})
 	}
 	return result, nil

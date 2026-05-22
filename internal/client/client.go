@@ -38,6 +38,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 var (
@@ -472,7 +473,9 @@ func New(opts ...Option) *Client {
 		opt(options)
 	}
 
-	logger = options.Logger
+	if options.Logger != nil {
+		SetLogger(options.Logger)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	client := &Client{
@@ -595,23 +598,23 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 		return fmt.Errorf("unmarshal response: %w", err)
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
 		c.conn.Close()
-		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		c.conn.Close()
 		return errors.New("init connect: s2c is nil")
 	}
 
 	c.mu.Lock()
-	c.connID = s2c.GetConnID()
-	c.loginUserID = s2c.GetLoginUserID()
-	c.keepAliveInterval = s2c.GetKeepAliveInterval()
+	c.connID = util.ProtoUint64(s2c.ConnID)
+	c.loginUserID = util.ProtoUint64(s2c.LoginUserID)
+	c.keepAliveInterval = util.ProtoInt32(s2c.KeepAliveInterval)
 	atomic.StoreInt32(&c.isEncrypt, 0)
-	c.serverVer = s2c.GetServerVer()
+	c.serverVer = util.ProtoInt32(s2c.ServerVer)
 	c.setState(StateConnected)
 	c.isWebSocket = true
 	c.wsAddr = addr
@@ -798,15 +801,15 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		c.logError("[%s] ConnectWithRSA: Unmarshal response FAILED: %v", c.ts(), err)
 		return fmt.Errorf("unmarshal response: %w", err)
 	}
-	c.logInfo("[%s] ConnectWithRSA: Response unmarshaled, retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
+	c.logInfo("[%s] ConnectWithRSA: Response unmarshaled, retType=%d, retMsg=%s", c.ts(), util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
 		c.conn.Close()
-		c.logError("[%s] ConnectWithRSA: Server returned error: retType=%d, retMsg=%s", c.ts(), rsp.GetRetType(), rsp.GetRetMsg())
-		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", rsp.GetRetType(), rsp.GetRetMsg())
+		c.logError("[%s] ConnectWithRSA: Server returned error: retType=%d, retMsg=%s", c.ts(), util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+		return fmt.Errorf("init connect failed: retType=%d, retMsg=%s", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
 	}
 
-	s2c := rsp.GetS2C()
+	s2c := rsp.S2C
 	if s2c == nil {
 		c.conn.Close()
 		c.logError("[%s] ConnectWithRSA: S2C is nil!", c.ts())
@@ -814,17 +817,17 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	}
 
 	c.mu.Lock()
-	c.connID = s2c.GetConnID()
-	c.loginUserID = s2c.GetLoginUserID()
-	c.aesKey = s2c.GetConnAESKey()
-	c.aesCBCIV = s2c.GetAesCBCiv()
+	c.connID = util.ProtoUint64(s2c.ConnID)
+	c.loginUserID = util.ProtoUint64(s2c.LoginUserID)
+	c.aesKey = util.ProtoStr(s2c.ConnAESKey)
+	c.aesCBCIV = util.ProtoStr(s2c.AesCBCiv)
 	isEnc := int32(0)
 	if useEncryption {
 		isEnc = 1
 	}
 	atomic.StoreInt32(&c.isEncrypt, isEnc)
-	c.serverVer = s2c.GetServerVer()
-	c.keepAliveInterval = s2c.GetKeepAliveInterval()
+	c.serverVer = util.ProtoInt32(s2c.ServerVer)
+	c.keepAliveInterval = util.ProtoInt32(s2c.KeepAliveInterval)
 	c.setState(StateConnected)
 	c.metricsMu.Lock()
 	c.metrics.ConnectedSince = time.Now()
@@ -917,8 +920,8 @@ func (c *Client) keepAlive() error {
 		return err
 	}
 
-	if rsp.GetRetType() != int32(common.RetType_RetType_Succeed) {
-		return fmt.Errorf("keepalive failed: retType=%d", rsp.GetRetType())
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return fmt.Errorf("keepalive failed: retType=%d", util.ProtoInt32(rsp.RetType))
 	}
 
 	return nil

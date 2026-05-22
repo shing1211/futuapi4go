@@ -162,10 +162,10 @@ func GetOptionChain(ctx context.Context, c *futuapi.Client, req *GetOptionChainR
 	}
 
 	result := &GetOptionChainResponse{
-		OptionChain: make([]*OptionChain, 0, len(s2c.GetOptionChain())),
+		OptionChain: make([]*OptionChain, 0, len(s2c.OptionChain)),
 	}
 
-	for _, chain := range s2c.GetOptionChain() {
+	for _, chain := range s2c.OptionChain {
 		if chain == nil {
 			continue
 		}
@@ -279,7 +279,7 @@ func GetFutureInfo(ctx context.Context, c *futuapi.Client, req *GetFutureInfoReq
 			MinVar:             util.ProtoFloat64(fi.MinVar),
 			MinVarUnit:         util.ProtoStr(fi.MinVarUnit),
 			QuoteUnit:          util.ProtoStr(fi.QuoteUnit),
-			TradeTimeList:      fi.GetTradeTime(),
+			TradeTimeList:      fi.TradeTime,
 			TimeZone:           util.ProtoStr(fi.TimeZone),
 			ExchangeFormatUrl:  util.ProtoStr(fi.ExchangeFormatUrl),
 			Origin:             fi.Origin,

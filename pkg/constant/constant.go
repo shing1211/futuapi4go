@@ -102,6 +102,7 @@ const (
 	ProtoID_Qot_UpdatePriceReminder = 3019 // 到价提醒通知
 
 	// Historical Data
+	ProtoID_Qot_GetRehab               = 3102 // 获取复权信息
 	ProtoID_Qot_RequestHistoryKL      = 3103 // 拉取历史K线
 	ProtoID_Qot_RequestHistoryKLQuota = 3104 // 拉取历史K线已经用掉的额度
 	ProtoID_Qot_RequestRehab          = 3105 // 获取除权信息
@@ -131,10 +132,10 @@ const (
 	ProtoID_Qot_GetPriceReminder        = 3221 // 获取到价提醒
 	ProtoID_Qot_GetUserSecurityGroup    = 3222 // 获取自选股分组
 	ProtoID_Qot_GetMarketState          = 3223 // 获取指定品种的市场状态
-	ProtoID_Qot_GetOptionExpirationDate = 3224 // 获取期权到期日
-	ProtoID_Qot_GetTradeDate            = 3225 // 获取交易日
-	ProtoID_Qot_GetRehab                = 3102 // 获取复权信息
-	ProtoID_Qot_GetFinancialsStatements  = 3227 // 获取财务报表
+	ProtoID_Qot_GetOptionExpirationDate         = 3224 // 获取期权到期日
+	ProtoID_Qot_GetFinancialsEarningsPriceMove  = 3225 // 获取财报价格变动
+	ProtoID_Qot_GetFinancialsEarningsPriceHistory = 3226 // 获取财报价格历史
+	ProtoID_Qot_GetFinancialsStatements         = 3227 // 获取财务报表
 	ProtoID_Qot_GetFinancialsRevenueBreakdown = 3228 // 获取营收 breakdown
 	ProtoID_Qot_GetResearchAnalystConsensus   = 3229 // 获取研究分析师共识
 	ProtoID_Qot_GetResearchRatingSummary      = 3230 // 获取研究评级摘要

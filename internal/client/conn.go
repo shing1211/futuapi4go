@@ -151,11 +151,23 @@ func (c *Conn) SetWriteDeadline(t time.Time) error {
 }
 
 func (c *Conn) LocalAddr() net.Addr {
-	return c.conn.LocalAddr()
+	c.mu.Lock()
+	conn := c.conn
+	c.mu.Unlock()
+	if conn == nil {
+		return nil
+	}
+	return conn.LocalAddr()
 }
 
 func (c *Conn) RemoteAddr() net.Addr {
-	return c.conn.RemoteAddr()
+	c.mu.Lock()
+	conn := c.conn
+	c.mu.Unlock()
+	if conn == nil {
+		return nil
+	}
+	return conn.RemoteAddr()
 }
 
 func (c *Conn) Dispatch(pkt *Packet) {
