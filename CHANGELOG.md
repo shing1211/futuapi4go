@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.12.0] - 2026-05-22
+
 ### Fixed
 
 - **CRITICAL: ProtoID mismatch** — `ProtoID_Qot_GetTradeDate = 3225` was incorrect; 3225 is officially `Qot_GetFinancialsEarningsPriceMove`. Removed duplicate constant, updated `GetTradeDate` to use correct `ProtoID_Qot_RequestTradeDate` (3219) with official `Qot_RequestTradeDate` proto types
@@ -22,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`GetFinancialsEarningsPriceMove`** (ProtoID 3225) — Wrapper in `pkg/qot/financials.go`, client wrapper in `client/quote_api.go`, fluent API method in `client/fluent_api.go`
 - **`GetFinancialsEarningsPriceHistory`** (ProtoID 3226) — Wrapper in `pkg/qot/financials.go`, client wrapper in `client/quote_api.go`, fluent API method in `client/fluent_api.go`
+
+## [v0.11.0] - 2026-05-22
 
 ### Changed
 
