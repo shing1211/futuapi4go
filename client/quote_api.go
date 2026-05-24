@@ -2235,3 +2235,31 @@ func GetFinancialsEarningsPriceHistory(ctx context.Context, c *Client, market co
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	return qot.GetFinancialsEarningsPriceHistory(ctx, c.inner, &qot.GetFinancialsEarningsPriceHistoryRequest{Security: sec})
 }
+
+// StockScreen filters stocks using the new v10.6 stock screening engine.
+// The FilterList, RetrieveList, Sort, and SortList fields are raw proto types from
+// the qotstockscreen package for full flexibility.
+func StockScreen(ctx context.Context, c *Client, req *qot.StockScreenRequest) (*qot.StockScreenResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("StockScreen: request is nil")
+	}
+	return qot.StockScreen(ctx, c.inner, req)
+}
+
+// WarrantScreen filters warrants using the v10.6 warrant screening engine.
+// The FilterList and SortList fields are raw proto types from qotwarrantscreen.
+func WarrantScreen(ctx context.Context, c *Client, req *qot.WarrantScreenRequest) (*qot.WarrantScreenResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("WarrantScreen: request is nil")
+	}
+	return qot.WarrantScreen(ctx, c.inner, req)
+}
+
+// OptionScreen filters options using the v10.6 option screening engine.
+// The FilterList and SortList fields are raw proto types from qotoptionscreen.
+func OptionScreen(ctx context.Context, c *Client, req *qot.OptionScreenRequest) (*qot.OptionScreenResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("OptionScreen: request is nil")
+	}
+	return qot.OptionScreen(ctx, c.inner, req)
+}

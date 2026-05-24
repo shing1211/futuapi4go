@@ -94,6 +94,11 @@ const (
 	ProtoID_RegQotPush              = 3002
 	ProtoID_RequestHistoryKL        = 3103
 	ProtoID_RequestHistoryKLQuota   = 3104
+
+	// Screen APIs (v10.6+)
+	ProtoID_StockScreen   = 3252
+	ProtoID_WarrantScreen = 3253
+	ProtoID_OptionScreen  = 3254
 )
 
 // BasicQot represents basic quote data for a security.

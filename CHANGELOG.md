@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Qot_StockScreen** (ProtoID 3252) — New v10.6 stock screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
+- **Qot_WarrantScreen** (ProtoID 3253) — New v10.6 warrant screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
+- **Qot_OptionScreen** (ProtoID 3254) — New v10.6 option screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
+- **Phase 10 field audit** — Added missing fields to KLine (Pe), StaticInfo (Id, Delisting, ListTimestamp, ExchType), PushTicker (Time, Timestamp, PushDataType), PushRT (LastClosePrice), PushKLine (IsBlank, TurnoverRate, Pe)
+- **GetCapitalFlow** — Now returns `*CapitalFlowResponse` exposing `LastValidTime`/`LastValidTimestamp`
+- **GetMarketState** — Now returns `*MarketStateResult` exposing `Code`/`Name`/`State`
+
+### Changed
+
+- **ProtoID constants** — Added `ProtoID_Qot_StockScreen` (3252), `ProtoID_Qot_WarrantScreen` (3253), `ProtoID_Qot_OptionScreen` (3254) in `pkg/constant/constant.go`
+
 ## [v0.12.0] - 2026-05-22
 
 ### Fixed

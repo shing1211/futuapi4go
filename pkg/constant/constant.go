@@ -160,6 +160,11 @@ const (
 	ProtoID_Qot_GetShortInterest              = 3249 // 获取做空利息
 	ProtoID_Qot_GetOptionVolatility           = 3250 // 获取期权波动率
 	ProtoID_Qot_GetOptionExerciseProbability  = 3251 // 获取期权行权概率
+
+	// v10.6+ Screen APIs (C++-only OpenD)
+	ProtoID_Qot_StockScreen   = 3252 // 条件选股(新版股票筛选)
+	ProtoID_Qot_WarrantScreen = 3253 // 窝轮筛选
+	ProtoID_Qot_OptionScreen  = 3254 // 期权筛选
 )
 
 // AllPushIDs returns all push notification ProtoIDs
