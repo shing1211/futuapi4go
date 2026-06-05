@@ -2263,3 +2263,35 @@ func OptionScreen(ctx context.Context, c *Client, req *qot.OptionScreenRequest) 
 	}
 	return qot.OptionScreen(ctx, c.inner, req)
 }
+
+// GetOptionQuote retrieves real-time quotes for option combo legs.
+func GetOptionQuote(ctx context.Context, c *Client, req *qot.GetOptionQuoteRequest) (*qot.GetOptionQuoteResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionQuote: request is nil")
+	}
+	return qot.GetOptionQuote(ctx, c.inner, req)
+}
+
+// GetOptionStrategy retrieves option strategy combo lists for the given underlying.
+func GetOptionStrategy(ctx context.Context, c *Client, req *qot.GetOptionStrategyRequest) (*qot.GetOptionStrategyResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategy: request is nil")
+	}
+	return qot.GetOptionStrategy(ctx, c.inner, req)
+}
+
+// GetOptionStrategyAnalysis returns P&L analysis for an option strategy combination.
+func GetOptionStrategyAnalysis(ctx context.Context, c *Client, req *qot.GetOptionStrategyAnalysisRequest) (*qot.GetOptionStrategyAnalysisResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategyAnalysis: request is nil")
+	}
+	return qot.GetOptionStrategyAnalysis(ctx, c.inner, req)
+}
+
+// GetOptionStrategySpread returns available spread values for an option strategy.
+func GetOptionStrategySpread(ctx context.Context, c *Client, req *qot.GetOptionStrategySpreadRequest) (*qot.GetOptionStrategySpreadResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategySpread: request is nil")
+	}
+	return qot.GetOptionStrategySpread(ctx, c.inner, req)
+}

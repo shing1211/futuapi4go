@@ -9,16 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Qot_StockScreen** (ProtoID 3252) — New v10.6 stock screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
-- **Qot_WarrantScreen** (ProtoID 3253) — New v10.6 warrant screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
-- **Qot_OptionScreen** (ProtoID 3254) — New v10.6 option screening API wrapper in `pkg/qot/screen.go`, client wrapper in `client/quote_api.go`
-- **Phase 10 field audit** — Added missing fields to KLine (Pe), StaticInfo (Id, Delisting, ListTimestamp, ExchType), PushTicker (Time, Timestamp, PushDataType), PushRT (LastClosePrice), PushKLine (IsBlank, TurnoverRate, Pe)
-- **GetCapitalFlow** — Now returns `*CapitalFlowResponse` exposing `LastValidTime`/`LastValidTimestamp`
-- **GetMarketState** — Now returns `*MarketStateResult` exposing `Code`/`Name`/`State`
+- **Qot_GetOptionQuote** (ProtoID 3255) — New v10.7 option real-time quote API wrapper in `pkg/qot/quote.go`, client wrapper in `client/quote_api.go`, fluent API in `client/fluent_api.go`
+- **Qot_GetOptionStrategy** (ProtoID 3256) — New v10.7 option strategy combo list API wrapper in `pkg/qot/quote.go`, client wrapper in `client/quote_api.go`, fluent API in `client/fluent_api.go`
+- **Qot_GetOptionStrategyAnalysis** (ProtoID 3257) — New v10.7 option strategy P&L analysis API wrapper in `pkg/qot/quote.go`, client wrapper in `client/quote_api.go`, fluent API in `client/fluent_api.go`
+- **Qot_GetOptionStrategySpread** (ProtoID 3258) — New v10.7 option strategy spread list API wrapper in `pkg/qot/quote.go`, client wrapper in `client/quote_api.go`, fluent API in `client/fluent_api.go`
+- **Trd_GetComboMaxTrdQtys** (ProtoID 2112) — New v10.7 combo order max trade quantity API wrapper in `pkg/trd/trade.go`, client wrapper in `client/trade_api.go`, fluent API in `client/fluent_api.go`
+- **Trd_PlaceComboOrder** (ProtoID 2227) — New v10.7 combo order placement API wrapper in `pkg/trd/trade.go`, client wrapper in `client/trade_api.go`, fluent API in `client/fluent_api.go`
 
 ### Changed
 
-- **ProtoID constants** — Added `ProtoID_Qot_StockScreen` (3252), `ProtoID_Qot_WarrantScreen` (3253), `ProtoID_Qot_OptionScreen` (3254) in `pkg/constant/constant.go`
+- **Upgraded to Futu Protocol v10.7.6708** (clientVer 1076) — 111 protos, 6 new APIs
+- **Fixed ProtoID swap** — `Qot_WarrantScreen` changed from 3253→3254, `Qot_OptionScreen` changed from 3254→3253 (corrected per v10.7 spec)
+- **ProtoID constants** — Added `ProtoID_Qot_GetOptionQuote` (3255), `ProtoID_Qot_GetOptionStrategy` (3256), `ProtoID_Qot_GetOptionStrategyAnalysis` (3257), `ProtoID_Qot_GetOptionStrategySpread` (3258), `ProtoID_Trd_GetComboMaxTrdQtys` (2112), `ProtoID_Trd_PlaceComboOrder` (2227) in `pkg/constant/constant.go`
+- **clientVer** — Updated from 1066→1076 in `internal/client/client.go`
+- **SDK version** — Bumped to `0.13.0` in `internal/client/version.go`
 
 ## [v0.12.0] - 2026-05-22
 

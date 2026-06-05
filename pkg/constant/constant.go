@@ -162,9 +162,17 @@ const (
 	ProtoID_Qot_GetOptionExerciseProbability  = 3251 // 获取期权行权概率
 
 	// v10.6+ Screen APIs (C++-only OpenD)
-	ProtoID_Qot_StockScreen   = 3252 // 条件选股(新版股票筛选)
-	ProtoID_Qot_WarrantScreen = 3253 // 窝轮筛选
-	ProtoID_Qot_OptionScreen  = 3254 // 期权筛选
+	ProtoID_Qot_StockScreen      = 3252 // 条件选股(新版股票筛选)
+	ProtoID_Qot_OptionScreen     = 3253 // 期权筛选
+	ProtoID_Qot_WarrantScreen    = 3254 // 窝轮筛选
+	ProtoID_Qot_GetOptionQuote   = 3255 // 获取期权实时行情
+	ProtoID_Qot_GetOptionStrategy = 3256 // 获取期权策略组合列表
+	ProtoID_Qot_GetOptionStrategyAnalysis = 3257 // 获取期权策略组合分析
+	ProtoID_Qot_GetOptionStrategySpread  = 3258 // 获取期权策略价差列表
+
+	// v10.7+ Combo Trade APIs
+	ProtoID_Trd_GetComboMaxTrdQtys = 2112 // 查询组合最大可交易数量
+	ProtoID_Trd_PlaceComboOrder    = 2227 // 组合下单
 )
 
 // AllPushIDs returns all push notification ProtoIDs

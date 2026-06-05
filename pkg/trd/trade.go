@@ -36,6 +36,7 @@ package trd
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"google.golang.org/protobuf/proto"
@@ -43,8 +44,11 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetacclist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgetcombomaxtrdqtys"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdplacecomboorder"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdplaceorder"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
@@ -68,6 +72,8 @@ const (
 	ProtoID_SubAccPush              = 2008
 	ProtoID_ReconfirmOrder          = 2209
 	ProtoID_GetFlowSummary          = 2226
+	ProtoID_GetComboMaxTrdQtys     = 2112
+	ProtoID_PlaceComboOrder        = 2227
 )
 
 // Acc represents a trading account with its environment, ID, type, and status.
@@ -223,4 +229,142 @@ func GetAccList(ctx context.Context, c *futuapi.Client, trdCategory constant.Trd
 	}
 
 	return result, nil
+}
+
+// GetComboMaxTrdQtysRequest defines parameters for GetComboMaxTrdQtys.
+type GetComboMaxTrdQtysRequest struct {
+	Header    *trdcommon.TrdHeader
+	ComboLegs []*qotcommon.ComboLeg
+	Qty       float64
+	Price     float64
+	OrderType int32
+	OrderIDEx string
+}
+
+// GetComboMaxTrdQtysResponse is the response type for GetComboMaxTrdQtys.
+type GetComboMaxTrdQtysResponse struct {
+	Header     *trdcommon.TrdHeader
+	MaxTrdQtys *trdcommon.ComboMaxTrdQtys
+}
+
+// GetComboMaxTrdQtys returns maximum tradable quantities for combo orders.
+func GetComboMaxTrdQtys(ctx context.Context, c *futuapi.Client, req *GetComboMaxTrdQtysRequest) (*GetComboMaxTrdQtysResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetComboMaxTrdQtys: request is nil")
+	}
+	if req.Header == nil {
+		return nil, fmt.Errorf("GetComboMaxTrdQtys: Header is nil")
+	}
+	if len(req.ComboLegs) == 0 {
+		return nil, fmt.Errorf("GetComboMaxTrdQtys: ComboLegs is empty")
+	}
+	if req.Qty <= 0 {
+		return nil, fmt.Errorf("GetComboMaxTrdQtys: Qty must be positive")
+	}
+	c2s := &trdgetcombomaxtrdqtys.C2S{
+		Header:    req.Header,
+		ComboLegs: req.ComboLegs,
+		Qty:       &req.Qty,
+		OrderType: &req.OrderType,
+	}
+	if req.Price != 0 {
+		c2s.Price = &req.Price
+	}
+	if req.OrderIDEx != "" {
+		c2s.OrderIDEx = &req.OrderIDEx
+	}
+	pkt := &trdgetcombomaxtrdqtys.Request{C2S: c2s}
+	var rsp trdgetcombomaxtrdqtys.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetComboMaxTrdQtys, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetComboMaxTrdQtys", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("GetComboMaxTrdQtys", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &GetComboMaxTrdQtysResponse{
+		Header:     s2c.Header,
+		MaxTrdQtys: s2c.MaxTrdQtys,
+	}, nil
+}
+
+// PlaceComboOrderRequest defines parameters for PlaceComboOrder.
+type PlaceComboOrderRequest struct {
+	PacketID    *common.PacketID
+	Header      *trdcommon.TrdHeader
+	ComboLegs   []*qotcommon.ComboLeg
+	Qty         float64
+	Price       float64
+	OrderType   int32
+	TimeInForce int32
+	ExpireTime  string
+	Remark      string
+}
+
+// PlaceComboOrderResponse is the response type for PlaceComboOrder.
+type PlaceComboOrderResponse struct {
+	Header    *trdcommon.TrdHeader
+	OrderIDEx string
+}
+
+// PlaceComboOrder places a combo order for option strategies.
+func PlaceComboOrder(ctx context.Context, c *futuapi.Client, req *PlaceComboOrderRequest) (*PlaceComboOrderResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("PlaceComboOrder: request is nil")
+	}
+	if req.Header == nil {
+		return nil, fmt.Errorf("PlaceComboOrder: Header is nil")
+	}
+	if len(req.ComboLegs) == 0 {
+		return nil, fmt.Errorf("PlaceComboOrder: ComboLegs is empty")
+	}
+	if req.Qty <= 0 {
+		return nil, fmt.Errorf("PlaceComboOrder: Qty must be positive")
+	}
+	c2s := &trdplacecomboorder.C2S{
+		PacketID:  req.PacketID,
+		Header:    req.Header,
+		ComboLegs: req.ComboLegs,
+		Qty:       &req.Qty,
+		OrderType: &req.OrderType,
+	}
+	if req.Price != 0 {
+		c2s.Price = &req.Price
+	}
+	if req.TimeInForce != 0 {
+		c2s.TimeInForce = &req.TimeInForce
+	}
+	if req.ExpireTime != "" {
+		c2s.ExpireTime = &req.ExpireTime
+	}
+	if req.Remark != "" {
+		c2s.Remark = &req.Remark
+	}
+	pkt := &trdplacecomboorder.Request{C2S: c2s}
+	var rsp trdplacecomboorder.Response
+
+	if err := c.RequestContext(ctx, ProtoID_PlaceComboOrder, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("PlaceComboOrder", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("PlaceComboOrder", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &PlaceComboOrderResponse{
+		Header:    s2c.Header,
+		OrderIDEx: util.ProtoStr(s2c.OrderIDEx),
+	}, nil
 }

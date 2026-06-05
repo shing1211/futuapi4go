@@ -775,3 +775,19 @@ func GetAccountFunds(ctx context.Context, c *Client, accID uint64, market consta
 	}
 	return trd.GetAccountFunds(ctx, c.inner, accID, market, c.trdEnv)
 }
+
+// GetComboMaxTrdQtys retrieves maximum tradable quantities for combo orders.
+func GetComboMaxTrdQtys(ctx context.Context, c *Client, req *trd.GetComboMaxTrdQtysRequest) (*trd.GetComboMaxTrdQtysResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetComboMaxTrdQtys: request is nil")
+	}
+	return trd.GetComboMaxTrdQtys(ctx, c.inner, req)
+}
+
+// PlaceComboOrder places a combo order for option strategies.
+func PlaceComboOrder(ctx context.Context, c *Client, req *trd.PlaceComboOrderRequest) (*trd.PlaceComboOrderResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("PlaceComboOrder: request is nil")
+	}
+	return trd.PlaceComboOrder(ctx, c.inner, req)
+}

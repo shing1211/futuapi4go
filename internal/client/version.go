@@ -16,11 +16,11 @@ package futuapi
 
 // Version information / 版本信息
 const (
-	Version      = "0.4.0-dev"
+	Version      = "0.13.0"
 	VersionMajor = 0
-	VersionMinor = 4
+	VersionMinor = 13
 	VersionPatch = 0
-	VersionPre   = "dev"
+	VersionPre   = ""
 )
 
 // Build information (set via ldflags during release builds)

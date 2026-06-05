@@ -224,6 +224,26 @@ func (api *QuoteAPI) GetFinancialsEarningsPriceHistory(ctx context.Context, req 
 	return qot.GetFinancialsEarningsPriceHistory(ctx, api.client, req)
 }
 
+// GetOptionQuote retrieves real-time quotes for option combo legs.
+func (api *QuoteAPI) GetOptionQuote(ctx context.Context, req *qot.GetOptionQuoteRequest) (*qot.GetOptionQuoteResponse, error) {
+	return qot.GetOptionQuote(ctx, api.client, req)
+}
+
+// GetOptionStrategy retrieves option strategy combo lists.
+func (api *QuoteAPI) GetOptionStrategy(ctx context.Context, req *qot.GetOptionStrategyRequest) (*qot.GetOptionStrategyResponse, error) {
+	return qot.GetOptionStrategy(ctx, api.client, req)
+}
+
+// GetOptionStrategyAnalysis returns P&L analysis for an option strategy combination.
+func (api *QuoteAPI) GetOptionStrategyAnalysis(ctx context.Context, req *qot.GetOptionStrategyAnalysisRequest) (*qot.GetOptionStrategyAnalysisResponse, error) {
+	return qot.GetOptionStrategyAnalysis(ctx, api.client, req)
+}
+
+// GetOptionStrategySpread returns available spread values for an option strategy.
+func (api *QuoteAPI) GetOptionStrategySpread(ctx context.Context, req *qot.GetOptionStrategySpreadRequest) (*qot.GetOptionStrategySpreadResponse, error) {
+	return qot.GetOptionStrategySpread(ctx, api.client, req)
+}
+
 // TradeAPI provides a fluent API for trading operations.
 // Use client.Trade() to get an instance.
 type TradeAPI struct {
@@ -304,6 +324,16 @@ func (api *TradeAPI) GetMarginRatio(ctx context.Context, req *trd.GetMarginRatio
 
 func (api *TradeAPI) GetFlowSummary(ctx context.Context, req *trd.GetFlowSummaryRequest) (*trd.GetFlowSummaryResponse, error) {
 	return trd.GetFlowSummary(ctx, api.client, req)
+}
+
+// GetComboMaxTrdQtys retrieves maximum tradable quantities for combo orders.
+func (api *TradeAPI) GetComboMaxTrdQtys(ctx context.Context, req *trd.GetComboMaxTrdQtysRequest) (*trd.GetComboMaxTrdQtysResponse, error) {
+	return trd.GetComboMaxTrdQtys(ctx, api.client, req)
+}
+
+// PlaceComboOrder places a combo order for option strategies.
+func (api *TradeAPI) PlaceComboOrder(ctx context.Context, req *trd.PlaceComboOrderRequest) (*trd.PlaceComboOrderResponse, error) {
+	return trd.PlaceComboOrder(ctx, api.client, req)
 }
 
 func (api *TradeAPI) NewOrder(accID uint64, market constant.TrdMarket) *trd.OrderBuilder {

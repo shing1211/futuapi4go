@@ -48,9 +48,13 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/util"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionquote"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategy"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategyanalysis"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategyspreads"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // wrapError standardizes error messages for proto response failures
@@ -96,9 +100,13 @@ const (
 	ProtoID_RequestHistoryKLQuota   = 3104
 
 	// Screen APIs (v10.6+)
-	ProtoID_StockScreen   = 3252
-	ProtoID_WarrantScreen = 3253
-	ProtoID_OptionScreen  = 3254
+	ProtoID_StockScreen                = 3252
+	ProtoID_OptionScreen               = 3253
+	ProtoID_WarrantScreen              = 3254
+	ProtoID_GetOptionQuote             = 3255
+	ProtoID_GetOptionStrategy          = 3256
+	ProtoID_GetOptionStrategyAnalysis  = 3257
+	ProtoID_GetOptionStrategySpread    = 3258
 )
 
 // BasicQot represents basic quote data for a security.
@@ -207,6 +215,235 @@ type KLine struct {
 	ChangeRate     float64
 	Timestamp      float64
 }
+
+// GetOptionQuoteRequest defines parameters for GetOptionQuote.
+type GetOptionQuoteRequest struct {
+	MultiLegs []*qotcommon.ComboLeg
+}
+
+// GetOptionQuoteResponse is the response type for GetOptionQuote.
+type GetOptionQuoteResponse struct {
+	OptionQuoteList []*qotgetoptionquote.OptionQuote
+}
+
+// GetOptionQuote returns real-time quotes for option combo legs.
+func GetOptionQuote(ctx context.Context, c *futuapi.Client, req *GetOptionQuoteRequest) (*GetOptionQuoteResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionQuote: request is nil")
+	}
+	if len(req.MultiLegs) == 0 {
+		return nil, fmt.Errorf("GetOptionQuote: MultiLegs is empty")
+	}
+	c2s := &qotgetoptionquote.C2S{
+		MultiLegs: req.MultiLegs,
+	}
+	pkt := &qotgetoptionquote.Request{C2S: c2s}
+	var rsp qotgetoptionquote.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionQuote, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionQuote", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("GetOptionQuote", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &GetOptionQuoteResponse{
+		OptionQuoteList: s2c.OptionQuoteList,
+	}, nil
+}
+
+// GetOptionStrategyRequest defines parameters for GetOptionStrategy.
+type GetOptionStrategyRequest struct {
+	Owner           *qotcommon.Security
+	OptionStrategy  int32
+	ExpireTime      string
+	FarExpireTime   string
+	Spread          float64
+	OptionType      int32
+	StrikePrice     float64
+	IndexOptionType int32
+}
+
+// GetOptionStrategyResponse is the response type for GetOptionStrategy.
+type GetOptionStrategyResponse struct {
+	StrategyList []*qotgetoptionstrategy.OptionStrategyItem
+}
+
+// GetOptionStrategy returns option strategy combo lists for the given underlying.
+func GetOptionStrategy(ctx context.Context, c *futuapi.Client, req *GetOptionStrategyRequest) (*GetOptionStrategyResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategy: request is nil")
+	}
+	if req.Owner == nil {
+		return nil, fmt.Errorf("GetOptionStrategy: Owner is nil")
+	}
+	c2s := &qotgetoptionstrategy.C2S{
+		Owner:          req.Owner,
+		OptionStrategy: &req.OptionStrategy,
+	}
+	if req.ExpireTime != "" {
+		c2s.ExpireTime = &req.ExpireTime
+	}
+	if req.FarExpireTime != "" {
+		c2s.FarExpireTime = &req.FarExpireTime
+	}
+	if req.Spread != 0 {
+		c2s.Spread = &req.Spread
+	}
+	if req.OptionType != 0 {
+		c2s.OptionType = &req.OptionType
+	}
+	if req.StrikePrice != 0 {
+		c2s.StrikePrice = &req.StrikePrice
+	}
+	if req.IndexOptionType != 0 {
+		c2s.IndexOptionType = &req.IndexOptionType
+	}
+	pkt := &qotgetoptionstrategy.Request{C2S: c2s}
+	var rsp qotgetoptionstrategy.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionStrategy, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionStrategy", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("GetOptionStrategy", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &GetOptionStrategyResponse{
+		StrategyList: s2c.StrategyList,
+	}, nil
+}
+
+// GetOptionStrategyAnalysisRequest defines parameters for GetOptionStrategyAnalysis.
+type GetOptionStrategyAnalysisRequest struct {
+	MultiLegs []*qotcommon.ComboLeg
+}
+
+// GetOptionStrategyAnalysisResponse is the response type for GetOptionStrategyAnalysis.
+type GetOptionStrategyAnalysisResponse struct {
+	Code            string
+	Name            string
+	OptionStrategy  int32
+	Bid1            float64
+	Ask1            float64
+	MaxProfit       float64
+	MaxLoss         float64
+	BreakevenPoints []float64
+	ProbOfProfit    float64
+	Delta           float64
+	Theta           float64
+}
+
+// GetOptionStrategyAnalysis returns P&L analysis for an option strategy combination.
+func GetOptionStrategyAnalysis(ctx context.Context, c *futuapi.Client, req *GetOptionStrategyAnalysisRequest) (*GetOptionStrategyAnalysisResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategyAnalysis: request is nil")
+	}
+	if len(req.MultiLegs) == 0 {
+		return nil, fmt.Errorf("GetOptionStrategyAnalysis: MultiLegs is empty")
+	}
+	c2s := &qotgetoptionstrategyanalysis.C2S{
+		MultiLegs: req.MultiLegs,
+	}
+	pkt := &qotgetoptionstrategyanalysis.Request{C2S: c2s}
+	var rsp qotgetoptionstrategyanalysis.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionStrategyAnalysis, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionStrategyAnalysis", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("GetOptionStrategyAnalysis", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &GetOptionStrategyAnalysisResponse{
+		Code:            util.ProtoStr(s2c.Code),
+		Name:            util.ProtoStr(s2c.Name),
+		OptionStrategy:  util.ProtoInt32(s2c.OptionStrategy),
+		Bid1:            util.ProtoFloat64(s2c.Bid1),
+		Ask1:            util.ProtoFloat64(s2c.Ask1),
+		MaxProfit:       util.ProtoFloat64(s2c.MaxProfit),
+		MaxLoss:         util.ProtoFloat64(s2c.MaxLoss),
+		BreakevenPoints: s2c.BreakevenPoints,
+		ProbOfProfit:    util.ProtoFloat64(s2c.ProbOfProfit),
+		Delta:           util.ProtoFloat64(s2c.Delta),
+		Theta:           util.ProtoFloat64(s2c.Theta),
+	}, nil
+}
+
+// GetOptionStrategySpreadRequest defines parameters for GetOptionStrategySpread.
+type GetOptionStrategySpreadRequest struct {
+	Owner           *qotcommon.Security
+	OptionStrategy  int32
+	ExpireTime      string
+	FarExpireTime   string
+	IndexOptionType int32
+}
+
+// GetOptionStrategySpreadResponse is the response type for GetOptionStrategySpread.
+type GetOptionStrategySpreadResponse struct {
+	SpreadList []float64
+}
+
+// GetOptionStrategySpread returns available spread values for an option strategy.
+func GetOptionStrategySpread(ctx context.Context, c *futuapi.Client, req *GetOptionStrategySpreadRequest) (*GetOptionStrategySpreadResponse, error) {
+	if req == nil {
+		return nil, fmt.Errorf("GetOptionStrategySpread: request is nil")
+	}
+	if req.Owner == nil {
+		return nil, fmt.Errorf("GetOptionStrategySpread: Owner is nil")
+	}
+	c2s := &qotgetoptionstrategyspreads.C2S{
+		Owner:          req.Owner,
+		OptionStrategy: &req.OptionStrategy,
+	}
+	if req.ExpireTime != "" {
+		c2s.ExpireTime = &req.ExpireTime
+	}
+	if req.FarExpireTime != "" {
+		c2s.FarExpireTime = &req.FarExpireTime
+	}
+	if req.IndexOptionType != 0 {
+		c2s.IndexOptionType = &req.IndexOptionType
+	}
+	pkt := &qotgetoptionstrategyspreads.Request{C2S: c2s}
+	var rsp qotgetoptionstrategyspreads.Response
+
+	if err := c.RequestContext(ctx, ProtoID_GetOptionStrategySpread, pkt, &rsp); err != nil {
+		return nil, err
+	}
+
+	if util.ProtoInt32(rsp.RetType) != int32(common.RetType_RetType_Succeed) {
+		return nil, wrapError("GetOptionStrategySpread", util.ProtoInt32(rsp.RetType), util.ProtoStr(rsp.RetMsg))
+	}
+
+	s2c := rsp.S2C
+	if s2c == nil {
+		return nil, wrapError("GetOptionStrategySpread", int32(common.RetType_RetType_Unknown), "s2c is nil")
+	}
+
+	return &GetOptionStrategySpreadResponse{
+		SpreadList: s2c.SpreadList,
+	}, nil
+}
+
 
 // GetKLRequest defines parameters for GetKL.
 type GetKLRequest struct {

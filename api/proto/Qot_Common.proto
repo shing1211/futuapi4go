@@ -5,7 +5,6 @@ option go_package = "github.com/shing1211/futuapi4go/pkg/pb/qotcommon";
 
 import "Common.proto";
 
-
 enum QotMarket
 {
     QotMarket_Unknown = 0; //未知市场
@@ -136,6 +135,9 @@ enum TradeDateMarket
 	TradeDateMarket_ST = 5; //港股通（深、沪）
 	TradeDateMarket_JP_Future = 6; //日本期货
 	TradeDateMarket_SG_Future = 7; //新加坡期货
+	TradeDateMarket_SG = 8; //新加坡证券
+	TradeDateMarket_MY = 9; //马来西亚
+	TradeDateMarket_JP = 10; //日本（正股/ETF）
 }
 
 //交易日类型
@@ -214,6 +216,13 @@ enum SubType
 	SubType_KL_120Min = 19; //120分K
 	SubType_KL_180Min = 20; //180分K
 	SubType_KL_240Min = 21; //240分K
+	SubType_OrderBook_Odd = 22; //碎股摆盘
+}
+
+enum OrderBookType
+{
+	OrderBookType_Normal = 0; //整股盘(默认)
+	OrderBookType_Odd = 1; //碎股盘
 }
 
 enum TickerDirection
@@ -579,9 +588,11 @@ enum ExchType
     ExchType_CN_SZ = 15; //深交所
     ExchType_CN_STIB = 16; //科创板
     ExchType_SG_SGX = 17; //新交所
-    ExchType_JP_OSE = 18; //大阪交易所
+    ExchType_JP_OSE = 18; //大阪交易所 
 	ExchType_CC_CRYPTO = 19; //加密货币交易所
-	ExchType_MY_BMS = 20; //马来西亚交易所
+	ExchType_MY_MYX = 20; //马来西亚交易所
+	ExchType_JP_TSE = 21; //东京证券交易所
+	ExchType_JP_Nikkei = 22; //日经指数
 }
 
 // 周期类型
@@ -601,6 +612,30 @@ enum PriceReminderMarketStatus
 	PriceReminderMarketStatus_USPre = 2;  // 美股盘前
 	PriceReminderMarketStatus_USAfter = 3; // 美股盘后
 	PriceReminderMarketStatus_USOverNight = 4; // 美股夜盘
+}
+
+enum OptionStrategyType
+{
+	OptionStrategyType_Unknown = 0; // 未知
+	OptionStrategyType_SingleOption = 1;  // 单个期权
+	OptionStrategyType_Covered = 2;  // 股票担保
+	OptionStrategyType_Spread = 4;  // 垂直策略
+	OptionStrategyType_Straddle = 6;  // 跨式策略
+	OptionStrategyType_Strangle = 7;  // 宽跨式策略
+	OptionStrategyType_Collar = 8;  // 领式策略
+	OptionStrategyType_Butterfly = 9;  // 蝶式策略
+	OptionStrategyType_Condor = 11;  // 鹰式策略
+	OptionStrategyType_IronButterfly = 13;  // 铁蝶式策略
+	OptionStrategyType_IronCondor = 14;  // 铁鹰式策略
+	OptionStrategyType_CalendarSpread = 15;  // 日历策略
+	OptionStrategyType_DiagonalSpread = 16;  // 对角策略
+	OptionStrategyType_Customize = 100;  // 自定义策略
+}
+
+//行情协议公共参数头
+message QotHeader
+{
+	optional int32 securityFirm = 1; //券商标识，取值见 Trd_Common.SecurityFirm
 }
 
 // 财报类型
@@ -770,12 +805,6 @@ enum OptionImpvolStatusType
     ImpvolFluctuating = 0; // 期权波动率处于震荡中
     ImpvolOvervalued  = 1; // 期权波动率处于高估
     ImpvolUndervalued = 2; // 期权波动率处于低估
-}
-
-//行情协议公共参数头
-message QotHeader
-{
-	optional int32 securityFirm = 1; //券商标识，取值见 Trd_Common.SecurityFirm
 }
 
  //两个字段确定一支股票
@@ -1012,7 +1041,8 @@ message ConnSubInfo
 	repeated SubInfo subInfoList = 1; //该连接订阅信息
 	required int32 usedQuota = 2; //该连接已经使用的订阅额度
 	required bool isOwnConnData = 3; //用于区分是否是自己连接的数据
-	optional int32 securityFirm = 4; //券商标识，取值见 Trd_Common.SecurityFirm 
+	optional int32 securityFirm = 4; //券商标识，取值见 Trd_Common.SecurityFirm
+	optional int32 optionUsedQuota = 5; //期权已使用订阅额度
 }
 
 message PlateInfo
@@ -1049,4 +1079,12 @@ message Rehab
 	optional double spinOffBase = 24; // 分立
 	optional double spinOffErt = 25; //
 	optional double timestamp = 23; //时间戳
+}
+
+message ComboLeg
+{
+	required Qot_Common.Security security = 1; //股票/期权
+    optional int32 side = 2; //方向，取值见 Trd_Common.TrdSide
+    optional double qtyRatio = 3; //数量比例
+    optional uint64 positionID = 4; //持仓ID，仅 moomoo JP 平仓时使用
 }
