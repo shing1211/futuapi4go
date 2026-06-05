@@ -172,7 +172,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `ENHANCEMENT_PLAN.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.11.0)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.13.0)
 
 ---
 
@@ -212,7 +212,7 @@ Before ending a work session, confirm:
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **futuapi4go** (20427 symbols, 51795 relationships, 186 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **futuapi4go** (20476 symbols, 51966 relationships, 177 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
