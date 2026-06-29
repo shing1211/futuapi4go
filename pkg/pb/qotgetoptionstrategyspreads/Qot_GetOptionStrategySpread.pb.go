@@ -26,7 +26,7 @@ type C2S struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Owner           *qotcommon.Security    `protobuf:"bytes,1,req,name=owner" json:"owner,omitempty"`                                               //期权标的股，目前仅支持港美正股以及恒指国指
 	OptionStrategy  *int32                 `protobuf:"varint,2,req,name=option_strategy,json=optionStrategy" json:"option_strategy,omitempty"`      //Qot_GetOptionStrategy.OptionStrategyType，期权策略类型
-	ExpireTime      *string                `protobuf:"bytes,3,opt,name=expire_time,json=expireTime" json:"expire_time,omitempty"`                   //到期日（近端到期日），不填表示取行权日列表中第一条作为近端到期日
+	ExpireTime      *string                `protobuf:"bytes,3,opt,name=expire_time,json=expireTime" json:"expire_time,omitempty"`                   //到期日（近端到期日）
 	FarExpireTime   *string                `protobuf:"bytes,4,opt,name=far_expire_time,json=farExpireTime" json:"far_expire_time,omitempty"`        //远端到期日，对角策略（DiagonalSpread）时必传
 	IndexOptionType *int32                 `protobuf:"varint,5,opt,name=index_option_type,json=indexOptionType" json:"index_option_type,omitempty"` //Qot_Common.IndexOptionType，指数期权类型，仅用于恒指国指
 	Header          *qotcommon.QotHeader   `protobuf:"bytes,100,opt,name=header" json:"header,omitempty"`                                           //行情公共参数头

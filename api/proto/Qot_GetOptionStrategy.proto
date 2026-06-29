@@ -19,7 +19,7 @@ message C2S
 {
 	required Qot_Common.Security owner = 1;      //期权标的股，目前仅支持港美正股以及恒指国指
 	required int32 option_strategy = 2;             //OptionStrategyType，期权策略类型
-	optional string expire_time = 3;              //到期日（近端到期日），不填表示不过滤到期日，使用行权日列表中的全部项拉取策略
+	optional string expire_time = 3;              //到期日（近端到期日）
 	optional string far_expire_time = 4;           //远端到期日，对角策略（DiagonalSpread）时使用
 	optional double spread = 5;                  //价差筛选值，仅对价差类策略有效，不填表示返回所有
 	optional int32 option_type = 6;               //Qot_Common.OptionType，期权类型，不填表示都返回

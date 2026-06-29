@@ -520,8 +520,7 @@ const file_SkillWrapAPI_proto_rawDesc = "" +
 	"\aerrCode\x18\x03 \x01(\x05R\aerrCode\x12\x1d\n" +
 	"\n" +
 	"time_range\x18\x04 \x01(\tR\ttimeRange\x12\x18\n" +
-	"\acontent\x18\x05 \x01(\tR\acontentBM\n" +
-	"\x13com.futu.openapi.pbZ3github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi\x90\x01\x01"
+	"\acontent\x18\x05 \x01(\tR\acontentB8Z3github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi\x90\x01\x01"
 
 var (
 	file_SkillWrapAPI_proto_rawDescOnce sync.Once

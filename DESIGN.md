@@ -1,6 +1,6 @@
 # futuapi4go Design Document
 
-> **Version:** v0.13.0 | **Last Updated:** 2026-06-05
+> **Version:** v0.14.0 | **Last Updated:** 2026-06-29
 
 ---
 

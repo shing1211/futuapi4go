@@ -231,7 +231,7 @@ type S2C struct {
 	CcQotRight            *int32                 `protobuf:"varint,34,opt,name=ccQotRight" json:"ccQotRight,omitempty"`                       //加密货币市场行情权限, Qot_Common.QotRight
 	SgStockQotRight       *int32                 `protobuf:"varint,35,opt,name=sgStockQotRight" json:"sgStockQotRight,omitempty"`             //新加坡股票行情权限, Qot_Common.QotRight
 	MyStockQotRight       *int32                 `protobuf:"varint,36,opt,name=myStockQotRight" json:"myStockQotRight,omitempty"`             //马来西亚股票行情权限, Qot_Common.QotRight
-	JpStockQotRight       *int32                 `protobuf:"varint,37,opt,name=jpStockQotRight" json:"jpStockQotRight,omitempty"`             //日本市场股票行情权限, Qot_Common.QotRight
+	JpStockQotRight       *int32                 `protobuf:"varint,37,opt,name=jpStockQotRight" json:"jpStockQotRight,omitempty"`             //日本股票行情权限, Qot_Common.QotRight
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }

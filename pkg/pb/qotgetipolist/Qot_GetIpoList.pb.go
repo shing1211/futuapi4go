@@ -690,166 +690,19 @@ func (x *MYIpoExData) GetWinningTimestamp() float64 {
 	return 0
 }
 
-// JP ETF 简介信息
-type JPETFBriefInfo struct {
-	state                   protoimpl.MessageState `protogen:"open.v1"`
-	ManagementFeeRates      *int64                 `protobuf:"varint,1,opt,name=managementFeeRates" json:"managementFeeRates,omitempty"`          // 管理费率（原始值*1000000）
-	DividendTimes           *int64                 `protobuf:"varint,2,opt,name=dividendTimes" json:"dividendTimes,omitempty"`                    // 派息次数
-	DividendFrequencyType   *int32                 `protobuf:"varint,3,opt,name=dividendFrequencyType" json:"dividendFrequencyType,omitempty"`    // 派息周期类型 1-YEAR 2-QUARTER 3-MONTH
-	InvestingRiskType       *int32                 `protobuf:"varint,4,opt,name=investingRiskType" json:"investingRiskType,omitempty"`            // 投资风险类型 1-BOND_LINK 2-FUTURES 3-LEVERAGED 4-ACTIVELY_MANAGE 5-CURRENCY_SWAP 6-INVERSE
-	IndexName               *string                `protobuf:"bytes,5,opt,name=indexName" json:"indexName,omitempty"`                             // 标的指数名称
-	CompanyName             *string                `protobuf:"bytes,6,opt,name=companyName" json:"companyName,omitempty"`                         // 管理公司名称
-	CompanyIntroductionLink *string                `protobuf:"bytes,7,opt,name=companyIntroductionLink" json:"companyIntroductionLink,omitempty"` // 管理公司简介链接
-	CompanyInterviewLink    *string                `protobuf:"bytes,8,opt,name=companyInterviewLink" json:"companyInterviewLink,omitempty"`       // 企业采访信息链接
-	EtfPamphletLink         *string                `protobuf:"bytes,9,opt,name=etfPamphletLink" json:"etfPamphletLink,omitempty"`                 // 产品手册链接
-	EtfIntroductionLink     *string                `protobuf:"bytes,10,opt,name=etfIntroductionLink" json:"etfIntroductionLink,omitempty"`        // 产品简介链接
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
-}
-
-func (x *JPETFBriefInfo) Reset() {
-	*x = JPETFBriefInfo{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JPETFBriefInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JPETFBriefInfo) ProtoMessage() {}
-
-func (x *JPETFBriefInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JPETFBriefInfo.ProtoReflect.Descriptor instead.
-func (*JPETFBriefInfo) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *JPETFBriefInfo) GetManagementFeeRates() int64 {
-	if x != nil && x.ManagementFeeRates != nil {
-		return *x.ManagementFeeRates
-	}
-	return 0
-}
-
-func (x *JPETFBriefInfo) GetDividendTimes() int64 {
-	if x != nil && x.DividendTimes != nil {
-		return *x.DividendTimes
-	}
-	return 0
-}
-
-func (x *JPETFBriefInfo) GetDividendFrequencyType() int32 {
-	if x != nil && x.DividendFrequencyType != nil {
-		return *x.DividendFrequencyType
-	}
-	return 0
-}
-
-func (x *JPETFBriefInfo) GetInvestingRiskType() int32 {
-	if x != nil && x.InvestingRiskType != nil {
-		return *x.InvestingRiskType
-	}
-	return 0
-}
-
-func (x *JPETFBriefInfo) GetIndexName() string {
-	if x != nil && x.IndexName != nil {
-		return *x.IndexName
-	}
-	return ""
-}
-
-func (x *JPETFBriefInfo) GetCompanyName() string {
-	if x != nil && x.CompanyName != nil {
-		return *x.CompanyName
-	}
-	return ""
-}
-
-func (x *JPETFBriefInfo) GetCompanyIntroductionLink() string {
-	if x != nil && x.CompanyIntroductionLink != nil {
-		return *x.CompanyIntroductionLink
-	}
-	return ""
-}
-
-func (x *JPETFBriefInfo) GetCompanyInterviewLink() string {
-	if x != nil && x.CompanyInterviewLink != nil {
-		return *x.CompanyInterviewLink
-	}
-	return ""
-}
-
-func (x *JPETFBriefInfo) GetEtfPamphletLink() string {
-	if x != nil && x.EtfPamphletLink != nil {
-		return *x.EtfPamphletLink
-	}
-	return ""
-}
-
-func (x *JPETFBriefInfo) GetEtfIntroductionLink() string {
-	if x != nil && x.EtfIntroductionLink != nil {
-		return *x.EtfIntroductionLink
-	}
-	return ""
-}
-
 // 日本Ipo列表额外数据
 type JPIpoExData struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	IpoPriceMin *float64               `protobuf:"fixed64,1,req,name=ipoPriceMin" json:"ipoPriceMin,omitempty"` // 最低发行价
-	IpoPriceMax *float64               `protobuf:"fixed64,2,req,name=ipoPriceMax" json:"ipoPriceMax,omitempty"` // 最高发行价
-	IssueSize   *int64                 `protobuf:"varint,3,req,name=issueSize" json:"issueSize,omitempty"`      // 发行量
-	// CMD 20751 GetIPOList 扩展字段
-	LotSize          *int32  `protobuf:"varint,10,opt,name=lotSize" json:"lotSize,omitempty"`                   // 每手股数
-	EqtyIssuedShares *int64  `protobuf:"varint,11,opt,name=eqtyIssuedShares" json:"eqtyIssuedShares,omitempty"` // 总股本
-	Isin             *string `protobuf:"bytes,12,opt,name=isin" json:"isin,omitempty"`                          // ISIN代码 目前仅支持 JP ETF
-	IssuedShares     *int64  `protobuf:"varint,13,opt,name=issuedShares" json:"issuedShares,omitempty"`         // 已发行股本，本次IPO前股本
-	Industry         *string `protobuf:"bytes,14,opt,name=industry" json:"industry,omitempty"`                  // 行业板块
-	MarketSegment    *string `protobuf:"bytes,15,opt,name=marketSegment" json:"marketSegment,omitempty"`        // 细分市场
-	// 时间节点字符串与时间戳成对
-	ApprovalTime               *string  `protobuf:"bytes,20,opt,name=approvalTime" json:"approvalTime,omitempty"`                               // 获批上市时间字符串
-	ApprovalTimestamp          *float64 `protobuf:"fixed64,21,opt,name=approvalTimestamp" json:"approvalTimestamp,omitempty"`                   // 获批上市时间戳
-	IssueConfirmTime           *string  `protobuf:"bytes,22,opt,name=issueConfirmTime" json:"issueConfirmTime,omitempty"`                       // 发行条件确定时间字符串
-	IssueConfirmTimestamp      *float64 `protobuf:"fixed64,23,opt,name=issueConfirmTimestamp" json:"issueConfirmTimestamp,omitempty"`           // 发行条件确定时间戳
-	PriceConfirmStartTime      *string  `protobuf:"bytes,24,opt,name=priceConfirmStartTime" json:"priceConfirmStartTime,omitempty"`             // 发行价确定开始时间字符串
-	PriceConfirmStartTimestamp *float64 `protobuf:"fixed64,25,opt,name=priceConfirmStartTimestamp" json:"priceConfirmStartTimestamp,omitempty"` // 发行价确定开始时间戳
-	PriceConfirmEndTime        *string  `protobuf:"bytes,26,opt,name=priceConfirmEndTime" json:"priceConfirmEndTime,omitempty"`                 // 发行价确定结束时间字符串
-	PriceConfirmEndTimestamp   *float64 `protobuf:"fixed64,27,opt,name=priceConfirmEndTimestamp" json:"priceConfirmEndTimestamp,omitempty"`     // 发行价确定结束时间戳
-	InquiryStartTime           *string  `protobuf:"bytes,28,opt,name=inquiryStartTime" json:"inquiryStartTime,omitempty"`                       // 询价期开始时间字符串
-	InquiryStartTimestamp      *float64 `protobuf:"fixed64,29,opt,name=inquiryStartTimestamp" json:"inquiryStartTimestamp,omitempty"`           // 询价期开始时间戳
-	InquiryEndTime             *string  `protobuf:"bytes,30,opt,name=inquiryEndTime" json:"inquiryEndTime,omitempty"`                           // 询价期结束时间字符串
-	InquiryEndTimestamp        *float64 `protobuf:"fixed64,31,opt,name=inquiryEndTimestamp" json:"inquiryEndTimestamp,omitempty"`               // 询价期结束时间戳
-	ApplyStartTime             *string  `protobuf:"bytes,32,opt,name=applyStartTime" json:"applyStartTime,omitempty"`                           // 申购期开始时间字符串
-	ApplyStartTimestamp        *float64 `protobuf:"fixed64,33,opt,name=applyStartTimestamp" json:"applyStartTimestamp,omitempty"`               // 申购期开始时间戳
-	ApplyEndTime               *string  `protobuf:"bytes,34,opt,name=applyEndTime" json:"applyEndTime,omitempty"`                               // 申购期结束时间字符串
-	ApplyEndTimestamp          *float64 `protobuf:"fixed64,35,opt,name=applyEndTimestamp" json:"applyEndTimestamp,omitempty"`                   // 申购期结束时间戳
-	DrawTime                   *string  `protobuf:"bytes,36,opt,name=drawTime" json:"drawTime,omitempty"`                                       // 抽签时间字符串
-	DrawTimestamp              *float64 `protobuf:"fixed64,37,opt,name=drawTimestamp" json:"drawTimestamp,omitempty"`                           // 抽签时间戳
-	WinningTime                *string  `protobuf:"bytes,38,opt,name=winningTime" json:"winningTime,omitempty"`                                 // 中签公布时间字符串
-	WinningTimestamp           *float64 `protobuf:"fixed64,39,opt,name=winningTimestamp" json:"winningTimestamp,omitempty"`                     // 中签公布时间戳
-	// JP ETF 信息
-	EtfInfo       *JPETFBriefInfo `protobuf:"bytes,50,opt,name=etfInfo" json:"etfInfo,omitempty"` // 仅 JP ETF 下发
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IpoPriceMin   *float64               `protobuf:"fixed64,1,req,name=ipoPriceMin" json:"ipoPriceMin,omitempty"` // 最低发行价
+	IpoPriceMax   *float64               `protobuf:"fixed64,2,req,name=ipoPriceMax" json:"ipoPriceMax,omitempty"` // 最高发行价
+	IssueSize     *int64                 `protobuf:"varint,3,req,name=issueSize" json:"issueSize,omitempty"`      // 发行量
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *JPIpoExData) Reset() {
 	*x = JPIpoExData{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[8]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -861,7 +714,7 @@ func (x *JPIpoExData) String() string {
 func (*JPIpoExData) ProtoMessage() {}
 
 func (x *JPIpoExData) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[8]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -874,7 +727,7 @@ func (x *JPIpoExData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JPIpoExData.ProtoReflect.Descriptor instead.
 func (*JPIpoExData) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{8}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *JPIpoExData) GetIpoPriceMin() float64 {
@@ -898,195 +751,6 @@ func (x *JPIpoExData) GetIssueSize() int64 {
 	return 0
 }
 
-func (x *JPIpoExData) GetLotSize() int32 {
-	if x != nil && x.LotSize != nil {
-		return *x.LotSize
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetEqtyIssuedShares() int64 {
-	if x != nil && x.EqtyIssuedShares != nil {
-		return *x.EqtyIssuedShares
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetIsin() string {
-	if x != nil && x.Isin != nil {
-		return *x.Isin
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetIssuedShares() int64 {
-	if x != nil && x.IssuedShares != nil {
-		return *x.IssuedShares
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetIndustry() string {
-	if x != nil && x.Industry != nil {
-		return *x.Industry
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetMarketSegment() string {
-	if x != nil && x.MarketSegment != nil {
-		return *x.MarketSegment
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetApprovalTime() string {
-	if x != nil && x.ApprovalTime != nil {
-		return *x.ApprovalTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetApprovalTimestamp() float64 {
-	if x != nil && x.ApprovalTimestamp != nil {
-		return *x.ApprovalTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetIssueConfirmTime() string {
-	if x != nil && x.IssueConfirmTime != nil {
-		return *x.IssueConfirmTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetIssueConfirmTimestamp() float64 {
-	if x != nil && x.IssueConfirmTimestamp != nil {
-		return *x.IssueConfirmTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetPriceConfirmStartTime() string {
-	if x != nil && x.PriceConfirmStartTime != nil {
-		return *x.PriceConfirmStartTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetPriceConfirmStartTimestamp() float64 {
-	if x != nil && x.PriceConfirmStartTimestamp != nil {
-		return *x.PriceConfirmStartTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetPriceConfirmEndTime() string {
-	if x != nil && x.PriceConfirmEndTime != nil {
-		return *x.PriceConfirmEndTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetPriceConfirmEndTimestamp() float64 {
-	if x != nil && x.PriceConfirmEndTimestamp != nil {
-		return *x.PriceConfirmEndTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetInquiryStartTime() string {
-	if x != nil && x.InquiryStartTime != nil {
-		return *x.InquiryStartTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetInquiryStartTimestamp() float64 {
-	if x != nil && x.InquiryStartTimestamp != nil {
-		return *x.InquiryStartTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetInquiryEndTime() string {
-	if x != nil && x.InquiryEndTime != nil {
-		return *x.InquiryEndTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetInquiryEndTimestamp() float64 {
-	if x != nil && x.InquiryEndTimestamp != nil {
-		return *x.InquiryEndTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetApplyStartTime() string {
-	if x != nil && x.ApplyStartTime != nil {
-		return *x.ApplyStartTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetApplyStartTimestamp() float64 {
-	if x != nil && x.ApplyStartTimestamp != nil {
-		return *x.ApplyStartTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetApplyEndTime() string {
-	if x != nil && x.ApplyEndTime != nil {
-		return *x.ApplyEndTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetApplyEndTimestamp() float64 {
-	if x != nil && x.ApplyEndTimestamp != nil {
-		return *x.ApplyEndTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetDrawTime() string {
-	if x != nil && x.DrawTime != nil {
-		return *x.DrawTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetDrawTimestamp() float64 {
-	if x != nil && x.DrawTimestamp != nil {
-		return *x.DrawTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetWinningTime() string {
-	if x != nil && x.WinningTime != nil {
-		return *x.WinningTime
-	}
-	return ""
-}
-
-func (x *JPIpoExData) GetWinningTimestamp() float64 {
-	if x != nil && x.WinningTimestamp != nil {
-		return *x.WinningTimestamp
-	}
-	return 0
-}
-
-func (x *JPIpoExData) GetEtfInfo() *JPETFBriefInfo {
-	if x != nil {
-		return x.EtfInfo
-	}
-	return nil
-}
-
 // 新股Ipo数据
 type IpoData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1103,7 +767,7 @@ type IpoData struct {
 
 func (x *IpoData) Reset() {
 	*x = IpoData{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[9]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1115,7 +779,7 @@ func (x *IpoData) String() string {
 func (*IpoData) ProtoMessage() {}
 
 func (x *IpoData) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[9]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +792,7 @@ func (x *IpoData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IpoData.ProtoReflect.Descriptor instead.
 func (*IpoData) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{9}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *IpoData) GetBasic() *BasicIpoData {
@@ -1190,7 +854,7 @@ type C2S struct {
 
 func (x *C2S) Reset() {
 	*x = C2S{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[10]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1202,7 +866,7 @@ func (x *C2S) String() string {
 func (*C2S) ProtoMessage() {}
 
 func (x *C2S) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[10]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1215,7 +879,7 @@ func (x *C2S) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use C2S.ProtoReflect.Descriptor instead.
 func (*C2S) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{10}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *C2S) GetMarket() int32 {
@@ -1241,7 +905,7 @@ type S2C struct {
 
 func (x *S2C) Reset() {
 	*x = S2C{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[11]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1253,7 +917,7 @@ func (x *S2C) String() string {
 func (*S2C) ProtoMessage() {}
 
 func (x *S2C) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[11]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1266,7 +930,7 @@ func (x *S2C) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use S2C.ProtoReflect.Descriptor instead.
 func (*S2C) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{11}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *S2C) GetIpoList() []*IpoData {
@@ -1285,7 +949,7 @@ type Request struct {
 
 func (x *Request) Reset() {
 	*x = Request{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[12]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1297,7 +961,7 @@ func (x *Request) String() string {
 func (*Request) ProtoMessage() {}
 
 func (x *Request) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[12]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1310,7 +974,7 @@ func (x *Request) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Request.ProtoReflect.Descriptor instead.
 func (*Request) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{12}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Request) GetC2S() *C2S {
@@ -1337,7 +1001,7 @@ const (
 
 func (x *Response) Reset() {
 	*x = Response{}
-	mi := &file_Qot_GetIpoList_proto_msgTypes[13]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1349,7 +1013,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_Qot_GetIpoList_proto_msgTypes[13]
+	mi := &file_Qot_GetIpoList_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1362,7 +1026,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{13}
+	return file_Qot_GetIpoList_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Response) GetRetType() int32 {
@@ -1458,51 +1122,11 @@ const file_Qot_GetIpoList_proto_rawDesc = "" +
 	"\fapplyEndTime\x18\x05 \x01(\tR\fapplyEndTime\x12,\n" +
 	"\x11applyEndTimestamp\x18\x06 \x01(\x01R\x11applyEndTimestamp\x12 \n" +
 	"\vwinningTime\x18\a \x01(\tR\vwinningTime\x12*\n" +
-	"\x10winningTimestamp\x18\b \x01(\x01R\x10winningTimestamp\"\xd4\x03\n" +
-	"\x0eJPETFBriefInfo\x12.\n" +
-	"\x12managementFeeRates\x18\x01 \x01(\x03R\x12managementFeeRates\x12$\n" +
-	"\rdividendTimes\x18\x02 \x01(\x03R\rdividendTimes\x124\n" +
-	"\x15dividendFrequencyType\x18\x03 \x01(\x05R\x15dividendFrequencyType\x12,\n" +
-	"\x11investingRiskType\x18\x04 \x01(\x05R\x11investingRiskType\x12\x1c\n" +
-	"\tindexName\x18\x05 \x01(\tR\tindexName\x12 \n" +
-	"\vcompanyName\x18\x06 \x01(\tR\vcompanyName\x128\n" +
-	"\x17companyIntroductionLink\x18\a \x01(\tR\x17companyIntroductionLink\x122\n" +
-	"\x14companyInterviewLink\x18\b \x01(\tR\x14companyInterviewLink\x12(\n" +
-	"\x0fetfPamphletLink\x18\t \x01(\tR\x0fetfPamphletLink\x120\n" +
-	"\x13etfIntroductionLink\x18\n" +
-	" \x01(\tR\x13etfIntroductionLink\"\xf9\t\n" +
+	"\x10winningTimestamp\x18\b \x01(\x01R\x10winningTimestamp\"o\n" +
 	"\vJPIpoExData\x12 \n" +
 	"\vipoPriceMin\x18\x01 \x02(\x01R\vipoPriceMin\x12 \n" +
 	"\vipoPriceMax\x18\x02 \x02(\x01R\vipoPriceMax\x12\x1c\n" +
-	"\tissueSize\x18\x03 \x02(\x03R\tissueSize\x12\x18\n" +
-	"\alotSize\x18\n" +
-	" \x01(\x05R\alotSize\x12*\n" +
-	"\x10eqtyIssuedShares\x18\v \x01(\x03R\x10eqtyIssuedShares\x12\x12\n" +
-	"\x04isin\x18\f \x01(\tR\x04isin\x12\"\n" +
-	"\fissuedShares\x18\r \x01(\x03R\fissuedShares\x12\x1a\n" +
-	"\bindustry\x18\x0e \x01(\tR\bindustry\x12$\n" +
-	"\rmarketSegment\x18\x0f \x01(\tR\rmarketSegment\x12\"\n" +
-	"\fapprovalTime\x18\x14 \x01(\tR\fapprovalTime\x12,\n" +
-	"\x11approvalTimestamp\x18\x15 \x01(\x01R\x11approvalTimestamp\x12*\n" +
-	"\x10issueConfirmTime\x18\x16 \x01(\tR\x10issueConfirmTime\x124\n" +
-	"\x15issueConfirmTimestamp\x18\x17 \x01(\x01R\x15issueConfirmTimestamp\x124\n" +
-	"\x15priceConfirmStartTime\x18\x18 \x01(\tR\x15priceConfirmStartTime\x12>\n" +
-	"\x1apriceConfirmStartTimestamp\x18\x19 \x01(\x01R\x1apriceConfirmStartTimestamp\x120\n" +
-	"\x13priceConfirmEndTime\x18\x1a \x01(\tR\x13priceConfirmEndTime\x12:\n" +
-	"\x18priceConfirmEndTimestamp\x18\x1b \x01(\x01R\x18priceConfirmEndTimestamp\x12*\n" +
-	"\x10inquiryStartTime\x18\x1c \x01(\tR\x10inquiryStartTime\x124\n" +
-	"\x15inquiryStartTimestamp\x18\x1d \x01(\x01R\x15inquiryStartTimestamp\x12&\n" +
-	"\x0einquiryEndTime\x18\x1e \x01(\tR\x0einquiryEndTime\x120\n" +
-	"\x13inquiryEndTimestamp\x18\x1f \x01(\x01R\x13inquiryEndTimestamp\x12&\n" +
-	"\x0eapplyStartTime\x18  \x01(\tR\x0eapplyStartTime\x120\n" +
-	"\x13applyStartTimestamp\x18! \x01(\x01R\x13applyStartTimestamp\x12\"\n" +
-	"\fapplyEndTime\x18\" \x01(\tR\fapplyEndTime\x12,\n" +
-	"\x11applyEndTimestamp\x18# \x01(\x01R\x11applyEndTimestamp\x12\x1a\n" +
-	"\bdrawTime\x18$ \x01(\tR\bdrawTime\x12$\n" +
-	"\rdrawTimestamp\x18% \x01(\x01R\rdrawTimestamp\x12 \n" +
-	"\vwinningTime\x18& \x01(\tR\vwinningTime\x12*\n" +
-	"\x10winningTimestamp\x18' \x01(\x01R\x10winningTimestamp\x128\n" +
-	"\aetfInfo\x182 \x01(\v2\x1e.Qot_GetIpoList.JPETFBriefInfoR\aetfInfo\"\x93\x03\n" +
+	"\tissueSize\x18\x03 \x02(\x03R\tissueSize\"\x93\x03\n" +
 	"\aIpoData\x122\n" +
 	"\x05basic\x18\x01 \x02(\v2\x1c.Qot_GetIpoList.BasicIpoDataR\x05basic\x127\n" +
 	"\bcnExData\x18\x02 \x01(\v2\x1b.Qot_GetIpoList.CNIpoExDataR\bcnExData\x127\n" +
@@ -1537,7 +1161,7 @@ func file_Qot_GetIpoList_proto_rawDescGZIP() []byte {
 	return file_Qot_GetIpoList_proto_rawDescData
 }
 
-var file_Qot_GetIpoList_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_Qot_GetIpoList_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_Qot_GetIpoList_proto_goTypes = []any{
 	(*BasicIpoData)(nil),        // 0: Qot_GetIpoList.BasicIpoData
 	(*CNIpoExData)(nil),         // 1: Qot_GetIpoList.CNIpoExData
@@ -1546,36 +1170,34 @@ var file_Qot_GetIpoList_proto_goTypes = []any{
 	(*USIpoExData)(nil),         // 4: Qot_GetIpoList.USIpoExData
 	(*SGIpoExData)(nil),         // 5: Qot_GetIpoList.SGIpoExData
 	(*MYIpoExData)(nil),         // 6: Qot_GetIpoList.MYIpoExData
-	(*JPETFBriefInfo)(nil),      // 7: Qot_GetIpoList.JPETFBriefInfo
-	(*JPIpoExData)(nil),         // 8: Qot_GetIpoList.JPIpoExData
-	(*IpoData)(nil),             // 9: Qot_GetIpoList.IpoData
-	(*C2S)(nil),                 // 10: Qot_GetIpoList.C2S
-	(*S2C)(nil),                 // 11: Qot_GetIpoList.S2C
-	(*Request)(nil),             // 12: Qot_GetIpoList.Request
-	(*Response)(nil),            // 13: Qot_GetIpoList.Response
-	(*qotcommon.Security)(nil),  // 14: Qot_Common.Security
-	(*qotcommon.QotHeader)(nil), // 15: Qot_Common.QotHeader
+	(*JPIpoExData)(nil),         // 7: Qot_GetIpoList.JPIpoExData
+	(*IpoData)(nil),             // 8: Qot_GetIpoList.IpoData
+	(*C2S)(nil),                 // 9: Qot_GetIpoList.C2S
+	(*S2C)(nil),                 // 10: Qot_GetIpoList.S2C
+	(*Request)(nil),             // 11: Qot_GetIpoList.Request
+	(*Response)(nil),            // 12: Qot_GetIpoList.Response
+	(*qotcommon.Security)(nil),  // 13: Qot_Common.Security
+	(*qotcommon.QotHeader)(nil), // 14: Qot_Common.QotHeader
 }
 var file_Qot_GetIpoList_proto_depIdxs = []int32{
-	14, // 0: Qot_GetIpoList.BasicIpoData.security:type_name -> Qot_Common.Security
+	13, // 0: Qot_GetIpoList.BasicIpoData.security:type_name -> Qot_Common.Security
 	2,  // 1: Qot_GetIpoList.CNIpoExData.winningNumData:type_name -> Qot_GetIpoList.WinningNumData
-	7,  // 2: Qot_GetIpoList.JPIpoExData.etfInfo:type_name -> Qot_GetIpoList.JPETFBriefInfo
-	0,  // 3: Qot_GetIpoList.IpoData.basic:type_name -> Qot_GetIpoList.BasicIpoData
-	1,  // 4: Qot_GetIpoList.IpoData.cnExData:type_name -> Qot_GetIpoList.CNIpoExData
-	3,  // 5: Qot_GetIpoList.IpoData.hkExData:type_name -> Qot_GetIpoList.HKIpoExData
-	4,  // 6: Qot_GetIpoList.IpoData.usExData:type_name -> Qot_GetIpoList.USIpoExData
-	5,  // 7: Qot_GetIpoList.IpoData.sgExData:type_name -> Qot_GetIpoList.SGIpoExData
-	6,  // 8: Qot_GetIpoList.IpoData.myExData:type_name -> Qot_GetIpoList.MYIpoExData
-	8,  // 9: Qot_GetIpoList.IpoData.jpExData:type_name -> Qot_GetIpoList.JPIpoExData
-	15, // 10: Qot_GetIpoList.C2S.header:type_name -> Qot_Common.QotHeader
-	9,  // 11: Qot_GetIpoList.S2C.ipoList:type_name -> Qot_GetIpoList.IpoData
-	10, // 12: Qot_GetIpoList.Request.c2s:type_name -> Qot_GetIpoList.C2S
-	11, // 13: Qot_GetIpoList.Response.s2c:type_name -> Qot_GetIpoList.S2C
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	0,  // 2: Qot_GetIpoList.IpoData.basic:type_name -> Qot_GetIpoList.BasicIpoData
+	1,  // 3: Qot_GetIpoList.IpoData.cnExData:type_name -> Qot_GetIpoList.CNIpoExData
+	3,  // 4: Qot_GetIpoList.IpoData.hkExData:type_name -> Qot_GetIpoList.HKIpoExData
+	4,  // 5: Qot_GetIpoList.IpoData.usExData:type_name -> Qot_GetIpoList.USIpoExData
+	5,  // 6: Qot_GetIpoList.IpoData.sgExData:type_name -> Qot_GetIpoList.SGIpoExData
+	6,  // 7: Qot_GetIpoList.IpoData.myExData:type_name -> Qot_GetIpoList.MYIpoExData
+	7,  // 8: Qot_GetIpoList.IpoData.jpExData:type_name -> Qot_GetIpoList.JPIpoExData
+	14, // 9: Qot_GetIpoList.C2S.header:type_name -> Qot_Common.QotHeader
+	8,  // 10: Qot_GetIpoList.S2C.ipoList:type_name -> Qot_GetIpoList.IpoData
+	9,  // 11: Qot_GetIpoList.Request.c2s:type_name -> Qot_GetIpoList.C2S
+	10, // 12: Qot_GetIpoList.Response.s2c:type_name -> Qot_GetIpoList.S2C
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_Qot_GetIpoList_proto_init() }
@@ -1589,7 +1211,7 @@ func file_Qot_GetIpoList_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Qot_GetIpoList_proto_rawDesc), len(file_Qot_GetIpoList_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -5,6 +5,31 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.14.0] - 2026-06-29
+
+### Added
+
+- **Futu Protocol v10.8.6808 upgrade** — All 167 protos regenerated (111 existing + 56 new)
+- **56 new API wrappers** across 7 new files in `pkg/qot/`:
+  - `search.go` — `GetSearchQuote`, `GetSearchNews`, `GetIndicatorList`, `RequestIndicatorCalc`
+  - `option_analytics.go` — 13 option analytics APIs (market statistics, underlying data, events, 0DTE, earnings/seller screening)
+  - `ranking.go` — 8 ranking APIs (pre-market, after-hours, overnight, top movers, hot lists, short selling, period change, high dividend SOE)
+  - `institutional.go` — 9 institutional/ARK/rating APIs (institution list/profile/distribution/holdings, ARK fund/stock/transactions, rating changes)
+  - `chain.go` — 5 industrial chain APIs (chain list/detail/by-plate, plate info/stock)
+  - `heatmap.go` — `GetHeatMapData`, `GetRiseFallDistribution`
+  - `market_fundamentals.go` — 9 fundamental APIs (earnings calendar, macro indicators, FedWatch, dividend calendar/rank, economic calendar)
+- **50 new ProtoIDs** (3259-3263, 3301-3314, 3401-3433, 3801-3803) and **2 new push IDs** (`Qot_UpdateOptionEvent`, `Qot_PushIndicatorCalc`) in `pkg/constant/constant.go`
+- **~50 new enum types** added to `pkg/constant/constant.go` (indicator, option analytics, market rankings, institutional, chain, heatmap, etc.)
+- **56 new client wrappers** in `client/v10_8_api.go` for all new APIs
+- **48 new fluent API methods** in `client/fluent_api.go` `QuoteAPI` struct
+- **SecurityFirm enum updated** to match v10.8 proto values (FutuSecurities=1, FutuInc=2, FutuSG=3, FutuAU=4, FutuCA=5, FutuMY=6, FutuJP=7)
+
+### Changed
+
+- **Upgraded to Futu Protocol v10.8.6808** (clientVer 1080) — 167 protos, 56 new APIs
+- **SDK version bumped to `0.14.0`** in `internal/client/version.go`
+- **clientVer** — Updated from 1076→1080 in `internal/client/client.go`
+
 ## [v0.13.0] - 2026-06-05
 
 ### Added

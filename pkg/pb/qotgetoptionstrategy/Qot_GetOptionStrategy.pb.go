@@ -103,7 +103,7 @@ type C2S struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Owner           *qotcommon.Security    `protobuf:"bytes,1,req,name=owner" json:"owner,omitempty"`                                               //期权标的股，目前仅支持港美正股以及恒指国指
 	OptionStrategy  *int32                 `protobuf:"varint,2,req,name=option_strategy,json=optionStrategy" json:"option_strategy,omitempty"`      //OptionStrategyType，期权策略类型
-	ExpireTime      *string                `protobuf:"bytes,3,opt,name=expire_time,json=expireTime" json:"expire_time,omitempty"`                   //到期日（近端到期日），不填表示不过滤到期日，使用行权日列表中的全部项拉取策略
+	ExpireTime      *string                `protobuf:"bytes,3,opt,name=expire_time,json=expireTime" json:"expire_time,omitempty"`                   //到期日（近端到期日）
 	FarExpireTime   *string                `protobuf:"bytes,4,opt,name=far_expire_time,json=farExpireTime" json:"far_expire_time,omitempty"`        //远端到期日，对角策略（DiagonalSpread）时使用
 	Spread          *float64               `protobuf:"fixed64,5,opt,name=spread" json:"spread,omitempty"`                                           //价差筛选值，仅对价差类策略有效，不填表示返回所有
 	OptionType      *int32                 `protobuf:"varint,6,opt,name=option_type,json=optionType" json:"option_type,omitempty"`                  //Qot_Common.OptionType，期权类型，不填表示都返回

@@ -807,6 +807,67 @@ enum OptionImpvolStatusType
     ImpvolUndervalued = 2; // 期权波动率处于低估
 }
 
+// 指标语言类型
+enum IndicatorLangType
+{
+	IndicatorLangType_Unknown = 0;
+	IndicatorLangType_MyLang = 1;
+	IndicatorLangType_Python = 2;
+}
+
+// 指标搜索模式
+enum IndicatorSearchMode
+{
+	IndicatorSearchMode_Partial = 0; // 部分匹配（默认）
+	IndicatorSearchMode_Exact = 1;   // 完全匹配
+}
+
+// 指标参数值类型枚举
+enum IndicatorParamValueType
+{
+	IndicatorParamValueType_UNKNOWN = 0; // 未知
+	IndicatorParamValueType_INT = 1;     // 整数
+	IndicatorParamValueType_FLOAT = 2;   // 浮点
+	IndicatorParamValueType_STRING = 3;  // 字符串
+	IndicatorParamValueType_COLOR = 4;   // 颜色
+	IndicatorParamValueType_SHAPE = 5;   // 形状
+	IndicatorParamValueType_LINE = 6;    // 线型
+	IndicatorParamValueType_BOOL = 7;    // 布尔
+}
+
+// 指标形状
+enum IndicatorShape
+{
+	IndicatorShape_UNKNOWN = 0;       // 未知
+	IndicatorShape_XCROSS = 1;        // X 形十字
+	IndicatorShape_CROSS = 2;         // 十字
+	IndicatorShape_CIRCLE = 3;        // 圆形
+	IndicatorShape_TRIANGLE_UP = 4;   // 上三角
+	IndicatorShape_TRIANGLE_DOWN = 5; // 下三角
+	IndicatorShape_FLAG = 6;          // 旗帜
+	IndicatorShape_ARROW_UP = 7;      // 上箭头
+	IndicatorShape_ARROW_DOWN = 8;    // 下箭头
+	IndicatorShape_SQUARE = 9;        // 方块
+	IndicatorShape_DIAMOND = 10;      // 菱形
+	IndicatorShape_LABEL_UP = 11;     // 上标签
+	IndicatorShape_LABEL_DOWN = 12;   // 下标签
+}
+
+// 指标线型
+enum IndicatorLineType
+{
+	IndicatorLineType_UNKNOWN = 0;          // 未知/未指定
+	IndicatorLineType_SOLID = 1;            // 实线
+	IndicatorLineType_DASHED = 2;           // 虚线
+	IndicatorLineType_DOT = 3;              // 点线
+	IndicatorLineType_CROSS = 4;            // 交叉线
+	IndicatorLineType_CIRCLE = 5;           // 圆点连线
+	IndicatorLineType_HISTOGRAM = 6;        // 柱状图
+	IndicatorLineType_HISTOGRAM_LINE = 7;   // 柱线混合
+	IndicatorLineType_STEP = 8;             // 阶梯线
+	IndicatorLineType_STEP_DIAMONDS = 9;    // 阶梯+菱形
+}
+
  //两个字段确定一支股票
 message Security
 {
@@ -1087,4 +1148,33 @@ message ComboLeg
     optional int32 side = 2; //方向，取值见 Trd_Common.TrdSide
     optional double qtyRatio = 3; //数量比例
     optional uint64 positionID = 4; //持仓ID，仅 moomoo JP 平仓时使用
+}
+
+// 指标参数值（类型 + 对应 value 字段）
+message IndicatorParamValue
+{
+	optional IndicatorParamValueType type = 1;  // 值类型
+	optional int64 intValue = 2;                // type=INT 时使用
+	optional float floatValue = 3;              // type=FLOAT 时使用
+	optional string stringValue = 4;            // type=STRING 时使用
+	optional bool boolValue = 5;                // type=BOOL 时使用
+	optional string colorValue = 6;             // type=COLOR 时使用，格式为 #RRGGBBAA 或 #RRGGBB
+	optional IndicatorShape shapeValue = 7;     // type=SHAPE 时使用
+	optional IndicatorLineType lineValue = 8;   // type=LINE 时使用
+}
+
+// 指标输入参数项
+message IndicatorInputParam
+{
+	optional int32 index = 1;                // 从 0 开始
+	optional string name = 2;                // 参数名
+	optional IndicatorParamValue value = 3;  // 当前值
+	optional string varName = 4;             // 脚本原始变量名（如 N/P1/M），仅麦语言指标有效，Python 指标为空
+}
+
+// 指标输出参数项（即一条输出线）
+message IndicatorOutputParam
+{
+	optional int32 index = 1;                  // 从 0 开始
+	optional string name = 2;                  // 输出线名
 }

@@ -1,7 +1,7 @@
 # Phase 4: Missing High-Level API Coverage — Detailed Design & Implementation Plan
 
 *Generated: 2026-05-21*
-*SDK Version: v0.13.0 (Futu Protocol v10.7.6708)*
+*SDK Version: v0.14.0 (Futu Protocol v10.8.6808)*
 
 ---
 

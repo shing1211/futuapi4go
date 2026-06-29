@@ -40,7 +40,7 @@ enum UnderlyingIndicatorType
     // 行情指标
     UnderlyingIndicatorType_MarketCap = 401; // 【范围】标的市值
     UnderlyingIndicatorType_StockPrice = 402; // 【范围】标的最新价
-    UnderlyingIndicatorType_ChangeRatio = 403; // 【范围】涨跌幅
+    UnderlyingIndicatorType_ChangeRate = 403; // 【范围】涨跌幅
 }
 
 // 期权筛选因子类型
@@ -64,7 +64,7 @@ enum OptionIndicatorType
     OptionIndicatorType_BidVolume = 2007; // 【范围】买量
     OptionIndicatorType_AskVolume = 2008; // 【范围】卖量
     OptionIndicatorType_BidAskVolumeRatio = 2009; // 【范围】买卖量比
-    OptionIndicatorType_ChangeRatio = 2010; // 【范围】涨跌幅
+    OptionIndicatorType_ChangeRate = 2010; // 【范围】涨跌幅
     OptionIndicatorType_Volume = 2011; // 【范围】成交量
     OptionIndicatorType_Turnover = 2012; // 【范围】成交额
     OptionIndicatorType_OpenInterest = 2013; // 【范围】持仓量
@@ -170,7 +170,7 @@ message UnderlyingInfo
     optional double ivPercentile = 5; // IV Percentile
     optional double marketCap = 6; // 市值
     optional double price = 7; // 标的价格
-    optional double changeRatio = 8; // 涨跌幅
+    optional double changeRate = 8; // 涨跌幅（该字段为百分比字段，默认不展示%，如20实际对应20%）
 }
 
 // 期权数据项
@@ -193,7 +193,7 @@ message OptionScreenItem
     optional double bidAskSpread = 24; // 买卖价差
     optional int64 bidVolume = 25; // 买量
     optional int64 askVolume = 26; // 卖量
-    optional double changeRatio = 27; // 涨跌幅
+    optional double changeRate = 27; // 涨跌幅（该字段为百分比字段，默认不展示%，如20实际对应20%）
     optional int64 volume = 28; // 成交量
     optional double turnover = 29; // 成交额
     optional int64 openInterest = 30; // 持仓量

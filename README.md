@@ -3,8 +3,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.13.0-00ADD8?style=flat-square" alt="Version">
-  <img src="https://img.shields.io/badge/Futu%20Proto-v10.7.6708-blue?style=flat-square" alt="Futu Proto Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.14.0-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Futu%20Proto-v10.8.6808-blue?style=flat-square" alt="Futu Proto Version">
 </p>
 
 > **⚠️ Under Active Development**  
@@ -15,7 +15,7 @@
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for [Futu OpenAPI](https://www.futunn.com/en/overview) — market data, trading, and real-time push. All communication via Protocol Buffers over TCP.
 
-- 111 protobuf types covering every Futu OpenAPI service
+- 167 protobuf types covering every Futu OpenAPI service
 - One-liner connect with automatic env config (`NewClientFromEnv`)
 - Real-time push via channels or typed callbacks
 - Fluent API: `cli.Quote().GetBasicQot()`, `cli.Trade().PlaceOrder()`
@@ -42,7 +42,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.13.0
+go get github.com/shing1211/futuapi4go@v0.14.0
 ```
 
 Requires Go 1.26+ and a running [Futu OpenD](https://www.futunn.com/en/overview) instance.

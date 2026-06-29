@@ -6,6 +6,56 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkactivetransaction"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkfundholding"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkstockdynamic"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetdividendcalendar"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetdividendrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetearningsbeatrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetearningscalendar"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteconomiccalendar"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfedwatchdotplot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfedwatchtargetrate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetheatmapdata"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgethighdividendsoerank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgethotlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindicatorlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindustrialchainbyplate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindustrialchaindetail"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindustrialchainlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindustrialplateinfo"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindustrialplatestock"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetinstitutiondistribution"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetinstitutionholdingchange"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetinstitutionholdinglist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetinstitutionlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetinstitutionprofile"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmacroindicatorhistory"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmacroindicatorlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionevent"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptioneventalert"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionmarketstatistic"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionunderlyinghisstatistic"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionunderlyinghisvolatility"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionunderlyingoverview"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionunderlyingrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionzerodtecontract"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionzerodtescreener"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionearningsscreener"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionsellerscreener"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetperiodchangerank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetratingchange"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrisefalldistr"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchnews"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchquote"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetshortsellingrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgettopmoverrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusafterhoursrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusovernightrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetuspremarketrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestindicatorcalc"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsetoptioneventalert"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 	"github.com/shing1211/futuapi4go/pkg/trd"
@@ -242,6 +292,208 @@ func (api *QuoteAPI) GetOptionStrategyAnalysis(ctx context.Context, req *qot.Get
 // GetOptionStrategySpread returns available spread values for an option strategy.
 func (api *QuoteAPI) GetOptionStrategySpread(ctx context.Context, req *qot.GetOptionStrategySpreadRequest) (*qot.GetOptionStrategySpreadResponse, error) {
 	return qot.GetOptionStrategySpread(ctx, api.client, req)
+}
+
+// v10.8+ QuoteAPI extensions
+
+func (api *QuoteAPI) GetSearchQuote(ctx context.Context, req *qotgetsearchquote.C2S) (*qotgetsearchquote.S2C, error) {
+	return qot.GetSearchQuote(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetSearchNews(ctx context.Context, req *qotgetsearchnews.C2S) (*qotgetsearchnews.S2C, error) {
+	return qot.GetSearchNews(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndicatorList(ctx context.Context, req *qotgetindicatorlist.C2S) (*qotgetindicatorlist.S2C, error) {
+	return qot.GetIndicatorList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) RequestIndicatorCalc(ctx context.Context, req *qotrequestindicatorcalc.C2S) (*qotrequestindicatorcalc.S2C, error) {
+	return qot.RequestIndicatorCalc(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionMarketStatistic(ctx context.Context, req *qotgetoptionmarketstatistic.C2S) (*qotgetoptionmarketstatistic.S2C, error) {
+	return qot.GetOptionMarketStatistic(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionUnderlyingHisStatistic(ctx context.Context, req *qotgetoptionunderlyinghisstatistic.C2S) (*qotgetoptionunderlyinghisstatistic.S2C, error) {
+	return qot.GetOptionUnderlyingHisStatistic(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionUnderlyingOverview(ctx context.Context, req *qotgetoptionunderlyingoverview.C2S) (*qotgetoptionunderlyingoverview.S2C, error) {
+	return qot.GetOptionUnderlyingOverview(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionUnderlyingHisVolatility(ctx context.Context, req *qotgetoptionunderlyinghisvolatility.C2S) (*qotgetoptionunderlyinghisvolatility.S2C, error) {
+	return qot.GetOptionUnderlyingHisVolatility(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionUnderlyingRank(ctx context.Context, req *qotgetoptionunderlyingrank.C2S) (*qotgetoptionunderlyingrank.S2C, error) {
+	return qot.GetOptionUnderlyingRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionRank(ctx context.Context, req *qotgetoptionrank.C2S) (*qotgetoptionrank.S2C, error) {
+	return qot.GetOptionRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionEvent(ctx context.Context, req *qotgetoptionevent.C2S) (*qotgetoptionevent.S2C, error) {
+	return qot.GetOptionEvent(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionEventAlert(ctx context.Context, req *qotgetoptioneventalert.C2S) (*qotgetoptioneventalert.S2C, error) {
+	return qot.GetOptionEventAlert(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) SetOptionEventAlert(ctx context.Context, req *qotsetoptioneventalert.C2S) (*qotsetoptioneventalert.S2C, error) {
+	return qot.SetOptionEventAlert(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionZeroDteScreener(ctx context.Context, req *qotgetoptionzerodtescreener.C2S) (*qotgetoptionzerodtescreener.S2C, error) {
+	return qot.GetOptionZeroDteScreener(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionZeroDteContract(ctx context.Context, req *qotgetoptionzerodtecontract.C2S) (*qotgetoptionzerodtecontract.S2C, error) {
+	return qot.GetOptionZeroDteContract(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionEarningsScreener(ctx context.Context, req *qotgetoptionearningsscreener.C2S) (*qotgetoptionearningsscreener.S2C, error) {
+	return qot.GetOptionEarningsScreener(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetOptionSellerScreener(ctx context.Context, req *qotgetoptionsellerscreener.C2S) (*qotgetoptionsellerscreener.S2C, error) {
+	return qot.GetOptionSellerScreener(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetUSPreMarketRank(ctx context.Context, req *qotgetuspremarketrank.C2S) (*qotgetuspremarketrank.S2C, error) {
+	return qot.GetUSPreMarketRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetUSAfterHoursRank(ctx context.Context, req *qotgetusafterhoursrank.C2S) (*qotgetusafterhoursrank.S2C, error) {
+	return qot.GetUSAfterHoursRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetUSOvernightRank(ctx context.Context, req *qotgetusovernightrank.C2S) (*qotgetusovernightrank.S2C, error) {
+	return qot.GetUSOvernightRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetTopMoversRank(ctx context.Context, req *qotgettopmoverrank.C2S) (*qotgettopmoverrank.S2C, error) {
+	return qot.GetTopMoversRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetHotList(ctx context.Context, req *qotgethotlist.C2S) (*qotgethotlist.S2C, error) {
+	return qot.GetHotList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetShortSellingRank(ctx context.Context, req *qotgetshortsellingrank.C2S) (*qotgetshortsellingrank.S2C, error) {
+	return qot.GetShortSellingRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetPeriodChangeRank(ctx context.Context, req *qotgetperiodchangerank.C2S) (*qotgetperiodchangerank.S2C, error) {
+	return qot.GetPeriodChangeRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetHighDividendSOERank(ctx context.Context, req *qotgethighdividendsoerank.C2S) (*qotgethighdividendsoerank.S2C, error) {
+	return qot.GetHighDividendSOERank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInstitutionList(ctx context.Context, req *qotgetinstitutionlist.C2S) (*qotgetinstitutionlist.S2C, error) {
+	return qot.GetInstitutionList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInstitutionProfile(ctx context.Context, req *qotgetinstitutionprofile.C2S) (*qotgetinstitutionprofile.S2C, error) {
+	return qot.GetInstitutionProfile(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInstitutionDistribution(ctx context.Context, req *qotgetinstitutiondistribution.C2S) (*qotgetinstitutiondistribution.S2C, error) {
+	return qot.GetInstitutionDistribution(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInstitutionHoldingChange(ctx context.Context, req *qotgetinstitutionholdingchange.C2S) (*qotgetinstitutionholdingchange.S2C, error) {
+	return qot.GetInstitutionHoldingChange(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetInstitutionHoldingList(ctx context.Context, req *qotgetinstitutionholdinglist.C2S) (*qotgetinstitutionholdinglist.S2C, error) {
+	return qot.GetInstitutionHoldingList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetArkFundHolding(ctx context.Context, req *qotgetarkfundholding.C2S) (*qotgetarkfundholding.S2C, error) {
+	return qot.GetArkFundHolding(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetArkStockDynamic(ctx context.Context, req *qotgetarkstockdynamic.C2S) (*qotgetarkstockdynamic.S2C, error) {
+	return qot.GetArkStockDynamic(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetArkActiveTransaction(ctx context.Context, req *qotgetarkactivetransaction.C2S) (*qotgetarkactivetransaction.S2C, error) {
+	return qot.GetArkActiveTransaction(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetRatingChange(ctx context.Context, req *qotgetratingchange.C2S) (*qotgetratingchange.S2C, error) {
+	return qot.GetRatingChange(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndustrialChainList(ctx context.Context, req *qotgetindustrialchainlist.C2S) (*qotgetindustrialchainlist.S2C, error) {
+	return qot.GetIndustrialChainList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndustrialChainDetail(ctx context.Context, req *qotgetindustrialchaindetail.C2S) (*qotgetindustrialchaindetail.S2C, error) {
+	return qot.GetIndustrialChainDetail(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndustrialChainByPlate(ctx context.Context, req *qotgetindustrialchainbyplate.C2S) (*qotgetindustrialchainbyplate.S2C, error) {
+	return qot.GetIndustrialChainByPlate(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndustrialPlateInfo(ctx context.Context, req *qotgetindustrialplateinfo.C2S) (*qotgetindustrialplateinfo.S2C, error) {
+	return qot.GetIndustrialPlateInfo(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetIndustrialPlateStock(ctx context.Context, req *qotgetindustrialplatestock.C2S) (*qotgetindustrialplatestock.S2C, error) {
+	return qot.GetIndustrialPlateStock(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetHeatMapData(ctx context.Context, req *qotgetheatmapdata.C2S) (*qotgetheatmapdata.S2C, error) {
+	return qot.GetHeatMapData(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetRiseFallDistribution(ctx context.Context, req *qotgetrisefalldistr.C2S) (*qotgetrisefalldistr.S2C, error) {
+	return qot.GetRiseFallDistribution(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetEarningsCalendar(ctx context.Context, req *qotgetearningscalendar.C2S) (*qotgetearningscalendar.S2C, error) {
+	return qot.GetEarningsCalendar(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetMacroIndicatorList(ctx context.Context, req *qotgetmacroindicatorlist.C2S) (*qotgetmacroindicatorlist.S2C, error) {
+	return qot.GetMacroIndicatorList(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetMacroIndicatorHistory(ctx context.Context, req *qotgetmacroindicatorhistory.C2S) (*qotgetmacroindicatorhistory.S2C, error) {
+	return qot.GetMacroIndicatorHistory(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetFedWatchTargetRate(ctx context.Context, req *qotgetfedwatchtargetrate.C2S) (*qotgetfedwatchtargetrate.S2C, error) {
+	return qot.GetFedWatchTargetRate(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetFedWatchDotPlot(ctx context.Context, req *qotgetfedwatchdotplot.C2S) (*qotgetfedwatchdotplot.S2C, error) {
+	return qot.GetFedWatchDotPlot(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetEarningsBeatRank(ctx context.Context, req *qotgetearningsbeatrank.C2S) (*qotgetearningsbeatrank.S2C, error) {
+	return qot.GetEarningsBeatRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetDividendRank(ctx context.Context, req *qotgetdividendrank.C2S) (*qotgetdividendrank.S2C, error) {
+	return qot.GetDividendRank(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetDividendCalendar(ctx context.Context, req *qotgetdividendcalendar.C2S) (*qotgetdividendcalendar.S2C, error) {
+	return qot.GetDividendCalendar(ctx, api.client, req)
+}
+
+func (api *QuoteAPI) GetEconomicCalendar(ctx context.Context, req *qotgeteconomiccalendar.C2S) (*qotgeteconomiccalendar.S2C, error) {
+	return qot.GetEconomicCalendar(ctx, api.client, req)
 }
 
 // TradeAPI provides a fluent API for trading operations.

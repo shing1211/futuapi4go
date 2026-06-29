@@ -173,6 +173,73 @@ const (
 	// v10.7+ Combo Trade APIs
 	ProtoID_Trd_GetComboMaxTrdQtys = 2112 // 查询组合最大可交易数量
 	ProtoID_Trd_PlaceComboOrder    = 2227 // 组合下单
+
+	// v10.8+ Indicator & Search APIs
+	ProtoID_Qot_GetIndicatorList  = 3259 // 获取指标列表
+	ProtoID_Qot_RequestIndicatorCalc = 3260 // 请求异步指标计算
+	ProtoID_Qot_PushIndicatorCalc = 3261 // 指标计算推送
+	ProtoID_Qot_GetSearchQuote    = 3262 // 搜索报价
+	ProtoID_Qot_GetSearchNews     = 3263 // 搜索新闻
+
+	// v10.8+ Option Analytics APIs (3301-3314)
+	ProtoID_Qot_GetOptionMarketStatistic = 3301 // 获取期权市场统计
+	ProtoID_Qot_GetOptionUnderlyingHisStatistic = 3302 // 获取期权标的的历史统计
+	ProtoID_Qot_GetOptionUnderlyingOverview = 3303 // 批量获取期权标的概览
+	ProtoID_Qot_GetOptionUnderlyingHisVolatility = 3304 // 获取期权标的历史波动率
+	ProtoID_Qot_GetOptionUnderlyingRank = 3305 // 获取期权标的排名
+	ProtoID_Qot_GetOptionRank      = 3306 // 获取期权合约排名
+	ProtoID_Qot_GetOptionEvent     = 3307 // 获取期权大事件
+	ProtoID_Qot_GetOptionEventAlert = 3308 // 获取期权大事件提醒
+	ProtoID_Qot_SetOptionEventAlert = 3309 // 设置期权大事件提醒
+	ProtoID_Qot_UpdateOptionEvent  = 3310 // 推送期权大事件
+	ProtoID_Qot_GetOptionZeroDteScreener = 3311 // 获取0DTE期权筛选
+	ProtoID_Qot_GetOptionZeroDteContract = 3312 // 获取0DTE期权合约
+	ProtoID_Qot_GetOptionEarningsScreener = 3313 // 获取期权财报筛选
+	ProtoID_Qot_GetOptionSellerScreener  = 3314 // 获取期权卖方筛选
+
+	// v10.8+ Market Fundamentals APIs (3401-3417)
+	ProtoID_Qot_GetEarningsCalendar = 3401 // 获取财报日历
+	ProtoID_Qot_GetMacroIndicatorList = 3402 // 获取宏观指标列表
+	ProtoID_Qot_GetMacroIndicatorHistory = 3403 // 获取宏观指标历史
+	ProtoID_Qot_GetFedWatchTargetRate = 3404 // 获取FedWatch目标利率概率
+	ProtoID_Qot_GetFedWatchDotPlot = 3405 // 获取FedWatch点阵图
+	ProtoID_Qot_GetEarningsBeatRank = 3406 // 获取财报超预期排名
+	ProtoID_Qot_GetDividendRank    = 3407 // 获取股息排名
+	ProtoID_Qot_GetDividendCalendar = 3408 // 获取股息日历
+	ProtoID_Qot_GetEconomicCalendar = 3409 // 获取经济日历
+	ProtoID_Qot_GetUSPreMarketRank = 3410 // 获取美股盘前排名
+	ProtoID_Qot_GetUSAfterHoursRank = 3411 // 获取美股盘后排名
+	ProtoID_Qot_GetUSOvernightRank = 3412 // 获取美股隔夜排名
+	ProtoID_Qot_GetTopMoversRank   = 3413 // 获取热门异动排名
+	ProtoID_Qot_GetHotList         = 3414 // 获取热门榜单
+	ProtoID_Qot_GetShortSellingRank = 3415 // 获取做空排名
+	ProtoID_Qot_GetPeriodChangeRank = 3416 // 获取区间涨跌排名
+	ProtoID_Qot_GetHighDividendSOERank = 3417 // 获取高股息国企排名
+
+	// v10.8+ Institutional APIs (3418-3425)
+	ProtoID_Qot_GetInstitutionList = 3418 // 获取机构列表
+	ProtoID_Qot_GetInstitutionProfile = 3419 // 获取机构简介
+	ProtoID_Qot_GetInstitutionDistribution = 3420 // 获取机构配置分布
+	ProtoID_Qot_GetInstitutionHoldingChange = 3421 // 获取机构持仓变动
+	ProtoID_Qot_GetInstitutionHoldingList = 3422 // 获取机构持仓列表
+	ProtoID_Qot_GetArkFundHolding = 3423 // 获取ARK基金持仓
+	ProtoID_Qot_GetArkStockDynamic = 3424 // 获取ARK个股动态
+	ProtoID_Qot_GetArkActiveTransaction = 3425 // 获取ARK主动交易
+
+	// v10.8+ Other APIs (3426-3433)
+	ProtoID_Qot_GetRatingChange   = 3426 // 获取评级变动
+	ProtoID_Qot_GetIndustrialChainList = 3427 // 获取产业链列表
+	ProtoID_Qot_GetIndustrialChainDetail = 3428 // 获取产业链详情
+	ProtoID_Qot_GetIndustrialChainByPlate = 3429 // 根据板块获取产业链
+	ProtoID_Qot_GetIndustrialPlateInfo = 3430 // 获取产业板块信息
+	ProtoID_Qot_GetIndustrialPlateStock = 3431 // 获取产业板块成分股
+	ProtoID_Qot_GetHeatMapData    = 3432 // 获取热力图数据
+	ProtoID_Qot_GetRiseFallDistribution = 3433 // 获取涨跌分布
+
+	// v10.8+ SkillWrap APIs (3801-3803)
+	ProtoID_SkillWrap_TechnicalUnusual  = 3801 // 技术指标异动
+	ProtoID_SkillWrap_FinancialUnusual  = 3802 // 财务数据异动
+	ProtoID_SkillWrap_DerivativeUnusual = 3803 // 衍生品数据异动
 )
 
 // AllPushIDs returns all push notification ProtoIDs
@@ -187,6 +254,8 @@ var AllPushIDs = []int32{
 	ProtoID_Qot_UpdateBasicQot,
 	ProtoID_Qot_UpdateTicker,
 	ProtoID_Qot_UpdatePriceReminder,
+	ProtoID_Qot_UpdateOptionEvent,
+	ProtoID_Qot_PushIndicatorCalc,
 }
 
 // IsPushID returns true if the ProtoID is a push notification
@@ -218,6 +287,7 @@ const (
 	Market_MY   = 61 // 马来西亚市场
 	Market_CA   = 71 // 加拿大市场
 	Market_FX   = 81 // 外汇市场
+	Market_CC   = 101 // 加密货币市场
 )
 
 // MarketToTrdSecMarket maps QotMarket (int32) to TrdSecMarket.
@@ -255,6 +325,7 @@ const (
 	SecurityType_PlateSet SecurityType = 9  // 板块集
 	SecurityType_Future   SecurityType = 10 // 期货
 	SecurityType_Forex    SecurityType = 11 // 外汇
+	SecurityType_Crypto   SecurityType = 12 // 加密货币
 )
 
 // =============================================================================
@@ -281,7 +352,8 @@ const (
 	SubType_K_Week    SubType = 12 // 周K线
 	SubType_K_Month   SubType = 13 // 月K线
 	SubType_K_Quarter SubType = 15 // 季度K线
-	SubType_K_Year    SubType = 16 // 年K线
+	SubType_K_Year     SubType = 16 // 年K线
+	SubType_OrderBookOdd SubType = 18 // 碎股买卖摆盘
 )
 
 // IsKLType returns true if the SubType is a K-line type
@@ -429,6 +501,12 @@ const (
 	MarketState_FutureBreak      MarketState = 22 // 期货中盘休息
 	MarketState_FutureBreakOver  MarketState = 23 // 期货休息后开盘
 	MarketState_FutureClose      MarketState = 24 // 期货收盘
+	MarketState_StibAfterHoursWait MarketState = 25 // 盘后竞价等待
+	MarketState_StibAfterHoursBegin MarketState = 26 // 盘后竞价开始
+	MarketState_StibAfterHoursEnd MarketState = 27 // 盘后竞价结束
+	MarketState_Night             MarketState = 28 // 夜间交易
+	MarketState_TradeAtLast       MarketState = 29 // 收盘集合竞价
+	MarketState_Overnight         MarketState = 30 // 隔夜交易
 )
 
 // =============================================================================
@@ -458,6 +536,7 @@ const (
 	TrdMarket_HKCC              TrdMarket = 4   // 香港A股通市场
 	TrdMarket_Futures           TrdMarket = 5   // 期货市场
 	TrdMarket_SG                TrdMarket = 6   // 新加坡市场
+	TrdMarket_Crypto            TrdMarket = 7   // 加密货币市场
 	TrdMarket_AU                TrdMarket = 8   // 澳洲市场
 	TrdMarket_JP                TrdMarket = 15  // 日本市场
 	TrdMarket_MY                TrdMarket = 111 // 马来西亚市场
@@ -604,6 +683,7 @@ const (
 	TrdCategory_None     TrdCategory = 0 // 未知
 	TrdCategory_Security TrdCategory = 1 // 证券
 	TrdCategory_Future   TrdCategory = 2 // 期货
+	TrdCategory_Crypto   TrdCategory = 3 // 加密货币
 )
 
 // =============================================================================
@@ -770,13 +850,14 @@ const (
 type SecurityFirm int32
 
 const (
-	SecurityFirm_None                    SecurityFirm = 0 // 未知
-	SecurityFirm_FutuSecurities          SecurityFirm = 1 // 富途证券
-	SecurityFirm_FutuFuturesHK           SecurityFirm = 2 // 富途期货(香港)
-	SecurityFirm_FutuSecuritiesFuturesHK SecurityFirm = 3 // 富途证券(期货香港)
-	SecurityFirm_Virtu                   SecurityFirm = 4 // Virtu
-	SecurityFirm_FutuWealth              SecurityFirm = 5 // 富途财富
-	SecurityFirm_FutuTrust               SecurityFirm = 6 // 富途信托
+	SecurityFirm_None           SecurityFirm = 0 // 未知
+	SecurityFirm_FutuSecurities SecurityFirm = 1 // 富途证券(香港)
+	SecurityFirm_FutuInc        SecurityFirm = 2 // 富途证券(美国)
+	SecurityFirm_FutuSG         SecurityFirm = 3 // 富途证券(新加坡)
+	SecurityFirm_FutuAU         SecurityFirm = 4 // 富途证券(澳洲)
+	SecurityFirm_FutuCA         SecurityFirm = 5 // 富途证券(加拿大)
+	SecurityFirm_FutuMY         SecurityFirm = 6 // 富途证券(马来西亚)
+	SecurityFirm_FutuJP         SecurityFirm = 7 // 富途证券(日本)
 )
 
 // =============================================================================
@@ -1459,4 +1540,853 @@ const (
 	TrdAssetCategory_Unknown TrdAssetCategory = 0 // 未知
 	TrdAssetCategory_JP      TrdAssetCategory = 1 // 本国
 	TrdAssetCategory_US      TrdAssetCategory = 2 // 外国
+)
+
+// =============================================================================
+// IndicatorLangType (指标语言类型)
+// =============================================================================
+
+// IndicatorLangType represents the language type for indicators
+type IndicatorLangType int32
+
+const (
+	IndicatorLangType_Unknown IndicatorLangType = 0 // 未知
+	IndicatorLangType_MyLang  IndicatorLangType = 1 // 麦语言
+	IndicatorLangType_Python  IndicatorLangType = 2 // Python
+)
+
+// =============================================================================
+// IndicatorSearchMode (指标搜索模式)
+// =============================================================================
+
+// IndicatorSearchMode represents the search mode for indicators
+type IndicatorSearchMode int32
+
+const (
+	IndicatorSearchMode_Partial IndicatorSearchMode = 0 // 模糊匹配
+	IndicatorSearchMode_Exact   IndicatorSearchMode = 1 // 精确匹配
+)
+
+// =============================================================================
+// IndicatorParamValueType (指标参数值类型)
+// =============================================================================
+
+// IndicatorParamValueType represents the type of indicator parameter value
+type IndicatorParamValueType int32
+
+const (
+	IndicatorParamValueType_Unknown IndicatorParamValueType = 0 // 未知
+	IndicatorParamValueType_INT     IndicatorParamValueType = 1 // 整数
+	IndicatorParamValueType_FLOAT   IndicatorParamValueType = 2 // 浮点数
+	IndicatorParamValueType_STRING  IndicatorParamValueType = 3 // 字符串
+	IndicatorParamValueType_COLOR   IndicatorParamValueType = 4 // 颜色
+	IndicatorParamValueType_SHAPE   IndicatorParamValueType = 5 // 形状
+	IndicatorParamValueType_LINE    IndicatorParamValueType = 6 // 线型
+	IndicatorParamValueType_BOOL    IndicatorParamValueType = 7 // 布尔
+)
+
+// =============================================================================
+// IndicatorShape (指标形状)
+// =============================================================================
+
+// IndicatorShape represents the shape of an indicator point
+type IndicatorShape int32
+
+const (
+	IndicatorShape_Unknown        IndicatorShape = 0  // 未知
+	IndicatorShape_XCross         IndicatorShape = 1  // X型交叉
+	IndicatorShape_Cross          IndicatorShape = 2  // 十字
+	IndicatorShape_Circle         IndicatorShape = 3  // 圆形
+	IndicatorShape_TriangleUp     IndicatorShape = 4  // 三角向上
+	IndicatorShape_TriangleDown   IndicatorShape = 5  // 三角向下
+	IndicatorShape_Flag           IndicatorShape = 6  // 旗帜
+	IndicatorShape_ArrowUp        IndicatorShape = 7  // 箭头向上
+	IndicatorShape_ArrowDown      IndicatorShape = 8  // 箭头向下
+	IndicatorShape_Square         IndicatorShape = 9  // 方形
+	IndicatorShape_Diamond        IndicatorShape = 10 // 菱形
+	IndicatorShape_LabelUp        IndicatorShape = 11 // 标签向上
+	IndicatorShape_LabelDown      IndicatorShape = 12 // 标签向下
+)
+
+// =============================================================================
+// IndicatorLineType (指标线型)
+// =============================================================================
+
+// IndicatorLineType represents the type of indicator line
+type IndicatorLineType int32
+
+const (
+	IndicatorLineType_Unknown        IndicatorLineType = 0 // 未知
+	IndicatorLineType_Solid          IndicatorLineType = 1 // 实线
+	IndicatorLineType_Dashed         IndicatorLineType = 2 // 虚线
+	IndicatorLineType_Dot            IndicatorLineType = 3 // 点线
+	IndicatorLineType_Cross          IndicatorLineType = 4 // 十字
+	IndicatorLineType_Circle         IndicatorLineType = 5 // 圆形
+	IndicatorLineType_Histogram      IndicatorLineType = 6 // 柱状图
+	IndicatorLineType_HistogramLine  IndicatorLineType = 7 // 柱状线
+	IndicatorLineType_Step           IndicatorLineType = 8 // 阶梯
+	IndicatorLineType_StepDiamonds   IndicatorLineType = 9 // 阶梯菱形
+)
+
+// =============================================================================
+// NewsSubType (新闻子类型)
+// =============================================================================
+
+// NewsSubType represents the sub-type of news
+type NewsSubType int32
+
+const (
+	NewsSubType_All    NewsSubType = 0 // 所有类型
+	NewsSubType_News   NewsSubType = 1 // 新闻
+	NewsSubType_Notice NewsSubType = 2 // 公告
+	NewsSubType_Rating NewsSubType = 3 // 评级
+)
+
+// =============================================================================
+// OptionMarket (期权市场)
+// =============================================================================
+
+// OptionMarket represents the option market
+type OptionMarket int32
+
+const (
+	OptionMarket_Unknown    OptionMarket = 0 // 未知
+	OptionMarket_US_Security OptionMarket = 1 // 美股期权
+	OptionMarket_US_Index   OptionMarket = 2 // 美股指数期权
+	OptionMarket_HK_Security OptionMarket = 3 // 港股期权
+	OptionMarket_HK_Index   OptionMarket = 4 // 港股指数期权
+)
+
+// =============================================================================
+// OptionStatisticDataType (期权统计数据类型)
+// =============================================================================
+
+// OptionStatisticDataType represents the type of option statistic data
+type OptionStatisticDataType int32
+
+const (
+	OptionStatisticDataType_Volume       OptionStatisticDataType = 0 // 成交量
+	OptionStatisticDataType_OpenInterest OptionStatisticDataType = 1 // 持仓量
+)
+
+// =============================================================================
+// OptionHVTimeRange (期权历史波动率时间范围)
+// =============================================================================
+
+// OptionHVTimeRange represents the time range for option historical volatility
+type OptionHVTimeRange int32
+
+const (
+	OptionHVTimeRange_30  OptionHVTimeRange = 0 // 30天
+	OptionHVTimeRange_60  OptionHVTimeRange = 1 // 60天
+	OptionHVTimeRange_90  OptionHVTimeRange = 2 // 90天
+	OptionHVTimeRange_120 OptionHVTimeRange = 3 // 120天
+	OptionHVTimeRange_365 OptionHVTimeRange = 4 // 365天
+)
+
+// =============================================================================
+// UnderlyingRankSortType (标的排名排序类型)
+// =============================================================================
+
+// UnderlyingRankSortType represents the sort type for underlying ranking
+type UnderlyingRankSortType int32
+
+const (
+	UnderlyingRankSortType_Unknown                  UnderlyingRankSortType = 0  // 未知
+	UnderlyingRankSortType_Volume                   UnderlyingRankSortType = 1  // 成交量
+	UnderlyingRankSortType_OpenInterest             UnderlyingRankSortType = 2  // 持仓量
+	UnderlyingRankSortType_IV                       UnderlyingRankSortType = 3  // 隐含波动率
+	UnderlyingRankSortType_HV                       UnderlyingRankSortType = 4  // 历史波动率
+	UnderlyingRankSortType_IVRank                   UnderlyingRankSortType = 5  // IV分位
+	UnderlyingRankSortType_IVPercentile             UnderlyingRankSortType = 6  // IV百分位
+	UnderlyingRankSortType_IVChange                 UnderlyingRankSortType = 7  // IV变化
+	UnderlyingRankSortType_HVChange                 UnderlyingRankSortType = 8  // HV变化
+	UnderlyingRankSortType_VolumeRatio              UnderlyingRankSortType = 9  // 量比
+	UnderlyingRankSortType_OIRatio                  UnderlyingRankSortType = 10 // 持仓量比
+	UnderlyingRankSortType_MarketCap                UnderlyingRankSortType = 11 // 市值
+	UnderlyingRankSortType_ChangeRatio              UnderlyingRankSortType = 12 // 涨跌幅
+	UnderlyingRankSortType_Price                    UnderlyingRankSortType = 13 // 价格
+)
+
+// =============================================================================
+// OptionRankType (期权排名类型)
+// =============================================================================
+
+// OptionRankType represents the type of option contract ranking
+type OptionRankType int32
+
+const (
+	OptionRankType_Unknown         OptionRankType = 0  // 未知
+	OptionRankType_Volume          OptionRankType = 1  // 成交量
+	OptionRankType_OpenInterest    OptionRankType = 2  // 持仓量
+	OptionRankType_VolumeChange    OptionRankType = 3  // 成交量变化
+	OptionRankType_OIChange        OptionRankType = 4  // 持仓量变化
+	OptionRankType_IV              OptionRankType = 5  // 隐含波动率
+	OptionRankType_HV              OptionRankType = 6  // 历史波动率
+	OptionRankType_IVRank          OptionRankType = 7  // IV分位
+	OptionRankType_IVPercentile    OptionRankType = 8  // IV百分位
+	OptionRankType_PriceChange     OptionRankType = 9  // 价格变化
+	OptionRankType_Premium         OptionRankType = 10 // 权利金
+)
+
+// =============================================================================
+// ZeroDteSortType (0DTE排序类型)
+// =============================================================================
+
+// ZeroDteSortType represents the sort type for zero DTE options
+type ZeroDteSortType int32
+
+const (
+	ZeroDteSortType_Unknown     ZeroDteSortType = 0 // 未知
+	ZeroDteSortType_Volume      ZeroDteSortType = 1 // 成交量
+	ZeroDteSortType_IV          ZeroDteSortType = 2 // 隐含波动率
+	ZeroDteSortType_ChangeRatio ZeroDteSortType = 3 // 涨跌幅
+	ZeroDteSortType_OpenInterest ZeroDteSortType = 4 // 持仓量
+	ZeroDteSortType_MarketCap   ZeroDteSortType = 5 // 市值
+)
+
+// =============================================================================
+// ZeroDteIndicatorType (0DTE筛选指标类型)
+// =============================================================================
+
+// ZeroDteIndicatorType represents the indicator type for zero DTE screening
+type ZeroDteIndicatorType int32
+
+const (
+	ZeroDteIndicatorType_Unknown          ZeroDteIndicatorType = 0  // 未知
+	ZeroDteIndicatorType_OwnerList        ZeroDteIndicatorType = 1  // 持有列表
+	ZeroDteIndicatorType_HasEarningsWeek  ZeroDteIndicatorType = 2  // 本周有财报
+	ZeroDteIndicatorType_Volume           ZeroDteIndicatorType = 3  // 成交量
+	ZeroDteIndicatorType_OpenInterest     ZeroDteIndicatorType = 4  // 持仓量
+	ZeroDteIndicatorType_IV               ZeroDteIndicatorType = 5  // 隐含波动率
+	ZeroDteIndicatorType_HV               ZeroDteIndicatorType = 6  // 历史波动率
+	ZeroDteIndicatorType_IVRank           ZeroDteIndicatorType = 7  // IV分位
+	ZeroDteIndicatorType_IVPercentile     ZeroDteIndicatorType = 8  // IV百分位
+	ZeroDteIndicatorType_Price            ZeroDteIndicatorType = 9  // 价格
+	ZeroDteIndicatorType_ChangeRatio      ZeroDteIndicatorType = 10 // 涨跌幅
+)
+
+// =============================================================================
+// ZeroDteContractSortType (0DTE合约排序类型)
+// =============================================================================
+
+// ZeroDteContractSortType represents the sort type for zero DTE contracts
+type ZeroDteContractSortType int32
+
+const (
+	ZeroDteContractSortType_Unknown     ZeroDteContractSortType = 0 // 未知
+	ZeroDteContractSortType_Volume      ZeroDteContractSortType = 1 // 成交量
+	ZeroDteContractSortType_OpenInterest ZeroDteContractSortType = 2 // 持仓量
+	ZeroDteContractSortType_IV          ZeroDteContractSortType = 3 // 隐含波动率
+	ZeroDteContractSortType_Delta       ZeroDteContractSortType = 4 // Delta
+)
+
+// =============================================================================
+// ZeroDteContractIndicatorType (0DTE合约筛选指标类型)
+// =============================================================================
+
+// ZeroDteContractIndicatorType represents the indicator type for zero DTE contracts
+type ZeroDteContractIndicatorType int32
+
+const (
+	ZeroDteContractIndicatorType_Unknown             ZeroDteContractIndicatorType = 0  // 未知
+	ZeroDteContractIndicatorType_OptionType          ZeroDteContractIndicatorType = 1  // 期权类型
+	ZeroDteContractIndicatorType_Volume              ZeroDteContractIndicatorType = 2  // 成交量
+	ZeroDteContractIndicatorType_OpenInterest        ZeroDteContractIndicatorType = 3  // 持仓量
+	ZeroDteContractIndicatorType_IV                  ZeroDteContractIndicatorType = 4  // 隐含波动率
+	ZeroDteContractIndicatorType_Delta               ZeroDteContractIndicatorType = 5  // Delta
+	ZeroDteContractIndicatorType_Gamma               ZeroDteContractIndicatorType = 6  // Gamma
+	ZeroDteContractIndicatorType_Theta               ZeroDteContractIndicatorType = 7  // Theta
+	ZeroDteContractIndicatorType_Vega                ZeroDteContractIndicatorType = 8  // Vega
+	ZeroDteContractIndicatorType_Rho                 ZeroDteContractIndicatorType = 9  // Rho
+	ZeroDteContractIndicatorType_Price               ZeroDteContractIndicatorType = 10 // 价格
+	ZeroDteContractIndicatorType_ChangeRatio         ZeroDteContractIndicatorType = 11 // 涨跌幅
+	ZeroDteContractIndicatorType_BreakEvenPoint      ZeroDteContractIndicatorType = 12 // 盈亏平衡点
+	ZeroDteContractIndicatorType_ToBEP               ZeroDteContractIndicatorType = 13 // 距离盈亏平衡点
+	ZeroDteContractIndicatorType_BuyProfitProb       ZeroDteContractIndicatorType = 14 // 买入盈利概率
+	ZeroDteContractIndicatorType_SellProfitProb      ZeroDteContractIndicatorType = 15 // 卖出盈利概率
+)
+
+// =============================================================================
+// EarningsSortType (财报扫描排序类型)
+// =============================================================================
+
+// EarningsSortType represents the sort type for earnings screening
+type EarningsSortType int32
+
+const (
+	EarningsSortType_Unknown              EarningsSortType = 0  // 未知
+	EarningsSortType_EarningsDate         EarningsSortType = 1  // 财报日期
+	EarningsSortType_Volume               EarningsSortType = 2  // 成交量
+	EarningsSortType_IV                   EarningsSortType = 3  // 隐含波动率
+	EarningsSortType_MarketCap            EarningsSortType = 4  // 市值
+	EarningsSortType_ChangeRatio          EarningsSortType = 5  // 涨跌幅
+	EarningsSortType_Price                EarningsSortType = 6  // 价格
+	EarningsSortType_IVRank               EarningsSortType = 7  // IV分位
+	EarningsSortType_IVPercentile         EarningsSortType = 8  // IV百分位
+	EarningsSortType_HV                   EarningsSortType = 9  // 历史波动率
+	EarningsSortType_OpenInterest         EarningsSortType = 10 // 持仓量
+	EarningsSortType_LastReportIVCrush    EarningsSortType = 11 // 上次财报IV平仓
+	EarningsSortType_HistoryReportIVCrush EarningsSortType = 12 // 历史财报IV平仓
+	EarningsSortType_LastReportChgRatio   EarningsSortType = 13 // 上次财报涨跌幅
+	EarningsSortType_HistoryReportChgRatio EarningsSortType = 14 // 历史财报涨跌幅
+	EarningsSortType_EstimateEPSYoY       EarningsSortType = 15 // 预估EPS同比
+	EarningsSortType_EstimateRevenueYoY   EarningsSortType = 16 // 预估营收同比
+	EarningsSortType_ExpectedMoveRatio    EarningsSortType = 17 // 预期波动幅度
+)
+
+// =============================================================================
+// StockCategory (股票分类)
+// =============================================================================
+
+// StockCategory represents the category of stock for screening
+type StockCategory int32
+
+const (
+	StockCategory_All    StockCategory = 0 // 所有
+	StockCategory_Equity StockCategory = 1 // 正股
+	StockCategory_ETF    StockCategory = 2 // ETF
+)
+
+// =============================================================================
+// IndexComponent (指数成分股)
+// =============================================================================
+
+// IndexComponent represents a major stock index component filter
+type IndexComponent int32
+
+const (
+	IndexComponent_Unknown IndexComponent = 0 // 未知
+	IndexComponent_DJI     IndexComponent = 1 // 道琼斯
+	IndexComponent_IXIC    IndexComponent = 2 // 纳斯达克综合
+	IndexComponent_NDX     IndexComponent = 3 // 纳斯达克100
+	IndexComponent_SPX     IndexComponent = 4 // 标普500
+)
+
+// =============================================================================
+// ExpirationType (到期类型)
+// =============================================================================
+
+// ExpirationType represents the expiration type for options
+type ExpirationType int32
+
+const (
+	ExpirationType_Unknown     ExpirationType = 0 // 未知
+	ExpirationType_Monthly     ExpirationType = 1 // 月度
+	ExpirationType_Weekly      ExpirationType = 2 // 周度
+	ExpirationType_EndOfMonth  ExpirationType = 3 // 月末
+	ExpirationType_Quarterly   ExpirationType = 4 // 季度
+)
+
+// =============================================================================
+// EarningsPubType (财报发布时间)
+// =============================================================================
+
+// EarningsPubType represents the publication time type for earnings
+type EarningsPubType int32
+
+const (
+	EarningsPubType_Unknown EarningsPubType = 0 // 未知
+	EarningsPubType_Before  EarningsPubType = 1 // 盘前
+	EarningsPubType_After   EarningsPubType = 2 // 盘后
+)
+
+// =============================================================================
+// SellerType (期权卖方策略类型)
+// =============================================================================
+
+// SellerType represents the option seller strategy type
+type SellerType int32
+
+const (
+	SellerType_Unknown      SellerType = 0 // 未知
+	SellerType_CoveredCall   SellerType = 1 // 备兑开仓
+	SellerType_CashSecuredPut SellerType = 2 // 现金担保看跌
+)
+
+// =============================================================================
+// SellerSortType (期权卖方排序类型)
+// =============================================================================
+
+// SellerSortType represents the sort type for option seller screening
+type SellerSortType int32
+
+const (
+	SellerSortType_Unknown          SellerSortType = 0 // 未知
+	SellerSortType_AnnualizedReturn SellerSortType = 1 // 年化收益率
+	SellerSortType_IntervalReturn   SellerSortType = 2 // 区间收益率
+	SellerSortType_ITMProbability   SellerSortType = 3 // ITM概率
+	SellerSortType_Premium          SellerSortType = 4 // 权利金
+)
+
+// =============================================================================
+// EarningsCalendarSortType (财报日历排序类型)
+// =============================================================================
+
+// EarningsCalendarSortType represents the sort type for earnings calendar
+type EarningsCalendarSortType int32
+
+const (
+	EarningsCalendarSortType_Unknown      EarningsCalendarSortType = 0 // 未知
+	EarningsCalendarSortType_Hot          EarningsCalendarSortType = 1 // 热度
+	EarningsCalendarSortType_MarketCap    EarningsCalendarSortType = 2 // 市值
+	EarningsCalendarSortType_OptionVolume EarningsCalendarSortType = 3 // 期权成交量
+	EarningsCalendarSortType_IV           EarningsCalendarSortType = 4 // 隐含波动率
+	EarningsCalendarSortType_IVRank       EarningsCalendarSortType = 5 // IV分位
+	EarningsCalendarSortType_IVPercentile EarningsCalendarSortType = 6 // IV百分位
+	EarningsCalendarSortType_RTMarketCap  EarningsCalendarSortType = 7 // 实时市值
+)
+
+// =============================================================================
+// EarningsCalendarPubType (财报日历发布时间类型)
+// =============================================================================
+
+// EarningsCalendarPubType represents the publication type for earnings calendar
+type EarningsCalendarPubType int32
+
+const (
+	EarningsCalendarPubType_Unknown EarningsCalendarPubType = 0 // 未知
+	EarningsCalendarPubType_Regular EarningsCalendarPubType = 1 // 常规
+	EarningsCalendarPubType_Before  EarningsCalendarPubType = 2 // 盘前
+	EarningsCalendarPubType_After   EarningsCalendarPubType = 3 // 盘后
+)
+
+// =============================================================================
+// EarningsCalendarEstimateType (财报日历预估类型)
+// =============================================================================
+
+// EarningsCalendarEstimateType represents the estimate type for earnings calendar
+type EarningsCalendarEstimateType int32
+
+const (
+	EarningsCalendarEstimateType_Unknown  EarningsCalendarEstimateType = 0 // 未知
+	EarningsCalendarEstimateType_EPS      EarningsCalendarEstimateType = 1 // 每股收益
+	EarningsCalendarEstimateType_Revenue  EarningsCalendarEstimateType = 2 // 营收
+	EarningsCalendarEstimateType_EBIT     EarningsCalendarEstimateType = 3 // 息税前利润
+)
+
+// =============================================================================
+// EarningsCalendarPeriodType (财报日历周期类型)
+// =============================================================================
+
+// EarningsCalendarPeriodType represents the period type for earnings calendar
+type EarningsCalendarPeriodType int32
+
+const (
+	EarningsCalendarPeriodType_Unknown     EarningsCalendarPeriodType = 0 // 未知
+	EarningsCalendarPeriodType_Quarterly   EarningsCalendarPeriodType = 1 // 季度
+	EarningsCalendarPeriodType_SemiAnnual  EarningsCalendarPeriodType = 2 // 半年度
+	EarningsCalendarPeriodType_Annual      EarningsCalendarPeriodType = 3 // 年度
+)
+
+// =============================================================================
+// EarningsCalendarStockListType (财报日历股票列表类型)
+// =============================================================================
+
+// EarningsCalendarStockListType represents the stock list type for earnings calendar
+type EarningsCalendarStockListType int32
+
+const (
+	EarningsCalendarStockListType_Unknown  EarningsCalendarStockListType = 0 // 未知
+	EarningsCalendarStockListType_Watchlist EarningsCalendarStockListType = 1 // 自选股
+	EarningsCalendarStockListType_Position EarningsCalendarStockListType = 2 // 持仓
+	EarningsCalendarStockListType_Special  EarningsCalendarStockListType = 3 // 特别关注
+)
+
+// =============================================================================
+// MacroRegion (宏观区域)
+// =============================================================================
+
+// MacroRegion represents a region for macroeconomic data
+type MacroRegion int32
+
+const (
+	MacroRegion_Unknown MacroRegion = 0 // 未知
+	MacroRegion_HK      MacroRegion = 1 // 香港
+	MacroRegion_US      MacroRegion = 2 // 美国
+	MacroRegion_JP      MacroRegion = 3 // 日本
+	MacroRegion_SG      MacroRegion = 4 // 新加坡
+	MacroRegion_AU      MacroRegion = 5 // 澳大利亚
+	MacroRegion_CA      MacroRegion = 6 // 加拿大
+	MacroRegion_MY      MacroRegion = 7 // 马来西亚
+	MacroRegion_CN      MacroRegion = 8 // 中国
+)
+
+// =============================================================================
+// MacroDataUnitType (宏观数据单位类型)
+// =============================================================================
+
+// MacroDataUnitType represents the unit type for macroeconomic data
+type MacroDataUnitType int32
+
+const (
+	MacroDataUnitType_Unknown MacroDataUnitType = 0 // 未知
+	MacroDataUnitType_Percent MacroDataUnitType = 1 // 百分比
+	MacroDataUnitType_Value   MacroDataUnitType = 2 // 值
+	MacroDataUnitType_Index   MacroDataUnitType = 3 // 指数
+)
+
+// =============================================================================
+// BeatType (超预期类型)
+// =============================================================================
+
+// BeatType represents the type of earnings beat
+type BeatType int32
+
+const (
+	BeatType_Unknown BeatType = 0 // 未知
+	BeatType_EPS     BeatType = 1 // 每股收益
+	BeatType_Revenue BeatType = 2 // 营收
+	BeatType_EBIT    BeatType = 3 // 息税前利润
+)
+
+// =============================================================================
+// BeatTerm (财报超预期周期)
+// =============================================================================
+
+// BeatTerm represents the term for earnings beat
+type BeatTerm int32
+
+const (
+	BeatTerm_Latest         BeatTerm = 0 // 最新
+	BeatTerm_LatestQuarter  BeatTerm = 1 // 最新季度
+	BeatTerm_LatestHalf     BeatTerm = 2 // 最新半年度
+	BeatTerm_LatestAnnual   BeatTerm = 3 // 最新年度
+	BeatTerm_All            BeatTerm = 4 // 全部
+)
+
+// =============================================================================
+// PostPeriodType (财报后周期类型)
+// =============================================================================
+
+// PostPeriodType represents the post-earnings period type
+type PostPeriodType int32
+
+const (
+	PostPeriodType_Unknown        PostPeriodType = 0 // 未知
+	PostPeriodType_Regular        PostPeriodType = 1 // 常规
+	PostPeriodType_Before         PostPeriodType = 2 // 盘前
+	PostPeriodType_After          PostPeriodType = 3 // 盘后
+	PostPeriodType_IntradayTrading PostPeriodType = 4 // 盘中交易
+)
+
+// =============================================================================
+// DistributionFrequency (分红频率)
+// =============================================================================
+
+// DistributionFrequency represents the frequency of dividend distribution
+type DistributionFrequency int32
+
+const (
+	DistributionFrequency_Unknown    DistributionFrequency = 0 // 未知
+	DistributionFrequency_Annual     DistributionFrequency = 1 // 年度
+	DistributionFrequency_SemiAnnual DistributionFrequency = 2 // 半年度
+	DistributionFrequency_Quarterly  DistributionFrequency = 3 // 季度
+	DistributionFrequency_Monthly    DistributionFrequency = 4 // 月度
+)
+
+// =============================================================================
+// DividendRankType (股息排名类型)
+// =============================================================================
+
+// DividendRankType represents the type of dividend ranking
+type DividendRankType int32
+
+const (
+	DividendRankType_Unknown      DividendRankType = 0 // 未知
+	DividendRankType_HighYield    DividendRankType = 1 // 高股息
+	DividendRankType_DividendGrowth DividendRankType = 2 // 股息增长
+)
+
+// =============================================================================
+// EconomicImportance (经济数据重要性)
+// =============================================================================
+
+// EconomicImportance represents the importance level of economic data
+type EconomicImportance int32
+
+const (
+	EconomicImportance_All    EconomicImportance = 0 // 全部
+	EconomicImportance_Low    EconomicImportance = 1 // 低
+	EconomicImportance_Medium EconomicImportance = 2 // 中
+	EconomicImportance_High   EconomicImportance = 3 // 高
+)
+
+// =============================================================================
+// RankSortDir (排名排序方向)
+// =============================================================================
+
+// RankSortDir represents the sort direction for rankings
+type RankSortDir int32
+
+const (
+	RankSortDir_Descending RankSortDir = 0 // 降序
+	RankSortDir_Ascending  RankSortDir = 1 // 升序
+)
+
+// =============================================================================
+// SimpleRankIndicatorType (简单排名指标类型)
+// =============================================================================
+
+// SimpleRankIndicatorType represents the indicator type for simple rankings
+type SimpleRankIndicatorType int32
+
+const (
+	SimpleRankIndicatorType_Unknown   SimpleRankIndicatorType = 0 // 未知
+	SimpleRankIndicatorType_Price     SimpleRankIndicatorType = 1 // 价格
+	SimpleRankIndicatorType_MarketCap SimpleRankIndicatorType = 2 // 市值
+	SimpleRankIndicatorType_PE        SimpleRankIndicatorType = 3 // 市盈率
+)
+
+// =============================================================================
+// PriceFilter (价格筛选)
+// =============================================================================
+
+// PriceFilter represents a price range filter for rankings
+type PriceFilter int32
+
+const (
+	PriceFilter_All               PriceFilter = 0 // 全部
+	PriceFilter_LessThan1         PriceFilter = 1 // 小于1
+	PriceFilter_Between1And10     PriceFilter = 2 // 1-10
+	PriceFilter_Between10And100   PriceFilter = 3 // 10-100
+	PriceFilter_GreaterThan100    PriceFilter = 4 // 大于100
+	PriceFilter_Near52WeekHigh    PriceFilter = 5 // 接近52周高点
+	PriceFilter_Near52WeekLow     PriceFilter = 6 // 接近52周低点
+)
+
+// =============================================================================
+// HotListSortField (热门榜单排序字段)
+// =============================================================================
+
+// HotListSortField represents the sort field for hot list
+type HotListSortField int32
+
+const (
+	HotListSortField_Unknown    HotListSortField = 0 // 未知
+	HotListSortField_TradeHeat  HotListSortField = 1 // 交易热度
+	HotListSortField_SearchHeat HotListSortField = 2 // 搜索热度
+	HotListSortField_NewsHeat   HotListSortField = 3 // 新闻热度
+	HotListSortField_AverageHeat HotListSortField = 4 // 平均热度
+)
+
+// =============================================================================
+// ShortSellingSortField (做空排名排序字段)
+// =============================================================================
+
+// ShortSellingSortField represents the sort field for short selling ranking
+type ShortSellingSortField int32
+
+const (
+	ShortSellingSortField_Unknown            ShortSellingSortField = 0  // 未知
+	ShortSellingSortField_ShortNumberChange  ShortSellingSortField = 1  // 做空数量变化
+	ShortSellingSortField_ShortRatioChange   ShortSellingSortField = 2  // 做空比例变化
+	ShortSellingSortField_ShortNumber        ShortSellingSortField = 3  // 做空数量
+	ShortSellingSortField_ShortRatio         ShortSellingSortField = 4  // 做空比例
+	ShortSellingSortField_Volume             ShortSellingSortField = 5  // 成交量
+	ShortSellingSortField_PositionVolume     ShortSellingSortField = 6  // 持仓量
+	ShortSellingSortField_PositionRatio      ShortSellingSortField = 7  // 持仓占比
+	ShortSellingSortField_DaysToCover        ShortSellingSortField = 8  // 回补天数
+	ShortSellingSortField_WeekAvgVolume      ShortSellingSortField = 9  // 周均成交量
+	ShortSellingSortField_WeekAvgShortNumber ShortSellingSortField = 10 // 周均做空量
+	ShortSellingSortField_WeekAvgShortRatio  ShortSellingSortField = 11 // 周均做空比
+	ShortSellingSortField_MonthAvgVolume     ShortSellingSortField = 12 // 月均成交量
+	ShortSellingSortField_MonthAvgShortNumber ShortSellingSortField = 13 // 月均做空量
+	ShortSellingSortField_MonthAvgShortRatio  ShortSellingSortField = 14 // 月均做空比
+)
+
+// =============================================================================
+// RankPeriodType (排名周期类型)
+// =============================================================================
+
+// RankPeriodType represents the period type for period change ranking
+type RankPeriodType int32
+
+const (
+	RankPeriodType_Unknown  RankPeriodType = 0 // 未知
+	RankPeriodType_5Min    RankPeriodType = 1 // 5分钟
+	RankPeriodType_1Day    RankPeriodType = 2 // 1日
+	RankPeriodType_5Day    RankPeriodType = 3 // 5日
+	RankPeriodType_20Day   RankPeriodType = 4 // 20日
+	RankPeriodType_60Day   RankPeriodType = 5 // 60日
+	RankPeriodType_120Day  RankPeriodType = 6 // 120日
+	RankPeriodType_250Day  RankPeriodType = 7 // 250日
+	RankPeriodType_YTD     RankPeriodType = 8 // 年初至今
+)
+
+// =============================================================================
+// InstitutionListSortField (机构列表排序字段)
+// =============================================================================
+
+// InstitutionListSortField represents the sort field for institution list
+type InstitutionListSortField int32
+
+const (
+	InstitutionListSortField_Unknown            InstitutionListSortField = 0 // 未知
+	InstitutionListSortField_PositionValue      InstitutionListSortField = 1 // 持仓市值
+	InstitutionListSortField_PositionValueChange InstitutionListSortField = 2 // 持仓市值变化
+	InstitutionListSortField_PositionCount      InstitutionListSortField = 3 // 持仓数量
+	InstitutionListSortField_PositionCountChange InstitutionListSortField = 4 // 持仓数量变化
+)
+
+// =============================================================================
+// InstitutionHoldingChangeType (机构持仓变动类型)
+// =============================================================================
+
+// InstitutionHoldingChangeType represents the type of institution holding change
+type InstitutionHoldingChangeType int32
+
+const (
+	InstitutionHoldingChangeType_Unknown  InstitutionHoldingChangeType = 0 // 未知
+	InstitutionHoldingChangeType_New      InstitutionHoldingChangeType = 1 // 新增
+	InstitutionHoldingChangeType_SoldOut  InstitutionHoldingChangeType = 2 // 清仓
+	InstitutionHoldingChangeType_Increase InstitutionHoldingChangeType = 3 // 增持
+	InstitutionHoldingChangeType_Decrease InstitutionHoldingChangeType = 4 // 减持
+)
+
+// =============================================================================
+// ArkHoldingType (ARK持仓类型)
+// =============================================================================
+
+// ArkHoldingType represents the type of ARK fund holding
+type ArkHoldingType int32
+
+const (
+	ArkHoldingType_Position ArkHoldingType = 0 // 持仓
+	ArkHoldingType_Increase ArkHoldingType = 1 // 增持
+	ArkHoldingType_Decrease ArkHoldingType = 2 // 减持
+	ArkHoldingType_New      ArkHoldingType = 3 // 新增
+	ArkHoldingType_SoldOut  ArkHoldingType = 4 // 清仓
+)
+
+// =============================================================================
+// ArkCycleType (ARK周期类型)
+// =============================================================================
+
+// ArkCycleType represents the cycle type for ARK data
+type ArkCycleType int32
+
+const (
+	ArkCycleType_1Day   ArkCycleType = 0 // 1日
+	ArkCycleType_5Day   ArkCycleType = 1 // 5日
+	ArkCycleType_10Day  ArkCycleType = 2 // 10日
+	ArkCycleType_30Day  ArkCycleType = 3 // 30日
+	ArkCycleType_60Day  ArkCycleType = 4 // 60日
+)
+
+// =============================================================================
+// ArkDynamicType (ARK动态类型)
+// =============================================================================
+
+// ArkDynamicType represents the type of ARK stock dynamic
+type ArkDynamicType int32
+
+const (
+	ArkDynamicType_Unknown               ArkDynamicType = 0 // 未知
+	ArkDynamicType_ConsecutiveSameDir    ArkDynamicType = 1 // 连续同向
+	ArkDynamicType_RecentTransaction     ArkDynamicType = 2 // 近期交易
+	ArkDynamicType_LastTransaction       ArkDynamicType = 3 // 最后交易
+	ArkDynamicType_NoDynamic             ArkDynamicType = 4 // 无动态
+)
+
+// =============================================================================
+// RatingChangeType (评级变动类型)
+// =============================================================================
+
+// RatingChangeType represents the type of rating change
+type RatingChangeType int32
+
+const (
+	RatingChangeType_Unknown   RatingChangeType = 0 // 未知
+	RatingChangeType_Upgrade   RatingChangeType = 1 // 上调
+	RatingChangeType_Downgrade RatingChangeType = 2 // 下调
+	RatingChangeType_NewRating RatingChangeType = 3 // 新增评级
+)
+
+// =============================================================================
+// RatingLevel (评级等级)
+// =============================================================================
+
+// RatingLevel represents the level of a rating
+type RatingLevel int32
+
+const (
+	RatingLevel_Unknown RatingLevel = 0 // 未知
+	RatingLevel_Sell    RatingLevel = 1 // 卖出
+	RatingLevel_Hold    RatingLevel = 2 // 持有
+	RatingLevel_Buy     RatingLevel = 3 // 买入
+)
+
+// =============================================================================
+// IndustrialChainType (产业链类型)
+// =============================================================================
+
+// IndustrialChainType represents the type of industrial chain
+type IndustrialChainType int32
+
+const (
+	IndustrialChainType_Unknown   IndustrialChainType = 0 // 未知
+	IndustrialChainType_Chain     IndustrialChainType = 1 // 产业链
+	IndustrialChainType_Parallel  IndustrialChainType = 2 // 平行
+	IndustrialChainType_UpMidDown IndustrialChainType = 3 // 上中下游
+)
+
+// =============================================================================
+// PlateStockSortField (板块股票排序字段)
+// =============================================================================
+
+// PlateStockSortField represents the sort field for plate stocks
+type PlateStockSortField int32
+
+const (
+	PlateStockSortField_Unknown    PlateStockSortField = 0 // 未知
+	PlateStockSortField_Code       PlateStockSortField = 1 // 代码
+	PlateStockSortField_ChangeRate PlateStockSortField = 2 // 涨跌幅
+	PlateStockSortField_Turnover   PlateStockSortField = 3 // 成交额
+	PlateStockSortField_Volume     PlateStockSortField = 4 // 成交量
+	PlateStockSortField_MarketVal  PlateStockSortField = 5 // 市值
+)
+
+// =============================================================================
+// HeatMapSortField (热力图排序字段)
+// =============================================================================
+
+// HeatMapSortField represents the sort field for heat map data
+type HeatMapSortField int32
+
+const (
+	HeatMapSortField_Unknown    HeatMapSortField = 0 // 未知
+	HeatMapSortField_ChangeRate HeatMapSortField = 1 // 涨跌幅
+	HeatMapSortField_MarketVal  HeatMapSortField = 2 // 市值
+	HeatMapSortField_Turnover   HeatMapSortField = 3 // 成交额
+	HeatMapSortField_Hot        HeatMapSortField = 4 // 热度
+)
+
+// =============================================================================
+// HeatMapPlateType (热力图板块类型)
+// =============================================================================
+
+// HeatMapPlateType represents the plate type for heat map
+type HeatMapPlateType int32
+
+const (
+	HeatMapPlateType_Industry HeatMapPlateType = 0 // 行业
+	HeatMapPlateType_Concept  HeatMapPlateType = 1 // 概念
+	HeatMapPlateType_Theme    HeatMapPlateType = 2 // 主题
+)
+
+// =============================================================================
+// RiseFallDistributionType (涨跌分布类型)
+// =============================================================================
+
+// RiseFallDistributionType represents the type of rise/fall distribution
+type RiseFallDistributionType int32
+
+const (
+	RiseFallDistributionType_Unknown           RiseFallDistributionType = 0 // 未知
+	RiseFallDistributionType_RiseLimit         RiseFallDistributionType = 1 // 涨停
+	RiseFallDistributionType_PositiveInfinity  RiseFallDistributionType = 2 // 涨幅7%以上
+	RiseFallDistributionType_NormalRange       RiseFallDistributionType = 3 // 正常区间
+	RiseFallDistributionType_NegativeInfinity  RiseFallDistributionType = 4 // 跌幅7%以上
+	RiseFallDistributionType_FallLimit         RiseFallDistributionType = 5 // 跌停
 )

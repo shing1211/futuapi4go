@@ -1,6 +1,6 @@
 # futuapi4go Architecture
 
-> **Version:** v0.13.0 | **Futu Protocol:** v10.7.6708 | **Updated:** 2026-06-05
+> **Version:** v0.14.0 | **Futu Protocol:** v10.8.6808 | **Updated:** 2026-06-29
 
 ---
 
@@ -138,7 +138,7 @@ Cross-cutting concerns wired into every API call.
 
 ### 2.6 Protobuf Definitions (`pkg/pb/`)
 
-111 generated protobuf files matching Futu OpenD v10.7.6708 protocol.
+167 generated protobuf files matching Futu OpenD v10.8.6808 protocol.
 
 ```
 pkg/pb/
@@ -415,7 +415,7 @@ futuapi4go/
 │       └── alloc.go          sync.Pool for buffer recycling
 │
 ├── api/                       Protocol definitions
-│   └── proto/                .proto source files (111 protos, Futu v10.7.6708)
+│   └── proto/                .proto source files (167 protos, Futu v10.8.6808)
 │
 ├── test/                      Integration tests, benchmarks, fixtures
 │   ├── integration/          Live OpenD tests (requires running OpenD)
@@ -553,7 +553,7 @@ flowchart TB
 
 | SDK Version | Proto Version | Notable Changes |
 |-------------|---------------|-----------------|
-| v0.13.0 | v10.7.6708 | Latest — 111 protos, 6 new combo option APIs |
+| v0.14.0 | v10.8.6808 | Latest — 167 protos, 56 new v10.8 APIs (search, indicators, options analytics, rankings, institutional, chain, heatmap, market fundamentals) |
 | v0.9.0 | v10.5.6508 | Latest — 78 protos |
 | v0.5.7 | v10.5.6508 | Upgrade from v10.4.6408 |
 | v0.5.0 | v10.4.6408 | Context as first param, typed enums |

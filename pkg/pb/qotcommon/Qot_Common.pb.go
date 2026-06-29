@@ -4354,6 +4354,369 @@ func (OptionImpvolStatusType) EnumDescriptor() ([]byte, []int) {
 	return file_Qot_Common_proto_rawDescGZIP(), []int{53}
 }
 
+// 指标语言类型
+type IndicatorLangType int32
+
+const (
+	IndicatorLangType_IndicatorLangType_Unknown IndicatorLangType = 0
+	IndicatorLangType_IndicatorLangType_MyLang  IndicatorLangType = 1
+	IndicatorLangType_IndicatorLangType_Python  IndicatorLangType = 2
+)
+
+// Enum value maps for IndicatorLangType.
+var (
+	IndicatorLangType_name = map[int32]string{
+		0: "IndicatorLangType_Unknown",
+		1: "IndicatorLangType_MyLang",
+		2: "IndicatorLangType_Python",
+	}
+	IndicatorLangType_value = map[string]int32{
+		"IndicatorLangType_Unknown": 0,
+		"IndicatorLangType_MyLang":  1,
+		"IndicatorLangType_Python":  2,
+	}
+)
+
+func (x IndicatorLangType) Enum() *IndicatorLangType {
+	p := new(IndicatorLangType)
+	*p = x
+	return p
+}
+
+func (x IndicatorLangType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndicatorLangType) Descriptor() protoreflect.EnumDescriptor {
+	return file_Qot_Common_proto_enumTypes[54].Descriptor()
+}
+
+func (IndicatorLangType) Type() protoreflect.EnumType {
+	return &file_Qot_Common_proto_enumTypes[54]
+}
+
+func (x IndicatorLangType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *IndicatorLangType) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = IndicatorLangType(num)
+	return nil
+}
+
+// Deprecated: Use IndicatorLangType.Descriptor instead.
+func (IndicatorLangType) EnumDescriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{54}
+}
+
+// 指标搜索模式
+type IndicatorSearchMode int32
+
+const (
+	IndicatorSearchMode_IndicatorSearchMode_Partial IndicatorSearchMode = 0 // 部分匹配（默认）
+	IndicatorSearchMode_IndicatorSearchMode_Exact   IndicatorSearchMode = 1 // 完全匹配
+)
+
+// Enum value maps for IndicatorSearchMode.
+var (
+	IndicatorSearchMode_name = map[int32]string{
+		0: "IndicatorSearchMode_Partial",
+		1: "IndicatorSearchMode_Exact",
+	}
+	IndicatorSearchMode_value = map[string]int32{
+		"IndicatorSearchMode_Partial": 0,
+		"IndicatorSearchMode_Exact":   1,
+	}
+)
+
+func (x IndicatorSearchMode) Enum() *IndicatorSearchMode {
+	p := new(IndicatorSearchMode)
+	*p = x
+	return p
+}
+
+func (x IndicatorSearchMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndicatorSearchMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_Qot_Common_proto_enumTypes[55].Descriptor()
+}
+
+func (IndicatorSearchMode) Type() protoreflect.EnumType {
+	return &file_Qot_Common_proto_enumTypes[55]
+}
+
+func (x IndicatorSearchMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *IndicatorSearchMode) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = IndicatorSearchMode(num)
+	return nil
+}
+
+// Deprecated: Use IndicatorSearchMode.Descriptor instead.
+func (IndicatorSearchMode) EnumDescriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{55}
+}
+
+// 指标参数值类型枚举
+type IndicatorParamValueType int32
+
+const (
+	IndicatorParamValueType_IndicatorParamValueType_UNKNOWN IndicatorParamValueType = 0 // 未知
+	IndicatorParamValueType_IndicatorParamValueType_INT     IndicatorParamValueType = 1 // 整数
+	IndicatorParamValueType_IndicatorParamValueType_FLOAT   IndicatorParamValueType = 2 // 浮点
+	IndicatorParamValueType_IndicatorParamValueType_STRING  IndicatorParamValueType = 3 // 字符串
+	IndicatorParamValueType_IndicatorParamValueType_COLOR   IndicatorParamValueType = 4 // 颜色
+	IndicatorParamValueType_IndicatorParamValueType_SHAPE   IndicatorParamValueType = 5 // 形状
+	IndicatorParamValueType_IndicatorParamValueType_LINE    IndicatorParamValueType = 6 // 线型
+	IndicatorParamValueType_IndicatorParamValueType_BOOL    IndicatorParamValueType = 7 // 布尔
+)
+
+// Enum value maps for IndicatorParamValueType.
+var (
+	IndicatorParamValueType_name = map[int32]string{
+		0: "IndicatorParamValueType_UNKNOWN",
+		1: "IndicatorParamValueType_INT",
+		2: "IndicatorParamValueType_FLOAT",
+		3: "IndicatorParamValueType_STRING",
+		4: "IndicatorParamValueType_COLOR",
+		5: "IndicatorParamValueType_SHAPE",
+		6: "IndicatorParamValueType_LINE",
+		7: "IndicatorParamValueType_BOOL",
+	}
+	IndicatorParamValueType_value = map[string]int32{
+		"IndicatorParamValueType_UNKNOWN": 0,
+		"IndicatorParamValueType_INT":     1,
+		"IndicatorParamValueType_FLOAT":   2,
+		"IndicatorParamValueType_STRING":  3,
+		"IndicatorParamValueType_COLOR":   4,
+		"IndicatorParamValueType_SHAPE":   5,
+		"IndicatorParamValueType_LINE":    6,
+		"IndicatorParamValueType_BOOL":    7,
+	}
+)
+
+func (x IndicatorParamValueType) Enum() *IndicatorParamValueType {
+	p := new(IndicatorParamValueType)
+	*p = x
+	return p
+}
+
+func (x IndicatorParamValueType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndicatorParamValueType) Descriptor() protoreflect.EnumDescriptor {
+	return file_Qot_Common_proto_enumTypes[56].Descriptor()
+}
+
+func (IndicatorParamValueType) Type() protoreflect.EnumType {
+	return &file_Qot_Common_proto_enumTypes[56]
+}
+
+func (x IndicatorParamValueType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *IndicatorParamValueType) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = IndicatorParamValueType(num)
+	return nil
+}
+
+// Deprecated: Use IndicatorParamValueType.Descriptor instead.
+func (IndicatorParamValueType) EnumDescriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{56}
+}
+
+// 指标形状
+type IndicatorShape int32
+
+const (
+	IndicatorShape_IndicatorShape_UNKNOWN       IndicatorShape = 0  // 未知
+	IndicatorShape_IndicatorShape_XCROSS        IndicatorShape = 1  // X 形十字
+	IndicatorShape_IndicatorShape_CROSS         IndicatorShape = 2  // 十字
+	IndicatorShape_IndicatorShape_CIRCLE        IndicatorShape = 3  // 圆形
+	IndicatorShape_IndicatorShape_TRIANGLE_UP   IndicatorShape = 4  // 上三角
+	IndicatorShape_IndicatorShape_TRIANGLE_DOWN IndicatorShape = 5  // 下三角
+	IndicatorShape_IndicatorShape_FLAG          IndicatorShape = 6  // 旗帜
+	IndicatorShape_IndicatorShape_ARROW_UP      IndicatorShape = 7  // 上箭头
+	IndicatorShape_IndicatorShape_ARROW_DOWN    IndicatorShape = 8  // 下箭头
+	IndicatorShape_IndicatorShape_SQUARE        IndicatorShape = 9  // 方块
+	IndicatorShape_IndicatorShape_DIAMOND       IndicatorShape = 10 // 菱形
+	IndicatorShape_IndicatorShape_LABEL_UP      IndicatorShape = 11 // 上标签
+	IndicatorShape_IndicatorShape_LABEL_DOWN    IndicatorShape = 12 // 下标签
+)
+
+// Enum value maps for IndicatorShape.
+var (
+	IndicatorShape_name = map[int32]string{
+		0:  "IndicatorShape_UNKNOWN",
+		1:  "IndicatorShape_XCROSS",
+		2:  "IndicatorShape_CROSS",
+		3:  "IndicatorShape_CIRCLE",
+		4:  "IndicatorShape_TRIANGLE_UP",
+		5:  "IndicatorShape_TRIANGLE_DOWN",
+		6:  "IndicatorShape_FLAG",
+		7:  "IndicatorShape_ARROW_UP",
+		8:  "IndicatorShape_ARROW_DOWN",
+		9:  "IndicatorShape_SQUARE",
+		10: "IndicatorShape_DIAMOND",
+		11: "IndicatorShape_LABEL_UP",
+		12: "IndicatorShape_LABEL_DOWN",
+	}
+	IndicatorShape_value = map[string]int32{
+		"IndicatorShape_UNKNOWN":       0,
+		"IndicatorShape_XCROSS":        1,
+		"IndicatorShape_CROSS":         2,
+		"IndicatorShape_CIRCLE":        3,
+		"IndicatorShape_TRIANGLE_UP":   4,
+		"IndicatorShape_TRIANGLE_DOWN": 5,
+		"IndicatorShape_FLAG":          6,
+		"IndicatorShape_ARROW_UP":      7,
+		"IndicatorShape_ARROW_DOWN":    8,
+		"IndicatorShape_SQUARE":        9,
+		"IndicatorShape_DIAMOND":       10,
+		"IndicatorShape_LABEL_UP":      11,
+		"IndicatorShape_LABEL_DOWN":    12,
+	}
+)
+
+func (x IndicatorShape) Enum() *IndicatorShape {
+	p := new(IndicatorShape)
+	*p = x
+	return p
+}
+
+func (x IndicatorShape) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndicatorShape) Descriptor() protoreflect.EnumDescriptor {
+	return file_Qot_Common_proto_enumTypes[57].Descriptor()
+}
+
+func (IndicatorShape) Type() protoreflect.EnumType {
+	return &file_Qot_Common_proto_enumTypes[57]
+}
+
+func (x IndicatorShape) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *IndicatorShape) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = IndicatorShape(num)
+	return nil
+}
+
+// Deprecated: Use IndicatorShape.Descriptor instead.
+func (IndicatorShape) EnumDescriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{57}
+}
+
+// 指标线型
+type IndicatorLineType int32
+
+const (
+	IndicatorLineType_IndicatorLineType_UNKNOWN        IndicatorLineType = 0 // 未知/未指定
+	IndicatorLineType_IndicatorLineType_SOLID          IndicatorLineType = 1 // 实线
+	IndicatorLineType_IndicatorLineType_DASHED         IndicatorLineType = 2 // 虚线
+	IndicatorLineType_IndicatorLineType_DOT            IndicatorLineType = 3 // 点线
+	IndicatorLineType_IndicatorLineType_CROSS          IndicatorLineType = 4 // 交叉线
+	IndicatorLineType_IndicatorLineType_CIRCLE         IndicatorLineType = 5 // 圆点连线
+	IndicatorLineType_IndicatorLineType_HISTOGRAM      IndicatorLineType = 6 // 柱状图
+	IndicatorLineType_IndicatorLineType_HISTOGRAM_LINE IndicatorLineType = 7 // 柱线混合
+	IndicatorLineType_IndicatorLineType_STEP           IndicatorLineType = 8 // 阶梯线
+	IndicatorLineType_IndicatorLineType_STEP_DIAMONDS  IndicatorLineType = 9 // 阶梯+菱形
+)
+
+// Enum value maps for IndicatorLineType.
+var (
+	IndicatorLineType_name = map[int32]string{
+		0: "IndicatorLineType_UNKNOWN",
+		1: "IndicatorLineType_SOLID",
+		2: "IndicatorLineType_DASHED",
+		3: "IndicatorLineType_DOT",
+		4: "IndicatorLineType_CROSS",
+		5: "IndicatorLineType_CIRCLE",
+		6: "IndicatorLineType_HISTOGRAM",
+		7: "IndicatorLineType_HISTOGRAM_LINE",
+		8: "IndicatorLineType_STEP",
+		9: "IndicatorLineType_STEP_DIAMONDS",
+	}
+	IndicatorLineType_value = map[string]int32{
+		"IndicatorLineType_UNKNOWN":        0,
+		"IndicatorLineType_SOLID":          1,
+		"IndicatorLineType_DASHED":         2,
+		"IndicatorLineType_DOT":            3,
+		"IndicatorLineType_CROSS":          4,
+		"IndicatorLineType_CIRCLE":         5,
+		"IndicatorLineType_HISTOGRAM":      6,
+		"IndicatorLineType_HISTOGRAM_LINE": 7,
+		"IndicatorLineType_STEP":           8,
+		"IndicatorLineType_STEP_DIAMONDS":  9,
+	}
+)
+
+func (x IndicatorLineType) Enum() *IndicatorLineType {
+	p := new(IndicatorLineType)
+	*p = x
+	return p
+}
+
+func (x IndicatorLineType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndicatorLineType) Descriptor() protoreflect.EnumDescriptor {
+	return file_Qot_Common_proto_enumTypes[58].Descriptor()
+}
+
+func (IndicatorLineType) Type() protoreflect.EnumType {
+	return &file_Qot_Common_proto_enumTypes[58]
+}
+
+func (x IndicatorLineType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *IndicatorLineType) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = IndicatorLineType(num)
+	return nil
+}
+
+// Deprecated: Use IndicatorLineType.Descriptor instead.
+func (IndicatorLineType) EnumDescriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{58}
+}
+
 // 行情协议公共参数头
 type QotHeader struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -6704,6 +7067,229 @@ func (x *ComboLeg) GetPositionID() uint64 {
 	return 0
 }
 
+// 指标参数值（类型 + 对应 value 字段）
+type IndicatorParamValue struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Type          *IndicatorParamValueType `protobuf:"varint,1,opt,name=type,enum=Qot_Common.IndicatorParamValueType" json:"type,omitempty"`     // 值类型
+	IntValue      *int64                   `protobuf:"varint,2,opt,name=intValue" json:"intValue,omitempty"`                                     // type=INT 时使用
+	FloatValue    *float32                 `protobuf:"fixed32,3,opt,name=floatValue" json:"floatValue,omitempty"`                                // type=FLOAT 时使用
+	StringValue   *string                  `protobuf:"bytes,4,opt,name=stringValue" json:"stringValue,omitempty"`                                // type=STRING 时使用
+	BoolValue     *bool                    `protobuf:"varint,5,opt,name=boolValue" json:"boolValue,omitempty"`                                   // type=BOOL 时使用
+	ColorValue    *string                  `protobuf:"bytes,6,opt,name=colorValue" json:"colorValue,omitempty"`                                  // type=COLOR 时使用，格式为 #RRGGBBAA 或 #RRGGBB
+	ShapeValue    *IndicatorShape          `protobuf:"varint,7,opt,name=shapeValue,enum=Qot_Common.IndicatorShape" json:"shapeValue,omitempty"`  // type=SHAPE 时使用
+	LineValue     *IndicatorLineType       `protobuf:"varint,8,opt,name=lineValue,enum=Qot_Common.IndicatorLineType" json:"lineValue,omitempty"` // type=LINE 时使用
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IndicatorParamValue) Reset() {
+	*x = IndicatorParamValue{}
+	mi := &file_Qot_Common_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IndicatorParamValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndicatorParamValue) ProtoMessage() {}
+
+func (x *IndicatorParamValue) ProtoReflect() protoreflect.Message {
+	mi := &file_Qot_Common_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndicatorParamValue.ProtoReflect.Descriptor instead.
+func (*IndicatorParamValue) Descriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *IndicatorParamValue) GetType() IndicatorParamValueType {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return IndicatorParamValueType_IndicatorParamValueType_UNKNOWN
+}
+
+func (x *IndicatorParamValue) GetIntValue() int64 {
+	if x != nil && x.IntValue != nil {
+		return *x.IntValue
+	}
+	return 0
+}
+
+func (x *IndicatorParamValue) GetFloatValue() float32 {
+	if x != nil && x.FloatValue != nil {
+		return *x.FloatValue
+	}
+	return 0
+}
+
+func (x *IndicatorParamValue) GetStringValue() string {
+	if x != nil && x.StringValue != nil {
+		return *x.StringValue
+	}
+	return ""
+}
+
+func (x *IndicatorParamValue) GetBoolValue() bool {
+	if x != nil && x.BoolValue != nil {
+		return *x.BoolValue
+	}
+	return false
+}
+
+func (x *IndicatorParamValue) GetColorValue() string {
+	if x != nil && x.ColorValue != nil {
+		return *x.ColorValue
+	}
+	return ""
+}
+
+func (x *IndicatorParamValue) GetShapeValue() IndicatorShape {
+	if x != nil && x.ShapeValue != nil {
+		return *x.ShapeValue
+	}
+	return IndicatorShape_IndicatorShape_UNKNOWN
+}
+
+func (x *IndicatorParamValue) GetLineValue() IndicatorLineType {
+	if x != nil && x.LineValue != nil {
+		return *x.LineValue
+	}
+	return IndicatorLineType_IndicatorLineType_UNKNOWN
+}
+
+// 指标输入参数项
+type IndicatorInputParam struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Index         *int32                 `protobuf:"varint,1,opt,name=index" json:"index,omitempty"`    // 从 0 开始
+	Name          *string                `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`       // 参数名
+	Value         *IndicatorParamValue   `protobuf:"bytes,3,opt,name=value" json:"value,omitempty"`     // 当前值
+	VarName       *string                `protobuf:"bytes,4,opt,name=varName" json:"varName,omitempty"` // 脚本原始变量名（如 N/P1/M），仅麦语言指标有效，Python 指标为空
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IndicatorInputParam) Reset() {
+	*x = IndicatorInputParam{}
+	mi := &file_Qot_Common_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IndicatorInputParam) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndicatorInputParam) ProtoMessage() {}
+
+func (x *IndicatorInputParam) ProtoReflect() protoreflect.Message {
+	mi := &file_Qot_Common_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndicatorInputParam.ProtoReflect.Descriptor instead.
+func (*IndicatorInputParam) Descriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *IndicatorInputParam) GetIndex() int32 {
+	if x != nil && x.Index != nil {
+		return *x.Index
+	}
+	return 0
+}
+
+func (x *IndicatorInputParam) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *IndicatorInputParam) GetValue() *IndicatorParamValue {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *IndicatorInputParam) GetVarName() string {
+	if x != nil && x.VarName != nil {
+		return *x.VarName
+	}
+	return ""
+}
+
+// 指标输出参数项（即一条输出线）
+type IndicatorOutputParam struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Index         *int32                 `protobuf:"varint,1,opt,name=index" json:"index,omitempty"` // 从 0 开始
+	Name          *string                `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`    // 输出线名
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IndicatorOutputParam) Reset() {
+	*x = IndicatorOutputParam{}
+	mi := &file_Qot_Common_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IndicatorOutputParam) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndicatorOutputParam) ProtoMessage() {}
+
+func (x *IndicatorOutputParam) ProtoReflect() protoreflect.Message {
+	mi := &file_Qot_Common_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndicatorOutputParam.ProtoReflect.Descriptor instead.
+func (*IndicatorOutputParam) Descriptor() ([]byte, []int) {
+	return file_Qot_Common_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *IndicatorOutputParam) GetIndex() int32 {
+	if x != nil && x.Index != nil {
+		return *x.Index
+	}
+	return 0
+}
+
+func (x *IndicatorOutputParam) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
 var File_Qot_Common_proto protoreflect.FileDescriptor
 
 const file_Qot_Common_proto_rawDesc = "" +
@@ -6959,7 +7545,30 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\bqtyRatio\x18\x03 \x01(\x01R\bqtyRatio\x12\x1e\n" +
 	"\n" +
 	"positionID\x18\x04 \x01(\x04R\n" +
-	"positionID*\xe8\x02\n" +
+	"positionID\"\xe3\x02\n" +
+	"\x13IndicatorParamValue\x127\n" +
+	"\x04type\x18\x01 \x01(\x0e2#.Qot_Common.IndicatorParamValueTypeR\x04type\x12\x1a\n" +
+	"\bintValue\x18\x02 \x01(\x03R\bintValue\x12\x1e\n" +
+	"\n" +
+	"floatValue\x18\x03 \x01(\x02R\n" +
+	"floatValue\x12 \n" +
+	"\vstringValue\x18\x04 \x01(\tR\vstringValue\x12\x1c\n" +
+	"\tboolValue\x18\x05 \x01(\bR\tboolValue\x12\x1e\n" +
+	"\n" +
+	"colorValue\x18\x06 \x01(\tR\n" +
+	"colorValue\x12:\n" +
+	"\n" +
+	"shapeValue\x18\a \x01(\x0e2\x1a.Qot_Common.IndicatorShapeR\n" +
+	"shapeValue\x12;\n" +
+	"\tlineValue\x18\b \x01(\x0e2\x1d.Qot_Common.IndicatorLineTypeR\tlineValue\"\x90\x01\n" +
+	"\x13IndicatorInputParam\x12\x14\n" +
+	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x125\n" +
+	"\x05value\x18\x03 \x01(\v2\x1f.Qot_Common.IndicatorParamValueR\x05value\x12\x18\n" +
+	"\avarName\x18\x04 \x01(\tR\avarName\"@\n" +
+	"\x14IndicatorOutputParam\x12\x14\n" +
+	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name*\xe8\x02\n" +
 	"\tQotMarket\x12\x15\n" +
 	"\x11QotMarket_Unknown\x10\x00\x12\x19\n" +
 	"\x15QotMarket_HK_Security\x10\x01\x12\x17\n" +
@@ -7570,7 +8179,49 @@ const file_Qot_Common_proto_rawDesc = "" +
 	"\x16OptionImpvolStatusType\x12\x15\n" +
 	"\x11ImpvolFluctuating\x10\x00\x12\x14\n" +
 	"\x10ImpvolOvervalued\x10\x01\x12\x15\n" +
-	"\x11ImpvolUndervalued\x10\x02BG\n" +
+	"\x11ImpvolUndervalued\x10\x02*n\n" +
+	"\x11IndicatorLangType\x12\x1d\n" +
+	"\x19IndicatorLangType_Unknown\x10\x00\x12\x1c\n" +
+	"\x18IndicatorLangType_MyLang\x10\x01\x12\x1c\n" +
+	"\x18IndicatorLangType_Python\x10\x02*U\n" +
+	"\x13IndicatorSearchMode\x12\x1f\n" +
+	"\x1bIndicatorSearchMode_Partial\x10\x00\x12\x1d\n" +
+	"\x19IndicatorSearchMode_Exact\x10\x01*\xb0\x02\n" +
+	"\x17IndicatorParamValueType\x12#\n" +
+	"\x1fIndicatorParamValueType_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bIndicatorParamValueType_INT\x10\x01\x12!\n" +
+	"\x1dIndicatorParamValueType_FLOAT\x10\x02\x12\"\n" +
+	"\x1eIndicatorParamValueType_STRING\x10\x03\x12!\n" +
+	"\x1dIndicatorParamValueType_COLOR\x10\x04\x12!\n" +
+	"\x1dIndicatorParamValueType_SHAPE\x10\x05\x12 \n" +
+	"\x1cIndicatorParamValueType_LINE\x10\x06\x12 \n" +
+	"\x1cIndicatorParamValueType_BOOL\x10\a*\x86\x03\n" +
+	"\x0eIndicatorShape\x12\x1a\n" +
+	"\x16IndicatorShape_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15IndicatorShape_XCROSS\x10\x01\x12\x18\n" +
+	"\x14IndicatorShape_CROSS\x10\x02\x12\x19\n" +
+	"\x15IndicatorShape_CIRCLE\x10\x03\x12\x1e\n" +
+	"\x1aIndicatorShape_TRIANGLE_UP\x10\x04\x12 \n" +
+	"\x1cIndicatorShape_TRIANGLE_DOWN\x10\x05\x12\x17\n" +
+	"\x13IndicatorShape_FLAG\x10\x06\x12\x1b\n" +
+	"\x17IndicatorShape_ARROW_UP\x10\a\x12\x1d\n" +
+	"\x19IndicatorShape_ARROW_DOWN\x10\b\x12\x19\n" +
+	"\x15IndicatorShape_SQUARE\x10\t\x12\x1a\n" +
+	"\x16IndicatorShape_DIAMOND\x10\n" +
+	"\x12\x1b\n" +
+	"\x17IndicatorShape_LABEL_UP\x10\v\x12\x1d\n" +
+	"\x19IndicatorShape_LABEL_DOWN\x10\f*\xcb\x02\n" +
+	"\x11IndicatorLineType\x12\x1d\n" +
+	"\x19IndicatorLineType_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x17IndicatorLineType_SOLID\x10\x01\x12\x1c\n" +
+	"\x18IndicatorLineType_DASHED\x10\x02\x12\x19\n" +
+	"\x15IndicatorLineType_DOT\x10\x03\x12\x1b\n" +
+	"\x17IndicatorLineType_CROSS\x10\x04\x12\x1c\n" +
+	"\x18IndicatorLineType_CIRCLE\x10\x05\x12\x1f\n" +
+	"\x1bIndicatorLineType_HISTOGRAM\x10\x06\x12$\n" +
+	" IndicatorLineType_HISTOGRAM_LINE\x10\a\x12\x1a\n" +
+	"\x16IndicatorLineType_STEP\x10\b\x12#\n" +
+	"\x1fIndicatorLineType_STEP_DIAMONDS\x10\tBG\n" +
 	"\x13com.futu.openapi.pbZ0github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 
 var (
@@ -7585,8 +8236,8 @@ func file_Qot_Common_proto_rawDescGZIP() []byte {
 	return file_Qot_Common_proto_rawDescData
 }
 
-var file_Qot_Common_proto_enumTypes = make([]protoimpl.EnumInfo, 54)
-var file_Qot_Common_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_Qot_Common_proto_enumTypes = make([]protoimpl.EnumInfo, 59)
+var file_Qot_Common_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_Qot_Common_proto_goTypes = []any{
 	(QotMarket)(0),                      // 0: Qot_Common.QotMarket
 	(SecurityType)(0),                   // 1: Qot_Common.SecurityType
@@ -7642,56 +8293,68 @@ var file_Qot_Common_proto_goTypes = []any{
 	(BuySellType)(0),                    // 51: Qot_Common.BuySellType
 	(OptionVolatilityTimePeriodType)(0), // 52: Qot_Common.OptionVolatilityTimePeriodType
 	(OptionImpvolStatusType)(0),         // 53: Qot_Common.OptionImpvolStatusType
-	(*QotHeader)(nil),                   // 54: Qot_Common.QotHeader
-	(*Security)(nil),                    // 55: Qot_Common.Security
-	(*KLine)(nil),                       // 56: Qot_Common.KLine
-	(*OptionBasicQotExData)(nil),        // 57: Qot_Common.OptionBasicQotExData
-	(*PreAfterMarketData)(nil),          // 58: Qot_Common.PreAfterMarketData
-	(*FutureBasicQotExData)(nil),        // 59: Qot_Common.FutureBasicQotExData
-	(*WarrantBasicQotExData)(nil),       // 60: Qot_Common.WarrantBasicQotExData
-	(*BasicQot)(nil),                    // 61: Qot_Common.BasicQot
-	(*TimeShare)(nil),                   // 62: Qot_Common.TimeShare
-	(*SecurityStaticBasic)(nil),         // 63: Qot_Common.SecurityStaticBasic
-	(*WarrantStaticExData)(nil),         // 64: Qot_Common.WarrantStaticExData
-	(*OptionStaticExData)(nil),          // 65: Qot_Common.OptionStaticExData
-	(*FutureStaticExData)(nil),          // 66: Qot_Common.FutureStaticExData
-	(*SecurityStaticInfo)(nil),          // 67: Qot_Common.SecurityStaticInfo
-	(*Broker)(nil),                      // 68: Qot_Common.Broker
-	(*Ticker)(nil),                      // 69: Qot_Common.Ticker
-	(*OrderBookDetail)(nil),             // 70: Qot_Common.OrderBookDetail
-	(*OrderBook)(nil),                   // 71: Qot_Common.OrderBook
-	(*ShareHoldingChange)(nil),          // 72: Qot_Common.ShareHoldingChange
-	(*SubInfo)(nil),                     // 73: Qot_Common.SubInfo
-	(*ConnSubInfo)(nil),                 // 74: Qot_Common.ConnSubInfo
-	(*PlateInfo)(nil),                   // 75: Qot_Common.PlateInfo
-	(*Rehab)(nil),                       // 76: Qot_Common.Rehab
-	(*ComboLeg)(nil),                    // 77: Qot_Common.ComboLeg
+	(IndicatorLangType)(0),              // 54: Qot_Common.IndicatorLangType
+	(IndicatorSearchMode)(0),            // 55: Qot_Common.IndicatorSearchMode
+	(IndicatorParamValueType)(0),        // 56: Qot_Common.IndicatorParamValueType
+	(IndicatorShape)(0),                 // 57: Qot_Common.IndicatorShape
+	(IndicatorLineType)(0),              // 58: Qot_Common.IndicatorLineType
+	(*QotHeader)(nil),                   // 59: Qot_Common.QotHeader
+	(*Security)(nil),                    // 60: Qot_Common.Security
+	(*KLine)(nil),                       // 61: Qot_Common.KLine
+	(*OptionBasicQotExData)(nil),        // 62: Qot_Common.OptionBasicQotExData
+	(*PreAfterMarketData)(nil),          // 63: Qot_Common.PreAfterMarketData
+	(*FutureBasicQotExData)(nil),        // 64: Qot_Common.FutureBasicQotExData
+	(*WarrantBasicQotExData)(nil),       // 65: Qot_Common.WarrantBasicQotExData
+	(*BasicQot)(nil),                    // 66: Qot_Common.BasicQot
+	(*TimeShare)(nil),                   // 67: Qot_Common.TimeShare
+	(*SecurityStaticBasic)(nil),         // 68: Qot_Common.SecurityStaticBasic
+	(*WarrantStaticExData)(nil),         // 69: Qot_Common.WarrantStaticExData
+	(*OptionStaticExData)(nil),          // 70: Qot_Common.OptionStaticExData
+	(*FutureStaticExData)(nil),          // 71: Qot_Common.FutureStaticExData
+	(*SecurityStaticInfo)(nil),          // 72: Qot_Common.SecurityStaticInfo
+	(*Broker)(nil),                      // 73: Qot_Common.Broker
+	(*Ticker)(nil),                      // 74: Qot_Common.Ticker
+	(*OrderBookDetail)(nil),             // 75: Qot_Common.OrderBookDetail
+	(*OrderBook)(nil),                   // 76: Qot_Common.OrderBook
+	(*ShareHoldingChange)(nil),          // 77: Qot_Common.ShareHoldingChange
+	(*SubInfo)(nil),                     // 78: Qot_Common.SubInfo
+	(*ConnSubInfo)(nil),                 // 79: Qot_Common.ConnSubInfo
+	(*PlateInfo)(nil),                   // 80: Qot_Common.PlateInfo
+	(*Rehab)(nil),                       // 81: Qot_Common.Rehab
+	(*ComboLeg)(nil),                    // 82: Qot_Common.ComboLeg
+	(*IndicatorParamValue)(nil),         // 83: Qot_Common.IndicatorParamValue
+	(*IndicatorInputParam)(nil),         // 84: Qot_Common.IndicatorInputParam
+	(*IndicatorOutputParam)(nil),        // 85: Qot_Common.IndicatorOutputParam
 }
 var file_Qot_Common_proto_depIdxs = []int32{
-	55, // 0: Qot_Common.BasicQot.security:type_name -> Qot_Common.Security
-	57, // 1: Qot_Common.BasicQot.optionExData:type_name -> Qot_Common.OptionBasicQotExData
-	58, // 2: Qot_Common.BasicQot.preMarket:type_name -> Qot_Common.PreAfterMarketData
-	58, // 3: Qot_Common.BasicQot.afterMarket:type_name -> Qot_Common.PreAfterMarketData
-	59, // 4: Qot_Common.BasicQot.futureExData:type_name -> Qot_Common.FutureBasicQotExData
-	60, // 5: Qot_Common.BasicQot.warrantExData:type_name -> Qot_Common.WarrantBasicQotExData
-	58, // 6: Qot_Common.BasicQot.overnight:type_name -> Qot_Common.PreAfterMarketData
-	55, // 7: Qot_Common.SecurityStaticBasic.security:type_name -> Qot_Common.Security
-	55, // 8: Qot_Common.WarrantStaticExData.owner:type_name -> Qot_Common.Security
-	55, // 9: Qot_Common.OptionStaticExData.owner:type_name -> Qot_Common.Security
-	63, // 10: Qot_Common.SecurityStaticInfo.basic:type_name -> Qot_Common.SecurityStaticBasic
-	64, // 11: Qot_Common.SecurityStaticInfo.warrantExData:type_name -> Qot_Common.WarrantStaticExData
-	65, // 12: Qot_Common.SecurityStaticInfo.optionExData:type_name -> Qot_Common.OptionStaticExData
-	66, // 13: Qot_Common.SecurityStaticInfo.futureExData:type_name -> Qot_Common.FutureStaticExData
-	70, // 14: Qot_Common.OrderBook.detailList:type_name -> Qot_Common.OrderBookDetail
-	55, // 15: Qot_Common.SubInfo.securityList:type_name -> Qot_Common.Security
-	73, // 16: Qot_Common.ConnSubInfo.subInfoList:type_name -> Qot_Common.SubInfo
-	55, // 17: Qot_Common.PlateInfo.plate:type_name -> Qot_Common.Security
-	55, // 18: Qot_Common.ComboLeg.security:type_name -> Qot_Common.Security
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	60, // 0: Qot_Common.BasicQot.security:type_name -> Qot_Common.Security
+	62, // 1: Qot_Common.BasicQot.optionExData:type_name -> Qot_Common.OptionBasicQotExData
+	63, // 2: Qot_Common.BasicQot.preMarket:type_name -> Qot_Common.PreAfterMarketData
+	63, // 3: Qot_Common.BasicQot.afterMarket:type_name -> Qot_Common.PreAfterMarketData
+	64, // 4: Qot_Common.BasicQot.futureExData:type_name -> Qot_Common.FutureBasicQotExData
+	65, // 5: Qot_Common.BasicQot.warrantExData:type_name -> Qot_Common.WarrantBasicQotExData
+	63, // 6: Qot_Common.BasicQot.overnight:type_name -> Qot_Common.PreAfterMarketData
+	60, // 7: Qot_Common.SecurityStaticBasic.security:type_name -> Qot_Common.Security
+	60, // 8: Qot_Common.WarrantStaticExData.owner:type_name -> Qot_Common.Security
+	60, // 9: Qot_Common.OptionStaticExData.owner:type_name -> Qot_Common.Security
+	68, // 10: Qot_Common.SecurityStaticInfo.basic:type_name -> Qot_Common.SecurityStaticBasic
+	69, // 11: Qot_Common.SecurityStaticInfo.warrantExData:type_name -> Qot_Common.WarrantStaticExData
+	70, // 12: Qot_Common.SecurityStaticInfo.optionExData:type_name -> Qot_Common.OptionStaticExData
+	71, // 13: Qot_Common.SecurityStaticInfo.futureExData:type_name -> Qot_Common.FutureStaticExData
+	75, // 14: Qot_Common.OrderBook.detailList:type_name -> Qot_Common.OrderBookDetail
+	60, // 15: Qot_Common.SubInfo.securityList:type_name -> Qot_Common.Security
+	78, // 16: Qot_Common.ConnSubInfo.subInfoList:type_name -> Qot_Common.SubInfo
+	60, // 17: Qot_Common.PlateInfo.plate:type_name -> Qot_Common.Security
+	60, // 18: Qot_Common.ComboLeg.security:type_name -> Qot_Common.Security
+	56, // 19: Qot_Common.IndicatorParamValue.type:type_name -> Qot_Common.IndicatorParamValueType
+	57, // 20: Qot_Common.IndicatorParamValue.shapeValue:type_name -> Qot_Common.IndicatorShape
+	58, // 21: Qot_Common.IndicatorParamValue.lineValue:type_name -> Qot_Common.IndicatorLineType
+	83, // 22: Qot_Common.IndicatorInputParam.value:type_name -> Qot_Common.IndicatorParamValue
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_Qot_Common_proto_init() }
@@ -7704,8 +8367,8 @@ func file_Qot_Common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Qot_Common_proto_rawDesc), len(file_Qot_Common_proto_rawDesc)),
-			NumEnums:      54,
-			NumMessages:   24,
+			NumEnums:      59,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

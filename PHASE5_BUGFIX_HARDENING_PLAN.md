@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-Comprehensive audit against official Futu API v10.7.6708 documentation revealed **1 critical ProtoID mismatch**, **2 missing APIs**, **10+ proto safety violations**, **3 concurrency bugs**, **1 nil dereference risk**, **1 AES padding bug**, **1 breaker logic bug**, and **3 unwired architecture packages**. This phase addresses all findings.
+Comprehensive audit against official Futu API v10.8.6808 documentation revealed **1 critical ProtoID mismatch**, **2 missing APIs**, **10+ proto safety violations**, **3 concurrency bugs**, **1 nil dereference risk**, **1 AES padding bug**, **1 breaker logic bug**, and **3 unwired architecture packages**. This phase addresses all findings.
 
 ---
 

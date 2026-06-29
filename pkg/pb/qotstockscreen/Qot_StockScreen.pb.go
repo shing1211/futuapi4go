@@ -737,14 +737,9 @@ func (x *PropertyKlineShape) GetPeriod() int32 {
 }
 
 type QuerySimpleField struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	SimpleField *int32                 `protobuf:"varint,1,opt,name=simpleField" json:"simpleField,omitempty"` // SimpleField: 1=市场, 2=交易所, 3=指数, 4=自选股, ...
-	// 筛选值列表 (并集关系)
-	// 注意: 当 simpleField=1(MARKET) 时, 取值为 stock_screener_common.Market
-	//
-	//	(HK=1, US=2, CN=3, SG=4, CA=5, AU=6, JA=7, MY=8)
-	//	非 Qot_Common.QotMarket。SDK 已封装为 ScrMarket 枚举, 数值与此一致。
-	ScreenValueList []int64 `protobuf:"varint,2,rep,name=screenValueList" json:"screenValueList,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SimpleField     *int32                 `protobuf:"varint,1,opt,name=simpleField" json:"simpleField,omitempty"`         // SimpleField: 1=市场, 2=交易所, 3=指数, 4=自选股, ...
+	ScreenValueList []int64                `protobuf:"varint,2,rep,name=screenValueList" json:"screenValueList,omitempty"` // 筛选值列表 (并集关系)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
