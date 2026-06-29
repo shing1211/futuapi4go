@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 )
 
@@ -170,22 +171,41 @@ func GetDelayStatistics(ctx context.Context, c *Client) (*DelayStatistics, error
 	return result, nil
 }
 
-// GetTechnicalUnusual queries technical unusual stocks via SkillWrapAPI.
-// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
-func GetTechnicalUnusual(ctx context.Context, c *Client, req any) (any, error) {
-	return nil, fmt.Errorf("GetTechnicalUnusual: removed in Futu v10.6")
+// GetTechnicalUnusual queries AI-driven technical indicator unusual activity.
+// Available since Futu Protocol v10.8 (re-introduced after removal in v10.6).
+// Use constant.SkillWrapLang_* constants to control the response language.
+func GetTechnicalUnusual(ctx context.Context, c *Client, req *skillwrapapi.TechnicalUnusualReq) (*skillwrapapi.TechnicalUnusualRsp, error) {
+	if c == nil {
+		return nil, fmt.Errorf("GetTechnicalUnusual: client is nil")
+	}
+	if req == nil {
+		return nil, fmt.Errorf("GetTechnicalUnusual: req is nil")
+	}
+	return sys.GetTechnicalUnusual(ctx, c.inner, req)
 }
 
-// GetFinancialUnusual queries financial unusual stocks via SkillWrapAPI.
-// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
-func GetFinancialUnusual(ctx context.Context, c *Client, req any) (any, error) {
-	return nil, fmt.Errorf("GetFinancialUnusual: removed in Futu v10.6")
+// GetFinancialUnusual queries AI-driven financial unusual activity.
+// Available since Futu Protocol v10.8.
+func GetFinancialUnusual(ctx context.Context, c *Client, req *skillwrapapi.FinancialUnusualReq) (*skillwrapapi.FinancialUnusualRsp, error) {
+	if c == nil {
+		return nil, fmt.Errorf("GetFinancialUnusual: client is nil")
+	}
+	if req == nil {
+		return nil, fmt.Errorf("GetFinancialUnusual: req is nil")
+	}
+	return sys.GetFinancialUnusual(ctx, c.inner, req)
 }
 
-// GetDerivativeUnusual queries derivative unusual stocks via SkillWrapAPI.
-// Deprecated: Removed in Futu v10.6 proto — proto package skillwrapapi no longer exists.
-func GetDerivativeUnusual(ctx context.Context, c *Client, req any) (any, error) {
-	return nil, fmt.Errorf("GetDerivativeUnusual: removed in Futu v10.6")
+// GetDerivativeUnusual queries AI-driven derivative unusual activity.
+// Available since Futu Protocol v10.8.
+func GetDerivativeUnusual(ctx context.Context, c *Client, req *skillwrapapi.DerivativeUnusualReq) (*skillwrapapi.DerivativeUnusualRsp, error) {
+	if c == nil {
+		return nil, fmt.Errorf("GetDerivativeUnusual: client is nil")
+	}
+	if req == nil {
+		return nil, fmt.Errorf("GetDerivativeUnusual: req is nil")
+	}
+	return sys.GetDerivativeUnusual(ctx, c.inner, req)
 }
 
 // TestCmd sends a test command to OpenD for internal diagnostics.

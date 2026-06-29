@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.14.1] - 2026-06-29
+
+### Fixed
+
+- **SkillWrap API stubs replaced with real implementations** — `GetTechnicalUnusual`, `GetFinancialUnusual`, `GetDerivativeUnusual` previously returned `fmt.Errorf("removed in Futu v10.6")`. The `SkillWrapAPI.proto` was re-introduced in v10.8, so the wrappers are now functional again. Signatures changed from `(ctx, c, req any) (any, error)` → properly typed `(*skillwrapapi.XxxUnusualReq)` / `(*skillwrapapi.XxxUnusualRsp)`
+- **Removed dead `ProtoID_SkillWrapAPI = 8001`** from `internal/client/client.go` — was an unused, incorrect placeholder. The correct IDs are `constant.ProtoID_SkillWrap_TechnicalUnusual|FinancialUnusual|DerivativeUnusual` (3801-3803)
+
+### Added
+
+- **`SkillWrapLang_*` constants** — `SkillWrapLang_ZH_CN|ZH_HK|EN|TH|JA` (0/1/2/4/5) for `*UnusualReq.LanguageId` in `pkg/constant/constant.go`
+
 ## [v0.14.0] - 2026-06-29
 
 ### Added

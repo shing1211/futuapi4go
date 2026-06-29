@@ -125,7 +125,6 @@ const (
 	ProtoID_InitConnect    = 1001
 	ProtoID_GetGlobalState = 1002
 	ProtoID_KeepAlive      = 1004
-	ProtoID_SkillWrapAPI   = 8001
 
 	ProtoID_Trd_UnlockTrade    = 2005
 	ProtoID_Trd_PlaceOrder     = 2202

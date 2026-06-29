@@ -240,6 +240,14 @@ const (
 	ProtoID_SkillWrap_TechnicalUnusual  = 3801 // 技术指标异动
 	ProtoID_SkillWrap_FinancialUnusual  = 3802 // 财务数据异动
 	ProtoID_SkillWrap_DerivativeUnusual = 3803 // 衍生品数据异动
+
+	// SkillWrap language codes — used by *UnusualReq.LanguageId to control the
+	// language of the AI-generated `Content` field in the response.
+	SkillWrapLang_ZH_CN int32 = 0 // 简体中文
+	SkillWrapLang_ZH_HK int32 = 1 // 繁體中文
+	SkillWrapLang_EN    int32 = 2 // English
+	SkillWrapLang_TH    int32 = 4 // ภาษาไทย
+	SkillWrapLang_JA    int32 = 5 // 日本語
 )
 
 // AllPushIDs returns all push notification ProtoIDs

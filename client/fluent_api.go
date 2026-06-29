@@ -56,6 +56,7 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetuspremarketrank"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestindicatorcalc"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsetoptioneventalert"
+	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
 	"github.com/shing1211/futuapi4go/pkg/trd"
@@ -616,4 +617,22 @@ func (api *SystemAPI) GetDelayStatistics(ctx context.Context) (*sys.GetDelayStat
 // GetUsedQuota retrieves quota usage.
 func (api *SystemAPI) GetUsedQuota(ctx context.Context) (*sys.GetUsedQuotaResponse, error) {
 	return sys.GetUsedQuota(ctx, api.client)
+}
+
+// GetTechnicalUnusual queries AI-driven technical indicator unusual activity.
+// Available since Futu Protocol v10.8.
+func (api *SystemAPI) GetTechnicalUnusual(ctx context.Context, req *skillwrapapi.TechnicalUnusualReq) (*skillwrapapi.TechnicalUnusualRsp, error) {
+	return sys.GetTechnicalUnusual(ctx, api.client, req)
+}
+
+// GetFinancialUnusual queries AI-driven financial unusual activity.
+// Available since Futu Protocol v10.8.
+func (api *SystemAPI) GetFinancialUnusual(ctx context.Context, req *skillwrapapi.FinancialUnusualReq) (*skillwrapapi.FinancialUnusualRsp, error) {
+	return sys.GetFinancialUnusual(ctx, api.client, req)
+}
+
+// GetDerivativeUnusual queries AI-driven derivative unusual activity.
+// Available since Futu Protocol v10.8.
+func (api *SystemAPI) GetDerivativeUnusual(ctx context.Context, req *skillwrapapi.DerivativeUnusualReq) (*skillwrapapi.DerivativeUnusualRsp, error) {
+	return sys.GetDerivativeUnusual(ctx, api.client, req)
 }
