@@ -16,7 +16,7 @@ package futuapi
 
 // Version information / 版本信息
 const (
-	Version      = "0.14.1"
+	Version      = "0.15.0"
 	VersionMajor = 0
 	VersionMinor = 14
 	VersionPatch = 1

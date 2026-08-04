@@ -34,8 +34,14 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractkline"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractticker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractkline"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractticker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
@@ -52,6 +58,11 @@ const (
 	ProtoID_Qot_UpdateRT            = 3009
 	ProtoID_Qot_UpdateBroker        = 3015
 	ProtoID_Qot_UpdatePriceReminder = 3019
+
+	// v10.9+ Event Contract push notifications.
+	ProtoID_Qot_UpdateEventContractOrderBook = 3450
+	ProtoID_Qot_UpdateEventContractKline     = 3451
+	ProtoID_Qot_UpdateEventContractTicker    = 3452
 )
 
 // UpdateBasicQot represents a real-time basic quote push notification.
@@ -356,5 +367,80 @@ func ParseUpdatePriceReminder(body []byte) (*UpdatePriceReminder, error) {
 		Type:         util.ProtoInt32(s2c.Type),
 		SetValue:     util.ProtoFloat64(s2c.SetValue),
 		CurValue:     util.ProtoFloat64(s2c.CurValue),
+	}, nil
+}
+
+// UpdateEventContractOrderBook represents an Event Contract order book push
+// notification. Each item contains YES/NO bid/ask levels.
+type UpdateEventContractOrderBook struct {
+	OrderBookList []*qotgeteventcontractorderbook.OrderBookItem
+}
+
+// ParseUpdateEventContractOrderBook parses an EC order book push notification
+// from a raw protobuf body.
+func ParseUpdateEventContractOrderBook(body []byte) (*UpdateEventContractOrderBook, error) {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var resp qotupdateeventcontractorderbook.Response
+	if err := proto.Unmarshal(body, &resp); err != nil {
+		return nil, err
+	}
+	s2c := resp.S2C
+	if s2c == nil {
+		return nil, nil
+	}
+	return &UpdateEventContractOrderBook{
+		OrderBookList: s2c.OrderBookList,
+	}, nil
+}
+
+// UpdateEventContractKline represents an Event Contract K-line push
+// notification.
+type UpdateEventContractKline struct {
+	KlineList []*qotgeteventcontractkline.KlineItem
+}
+
+// ParseUpdateEventContractKline parses an EC K-line push notification from a
+// raw protobuf body.
+func ParseUpdateEventContractKline(body []byte) (*UpdateEventContractKline, error) {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var resp qotupdateeventcontractkline.Response
+	if err := proto.Unmarshal(body, &resp); err != nil {
+		return nil, err
+	}
+	s2c := resp.S2C
+	if s2c == nil {
+		return nil, nil
+	}
+	return &UpdateEventContractKline{
+		KlineList: s2c.KlineList,
+	}, nil
+}
+
+// UpdateEventContractTicker represents an Event Contract tick-by-tick push
+// notification.
+type UpdateEventContractTicker struct {
+	TickerList []*qotgeteventcontractticker.TickerItem
+}
+
+// ParseUpdateEventContractTicker parses an EC ticker push notification from a
+// raw protobuf body.
+func ParseUpdateEventContractTicker(body []byte) (*UpdateEventContractTicker, error) {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var resp qotupdateeventcontractticker.Response
+	if err := proto.Unmarshal(body, &resp); err != nil {
+		return nil, err
+	}
+	s2c := resp.S2C
+	if s2c == nil {
+		return nil, nil
+	}
+	return &UpdateEventContractTicker{
+		TickerList: s2c.TickerList,
 	}, nil
 }

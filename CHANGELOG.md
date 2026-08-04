@@ -5,6 +5,44 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [v0.15.0] - 2026-08-04
+
+### Added
+
+- **Futu Protocol v10.9.6908 upgrade** — Full Prediction Market / Event Contract API support (Moomoo US Prediction)
+- **17 new protos** in `api/proto/` (184 total):
+  - `Qot_FilterCompetition` (3435), `Qot_GetEventContractCategory` (3434), `Qot_GetEventContractSeriesList` (3436), `Qot_GetEventContractEventList` (3437), `Qot_GetEventContract` (3438), `Qot_GetEventContractMilestoneList` (3439)
+  - `Qot_GetEventContractSnapshot` (3445), `Qot_GetEventContractOrderBook` (3446), `Qot_GetEventContractKline` (3447), `Qot_GetEventContractTicker` (3448)
+  - `Qot_UpdateEventContractOrderBook` (3450), `Qot_UpdateEventContractKline` (3451), `Qot_UpdateEventContractTicker` (3452)
+  - `Qot_GetEventContractComboList` (3453), `Qot_GetEventContractComboRfq` (3454), `Qot_SubEventContract` (3455), `Qot_RequestHistoryEventContractKL` (3456)
+- **Shared proto additions**:
+  - `Common.PredSide` enum (`Unknown=0`, `Yes=1`, `No=2`)
+  - `Qot_Common.QotMarket_QotMarket_EventContract = 101`
+  - `Qot_Common.ComboLeg.predSide` field
+  - `Qot_Common.EC_Status`, `EC_ContractType`, `EC_Frequency`, `EC_MilestoneType`, `EC_KlineSource` enums
+  - `Trd_Common.TrdMarket_Prediction = 17`, `TrdSecMarket_EC = 111`, `OrderFillStatus_Payout = 3`, `Currency_NZD = 9`
+  - `Trd_Common.Position.payoutIfWin` field
+  - `Trd_PlaceOrder.amount = 21` (order amount), `predSide = 22`
+  - `Trd_PlaceComboOrder.quoteID = 10` (combo RFQ quote ID)
+- **14 new wrappers** in `pkg/qot/event_contract.go`:
+  - Discovery: `FilterCompetition`, `GetEventContractCategory`, `GetEventContractSeriesList`, `GetEventContractEventList`, `GetEventContract`, `GetEventContractMilestoneList`
+  - Real-time: `GetEventContractSnapshot`, `GetEventContractOrderBook`, `GetEventContractKline`, `GetEventContractTicker`, `RequestHistoryEventContractKL`
+  - Combo: `GetEventContractComboList`, `GetEventContractComboRfq`
+  - Subscribe: `SubEventContract` (subscribe/unsubscribe/unsubAll)
+  - Helper: `BuildECSecurity(code string) *qotcommon.Security`
+- **14 new client wrappers** in `client/v10_9_api.go` (pass-throughs to `qot.*`)
+- **3 new push parsers** in `pkg/push/qot_push.go`: `ParseUpdateEventContractOrderBook`, `ParseUpdateEventContractKline`, `ParseUpdateEventContractTicker` (ProtoIDs 3450/3451/3452)
+- **New `ECSubType` enum** (`OrderBook=1`, `Kline=2`, `Ticker=3`) in `pkg/qot/event_contract.go`
+- **Unit tests** in `pkg/qot/event_contract_test.go` and `pkg/push/event_contract_test.go`
+
+### Changed
+
+- **Upgraded to Futu Protocol v10.9.6908** (clientVer 1090) — 184 protos, 17 new EC APIs
+- **clientVer** — Updated from 1080→1090 in `internal/client/client.go`
+- **SDK version** — Bumped to `0.15.0` in `internal/client/version.go`
+
 ## [v0.14.1] - 2026-06-29
 
 ### Fixed

@@ -236,6 +236,25 @@ const (
 	ProtoID_Qot_GetHeatMapData    = 3432 // 获取热力图数据
 	ProtoID_Qot_GetRiseFallDistribution = 3433 // 获取涨跌分布
 
+	// v10.9+ Event Contract / Prediction Market APIs (3434-3456)
+	ProtoID_Qot_GetEventContractCategory      = 3434 // 获取事件合约分类列表
+	ProtoID_Qot_FilterCompetition            = 3435 // 事件合约赛事筛选
+	ProtoID_Qot_GetEventContractSeriesList    = 3436 // 获取事件合约 Series 列表
+	ProtoID_Qot_GetEventContractEventList     = 3437 // 获取事件合约 Event 列表
+	ProtoID_Qot_GetEventContract              = 3438 // 获取事件合约 Contract 列表
+	ProtoID_Qot_GetEventContractMilestoneList = 3439 // 获取事件合约里程碑列表
+	ProtoID_Qot_GetEventContractSnapshot      = 3445 // 获取事件合约快照
+	ProtoID_Qot_GetEventContractOrderBook     = 3446 // 获取事件合约摆盘
+	ProtoID_Qot_GetEventContractKline         = 3447 // 获取事件合约 K 线
+	ProtoID_Qot_GetEventContractTicker        = 3448 // 获取事件合约逐笔
+	ProtoID_Qot_UpdateEventContractOrderBook  = 3450 // 推送事件合约摆盘
+	ProtoID_Qot_UpdateEventContractKline      = 3451 // 推送事件合约 K 线
+	ProtoID_Qot_UpdateEventContractTicker     = 3452 // 推送事件合约逐笔
+	ProtoID_Qot_GetEventContractComboList     = 3453 // 获取可 Combo 事件列表
+	ProtoID_Qot_GetEventContractComboRfq      = 3454 // Combo 询价
+	ProtoID_Qot_SubEventContract              = 3455 // 订阅/反订阅事件合约
+	ProtoID_Qot_RequestHistoryEventContractKL = 3456 // 拉取事件合约历史 K 线
+
 	// v10.8+ SkillWrap APIs (3801-3803)
 	ProtoID_SkillWrap_TechnicalUnusual  = 3801 // 技术指标异动
 	ProtoID_SkillWrap_FinancialUnusual  = 3802 // 财务数据异动
@@ -264,6 +283,9 @@ var AllPushIDs = []int32{
 	ProtoID_Qot_UpdatePriceReminder,
 	ProtoID_Qot_UpdateOptionEvent,
 	ProtoID_Qot_PushIndicatorCalc,
+	ProtoID_Qot_UpdateEventContractOrderBook,
+	ProtoID_Qot_UpdateEventContractKline,
+	ProtoID_Qot_UpdateEventContractTicker,
 }
 
 // IsPushID returns true if the ProtoID is a push notification

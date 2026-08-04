@@ -20,15 +20,16 @@ enum QotMarket
 	QotMarket_CA_Security = 71; // 加拿大市场
 	QotMarket_FX_Security = 81; // 外汇市场
 	QotMarket_CC_Security = 91; // 加密货币市场
+	QotMarket_EventContract = 101; // 事件合约市场
 }
 
 enum SecurityType
 {
 	SecurityType_Unknown = 0; //未知
-    SecurityType_Bond = 1; //场内债券
+    SecurityType_Bond = 1; //债券
     SecurityType_Bwrt = 2; //一揽子权证
     SecurityType_Eqty = 3; //正股
-    SecurityType_Trust = 4; //信托 
+    SecurityType_Trust = 4; //信托,基金
     SecurityType_Warrant = 5; //窝轮
     SecurityType_Index = 6; //指数
     SecurityType_Plate = 7; //板块
@@ -1148,6 +1149,7 @@ message ComboLeg
     optional int32 side = 2; //方向，取值见 Trd_Common.TrdSide
     optional double qtyRatio = 3; //数量比例
     optional uint64 positionID = 4; //持仓ID，仅 moomoo JP 平仓时使用
+    optional int32 predSide = 5; //事件合约预测方向，取值见 Common.PredSide
 }
 
 // 指标参数值（类型 + 对应 value 字段）
@@ -1177,4 +1179,69 @@ message IndicatorOutputParam
 {
 	optional int32 index = 1;                  // 从 0 开始
 	optional string name = 2;                  // 输出线名
+}
+
+// ===================== 事件合约 (Event Contract) 枚举 =====================
+
+// 事件合约生命周期状态（适用于 Series / Event / Contract）
+enum EC_Status
+{
+	// ---- 合约级状态 (Contract) ----
+	EC_Status_Initialized          = 0;     // 初始化（默认值/未知）
+	EC_Status_Inactive             = 1;     // 未激活
+	EC_Status_Active               = 2;     // 活跃（可交易）
+	EC_Status_Closed               = 3;     // 已关闭
+	EC_Status_Halted               = 4;     // 暂停交易
+	EC_Status_Settled              = 5;     // 已结算
+	EC_Status_Canceled             = 6;     // 已取消
+	EC_Status_DeterminationPending = 7;     // 等待确认结果
+	EC_Status_Determined           = 8;     // 已确认结果
+	EC_Status_Finalized            = 9;     // 已完成
+	// ---- 事件级状态 (Event) ----
+	EC_Status_EventAbnormal        = 100;   // 事件异常
+	EC_Status_EventInitialized     = 101;   // 事件初始化
+	EC_Status_EventActive          = 102;   // 事件活跃
+	EC_Status_EventClosed          = 103;   // 事件已关闭
+	EC_Status_EventSettled         = 104;   // 事件已结算
+	EC_Status_EventCanceled        = 105;   // 事件已取消
+	EC_Status_EventFinalized       = 106;   // 事件已完成
+}
+
+// 事件合约类型
+enum EC_ContractType
+{
+	EC_ContractType_None   = 0;     // 未公布/未知
+	EC_ContractType_Binary = 1;     // 二元市场（Yes/No）
+	EC_ContractType_Scalar = 2;     // 标量市场（Long/Short）
+}
+
+// 事件合约 Series 频率
+enum EC_Frequency
+{
+	EC_Frequency_Unknown = 0;       // 未知
+	EC_Frequency_Annual  = 1;       // 年度
+	EC_Frequency_Monthly = 2;       // 月度
+	EC_Frequency_Weekly  = 3;       // 周度
+	EC_Frequency_Daily   = 4;       // 日度
+	EC_Frequency_Hourly  = 5;       // 小时
+	EC_Frequency_Custom  = 6;       // 自定义
+	EC_Frequency_OneOff  = 7;       // 一次性
+}
+
+// 里程碑类型
+enum EC_MilestoneType
+{
+	EC_MilestoneType_Unknown                   = 0; // 未知/暂未支持
+	EC_MilestoneType_FootballGame              = 1; // 橄榄球比赛
+	EC_MilestoneType_BasketballGame            = 2; // 篮球比赛
+	EC_MilestoneType_SoccerTournamentMultiLeg  = 3; // 足球锦标赛（多回合）
+	EC_MilestoneType_BaseballTournament        = 4; // 棒球锦标赛
+	EC_MilestoneType_BaseballGame              = 5; // 棒球比赛
+}
+
+// 事件合约K线来源（区分合约成交价K线与子合约摆盘K线）
+enum EC_KlineSource
+{
+	EC_KlineSource_None         = 0; // 合约级 Yes/No 成交价K线
+	EC_KlineSource_OrderBookYes = 1; // YES 子合约的摆盘K线
 }

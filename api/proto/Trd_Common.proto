@@ -39,6 +39,7 @@ enum TrdMarket
     TrdMarket_Futures_Simulate_SG = 12;
     TrdMarket_Futures_Simulate_JP = 13;
     TrdMarket_JP = 15;
+    TrdMarket_Prediction = 17;
     TrdMarket_MY = 111;
     TrdMarket_CA = 112;
 	TrdMarket_HK_Fund = 113; //香港基金市场
@@ -63,6 +64,7 @@ enum TrdSecMarket
     TrdSecMarket_CA = 81; // 加拿大
     TrdSecMarket_FX = 91; // 外汇
 	TrdSecMarket_CC = 101; // 加密货币市场
+	TrdSecMarket_EC = 111; // 事件合约 Event Contract
 }
 
 //交易方向
@@ -136,6 +138,7 @@ enum OrderFillStatus
 	OrderFillStatus_OK = 0; //正常
 	OrderFillStatus_Cancelled = 1; //成交被取消
 	OrderFillStatus_Changed = 2; //成交被更改
+	OrderFillStatus_Payout = 3; //赔付（仅事件合约）
 }
 
 //持仓方向类型
@@ -198,6 +201,7 @@ enum Currency
 	Currency_AUD = 6;   // 澳元
     Currency_CAD = 7; // 加拿大元
     Currency_MYR = 8; // 马来西亚林吉特
+    Currency_NZD = 9; // 新西兰元
 }
 
 //账户风险控制等级
@@ -437,6 +441,7 @@ message Position
 	optional int32 positionType = 37;   // 期权组合持仓类型，参见PositionType的枚举定义
 	optional uint64 accID = 38;         // 交易账户ID
 	optional int32 jpAccType = 39;      // JP子账户类型，取值见 TrdSubAccType
+	optional double payoutIfWin = 40;   // 事件合约猜中后的赔付金额，等于持仓数量*1.0，仅事件合约持仓返回
 }
 
 //订单结构

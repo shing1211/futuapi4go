@@ -19,6 +19,7 @@ message C2S
 	optional int32 timeInForce = 7; //订单有效期限，参见TrdCommon_TimeInForce的枚举定义
 	optional string expireTime = 8; //订单过期时间，timeInForce 为 GTD 时有效
 	optional string remark = 9; //用户备注字符串，最多只能传64字节。可用于标识订单唯一信息等，下单填上，订单结构就会带上。
+	optional string quoteID = 10; //事件合约Combo询价返回的报价ID
 }
 
 message S2C

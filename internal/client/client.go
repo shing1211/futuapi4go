@@ -554,7 +554,7 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	c.conn = newWSConn(ws)
 	c.conn.SetAPITimeout(c.opts.APITimeout)
 
-	clientVer := int32(1080)
+	clientVer := int32(1090)
 	clientID := "futuapi4go"
 	recvNotify := true
 	var packetEncAlgo int32 = -1
@@ -697,7 +697,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	}
 	c.logInfo("[%s] ConnectWithRSA: Dial OK (%v)", c.ts(), time.Since(dialStart))
 
-	clientVer := int32(1080)
+	clientVer := int32(1090)
 	clientID := "futuapi4go"
 	recvNotify := true
 	programmingLanguage := "Go"
