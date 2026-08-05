@@ -1,6 +1,6 @@
 # futuapi4go Architecture
 
-> **Version:** v0.14.0 | **Futu Protocol:** v10.8.6808 | **Updated:** 2026-06-29
+> **Version:** v0.15.1 | **Futu Protocol:** v10.9.6908 | **Updated:** 2026-08-05
 
 ---
 
@@ -415,7 +415,7 @@ futuapi4go/
 │       └── alloc.go          sync.Pool for buffer recycling
 │
 ├── api/                       Protocol definitions
-│   └── proto/                .proto source files (167 protos, Futu v10.8.6808)
+│   └── proto/                .proto source files (184 protos, Futu v10.9.6908)
 │
 ├── test/                      Integration tests, benchmarks, fixtures
 │   ├── integration/          Live OpenD tests (requires running OpenD)
@@ -553,7 +553,9 @@ flowchart TB
 
 | SDK Version | Proto Version | Notable Changes |
 |-------------|---------------|-----------------|
-| v0.14.0 | v10.8.6808 | Latest — 167 protos, 56 new v10.8 APIs (search, indicators, options analytics, rankings, institutional, chain, heatmap, market fundamentals) |
+| v0.15.0 | v10.9.6908 | Latest — 184 protos, 17 Event Contract / Prediction Market APIs (ProtoIDs 3434-3456); 23 new client wrappers + 3 push parsers |
+| v0.15.1 | v10.9.6908 | Backfill: ParseUpdateOptionEvent (3310) + ParsePushIndicatorCalc (3261); EC chanpkg subscribe wrappers |
+| v0.14.0 | v10.8.6808 | 167 protos, 56 new v10.8 APIs (search, indicators, options analytics, rankings, institutional, chain, heatmap, market fundamentals) |
 | v0.9.0 | v10.5.6508 | Latest — 78 protos |
 | v0.5.7 | v10.5.6508 | Upgrade from v10.4.6408 |
 | v0.5.0 | v10.4.6408 | Context as first param, typed enums |

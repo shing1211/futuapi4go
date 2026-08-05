@@ -1,10 +1,10 @@
 # FutuAPI4Go SDK — Implementation Complete
 
-> **Version:** v0.14.0 | **Date:** 2026-06-29 | **Status:** COMPLETE
+> **Version:** v0.15.1 | **Date:** 2026-08-05 | **Status:** COMPLETE
 
 ## Overview
 
-The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.8.5, the SDK has achieved **97.4% API coverage** (76/78 protos wrapped), full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, and 107 demo examples. All phases from v0.5.0 through v0.8.5 are complete.
+The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.15.1 (Futu Protocol v10.9.6908), the SDK has achieved **100% API coverage** (176/176 OpenAPI ProtoIDs wrapped: 151 Qot, 22 Trd, 7 Sys; 12 push-only notifications covered by typed parsers), full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and 113 demo examples. All phases from v0.5.0 through v0.15.1 are complete.
 
 ---
 
@@ -12,10 +12,13 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 | Category | Protos | Wrapped | Coverage |
 |----------|--------|---------|----------|
-| Qot (Market Data) | ~50 | ~49 | 98% |
-| Trd (Trading) | ~25 | ~24 | 96% |
-| Sys (System) | ~6 | ~6 | 100% |
-| **Total** | **78** | **76** | **97.4%** |
+| Qot (Market Data) | 151 | 151 | 100% |
+| Trd (Trading) | 22 | 22 | 100% |
+| Sys (System) | 7 | 7 | 100% |
+| **API Total** | **176** | **176** | **100%** |
+| Shared types (Common, Qot_Common, Qot_OptionCommon, Trd_Common) | 4 | — (type definitions) | n/a |
+| Internal (InitConnect, KeepAlive, Notify, UsedQuota) | 4 | 4 | 100% |
+| **All protos** | **184** | **184** | **100%** |
 
 ---
 
@@ -176,7 +179,7 @@ All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 
 ## References
 
-- `CHANGELOG.md` — Full version history from v0.0.1 through v0.8.5
+- `CHANGELOG.md` — Full version history from v0.0.1 through v0.15.1
 - `ENHANCEMENT_PLAN.md` — Original enhancement plan with current state
 - `docs/PROTO_FIELD_COMPLETION_PLAN.md` — Phase I proto field enrichment (superseded)
 - `docs/PROTO_FIELD_COMPLETION_PLAN_v2.md` — Phase II-X audit with 30 issues (superseded)

@@ -1,6 +1,6 @@
 # Phase 5: Bug Fixes, Missing APIs & Architecture Hardening
 
-*Generated: 2026-05-22 | Status: PLANNED*
+*Generated: 2026-05-22 | Status: COMPLETE (implemented in v0.12.0+; extended through v0.15.1)*
 
 ## Executive Summary
 
@@ -88,6 +88,10 @@ Source: https://openapi.futunn.com/futu-api-doc/en/quote/overview.html
 | 3249 | Qot_GetShortInterest | ProtoID_Qot_GetShortInterest | 3249 | OK |
 | 3250 | Qot_GetOptionVolatility | ProtoID_Qot_GetOptionVolatility | 3250 | OK |
 | 3251 | Qot_GetOptionExerciseProbability | ProtoID_Qot_GetOptionExerciseProbability | 3251 | OK |
+
+> **Note:** This audit was conducted against Futu API v10.6. Subsequent protocol upgrades extended the quote-space ProtoID range. The ranges below are now **all wrapped** and tested:
+> - **v10.8 (3252–3364)** — 56 new APIs (search, indicators, options analytics, rankings, institutional, chain, heatmap, market fundamentals) implemented in SDK v0.14.0
+> - **v10.9 (3434–3456)** — 17 Event Contract / Prediction Market APIs implemented in SDK v0.15.0, plus 2 backfill push parsers (`ParseUpdateOptionEvent` 3310, `ParsePushIndicatorCalc` 3261) and 6 EC chanpkg wrappers in SDK v0.15.1
 
 ### Trade APIs (ProtoIDs 2001-2226)
 
