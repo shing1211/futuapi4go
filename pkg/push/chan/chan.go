@@ -68,6 +68,8 @@ import (
 
 	"github.com/shing1211/futuapi4go/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
+	qotcommon "github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsubeventcontract"
 	"github.com/shing1211/futuapi4go/pkg/push"
 )
 
@@ -303,3 +305,88 @@ func SubscribeTrdNotify(ctx context.Context, cli *client.Client, ch chan<- *push
 		return nil
 	})
 }
+
+func NewOptionEventChannel(bufferSize int) chan *push.UpdateOptionEvent {
+	return make(chan *push.UpdateOptionEvent, WithBufferSize(bufferSize))
+}
+
+func NewPushIndicatorCalcChannel(bufferSize int) chan *push.PushIndicatorCalc {
+	return make(chan *push.PushIndicatorCalc, WithBufferSize(bufferSize))
+}
+
+func NewEventContractOrderBookChannel(bufferSize int) chan *push.UpdateEventContractOrderBook {
+	return make(chan *push.UpdateEventContractOrderBook, WithBufferSize(bufferSize))
+}
+
+func NewEventContractKLineChannel(bufferSize int) chan *push.UpdateEventContractKline {
+	return make(chan *push.UpdateEventContractKline, WithBufferSize(bufferSize))
+}
+
+func NewEventContractTickerChannel(bufferSize int) chan *push.UpdateEventContractTicker {
+	return make(chan *push.UpdateEventContractTicker, WithBufferSize(bufferSize))
+}
+
+// SubscribeOptionEvent subscribes to option event alert pushes. These pushes are
+// server-triggered (e.g. option listing / expiration / assignment alerts); no
+// client-side subscribe request is required.
+func SubscribeOptionEvent(ctx context.Context, cli *client.Client, ch chan<- *push.UpdateOptionEvent) (func(), error) {
+	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateOptionEvent, ch, push.ParseUpdateOptionEvent, func() error {
+		return nil
+	})
+}
+
+// SubscribePushIndicatorCalc subscribes to asynchronous indicator calculation
+// results. The caller must first issue a RequestIndicatorCalc to start a
+// calculation; the matching result (by calcId) is then delivered on the channel.
+func SubscribePushIndicatorCalc(ctx context.Context, cli *client.Client, ch chan<- *push.PushIndicatorCalc) (func(), error) {
+	return subscribeOne(ctx, cli, push.ProtoID_Qot_PushIndicatorCalc, ch, push.ParsePushIndicatorCalc, func() error {
+		return nil
+	})
+}
+
+func ecSecurity(code string) *qotcommon.Security {
+	return client.NewECSecurity(code)
+}
+
+func SubscribeEventContractOrderBook(ctx context.Context, cli *client.Client, code string, ch chan<- *push.UpdateEventContractOrderBook) (func(), error) {
+	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateEventContractOrderBook, ch, push.ParseUpdateEventContractOrderBook, func() error {
+		return client.SubEventContract(ctx, cli, &qotsubeventcontract.C2S{
+			SecurityList:     []*qotcommon.Security{ecSecurity(code)},
+			SubTypeList:      []int32{int32(constant.SubType_OrderBook)},
+			IsSubOrUnSub:     ptrToBool(true),
+			IsRegOrUnRegPush: ptrToBool(true),
+			IsFirstPush:      ptrToBool(true),
+		})
+	})
+}
+
+func SubscribeEventContractKLine(ctx context.Context, cli *client.Client, code string, klType constant.KLType, ch chan<- *push.UpdateEventContractKline) (func(), error) {
+	st, err := klTypeToSubType(klType)
+	if err != nil {
+		return nil, err
+	}
+	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateEventContractKline, ch, push.ParseUpdateEventContractKline, func() error {
+		return client.SubEventContract(ctx, cli, &qotsubeventcontract.C2S{
+			SecurityList:     []*qotcommon.Security{ecSecurity(code)},
+			SubTypeList:      []int32{int32(st)},
+			IsSubOrUnSub:     ptrToBool(true),
+			IsRegOrUnRegPush: ptrToBool(true),
+			IsFirstPush:      ptrToBool(true),
+			KlineSource:      []qotcommon.EC_KlineSource{qotcommon.EC_KlineSource_EC_KlineSource_None},
+		})
+	})
+}
+
+func SubscribeEventContractTicker(ctx context.Context, cli *client.Client, code string, ch chan<- *push.UpdateEventContractTicker) (func(), error) {
+	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateEventContractTicker, ch, push.ParseUpdateEventContractTicker, func() error {
+		return client.SubEventContract(ctx, cli, &qotsubeventcontract.C2S{
+			SecurityList:     []*qotcommon.Security{ecSecurity(code)},
+			SubTypeList:      []int32{int32(constant.SubType_Ticker)},
+			IsSubOrUnSub:     ptrToBool(true),
+			IsRegOrUnRegPush: ptrToBool(true),
+			IsFirstPush:      ptrToBool(true),
+		})
+	})
+}
+
+func ptrToBool(v bool) *bool { return &v }

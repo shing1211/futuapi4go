@@ -37,12 +37,14 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractkline"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractticker"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotpushindicatorcalc"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractkline"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateeventcontractticker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateoptionevent"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
@@ -63,35 +65,37 @@ const (
 	ProtoID_Qot_UpdateEventContractOrderBook = 3450
 	ProtoID_Qot_UpdateEventContractKline     = 3451
 	ProtoID_Qot_UpdateEventContractTicker    = 3452
+	ProtoID_Qot_UpdateOptionEvent            = 3310
+	ProtoID_Qot_PushIndicatorCalc            = 3261
 )
 
 // UpdateBasicQot represents a real-time basic quote push notification.
 type UpdateBasicQot struct {
-	Security       *qotcommon.Security
-	Name           string
-	CurPrice       float64
-	OpenPrice      float64
-	HighPrice      float64
-	LowPrice       float64
-	Volume         int64
-	Turnover       float64
-	IsSuspended    bool
-	LastClosePrice float64
-	UpdateTime     string
+	Security        *qotcommon.Security
+	Name            string
+	CurPrice        float64
+	OpenPrice       float64
+	HighPrice       float64
+	LowPrice        float64
+	Volume          int64
+	Turnover        float64
+	IsSuspended     bool
+	LastClosePrice  float64
+	UpdateTime      string
 	UpdateTimestamp float64
-	ListTime       string
-	PriceSpread    float64
-	TurnoverRate   float64
-	Amplitude      float64
-	DarkStatus     int32
-	OptionExData   *qotcommon.OptionBasicQotExData
-	ListTimestamp  float64
-	PreMarket      *qotcommon.PreAfterMarketData
-	AfterMarket    *qotcommon.PreAfterMarketData
-	SecStatus      int32
-	FutureExData   *qotcommon.FutureBasicQotExData
-	WarrantExData  *qotcommon.WarrantBasicQotExData
-	Overnight      *qotcommon.PreAfterMarketData
+	ListTime        string
+	PriceSpread     float64
+	TurnoverRate    float64
+	Amplitude       float64
+	DarkStatus      int32
+	OptionExData    *qotcommon.OptionBasicQotExData
+	ListTimestamp   float64
+	PreMarket       *qotcommon.PreAfterMarketData
+	AfterMarket     *qotcommon.PreAfterMarketData
+	SecStatus       int32
+	FutureExData    *qotcommon.FutureBasicQotExData
+	WarrantExData   *qotcommon.WarrantBasicQotExData
+	Overnight       *qotcommon.PreAfterMarketData
 }
 
 // ParseUpdateBasicQot parses a basic quote push notification from a raw protobuf body.
@@ -139,19 +143,19 @@ func ParseUpdateBasicQot(body []byte) (*UpdateBasicQot, error) {
 
 // PushKLine represents a single K-line bar from push notification.
 type PushKLine struct {
-	Time         string
-	IsBlank      bool
-	HighPrice    float64
-	OpenPrice    float64
-	LowPrice     float64
-	ClosePrice   float64
+	Time           string
+	IsBlank        bool
+	HighPrice      float64
+	OpenPrice      float64
+	LowPrice       float64
+	ClosePrice     float64
 	LastClosePrice float64
-	Volume       int64
-	Turnover     float64
-	TurnoverRate float64
-	Pe           float64
-	ChangeRate   float64
-	Timestamp    float64
+	Volume         int64
+	Turnover       float64
+	TurnoverRate   float64
+	Pe             float64
+	ChangeRate     float64
+	Timestamp      float64
 }
 
 // UpdateKL represents a K-line push notification.
@@ -442,5 +446,65 @@ func ParseUpdateEventContractTicker(body []byte) (*UpdateEventContractTicker, er
 	}
 	return &UpdateEventContractTicker{
 		TickerList: s2c.TickerList,
+	}, nil
+}
+
+// UpdateOptionEvent represents an option event alert push notification.
+// Triggered server-side when an option event (e.g. listing, expiration,
+// assignment) occurs.
+type UpdateOptionEvent struct {
+	Owner   *qotcommon.Security
+	Option  *qotcommon.Security
+	Message *string
+}
+
+// ParseUpdateOptionEvent parses an option event alert push notification from a
+// raw protobuf body.
+func ParseUpdateOptionEvent(body []byte) (*UpdateOptionEvent, error) {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var resp qotupdateoptionevent.Response
+	if err := proto.Unmarshal(body, &resp); err != nil {
+		return nil, err
+	}
+	s2c := resp.S2C
+	if s2c == nil {
+		return nil, nil
+	}
+	return &UpdateOptionEvent{
+		Owner:   s2c.Owner,
+		Option:  s2c.Option,
+		Message: s2c.Message,
+	}, nil
+}
+
+// PushIndicatorCalc represents an asynchronous indicator calculation result
+// push notification, paired with a prior RequestIndicatorCalc(caclId) call.
+type PushIndicatorCalc struct {
+	CalcId     string
+	Outputs    []*qotcommon.IndicatorOutputParam
+	OutputRows []*qotpushindicatorcalc.IndicatorOutputRow
+}
+
+// ParsePushIndicatorCalc parses an indicator calculation push result from a
+// raw protobuf body. The CalcId field corresponds to the value returned by
+// RequestIndicatorCalc.
+func ParsePushIndicatorCalc(body []byte) (*PushIndicatorCalc, error) {
+	if len(body) == 0 {
+		return nil, nil
+	}
+	var resp qotpushindicatorcalc.Response
+	if err := proto.Unmarshal(body, &resp); err != nil {
+		return nil, err
+	}
+	s2c := resp.S2C
+	if s2c == nil {
+		return nil, nil
+	}
+	return &PushIndicatorCalc{
+		CalcId:     util.ProtoStr(s2c.CalcId),
+		Outputs:    s2c.Outputs,
+		OutputRows: s2c.OutputRows,
 	}, nil
 }

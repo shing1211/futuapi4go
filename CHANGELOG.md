@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.15.1] - 2026-08-04
+
+### Added
+
+- **Backfilled 2 missing push parsers** in `pkg/push/qot_push.go`:
+  - `ParseUpdateOptionEvent` (ProtoID 3310) — option event alert push (listing/expiration/assignment)
+  - `ParsePushIndicatorCalc` (ProtoID 3261) — async indicator calculation result push (paired with `RequestIndicatorCalc`)
+- **10 new channel wrappers** in `pkg/push/chan/chan.go`:
+  - `NewOptionEventChannel` + `SubscribeOptionEvent`
+  - `NewPushIndicatorCalcChannel` + `SubscribePushIndicatorCalc`
+  - `NewEventContractOrderBookChannel` + `SubscribeEventContractOrderBook`
+  - `NewEventContractKLineChannel` + `SubscribeEventContractKLine`
+  - `NewEventContractTickerChannel` + `SubscribeEventContractTicker`
+- **Unit tests** for both new parsers (`pkg/push/push_test.go`)
+- ProtoID constants `ProtoID_Qot_UpdateOptionEvent` (3310) and `ProtoID_Qot_PushIndicatorCalc` (3261) now exposed in `pkg/push/qot_push.go`
+
+### Fixed
+
+- **v0.15.0 omission** — `Qot_UpdateOptionEvent` and `Qot_PushIndicatorCalc` protos were regenerated and had PIDs registered in `pkg/constant`, but no `ParseUpdate*` convenience wrappers existed. Users previously had to `proto.Unmarshal` manually.
+
 ## [v0.15.0] - 2026-08-04
 
 ### Added

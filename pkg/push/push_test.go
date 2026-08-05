@@ -22,6 +22,8 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/notify"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotpushindicatorcalc"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateoptionevent"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
@@ -877,5 +879,116 @@ func TestParseTrdNotifyValidData(t *testing.T) {
 	}
 	if result.Header == nil {
 		t.Error("Header should not be nil")
+	}
+}
+
+func TestParseUpdateOptionEventInvalidData(t *testing.T) {
+	result, err := ParseUpdateOptionEvent([]byte{})
+	if err != nil {
+		t.Errorf("ParseUpdateOptionEvent should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParseUpdateOptionEvent should return nil for empty data")
+	}
+
+	_, err = ParseUpdateOptionEvent([]byte{0x00, 0x01, 0x02})
+	if err == nil {
+		t.Error("ParseUpdateOptionEvent should fail with invalid protobuf data")
+	}
+}
+
+func TestParseUpdateOptionEventValidData(t *testing.T) {
+	ownerCode := "AAPL"
+	optionCode := "AAPL240119C00150000"
+	ownerMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
+	optMarket := int32(qotcommon.QotMarket_QotMarket_US_Security)
+	msg := "option event: listing"
+	retType := int32(0) // RetType_Succeed
+
+	resp := &qotupdateoptionevent.Response{
+		RetType: &retType,
+		S2C: &qotupdateoptionevent.S2C{
+			Owner:  &qotcommon.Security{Market: &ownerMarket, Code: &ownerCode},
+			Option: &qotcommon.Security{Market: &optMarket, Code: &optionCode},
+			Message: &msg,
+		},
+	}
+
+	body, err := proto.Marshal(resp)
+	if err != nil {
+		t.Fatalf("failed to marshal protobuf: %v", err)
+	}
+
+	result, err := ParseUpdateOptionEvent(body)
+	if err != nil {
+		t.Fatalf("ParseUpdateOptionEvent failed: %v", err)
+	}
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+	if result.Owner.GetCode() != ownerCode {
+		t.Errorf("expected owner code %q, got %q", ownerCode, result.Owner.GetCode())
+	}
+	if result.Option.GetCode() != optionCode {
+		t.Errorf("expected option code %q, got %q", optionCode, result.Option.GetCode())
+	}
+	if result.Message == nil || *result.Message != msg {
+		t.Errorf("expected message %q, got %v", msg, result.Message)
+	}
+}
+
+func TestParsePushIndicatorCalcInvalidData(t *testing.T) {
+	result, err := ParsePushIndicatorCalc([]byte{})
+	if err != nil {
+		t.Errorf("ParsePushIndicatorCalc should not error on empty data, got: %v", err)
+	}
+	if result != nil {
+		t.Error("ParsePushIndicatorCalc should return nil for empty data")
+	}
+
+	_, err = ParsePushIndicatorCalc([]byte{0x00, 0x01, 0x02})
+	if err == nil {
+		t.Error("ParsePushIndicatorCalc should fail with invalid protobuf data")
+	}
+}
+
+func TestParsePushIndicatorCalcValidData(t *testing.T) {
+	calcID := "indicator-calc-abc"
+	retType := int32(0)
+	timeKey := "2026-06-28 09:30:00"
+	ret := 0.0012
+	row := &qotpushindicatorcalc.IndicatorOutputRow{
+		Time:   &timeKey,
+		Values: []float64{ret},
+	}
+
+	resp := &qotpushindicatorcalc.Response{
+		RetType: &retType,
+		S2C: &qotpushindicatorcalc.S2C{
+			CalcId:     &calcID,
+			OutputRows: []*qotpushindicatorcalc.IndicatorOutputRow{row},
+		},
+	}
+
+	body, err := proto.Marshal(resp)
+	if err != nil {
+		t.Fatalf("failed to marshal protobuf: %v", err)
+	}
+
+	result, err := ParsePushIndicatorCalc(body)
+	if err != nil {
+		t.Fatalf("ParsePushIndicatorCalc failed: %v", err)
+	}
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+	if result.CalcId != calcID {
+		t.Errorf("expected calcId %q, got %q", calcID, result.CalcId)
+	}
+	if len(result.OutputRows) != 1 {
+		t.Fatalf("expected 1 output row, got %d", len(result.OutputRows))
+	}
+	if got := result.OutputRows[0].GetTime(); got != timeKey {
+		t.Errorf("expected row time %q, got %q", timeKey, got)
 	}
 }
