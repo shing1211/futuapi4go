@@ -5,6 +5,13 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.16.0] - 2026-08-14
+
+### Upgraded
+- Futu OpenD Protocol: v10.9.6908 → v10.10.7008
+- Regenerated 184 proto files via `scripts/regen-all-protos.sh`
+- Phase-3 proto safety audit across all `pkg/pb/` generated files
+
 ## [Unreleased]
 
 ## [v0.15.1] - 2026-08-04
