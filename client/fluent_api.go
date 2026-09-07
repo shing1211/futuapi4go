@@ -9,11 +9,23 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkactivetransaction"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkfundholding"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetarkstockdynamic"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotfiltercompetition"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetdividendcalendar"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetdividendrank"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetearningsbeatrank"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetearningscalendar"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteconomiccalendar"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontract"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractcategory"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractcombolist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractcomborfq"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontracteventlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractkline"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractmilestonelist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractserieslist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractsnapshot"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgeteventcontractticker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfedwatchdotplot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfedwatchtargetrate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetheatmapdata"
@@ -54,8 +66,10 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusafterhoursrank"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusovernightrank"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetuspremarketrank"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryeventcontractkl"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestindicatorcalc"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsetoptioneventalert"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotsubeventcontract"
 	"github.com/shing1211/futuapi4go/pkg/pb/skillwrapapi"
 	"github.com/shing1211/futuapi4go/pkg/qot"
 	"github.com/shing1211/futuapi4go/pkg/sys"
@@ -495,6 +509,78 @@ func (api *QuoteAPI) GetDividendCalendar(ctx context.Context, req *qotgetdividen
 
 func (api *QuoteAPI) GetEconomicCalendar(ctx context.Context, req *qotgeteconomiccalendar.C2S) (*qotgeteconomiccalendar.S2C, error) {
 	return qot.GetEconomicCalendar(ctx, api.client, req)
+}
+
+// v10.9+ Event Contract (Prediction Market) convenience wrappers.
+
+// FilterCompetition returns the available competition filters for Event Contracts.
+func (api *QuoteAPI) FilterCompetition(ctx context.Context, req *qotfiltercompetition.C2S) (*qotfiltercompetition.S2C, error) {
+	return qot.FilterCompetition(ctx, api.client, req)
+}
+
+// GetEventContractCategory returns the top-level EC categories.
+func (api *QuoteAPI) GetEventContractCategory(ctx context.Context, req *qotgeteventcontractcategory.C2S) (*qotgeteventcontractcategory.S2C, error) {
+	return qot.GetEventContractCategory(ctx, api.client, req)
+}
+
+// GetEventContractSeriesList returns Series under a category/tag filter.
+func (api *QuoteAPI) GetEventContractSeriesList(ctx context.Context, req *qotgeteventcontractserieslist.C2S) (*qotgeteventcontractserieslist.S2C, error) {
+	return qot.GetEventContractSeriesList(ctx, api.client, req)
+}
+
+// GetEventContractEventList returns Events under a Series.
+func (api *QuoteAPI) GetEventContractEventList(ctx context.Context, req *qotgeteventcontracteventlist.C2S) (*qotgeteventcontracteventlist.S2C, error) {
+	return qot.GetEventContractEventList(ctx, api.client, req)
+}
+
+// GetEventContract returns Contracts under an Event.
+func (api *QuoteAPI) GetEventContract(ctx context.Context, req *qotgeteventcontract.C2S) (*qotgeteventcontract.S2C, error) {
+	return qot.GetEventContract(ctx, api.client, req)
+}
+
+// GetEventContractMilestoneList returns the EC milestone list.
+func (api *QuoteAPI) GetEventContractMilestoneList(ctx context.Context, req *qotgeteventcontractmilestonelist.C2S) (*qotgeteventcontractmilestonelist.S2C, error) {
+	return qot.GetEventContractMilestoneList(ctx, api.client, req)
+}
+
+// GetEventContractSnapshot returns a batch of EC snapshots.
+func (api *QuoteAPI) GetEventContractSnapshot(ctx context.Context, req *qotgeteventcontractsnapshot.C2S) (*qotgeteventcontractsnapshot.S2C, error) {
+	return qot.GetEventContractSnapshot(ctx, api.client, req)
+}
+
+// GetEventContractOrderBook returns the EC order book snapshot.
+func (api *QuoteAPI) GetEventContractOrderBook(ctx context.Context, req *qotgeteventcontractorderbook.C2S) (*qotgeteventcontractorderbook.S2C, error) {
+	return qot.GetEventContractOrderBook(ctx, api.client, req)
+}
+
+// GetEventContractKline returns the EC K-line snapshot.
+func (api *QuoteAPI) GetEventContractKline(ctx context.Context, req *qotgeteventcontractkline.C2S) (*qotgeteventcontractkline.S2C, error) {
+	return qot.GetEventContractKline(ctx, api.client, req)
+}
+
+// GetEventContractTicker returns the EC tick-by-tick snapshot.
+func (api *QuoteAPI) GetEventContractTicker(ctx context.Context, req *qotgeteventcontractticker.C2S) (*qotgeteventcontractticker.S2C, error) {
+	return qot.GetEventContractTicker(ctx, api.client, req)
+}
+
+// GetEventContractComboList returns Events combinable into Combo positions.
+func (api *QuoteAPI) GetEventContractComboList(ctx context.Context, req *qotgeteventcontractcombolist.C2S) (*qotgeteventcontractcombolist.S2C, error) {
+	return qot.GetEventContractComboList(ctx, api.client, req)
+}
+
+// GetEventContractComboRfq requests a quote for a Combo leg combination.
+func (api *QuoteAPI) GetEventContractComboRfq(ctx context.Context, req *qotgeteventcontractcomborfq.C2S) (*qotgeteventcontractcomborfq.S2C, error) {
+	return qot.GetEventContractComboRfq(ctx, api.client, req)
+}
+
+// RequestHistoryEventContractKL pulls historical EC K-line data.
+func (api *QuoteAPI) RequestHistoryEventContractKL(ctx context.Context, req *qotrequesthistoryeventcontractkl.C2S) (*qotrequesthistoryeventcontractkl.S2C, error) {
+	return qot.RequestHistoryEventContractKL(ctx, api.client, req)
+}
+
+// SubEventContract subscribes/unsubscribes Event Contract real-time data.
+func (api *QuoteAPI) SubEventContract(ctx context.Context, req *qotsubeventcontract.C2S) error {
+	return qot.SubEventContract(ctx, api.client, req)
 }
 
 // TradeAPI provides a fluent API for trading operations.

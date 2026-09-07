@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **15 Event Contract convenience wrappers** in `client/fluent_api.go`:
+  - `FilterCompetition`, `GetEventContractCategory`, `GetEventContractSeriesList`
+  - `GetEventContractEventList`, `GetEventContract`, `GetEventContractMilestoneList`
+  - `GetEventContractSnapshot`, `GetEventContractOrderBook`, `GetEventContractKline`
+  - `GetEventContractTicker`, `GetEventContractComboList`, `GetEventContractComboRfq`
+  - `RequestHistoryEventContractKL`, `SubEventContract`, `NewECSecurity`
+- **Unit test stubs** for all EC convenience wrappers (`client/fluent_api_ec_test.go`)
+
 ## [v0.15.1] - 2026-08-04
 
 ### Added
