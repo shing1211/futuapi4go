@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Regenerated 184 proto files via `scripts/regen-all-protos.sh`
 - Phase-3 proto safety audit across all `pkg/pb/` generated files
 
-## [Unreleased]
+## [v0.17.0] - 2026-09-07
 
 ### Added
 - **15 Event Contract convenience wrappers** in `client/fluent_api.go`:
@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GetEventContractTicker`, `GetEventContractComboList`, `GetEventContractComboRfq`
   - `RequestHistoryEventContractKL`, `SubEventContract`, `NewECSecurity`
 - **Unit test stubs** for all EC convenience wrappers (`client/fluent_api_ec_test.go`)
+
+## [Unreleased]
 
 ## [v0.15.1] - 2026-08-04
 
