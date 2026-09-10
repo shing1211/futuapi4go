@@ -25,6 +25,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Product catalog** (`pkg/product/`): unified product data model, in-memory catalog with thread-safe access, TimescaleDB persistence
+  - `Product` struct with custom JSON marshaling (market/product_type as strings)
+  - `ProductCatalog` with `Get()`, `List()` (pagination + filters), `Stats()`, `Merge()`
+  - `LoadFromDB()` / `UpsertProducts()` via `pgx.CopyFrom` with auto-schema-migration
+- **Product REST endpoints** (`api/rest/handler.go`):
+  - `GET /api/v1/products` — list with market/type/search filters and pagination
+  - `GET /api/v1/products/{symbol}` — single product, `?quote=true` enriches with Futu live quote
+  - `GET /api/v1/products/stats` — aggregate counts by market/type/source
+  - `POST /api/v1/products/refresh` — async background refresh (202 Accepted)
+- **Data source fetchers**:
+  - `pkg/product/nasdaq_fetcher.go` — US stocks from NASDAQ API (7,139 products)
+  - `pkg/product/cn_fetcher.go` — China A-shares from HKEX Stock Connect CSVs (SSE + SZSE, 3,523 products)
+  - `pkg/product/hk_fetcher.go` — HK equities/ETFs from HKEX `ListOfSecurities.xlsx` via `wget` (3,237 products)
+  - `pkg/product/fetcher.go` — shared HTTP/1.1 client with TLS 1.2 workaround
+- **Dashboard products page** (`dashboard/src/pages/Products.tsx`): filter bar, paginated table, refresh button, stats cards
+- **Product catalog documentation** (`docs/PROJECT_STATUS.md`, `docs/PROJECT_PLAN.md`)
+
+### Fixed
+
+- **HK XLSX parsing**: stripped `x:` namespace prefixes before XML decode (Go's decoder doesn't match prefixed elements to untagged struct fields)
+- **HK XLSX download**: proxy was returning HTML instead of zip; switched to `wget` exec + temp file
+- **Upsert duplicate key**: `UpsertProducts()` now DELETEs all rows before `CopyFrom` within a transaction
+- **Lot size parsing**: fixed digit-concatenation bug (was appending to default 500 instead of replacing)
+
 ## [v0.15.1] - 2026-08-04
 
 ### Added
