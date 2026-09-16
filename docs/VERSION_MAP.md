@@ -7,7 +7,7 @@ version. This table is the authoritative mapping between them.
 
 | | |
 |---|---|
-| SDK release | **v0.17.0** |
+| SDK release | **v0.18.1** |
 | Futu OpenD protocol | **v10.10.7008** |
 | `clientVer` in handshake | **1100** (`internal/client/client.go`) |
 | Generated proto files | **184** (`pkg/pb/**/*.pb.go`) |
@@ -16,7 +16,7 @@ version. This table is the authoritative mapping between them.
 
 | Futu OpenD protocol | protos | `clientVer` | SDK tags | released |
 |---------------------|-------:|------------:|----------|----------|
-| **v10.10.7008** | 184 | 1100 | `v0.16.0` … `v0.17.0` | 2026-08-14 … 2026-09-07 |
+| **v10.10.7008** | 184 | 1100 | `v0.16.0` … `v0.18.1` | 2026-08-14 … 2026-09-17 |
 | v10.9.6908 | 184 | 1090 | `v0.15.0` … `v0.15.2` | 2026-08-04 … 2026-08-05 |
 | v10.8.6808 | 167 | 1080 | `v0.14.0` … `v0.14.1` | 2026-06-29 |
 | v10.7.6708 | 111 | 1076 | `v0.13.0` | 2026-06-05 |

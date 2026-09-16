@@ -281,15 +281,29 @@ meter.RecordAPICall("3001", "success")
 
 ### Structured Logging
 
-Replace unstructured log output with JSON-structured logs:
+Route SDK events into your own structured logger (levels and attributes are
+preserved; the client's `connID`/`userID` are added to every event):
 
 ```go
-import futuapi "github.com/shing1211/futuapi4go/internal/client"
+import (
+    "log/slog"
+    "os"
 
-sl := futuapi.NewSlogLoggerDefault(futuapi.LevelDebug)
-cli := client.New(client.WithSlog(sl))
-// All internal logs now include connID and userID attributes in JSON format
+    "github.com/shing1211/futuapi4go/client"
+)
+
+// Any slog.Logger works — a zerolog/zap bridge, or the standard JSON handler.
+sl := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+
+cli := client.New(
+    client.WithSlogLogger(sl),
+    client.WithLogLevelName("warn"), // debug | info | warn | error | silent
+)
 ```
+
+`debug` includes one line per inbound packet (`recv Trd_GetFunds (2101)
+serial=535 bytes=121`), which is useful for tracing the wire protocol but noisy
+at the account-poll rate; `warn` is the recommended default.
 
 ---
 
@@ -531,6 +545,6 @@ meter.RecordAPICall("3001", "success")
 將內部日誌輸出為 JSON 格式：
 
 ```go
-sl := futuapi.NewSlogLoggerDefault(futuapi.LevelDebug)
-cli := client.New(client.WithSlog(sl))
+sl := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+cli := client.New(client.WithSlogLogger(sl), client.WithLogLevelName("warn"))
 ```
