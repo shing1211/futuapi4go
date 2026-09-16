@@ -59,6 +59,30 @@ OpenD logs. Consequences:
 number of generated `.pb.go` files is stable, so it is the quickest way to
 confirm which protocol a working tree or a built artifact actually carries.
 
+### Tag naming — considered and deliberately left as-is
+
+Renaming release tags to mirror the Futu version (e.g. tagging `v10.10.7008`)
+was evaluated and **rejected**. Do not re-raise it without new information:
+
+- Go module path rules make it a breaking change. A tag of `v10.10.7008` means
+  major version 10, which requires the module path to become
+  `github.com/shing1211/futuapi4go/v10`. Without that, resolution fails
+  outright. Verified with a real `go get` against a file-based module proxy:
+
+  ```
+  example.com/m      @ v10.0.0      → invalid version: should be v0 or v1, not v10
+  example.com/p/v10  @ v10.0.0      → added
+  example.com/n      @ v0.17.0      → added
+  ```
+
+- It would leave no version space for SDK-only releases. `v10.10.7008` consumes
+  all three semver segments (10 / 10 / 7008), so a bug fix shipping against the
+  same Futu protocol has nowhere to go without falsely implying a Futu bump.
+
+- The mapping table above already answers the underlying need ("which Futu
+  version is in this build?"), keyed off the tag range, at zero cost to
+  consumers.
+
 ## Inspecting a build
 
 ```bash
