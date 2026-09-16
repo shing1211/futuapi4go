@@ -372,6 +372,13 @@ func WithLogLevel(level int) Option {
 	return futuapi.WithLogLevel(level)
 }
 
+// WithSlogLogger routes SDK logs through a caller-supplied structured logger, so
+// the SDK's events appear in the caller's own logging pipeline with levels and
+// attributes preserved. The SDK log level still gates which events are emitted.
+func WithSlogLogger(l *slog.Logger) Option {
+	return futuapi.WithSlogLogger(l)
+}
+
 // WithRSAPublicKey sets the RSA public key (PEM format) for encrypted InitConnect.
 func WithRSAPublicKey(pem string) Option {
 	return futuapi.WithRSAPublicKey(pem)

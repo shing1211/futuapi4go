@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -32,12 +33,13 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/shing1211/futuapi4go/pkg/breaker"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/metrics"
-	"github.com/shing1211/futuapi4go/pkg/ratelimit"
-	"github.com/shing1211/futuapi4go/pkg/retry"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/initconnect"
 	"github.com/shing1211/futuapi4go/pkg/pb/keepalive"
+	"github.com/shing1211/futuapi4go/pkg/ratelimit"
+	"github.com/shing1211/futuapi4go/pkg/retry"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
@@ -121,6 +123,25 @@ func (c *Client) logError(format string, v ...interface{}) {
 	l.Printf(format, v...)
 }
 
+// logDebug logs at debug level (per-packet transport detail) if enabled.
+//
+// Debug is below Info because these lines fire for every inbound packet, so
+// they are opt-in: set LogLevel to LogLevelDebug to see them.
+func (c *Client) logDebug(format string, v ...interface{}) {
+	if c.opts.LogLevel > LogLevelDebug {
+		return
+	}
+	if sl := c.opts.SlogLogger; sl != nil {
+		sl.Debug(c.ctx, fmt.Sprintf(format, v...), c.slogAttrs()...)
+		return
+	}
+	l := c.opts.Logger
+	if l == nil {
+		l = defaultLogger()
+	}
+	l.Printf(format, v...)
+}
+
 const (
 	ProtoID_InitConnect    = 1001
 	ProtoID_GetGlobalState = 1002
@@ -154,12 +175,13 @@ const handshakeClientVer int32 = 1100 // Futu OpenD protocol v10.10.7008
 
 // LogLevel constants for clarity.
 // Higher values suppress more verbose logging.
-// LogLevelInfo (0) = all logs, LogLevelSilent (3) = no logs.
+// LogLevelDebug (-1) = everything, LogLevelSilent (3) = no logs.
 const (
-	LogLevelInfo   int = 0 // Log info, warnings, and errors
-	LogLevelWarn   int = 1 // Log warnings and errors only
-	LogLevelError  int = 2 // Log errors only
-	LogLevelSilent int = 3 // Suppress all logs
+	LogLevelDebug  int = -1 // Log per-packet transport detail, info, warnings, and errors
+	LogLevelInfo   int = 0  // Log info, warnings, and errors
+	LogLevelWarn   int = 1  // Log warnings and errors only
+	LogLevelError  int = 2  // Log errors only
+	LogLevelSilent int = 3  // Suppress all logs
 )
 
 // ConnState represents the connection state of the client.
@@ -188,9 +210,9 @@ type ClientOptions struct {
 	ReconnectBackoff  float64       // Multiplier for backoff (1.0 = no backoff)
 
 	// Logging
-	Logger   *log.Logger // Custom logger (nil = use default)
+	Logger     *log.Logger // Custom logger (nil = use default)
 	SlogLogger *SlogLogger // Structured logger (nil = use default)
-	LogLevel int           // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent. Use LogLevel* constants.
+	LogLevel   int         // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent. Use LogLevel* constants.
 
 	// WebSocket
 	WSSecretKey string // Secret key for WebSocket authentication
@@ -201,7 +223,7 @@ type ClientOptions struct {
 	// State change callback
 	OnStateChange func(oldState, newState ConnState) // Callback when connection state changes
 
-	TLSConfig *tls.Config	// TLS configuration (nil = no TLS)
+	TLSConfig *tls.Config // TLS configuration (nil = no TLS)
 
 	// RSA
 	RSAPublicKey  string // RSA public key in PEM format for InitConnect encryption
@@ -211,9 +233,9 @@ type ClientOptions struct {
 	EncryptionEnabled bool // Enable FTAES encryption for all packets after InitConnect
 
 	// Resilience
-	RateLimiter  *ratelimit.ProtoLimiter // Rate limiter for API calls
-	RetryConfig  retry.Config           // Retry configuration
-	Breaker      *breaker.Breaker        // Circuit breaker
+	RateLimiter *ratelimit.ProtoLimiter // Rate limiter for API calls
+	RetryConfig retry.Config            // Retry configuration
+	Breaker     *breaker.Breaker        // Circuit breaker
 }
 
 // NewOptions returns ClientOptions with sensible defaults.
@@ -332,6 +354,18 @@ func WithSlog(sl *SlogLogger) Option {
 	return func(o *ClientOptions) { o.SlogLogger = sl }
 }
 
+// WithSlogLogger routes SDK logs through a caller-supplied slog.Logger, so a
+// consumer can emit SDK events into its own logging pipeline with levels and
+// attributes preserved (the Client's own conn_id/user_id attributes are added
+// to every event). The LogLevel setting still gates which events are emitted.
+func WithSlogLogger(l *slog.Logger) Option {
+	return func(o *ClientOptions) {
+		if l != nil {
+			o.SlogLogger = &SlogLogger{logger: l, level: LevelInfo}
+		}
+	}
+}
+
 func WithTLS(cfg *tls.Config) Option {
 	return func(o *ClientOptions) { o.TLSConfig = cfg }
 }
@@ -387,7 +421,7 @@ type Client struct {
 	wg                sync.WaitGroup
 	state             int32
 
-	addr              string
+	addr string
 
 	rsaKey string
 
@@ -403,9 +437,9 @@ type Client struct {
 	metrics   *Metrics
 	metricsMu sync.RWMutex
 
-	breaker      *breaker.Breaker
-	rateLimiter  *ratelimit.ProtoLimiter
-	retryConfig  *retry.Config
+	breaker     *breaker.Breaker
+	rateLimiter *ratelimit.ProtoLimiter
+	retryConfig *retry.Config
 }
 
 // Metrics tracks client performance statistics.
@@ -976,7 +1010,8 @@ func (c *Client) readLoop() {
 			c.logInfo("[%s] readLoop: context cancelled, exiting", c.ts())
 			return
 		case pkt := <-resultCh:
-			c.logInfo("[%s] readLoop: got packet protoID=%d serialNo=%d bodyLen=%d dispatching...", c.ts(), pkt.Header.ProtoID, pkt.Header.SerialNo, pkt.Header.BodyLen)
+			c.logDebug("recv %s (%d) serial=%d bytes=%d",
+				constant.ProtoIDName(int32(pkt.Header.ProtoID)), pkt.Header.ProtoID, pkt.Header.SerialNo, pkt.Header.BodyLen)
 			c.conn.Dispatch(pkt)
 		case err := <-errCh:
 			c.mu.Lock()
