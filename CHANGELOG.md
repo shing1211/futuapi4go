@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.1] - 2026-09-17
+
+### Added
+
+- **`ParseLogLevel(name)` and `WithLogLevelName(name)`.** v0.18.0 added
+  `LogLevelDebug` but did not re-export the level constants from the public
+  `client` package, so a consumer could not name a level without hardcoding the
+  numeric scale. A caller can now pass its own configuration string
+  (`debug|info|warn|error|silent`, case-insensitive, with the usual aliases);
+  an unknown or empty name falls back to **warn**, which keeps per-packet
+  transport detail off.
+- Both are re-exported from the public `client` package alongside
+  `WithLogLevel`.
+
 ## [0.18.0] - 2026-09-17
 
 ### Added

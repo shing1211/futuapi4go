@@ -51,3 +51,23 @@ func TestWithSlogLoggerIgnoresNil(t *testing.T) {
 		t.Error("WithSlogLogger(nil) should leave the structured logger unset")
 	}
 }
+
+func TestParseLogLevel(t *testing.T) {
+	cases := map[string]int{
+		"debug":    LogLevelDebug,
+		"TRACE":    LogLevelDebug,
+		"info":     LogLevelInfo,
+		"warn":     LogLevelWarn,
+		"warning":  LogLevelWarn,
+		"error":    LogLevelError,
+		"silent":   LogLevelSilent,
+		"off":      LogLevelSilent,
+		"":         LogLevelWarn,
+		"nonsense": LogLevelWarn,
+	}
+	for name, want := range cases {
+		if got := ParseLogLevel(name); got != want {
+			t.Errorf("ParseLogLevel(%q) = %d, want %d", name, got, want)
+		}
+	}
+}

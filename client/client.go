@@ -372,6 +372,18 @@ func WithLogLevel(level int) Option {
 	return futuapi.WithLogLevel(level)
 }
 
+// WithLogLevelName sets the log level by name (debug, info, warn, error,
+// silent). An unknown name falls back to warn.
+func WithLogLevelName(name string) Option {
+	return futuapi.WithLogLevelName(name)
+}
+
+// ParseLogLevel maps a log level name to a level value. Unknown names fall back
+// to warn.
+func ParseLogLevel(name string) int {
+	return futuapi.ParseLogLevel(name)
+}
+
 // WithSlogLogger routes SDK logs through a caller-supplied structured logger, so
 // the SDK's events appear in the caller's own logging pipeline with levels and
 // attributes preserved. The SDK log level still gates which events are emitted.

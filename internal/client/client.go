@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -184,6 +185,26 @@ const (
 	LogLevelSilent int = 3  // Suppress all logs
 )
 
+// ParseLogLevel maps a level name to the LogLevel constants. It is case
+// insensitive and accepts the common aliases; an unrecognised or empty name
+// falls back to LogLevelWarn, which keeps per-packet transport detail off.
+func ParseLogLevel(name string) int {
+	switch strings.ToLower(strings.TrimSpace(name)) {
+	case "debug", "trace":
+		return LogLevelDebug
+	case "info":
+		return LogLevelInfo
+	case "warn", "warning":
+		return LogLevelWarn
+	case "error", "fatal", "panic":
+		return LogLevelError
+	case "silent", "off", "disabled":
+		return LogLevelSilent
+	default:
+		return LogLevelWarn
+	}
+}
+
 // ConnState represents the connection state of the client.
 type ConnState int32
 
@@ -297,6 +318,13 @@ func WithLogger(l *log.Logger) Option {
 // Example: WithLogLevel(LogLevelWarn) suppresses info logs.
 func WithLogLevel(level int) Option {
 	return func(o *ClientOptions) { o.LogLevel = level }
+}
+
+// WithLogLevelName sets the log level by name (debug, info, warn, error,
+// silent), so a caller can pass its own configuration string straight through.
+// An unknown name falls back to warn.
+func WithLogLevelName(name string) Option {
+	return func(o *ClientOptions) { o.LogLevel = ParseLogLevel(name) }
 }
 
 // WithPushHandler sets a handler for push notifications.
