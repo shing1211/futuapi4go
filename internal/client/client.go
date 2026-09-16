@@ -140,6 +140,18 @@ const (
 	DefaultDialTimeout       = 10 * time.Second
 )
 
+// handshakeClientVer is the clientVer reported in the InitConnect handshake.
+//
+// It is advanced alongside each Futu OpenD protocol upgrade, so a build
+// announces which protocol it was generated against. See docs/VERSION_MAP.md
+// for the protocol-version mapping.
+//
+// NOTE: Futu's own SDKs pin a fixed value here (300 in every Python release
+// from 10.5.6508 through 10.10.7008) — clientVer is a client-side identifier
+// and OpenD does not require it to track the protocol version. Advancing it is
+// a local convention of this SDK.
+const handshakeClientVer int32 = 1100 // Futu OpenD protocol v10.10.7008
+
 // LogLevel constants for clarity.
 // Higher values suppress more verbose logging.
 // LogLevelInfo (0) = all logs, LogLevelSilent (3) = no logs.
@@ -554,7 +566,7 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	c.conn = newWSConn(ws)
 	c.conn.SetAPITimeout(c.opts.APITimeout)
 
-	clientVer := int32(1090)
+	clientVer := handshakeClientVer
 	clientID := "futuapi4go"
 	recvNotify := true
 	var packetEncAlgo int32 = -1
@@ -697,7 +709,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	}
 	c.logInfo("[%s] ConnectWithRSA: Dial OK (%v)", c.ts(), time.Since(dialStart))
 
-	clientVer := int32(1090)
+	clientVer := handshakeClientVer
 	clientID := "futuapi4go"
 	recvNotify := true
 	programmingLanguage := "Go"

@@ -289,6 +289,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history and [ENHANCEMENT_PLAN.m
 ## See Also
 
 - [CHANGELOG](CHANGELOG.md) — version history and release notes
+- [Version Map](docs/VERSION_MAP.md) — which Futu OpenD protocol / proto count / `clientVer` each SDK release carries
 - [USAGE Guide](docs/USAGE.md) — detailed setup, environment, and advanced patterns
 - [DESIGN](DESIGN.md) — architecture, design decisions, API patterns
 - [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — upcoming features and roadmap

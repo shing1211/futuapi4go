@@ -5,27 +5,25 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.16.0] - 2026-08-14
-
-### Upgraded
-- Futu OpenD Protocol: v10.9.6908 → v10.10.7008
-- Regenerated 184 proto files via `scripts/regen-all-protos.sh`
-- Phase-3 proto safety audit across all `pkg/pb/` generated files
-
-## [v0.17.0] - 2026-09-07
-
-### Added
-- **15 Event Contract convenience wrappers** in `client/fluent_api.go`:
-  - `FilterCompetition`, `GetEventContractCategory`, `GetEventContractSeriesList`
-  - `GetEventContractEventList`, `GetEventContract`, `GetEventContractMilestoneList`
-  - `GetEventContractSnapshot`, `GetEventContractOrderBook`, `GetEventContractKline`
-  - `GetEventContractTicker`, `GetEventContractComboList`, `GetEventContractComboRfq`
-  - `RequestHistoryEventContractKL`, `SubEventContract`, `NewECSecurity`
-- **Unit test stubs** for all EC convenience wrappers (`client/fluent_api_ec_test.go`)
-
 ## [Unreleased]
 
+### Changed
+
+- **`clientVer` handshake value hoisted into a constant and corrected** — it was
+  hardcoded as `int32(1090)` in *both* connect paths in
+  `internal/client/client.go`. That is how `v0.16.0` regenerated the protos for
+  v10.10.7008 while the handshake kept announcing the v10.9.6908 value. Now a
+  single `handshakeClientVer` constant, set to **1100**. See
+  [docs/VERSION_MAP.md](docs/VERSION_MAP.md) — note that Futu's own SDKs pin a
+  fixed value here (`300` in every release from 10.5.6508 to 10.10.7008), so
+  this remains a local convention rather than a protocol requirement.
+
 ### Added
+
+- **Version map** (`docs/VERSION_MAP.md`) — maps each SDK release range to the
+  Futu OpenD protocol version, proto count, and `clientVer`. The SDK's own
+  `v0.x.y` tags do not encode the protocol version, so this is the authoritative
+  reference for "which Futu version is in this build?".
 
 - **Product catalog** (`pkg/product/`): unified product data model, in-memory catalog with thread-safe access, TimescaleDB persistence
   - `Product` struct with custom JSON marshaling (market/product_type as strings)
@@ -50,6 +48,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **HK XLSX download**: proxy was returning HTML instead of zip; switched to `wget` exec + temp file
 - **Upsert duplicate key**: `UpsertProducts()` now DELETEs all rows before `CopyFrom` within a transaction
 - **Lot size parsing**: fixed digit-concatenation bug (was appending to default 500 instead of replacing)
+
+## [v0.17.0] - 2026-09-07
+
+### Added
+- **15 Event Contract convenience wrappers** in `client/fluent_api.go`:
+  - `FilterCompetition`, `GetEventContractCategory`, `GetEventContractSeriesList`
+  - `GetEventContractEventList`, `GetEventContract`, `GetEventContractMilestoneList`
+  - `GetEventContractSnapshot`, `GetEventContractOrderBook`, `GetEventContractKline`
+  - `GetEventContractTicker`, `GetEventContractComboList`, `GetEventContractComboRfq`
+  - `RequestHistoryEventContractKL`, `SubEventContract`, `NewECSecurity`
+- **Unit test stubs** for all EC convenience wrappers (`client/fluent_api_ec_test.go`)
+
+## [v0.16.0] - 2026-08-14
+
+### Upgraded
+- Futu OpenD Protocol: v10.9.6908 → v10.10.7008
+- Regenerated 184 proto files via `scripts/regen-all-protos.sh`
+- Phase-3 proto safety audit across all `pkg/pb/` generated files
 
 ## [v0.15.1] - 2026-08-04
 
