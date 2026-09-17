@@ -52,7 +52,7 @@ go test -bench=. -benchmem ./internal/client/...
    - Nil guards on all list iteration
 4. Add a public helper in `client/client.go` if it simplifies usage
 5. Add unit tests with table-driven edge cases
-6. Update `docs/CHANGELOG.md` under `[Unreleased]`
+6. Update `CHANGELOG.md` under `[Unreleased]`
 7. Verify: `go build ./... && go vet ./... && go test -race ./...`
 
 ---
@@ -167,7 +167,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 ## Official Documentation References
 
 - **API Reference:** See README.md "Full API Reference" section
-- **Changelog:** `docs/CHANGELOG.md`
+- **Changelog:** `CHANGELOG.md`
 - **Developer Guide:** This file (AGENTS.md)
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `ENHANCEMENT_PLAN.md` (advanced features — application-level, not core SDK)
