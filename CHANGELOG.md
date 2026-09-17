@@ -85,6 +85,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dashboard products page** (`dashboard/src/pages/Products.tsx`): filter bar, paginated table, refresh button, stats cards
 - **Product catalog documentation** (`docs/PROJECT_STATUS.md`, `docs/PROJECT_PLAN.md`)
 
+### Removed
+
+- **`pkg/history.Streamer` and `StreamKLineRequest`.** The streaming API was
+  non-functional and could not be repaired in place. It passed a `constant.KLType`
+  straight into `constant.SubType(kt)` — an unchecked numeric cast between two
+  enums with different numbering — so every interval subscribed to the wrong
+  stream: `KLType_K_1Min` (1) requested `SubType_Quote`, `KLType_K_Day` (2)
+  requested `SubType_OrderBook`, `KLType_K_Week` (3) requested the undefined value
+  3, `KLType_K_Month` (4) requested `SubType_Ticker`, `KLType_K_Year` (5)
+  requested `SubType_RT`, and the rest were off by one or more. It then registered
+  a handler for protoID `3005` (`Qot_UpdateBasicQot`, a quote push) instead of
+  `3007` (`Qot_UpdateKL`) and left the handler body empty.
+  Nothing referenced it — no code in the SDK or in `futuapi4go-demo` called
+  `NewStreamer`, `OnKLine` or `Start`. Removing it deletes a shipped API that
+  silently delivered the wrong data rather than repairing one, and avoids a
+  second, hand-rolled KLType-to-SubType mapping. `Downloader`,
+  `ConcurrentDownloader` and `ProgressTracker` are unaffected and keep their
+  tests.
+
 ### Fixed
 
 - **HK XLSX parsing**: stripped `x:` namespace prefixes before XML decode (Go's decoder doesn't match prefixed elements to untagged struct fields)

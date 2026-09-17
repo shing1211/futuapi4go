@@ -216,53 +216,6 @@ func (d *Downloader) DownloadKLine(ctx context.Context, req KLineRequest) error 
 	return nil
 }
 
-type StreamKLineRequest struct {
-	Code   string
-	Market Market
-	KLType KLType
-	Handler func([]qot.KLine) error
-}
-
-type Streamer struct {
-	client   *client.Client
-	handlers map[KLType]func([]qot.KLine) error
-	mu       sync.Mutex
-}
-
-func NewStreamer(cli *client.Client) *Streamer {
-	return &Streamer{
-		client:   cli,
-		handlers: make(map[KLType]func([]qot.KLine) error),
-	}
-}
-
-func (s *Streamer) OnKLine(klType KLType, handler func([]qot.KLine) error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.handlers[klType] = handler
-}
-
-func (s *Streamer) Start(ctx context.Context, code string, market Market) error {
-	// Subscribe to K-line push
-	subTypes := make([]constant.SubType, 0)
-	for kt := range s.handlers {
-		subTypes = append(subTypes, constant.SubType(kt))
-	}
-
-	err := client.Subscribe(ctx, s.client, market, code, subTypes)
-	if err != nil {
-		return fmt.Errorf("subscribe failed: %w", err)
-	}
-
-	// Register handler for K-line updates
-	s.client.RegisterHandler(3005, func(protoID uint32, body []byte) {
-		// Parse and dispatch to appropriate handlers
-		// This would need actual push parsing
-	})
-
-	return nil
-}
-
 type DownloadStats struct {
 	TotalBars    int
 	DownloadTime time.Duration
