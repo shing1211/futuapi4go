@@ -1,6 +1,6 @@
 module github.com/shing1211/futuapi4go
 
-go 1.26.2
+go 1.26.6
 
 require (
 	github.com/gorilla/websocket v1.5.3

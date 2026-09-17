@@ -30,10 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- **Minimum Go raised to 1.26.2** (`go.mod`). `govulncheck` reported 11 standard
-  library vulnerabilities in Go 1.26.1 — `crypto/x509` and `crypto/tls` — that are
-  reachable through the TLS dial, read, and write paths. All are fixed in Go
-  1.26.2+. CI now uses the latest 1.26.x patch.
+- **Minimum Go raised to 1.26.6** (`go.mod`). `govulncheck` reported standard
+  library vulnerabilities in Go 1.26.1 — in `crypto/tls`, `crypto/x509`,
+  `encoding/asn1`, `net`, `net/http`, and `net/textproto` — reachable through the
+  TLS dial, read, and write paths. The highest fix lands in Go 1.26.6, so that is
+  now the minimum. CI installs the latest 1.26.x patch (`check-latest`).
 
 ## [0.19.0] - 2026-09-17
 
