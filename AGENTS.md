@@ -173,6 +173,7 @@ Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no 
 - **Testing Guide:** See README.md "Build & Test"; integration tests are gated by the `FUTU_INTEGRATION_TESTS=1` environment variable (not a build tag)
 - **Docs index:** `docs/README.md` — every document and its status (current vs historical)
 - **Protocol / version map:** `docs/VERSION_MAP.md` (authoritative for Futu protocol ↔ SDK tag)
+- **Architecture decisions:** `docs/adr/` (ADRs — read before reversing a deliberate choice)
 - **Robustness audit:** `docs/IMPROVEMENT_PLAN.md`
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
 - **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.2; requires Go 1.26.6+)

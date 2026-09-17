@@ -17,6 +17,12 @@ references and which are point-in-time plans.
 | [ERRORS.md](ERRORS.md) | Error codes, categories, recovery hints, retry guidance |
 | [VERSION_MAP.md](VERSION_MAP.md) | Futu protocol ↔ SDK tag mapping (authoritative) |
 
+## Architecture decisions
+
+| Document | What it is |
+|----------|------------|
+| [adr/README.md](adr/README.md) | Index of Architecture Decision Records (ADRs) — durable design decisions and their rationale |
+
 ## Operations & policy
 
 | Document | What it is |
