@@ -1,12 +1,14 @@
 # futuapi4go Architecture
 
-> **Version:** v0.15.1 | **Futu Protocol:** v10.9.6908 | **Updated:** 2026-08-05
+> **Version:** v0.19.2 | **Futu Protocol:** v10.10.7008 | **Updated:** 2026-09-17
+>
+> See [VERSION_MAP.md](VERSION_MAP.md) for the authoritative protocol/tag mapping.
 
 ---
 
 ## 1. Overview
 
-futuapi4go is a Go SDK for [Futu OpenD](https://www.futunn.com/en/overview) — a TCP-based trading and market data gateway. All communication uses Protocol Buffers over raw TCP sockets (no HTTP/REST/JSON).
+futuapi4go is a Go SDK for [Futu OpenD](https://www.futunn.com/en/overview) — a TCP-based trading and market data gateway. It speaks Protocol Buffers over raw TCP sockets, with an optional WebSocket transport (`ConnectWS`/`ConnectWSS`) for TLS/proxy environments. There is no HTTP/REST/JSON API. The SDK is a pure library — there is no `main` package or binary.
 
 ```
 Application
@@ -26,7 +28,7 @@ Application
 **Design Constraints:**
 - Protocol Buffers over TCP — no JSON
 - Context passed as first parameter to all public APIs
-- All protobuf fields accessed via direct nil-checks (no GetXxx helpers)
+- Protobuf fields are read through nil-safe helpers (`util.ProtoStr`, `util.ProtoInt32`, `util.ProtoUint64`, …) for explicit nil-safety
 - Thread-safe connection management with automatic reconnection
 - Typed error handling via `FutuError` with recovery suggestions
 
@@ -83,7 +85,7 @@ defer stop()
 for q := range ch { fmt.Println(q.CurPrice) }
 
 // Callback-based
-cli.OnQuote(func(q *push.UpdateBasicQot) { fmt.Println(q.CurPrice) })
+cli.OnQuote(func(q *client.PushQuote) error { fmt.Println(q.CurPrice); return nil })
 ```
 
 ### 2.3 Trading (`pkg/trd/`)
@@ -128,9 +130,9 @@ Cross-cutting concerns wired into every API call.
 
 | Package | Purpose |
 |---------|---------|
-| `breaker/` | Circuit breaker — trips after 5 failures in 10s, half-open probes |
-| `ratelimit/` | Per-protoID rate limiter — burst of 10, refill 100ms |
-| `retry/` | Exponential backoff — base 500ms, max 30s, jitter |
+| `breaker/` | Circuit breaker — opens after 5 consecutive failures, 30s cooldown, half-open probe |
+| `ratelimit/` | Per-protoID token bucket — caller-supplied rate/capacity (opt-in, no defaults) |
+| `retry/` | Exponential backoff — base 500ms, max 10s, 3 attempts |
 | `metrics/` | Request latency, success/failure counts, reconnect count |
 | `tracing/otel/` | OpenTelemetry integration (opt-in) |
 | `cache/` | LRU + TTL cache for kline data |
@@ -138,18 +140,27 @@ Cross-cutting concerns wired into every API call.
 
 ### 2.6 Protobuf Definitions (`pkg/pb/`)
 
-167 generated protobuf files matching Futu OpenD v10.8.6808 protocol.
+**184** generated protobuf packages matching Futu OpenD **v10.10.7008** (Futu
+protocol). There is **one Go package per `.proto` file**, named after the
+lowercased file name — e.g. `api/proto/Qot_GetBasicQot.proto` →
+`pkg/pb/qotgetbasicqot/`. Shared message types live in their own `*common`
+packages.
 
 ```
 pkg/pb/
-├── common/           (RetType, TrdEnv, TrdMarket, etc.)
-├── initconnect/      (C2S, S2C — connection handshake)
-├── keepalive/        (Ping/pong)
-├── qot/              (79 market data protos: GetBasicQot, GetKL, Subscribe, etc.)
-├── trd/              (Trading protos: PlaceOrder, CancelOrder, GetOrderList, etc.)
-├── sys/              (System protos: GetGlobalState, GetUserInfo)
-└── getglobalstate/  (Server state response)
+├── common/           shared wire types  (Common.proto)
+├── qotcommon/        Qot shared types   (Qot_Common.proto)
+├── trdcommon/        Trd shared types   (Trd_Common.proto)
+├── initconnect/      connection handshake
+├── keepalive/        ping/pong
+├── notify/           server notifications
+├── getglobalstate/ · getuserinfo/ · usedquota/ · verification/ · skillwrapapi/ · getdelaystatistics/
+├── qotgetbasicqot/ · qotgetkl/ · qotsub/ · qotgetorderbook/ · …   (151 Qot_*.proto → 151 packages)
+└── trdplaceorder/ · trdmodifyorder/ · trdgetorderlist/ · …       (22 Trd_*.proto → 22 packages)
 ```
+
+Regenerated from `api/proto/` via `scripts/regen-all-protos.sh`. See
+[VERSION_MAP.md](VERSION_MAP.md) for the protocol ↔ SDK-tag mapping.
 
 ---
 
@@ -165,7 +176,7 @@ Application
     Connect(addr)
          │
          ▼
-    ConnectWithRSA(addr, rsaPublicKeyPEM)        internal/client/client.go:558
+    ConnectWithRSA(addr, rsaPublicKeyPEM)        internal/client/client.go
          │
          ├─ conn.Dial(addr)                      TCP dial (30s timeout)
          │
@@ -187,7 +198,7 @@ Application
               └─ keepAliveInterval
 ```
 
-**Key files:** `internal/client/client.go:558-715`, `internal/client/conn.go:105-120`
+**Key files:** `internal/client/client.go`, `internal/client/conn.go`
 
 ### Flow 2: GetQuote (Market Data)
 
@@ -205,7 +216,7 @@ Application
          ├─ rateLimiter.Acquire()                Wait if exceeded
          │
          ▼
-    client.requestInternal()                     internal/client/client.go:1080
+    client.requestInternal()                     internal/client/client.go
          │
          ├─ serialNo := nextSerialNo()           Atomic counter
          ├─ proto.Marshal(req)                   Serialize to bytes
@@ -229,16 +240,16 @@ Application
     Return *qot.GetBasicQot.Response (or error)
 ```
 
-**Key files:** `client/quote_api.go`, `internal/client/client.go:1080`, `internal/client/conn.go:178-221`
+**Key files:** `client/quote_api.go`, `internal/client/client.go`, `internal/client/conn.go`
 
 ### Flow 3: PlaceOrder (Trading)
 
 ```
 Application
-    cli.Trade().PlaceOrder(ctx, trdEnv, market, code, side, qty, price)
+    cli.Trade().PlaceOrder(ctx, req *trd.PlaceOrderRequest)
          │
          ▼
-    trd.PlaceOrder()                              pkg/trd/place_order.go
+    trd.PlaceOrder()                              pkg/trd/orders.go
          │
          ├─ ValidateOrderParams()                Pre-flight checks
          │   ├─ market hours check
@@ -305,12 +316,12 @@ Application
     Application reads from channel (or callback fires)
 ```
 
-**Key files:** `pkg/qot/subscribe.go`, `pkg/push/qot_push.go`, `internal/client/client.go:672-685`
+**Key files:** `pkg/qot/subscribe.go`, `pkg/push/qot_push.go`, `internal/client/client.go`
 
 ### Flow 5: Reconnection & Keep-Alive
 
 ```
-readLoop()                                        internal/client/client.go:795
+readLoop()                                        internal/client/client.go
      │
      ├─ conn.readOne()                           Blocking read (no deadline)
      │
@@ -324,7 +335,7 @@ readLoop()                                        internal/client/client.go:795
      ├─ logWarn("connection lost: %v")
      │
      ▼
-  reconnect()                                     internal/client/client.go:840
+  reconnect()                                     internal/client/client.go
      │
      ├─ Check reconnecting flag (atomic CAS)
      ├─ Backoff: 3s → 6s → 12s → 30s (max)
@@ -332,7 +343,7 @@ readLoop()                                        internal/client/client.go:795
      ├─ re-init AES session key
      └─ Restart readLoop + keepAliveLoop
 
-keepAliveLoop(interval)                           internal/client/client.go:734
+keepAliveLoop(interval)                           internal/client/client.go
      │
      ├─ Every 30s (default):
      ├─ conn.WritePacket(ProtoID_KeepAlive, serialNo, body)
@@ -384,12 +395,11 @@ futuapi4go/
 │   │   ├── qot_push.go        Market data pushes
 │   │   └── trd_push.go        Trade pushes
 │   │
-│   ├── pb/                    Generated Protocol Buffer code (78 files)
-│   │   ├── common/            Shared enums (RetType, TrdEnv, Market, etc.)
-│   │   ├── initconnect/      InitConnect handshake
-│   │   ├── keepalive/        Keep-alive ping
-│   │   ├── qot/              79 market data protos
-│   │   └── trd/              Trading protos
+│   ├── pb/                    Generated protobuf — 184 packages (one per .proto)
+│   │   ├── common/ qotcommon/ trdcommon/    Shared wire types
+│   │   ├── initconnect/ keepalive/ notify/   Protocol
+│   │   ├── qotgetbasicqot/ qotgetkl/ …       151 Qot packages
+│   │   └── trdplaceorder/ trdmodifyorder/ …  22 Trd packages
 │   │
 │   ├── constant/              Typed enums, error codes, constants
 │   ├── breaker/               Circuit breaker (circuitbreaker pattern)
@@ -415,7 +425,7 @@ futuapi4go/
 │       └── alloc.go          sync.Pool for buffer recycling
 │
 ├── api/                       Protocol definitions
-│   └── proto/                .proto source files (184 protos, Futu v10.9.6908)
+│   └── proto/                .proto source files (184 protos, Futu v10.10.7008)
 │
 ├── test/                      Integration tests, benchmarks, fixtures
 │   ├── integration/          Live OpenD tests (requires running OpenD)
@@ -425,8 +435,8 @@ futuapi4go/
 │   ├── benchmark/            Performance benchmarks
 │   └── fixtures/             Test fixtures (HSI symbol data)
 │
-├── docs/                      Documentation
-│   └── CHANGELOG.md          Release history
+├── docs/                      Documentation (ARCHITECTURE, USAGE, VERSION_MAP, index.html, plans)
+│   └── CHANGELOG.md           (note: the CHANGELOG lives at the repo root)
 │
 ├── client/client_test.go     Unit tests for client
 └── Makefile                  build, test, release targets
@@ -478,11 +488,11 @@ flowchart TB
         end
     end
 
-    subgraph GeneratedPB["pkg/pb/ — Generated Protobuf (78 files)"]
-        PB1[common/<br/>RetType TrdEnv Market]
-        PB2[initconnect/<br/>Handshake]
-        PB3[qot/ 5001-5999<br/>79 Market Data Protos]
-        PB4[trd/ 2201-2299<br/>Trading Protos]
+    subgraph GeneratedPB["pkg/pb/ — Generated Protobuf (184 packages)"]
+        PB1[common/ qotcommon/ trdcommon/<br/>Shared wire types]
+        PB2[initconnect/ keepalive/ notify/<br/>Protocol]
+        PB3[qot*/<br/>151 Qot packages]
+        PB4[trd*/<br/>22 Trd packages]
     end
 
     subgraph Core["internal/client/ — Core TCP Stack"]
@@ -499,8 +509,8 @@ flowchart TB
 
         subgraph Resiliences["Resilience"]
             R1[Circuit Breaker<br/>5 failures → open]
-            R2[Rate Limiter<br/>10 burst 100ms refill]
-            R3[Retry<br/>500ms base 30s max]
+            R2[Rate Limiter<br/>opt-in token bucket]
+            R3[Retry<br/>500ms base 10s max]
         end
     end
 
@@ -551,15 +561,19 @@ flowchart TB
 
 ## 7. Protocol Version History
 
+The authoritative table lives in [VERSION_MAP.md](VERSION_MAP.md). Summary:
+
 | SDK Version | Proto Version | Notable Changes |
 |-------------|---------------|-----------------|
-| v0.15.0 | v10.9.6908 | Latest — 184 protos, 17 Event Contract / Prediction Market APIs (ProtoIDs 3434-3456); 23 new client wrappers + 3 push parsers |
-| v0.15.1 | v10.9.6908 | Backfill: ParseUpdateOptionEvent (3310) + ParsePushIndicatorCalc (3261); EC chanpkg subscribe wrappers |
-| v0.14.0 | v10.8.6808 | 167 protos, 56 new v10.8 APIs (search, indicators, options analytics, rankings, institutional, chain, heatmap, market fundamentals) |
-| v0.9.0 | v10.5.6508 | Latest — 78 protos |
-| v0.5.7 | v10.5.6508 | Upgrade from v10.4.6408 |
+| v0.19.2 | v10.10.7008 | Latest — LICENSE/module-doc/release-workflow housekeeping |
+| v0.19.0 | v10.10.7008 | `clientVer` 1100, `SubType` enum aligned to the wire, CI (build/vet/race/gofmt/docs) |
+| v0.18.0 | v10.10.7008 | Human-readable opt-in packet logging, injectable `slog` logger, `handshakeClientVer` constant |
+| v0.16.0 | v10.10.7008 | Protocol upgrade (184 protos) |
+| v0.15.0 | v10.9.6908 | 184 protos, 17 Event Contract / Prediction Market APIs |
+| v0.14.0 | v10.8.6808 | 167 protos, 56 new v10.8 APIs |
+| v0.11.0 | v10.6.6608 | 104 protos |
+| v0.9.0 | v10.5.6508 | 78 protos |
 | v0.5.0 | v10.4.6408 | Context as first param, typed enums |
-| v0.4.0 | v10.3.5808 | Initial stable release |
 
 ---
 
@@ -567,7 +581,7 @@ flowchart TB
 
 1. **Binary over TCP** — No HTTP/REST/JSON. Pure Protobuf serialization.
 2. **Context as first param** — All public APIs accept `context.Context` as first argument.
-3. **No GetXxx helpers** — Direct nil-checks on proto fields: `if field != nil { val = *field }`.
+3. **Nil-safe proto access** — New code reads proto fields through `util.ProtoStr` / `util.ProtoInt32` / `util.ProtoUint64` helpers instead of dereferencing pointers directly.
 4. **Concurrent reads** — `readLoop()` goroutine reads packets; response dispatched by SerialNo.
 5. **Graceful degradation** — Circuit breaker, rate limiter, retry, and cache all opt-in.
 6. **Thread-safe** — All shared state protected by `sync.Mutex` or `sync/atomic`.
