@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI workflows** (`.github/workflows/`): `ci.yml` runs `go build`, `go vet`,
   `go test -race`, and the README-translation check on every push and PR;
   `govulncheck.yml` scans dependencies weekly; `codeql.yml` runs CodeQL for Go.
+- **Release workflow** (`.github/workflows/release.yml`): tag-triggered job that
+  runs `goreleaser-action@v6` on `v*` tag pushes using the built-in
+  `GITHUB_TOKEN`. Manual `make release` continues to work for local releases.
+
+### Changed
+
+- **Repository layout** — plan docs (`IMPLEMENTATION_PLAN.md`,
+  `PHASE3/4/5/…PLAN.md`, `PHASE6_…PLAN.md`, `UPGRADE_PLAN.md`) moved from the
+  repo root into `docs/`. The root now holds only project metadata. Internal
+  plan-to-plan cross-references and the `docs/index.html` cards have been
+  updated. `git mv` preserves file history.
+- **Strict format check in CI** — `ci.yml` now runs `gofmt -l .` and fails the
+  build on any unformatted file. The codebase is reformatted in this release.
+  Contributors must run `make fmt-fix` (or `gofmt -w .`) before opening a PR.
 
 ### Fixed
 
@@ -27,6 +41,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   nil, and `apiTimeout` was accessed unlocked. All accesses now snapshot the
   connection (and timeout) under the mutex. Fixes the `-race` failures in the
   mock and API test suites.
+- **Stale `docs/CHANGELOG.md` path in `AGENTS.md`** (lines 55 and 170). The
+  CHANGELOG lives at the repo root; both references now point to `CHANGELOG.md`.
+- **Broken `ENHANCEMENT_PLAN.md` link in 8 files** (6 READMEs, `AGENTS.md`,
+  `docs/IMPLEMENTATION_COMPLETE.md`). The original enhancement plan no longer
+  exists at the repo root; all link targets now point to
+  `docs/IMPLEMENTATION_COMPLETE.md`, which is itself described as the "Original
+  enhancement plan with current state". CHANGELOG.md historical references are
+  preserved verbatim.
 
 ### Security
 
