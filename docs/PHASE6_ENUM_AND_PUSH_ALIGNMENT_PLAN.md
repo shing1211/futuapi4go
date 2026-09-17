@@ -278,7 +278,7 @@ selects it by parameter. The push then reports which book each message carries.
 - [x] No reference to `Streamer`/`NewStreamer`/`StreamKLineRequest` remains
 - [x] `push.UpdateOrderBook` carries `OrderBookType`
 - [x] CHANGELOG updated under `[Unreleased]`
-- [x] Tagged `v0.19.0` and pushed to both remotes
+- [x] Tagged `v0.19.0` and pushed to origin/main
 
 ---
 

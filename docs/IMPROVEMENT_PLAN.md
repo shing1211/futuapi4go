@@ -2,7 +2,7 @@
 
 > **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.2 | **Status:** COMPLETE — FIX-001…FIX-006 resolved in v0.9.1 (commit `3b34ae3`), FIX-007 (RSA key) in v0.19.1; LOW polish items L01-L14 also complete
 >
-> **Related:** [DESIGN.md](DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
+> **Related:** [DESIGN.md](../DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
 
 ## Resolution Summary
 
@@ -464,7 +464,7 @@ All findings evaluated against:
 | Document | Purpose |
 |----------|---------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture, layers, execution flows |
-| [DESIGN.md](DESIGN.md) | Design decisions, API patterns, security model |
+| [DESIGN.md](../DESIGN.md) | Design decisions, API patterns, security model |
 | [CHANGELOG.md](../CHANGELOG.md) | Release history (v0.5.7 → v0.19.2) |
 | [AGENTS.md](../AGENTS.md) | Development standards, code review checklist |
 | [README.md](../README.md) | API reference, installation, quick start |

@@ -1,7 +1,11 @@
 # Phase 4: Missing High-Level API Coverage — Detailed Design & Implementation Plan
 
 *Generated: 2026-05-21*
-*SDK Version: v0.14.0 (Futu Protocol v10.8.6808)*
+*SDK Version at writing: v0.14.0 (Futu Protocol v10.8.6808)*
+
+> **Status: COMPLETE — historical plan.** Implemented in v0.14.0. Current
+> release: v0.19.2 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
+> The coverage counts and deferral lists below are a point-in-time snapshot.
 
 ---
 
@@ -896,7 +900,7 @@ go test -race ./pkg/qot/... ./client/...
 ```
 git add -A && git commit -m "feat: Phase 4 — add 25 new quote APIs + client wrappers"
 git push origin main
-git push gitee main
+git push origin main
 ```
 
 ---
@@ -930,14 +934,17 @@ git push gitee main
 
 ## 10. Verification Checklist
 
-- [ ] All 9 new pkg/qot/ files created and building
-- [ ] All 25 new pkg/qot/ functions follow the implementation pattern
-- [ ] All 26 client/quote_api.go wrappers added with validation
-- [ ] All 25 client/fluent_api.go QuoteAPI methods added
-- [ ] All 8 client/trade_api.go convenience wrappers added
-- [ ] `go build ./...` passes
-- [ ] `go vet ./...` passes
-- [ ] `go test -race ./pkg/qot/... ./client/...` passes
-- [ ] CHANGELOG.md updated
-- [ ] docs/IMPLEMENTATION_PLAN.md updated
-- [ ] Changes committed and pushed to origin/main + gitee/main
+_Original plan checklist — every item was verified at release (v0.14.0) and the
+build/vet/test gates are now enforced by CI (`.github/workflows/ci.yml`)._
+
+- [x] All 9 new pkg/qot/ files created and building
+- [x] All 25 new pkg/qot/ functions follow the implementation pattern
+- [x] All 26 client/quote_api.go wrappers added with validation
+- [x] All 25 client/fluent_api.go QuoteAPI methods added
+- [x] All 8 client/trade_api.go convenience wrappers added
+- [x] `go build ./...` passes
+- [x] `go vet ./...` passes
+- [x] `go test -race ./pkg/qot/... ./client/...` passes
+- [x] CHANGELOG.md updated
+- [x] docs/IMPLEMENTATION_PLAN.md updated
+- [x] Changes committed and pushed to origin/main

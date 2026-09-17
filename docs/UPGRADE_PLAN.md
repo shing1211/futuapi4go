@@ -3,6 +3,11 @@
 **Date:** 2026-05-21
 **Goal:** Upgrade SDK to support Futu OpenD v10.6.6608
 
+> **Status: COMPLETE — historical (superseded).** The SDK now targets Futu OpenD
+> **v10.10.7008** (184 protos, `clientVer` 1100); see
+> [VERSION_MAP.md](VERSION_MAP.md). This document is retained as a template for
+> future protocol upgrades.
+
 ---
 
 ## Status Quo
@@ -146,4 +151,4 @@ go test -race ./...
 
 - **SDK version**: v0.11.0
 - **Tag**: `v0.11.0`
-- **Push to**: origin + gitee (dual push)
+- **Push to**: origin (gitee mirror retired)

@@ -4,21 +4,18 @@
 
 ## Overview
 
-The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.19.2 (Futu Protocol v10.10.7008), the SDK has achieved **100% API coverage** (184/184 OpenAPI ProtoIDs wrapped: 151 Qot, 22 Trd, 7 Sys; 12 push-only notifications covered by typed parsers), full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and 113 demo examples. All phases from v0.5.0 through v0.19.2 are complete.
+The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.19.2 (Futu Protocol v10.10.7008) it wraps all **184** Futu OpenD proto files (151 Qot, 22 Trd, 11 shared/protocol/system), with push notifications covered by typed parsers. It provides full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and a companion demo repository (`futuapi4go-demo`) with runnable examples. All phases from v0.5.0 through v0.19.2 are complete.
 
 ---
 
 ## API Coverage Summary
 
-| Category | Protos | Wrapped | Coverage |
-|----------|--------|---------|----------|
-| Qot (Market Data) | 151 | 151 | 100% |
-| Trd (Trading) | 22 | 22 | 100% |
-| Sys (System) | 7 | 7 | 100% |
-| **API Total** | **176** | **176** | **100%** |
-| Shared types (Common, Qot_Common, Qot_OptionCommon, Trd_Common) | 4 | — (type definitions) | n/a |
-| Internal (InitConnect, KeepAlive, Notify, UsedQuota) | 4 | 4 | 100% |
-| **All protos** | **184** | **184** | **100%** |
+| Category | Protos | Notes |
+|----------|--------|-------|
+| Qot — market data | 151 | includes the shared `Qot_Common` type proto |
+| Trd — trading | 22 | includes the shared `Trd_Common` type proto |
+| Common / protocol / system | 11 | `Common`, `InitConnect`, `KeepAlive`, `Notify`, `GetGlobalState`, `GetUserInfo`, `GetDelayStatistics`, `UsedQuota`, `Verification`, `SkillWrapAPI`, `TestCmd` |
+| **Total** | **184** | matches `ls api/proto/*.proto \| wc -l` and `find pkg/pb -name '*.pb.go' \| wc -l` |
 
 ---
 
@@ -40,7 +37,7 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 ### Item 1c: Audit Examples 21-99
 
-- **Scope:** 107 examples total; ~6 verified in earlier phases; cross-layer proto field trace completed for all major examples
+- **Scope:** the companion `futuapi4go-demo` examples; ~6 verified in earlier phases; cross-layer proto field trace completed for all major examples
 - **Verification results:** Gaps A–F identified and fixed (PushTicker, PushRT, KLine, StaticInfo, GetCapitalFlow, GetMarketState)
 - **Status:** ✅ COMPLETE (all major gaps resolved)
 
@@ -125,9 +122,11 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 ## Example Coverage
 
+Counts below describe the companion `futuapi4go-demo` repository (128 examples as of v0.19.2):
+
 | Category | Count | Status |
 |----------|-------|--------|
-| Total Examples | 105 | ✅ All functional |
+| Total Examples | 128 | ✅ All functional |
 | SDK Wrapper Usage | 90+ | ✅ Proper patterns |
 | Raw Proto Requests | 7 | ⚠️ Acceptable (request types only) |
 | Trade() Direct API | 6 | ⚠️ Advanced use case |
@@ -164,6 +163,10 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 | v0.8.3 | 2026-05-17 | Plate.PlateType field added |
 | v0.8.5 | 2026-05-17 | GetDelayStatistics typed wrappers, GetFlowSummaryResponse wrapped type, cross-layer field audit |
 
+_This table records the early phases only. For the full history through v0.19.2
+(protocol upgrades v10.6 → v10.10, CI, races, and API coverage), see
+[CHANGELOG.md](../CHANGELOG.md)._
+
 ---
 
 ## What's Left (None — All Items Complete)
@@ -179,7 +182,6 @@ All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 
 ## References
 
-- `CHANGELOG.md` — Full version history from v0.0.1 through v0.19.2
-- `docs/IMPLEMENTATION_COMPLETE.md` — Original enhancement plan with current state
-- `docs/PROTO_FIELD_COMPLETION_PLAN.md` — Phase I proto field enrichment (superseded)
-- `docs/PROTO_FIELD_COMPLETION_PLAN_v2.md` — Phase II-X audit with 30 issues (superseded)
+- [`CHANGELOG.md`](../CHANGELOG.md) — full version history (v0.0.1 → v0.19.2)
+- [`docs/VERSION_MAP.md`](VERSION_MAP.md) — SDK-tag ↔ Futu OpenD protocol mapping
+- [`docs/IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) — robustness audit (all items resolved)

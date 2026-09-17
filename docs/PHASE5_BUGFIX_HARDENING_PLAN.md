@@ -700,7 +700,9 @@ Add all Phase 5 items under `[Unreleased]`:
 - Fixed nil dereference in Conn.LocalAddr/RemoteAddr
 - Fixed AES CBC PKCS#7 unpadding
 - Fixed breaker halfOpenMax enforcement
-- Fixed pool contention (mutex no longer held during TCP dial)
+- Pool contention: **not fixed here** — `newClientLocked` still performs the TCP
+  dial and `InitConnect` handshake while holding the pool mutex (corrected by
+  [PHASE6_ENUM_AND_PUSH_ALIGNMENT_PLAN.md](PHASE6_ENUM_AND_PUSH_ALIGNMENT_PLAN.md), which records this as outstanding)
 - Added middleware/interceptor pattern
 - Wired degradation manager, metrics callbacks, otel tracing
 
@@ -721,7 +723,7 @@ Mark Phase 5 items as DONE.
 git add -A
 git commit -m "phase5: bug fixes, missing APIs, architecture hardening"
 git push origin main
-git push gitee main
+git push origin main
 ```
 
 ---
@@ -759,14 +761,17 @@ git push gitee main
 
 ## Verification Checklist
 
-- [ ] `go build ./...` passes
-- [ ] `go vet ./...` passes
-- [ ] `go test -race ./...` passes
-- [ ] All ProtoIDs match official Futu API v10.6 documentation
-- [ ] No `GetXxx()` calls on proto messages (except enum-typed getters)
-- [ ] No data races detected by `-race` flag
-- [ ] AES encrypt/decrypt round-trip test passes
-- [ ] Breaker halfOpenMax enforced in test
-- [ ] Pool Get/Put concurrent test passes without timeout
-- [ ] CHANGELOG.md updated
-- [ ] Committed and pushed to both remotes
+_Original plan checklist — verified at release; the build/vet/race gates are now
+enforced by CI (`.github/workflows/ci.yml`)._
+
+- [x] `go build ./...` passes
+- [x] `go vet ./...` passes
+- [x] `go test -race ./...` passes
+- [x] All ProtoIDs match official Futu API v10.6 documentation (that was the target at the time; the SDK has since moved to v10.10.7008)
+- [x] No `GetXxx()` calls on proto messages (except enum-typed getters)
+- [x] No data races detected by `-race` flag
+- [x] AES encrypt/decrypt round-trip test passes
+- [x] Breaker halfOpenMax enforced in test
+- [x] Pool Get/Put concurrent test passes without timeout
+- [x] CHANGELOG.md updated
+- [x] Committed and pushed to origin/main

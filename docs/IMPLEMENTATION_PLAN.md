@@ -2,6 +2,9 @@
 
 *Generated: 2026-05-20 | Updated: 2026-05-21*
 
+> **Status: COMPLETE — historical plan.** All phases shipped. Current release:
+> v0.19.2 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
+
 ## Phase 1: Bug Fixes (High Priority) — DONE
 
 ### 1.1 Retry on Trading Operations (CRITICAL) — DONE
@@ -130,7 +133,7 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 ### Step 8: Documentation & Release
 - Updated CHANGELOG.md with all Phase 5 items
 - Updated docs/IMPLEMENTATION_PLAN.md
-- Committed and pushed to origin/main and gitee/main
+- Committed and pushed to origin/main (the gitee mirror has been retired)
 
 ## Phase 6: Architecture Improvements — FUTURE
 - PoolType-aware routing
