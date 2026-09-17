@@ -1,6 +1,8 @@
 # goreleaser config for futuapi4go SDK
 # Pure Go library — no binaries to build
 
+version: 2
+
 project_name: futuapi4go
 builds: []
 
@@ -29,6 +31,3 @@ release:
     **Full Changelog**: https://github.com/shing1211/futuapi4go/compare/{{ .PreviousTag }}...{{ .Tag }}
   draft: false
   prerelease: auto
-
-# Skip existing tags (idempotent)
-skip: false
