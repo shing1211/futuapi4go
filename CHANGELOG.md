@@ -69,6 +69,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from the `docs/` folder at <https://shing1211.github.io/futuapi4go/>, plus a
   Docs badge in `README.md`.
 
+- **Community health files** — `SUPPORT.md`, `CONTRIBUTING.md`,
+  `CODE_OF_CONDUCT.md`, `DISCLAIMER.md`, `GOVERNANCE.md`, and `.github/`
+  templates (`FUNDING.yml`, `CODEOWNERS`, `dependabot.yml`,
+  `PULL_REQUEST_TEMPLATE.md`, issue templates).
+
+- **README translations** — 简体中文, 繁體中文, 日本語, 한국어, and Español
+  (`README.<locale>.md`), plus `TRANSLATING.md`, `README.zh-CN.md` redirect
+  stub, and `scripts/check_i18n.py` (run via `make docs-check`).
+
 - **Version map** (`docs/VERSION_MAP.md`) — maps each SDK release range to the
   Futu OpenD protocol version, proto count, and `clientVer`. The SDK's own
   `v0.x.y` tags do not encode the protocol version, so this is the authoritative

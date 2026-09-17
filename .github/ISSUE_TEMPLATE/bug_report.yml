@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a bug in futuapi4go
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. **Do not** include trading
+        passwords, RSA keys, account numbers, or other secrets. For security
+        issues, see SECURITY.md instead.
+  - type: input
+    id: version
+    attributes:
+      label: futuapi4go version
+      description: Commit SHA or tag (for example v0.18.1)
+    validations:
+      required: true
+  - type: input
+    id: gover
+    attributes:
+      label: Go version
+      description: Output of `go version`
+    validations:
+      required: true
+  - type: input
+    id: opend
+    attributes:
+      label: Futu OpenD version
+      description: OpenD build/protocol version (see docs/VERSION_MAP.md)
+    validations:
+      required: false
+  - type: dropdown
+    id: env
+    attributes:
+      label: Trading environment
+      options:
+        - Simulate
+        - Real
+        - N/A (market data only)
+    validations:
+      required: false
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Smallest code + exact command
+      render: go
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Error output
+      description: Full output, secrets redacted
+      render: shell
+    validations:
+      required: false

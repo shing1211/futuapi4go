@@ -1,6 +1,6 @@
 # futuapi4go Makefile
 
-.PHONY: build test vet lint clean install bench release help
+.PHONY: build test vet lint clean install bench release docs-check help
 
 # Build all packages
 build:
@@ -68,6 +68,10 @@ release:
 		echo "  gh release create vX.Y.Z --title 'vX.Y.Z' --notes 'See CHANGELOG.md'" ; \
 	}
 
+# Check README translations are consistent with the English canonical
+docs-check:
+	python3 scripts/check_i18n.py
+
 # Show help
 help:
 	@echo "futuapi4go Makefile targets:"
@@ -84,4 +88,5 @@ help:
 	@echo "  make check       - Quick check (fmt + vet + build)"
 	@echo "  make test-pkg    - Run specific package tests"
 	@echo "  make release     - Create GitHub release (requires git tag)"
+	@echo "  make docs-check  - Check README translations"
 	@echo "  make help        - Show this help"
