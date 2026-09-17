@@ -173,7 +173,7 @@ Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no 
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `docs/IMPLEMENTATION_COMPLETE.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.1)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.2)
 
 ---
 
