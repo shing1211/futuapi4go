@@ -19,7 +19,7 @@
 [English](./README.md) · [简体中文](./README.zh-Hans.md) · [繁體中文](./README.zh-Hant.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md)
 
 > 本ファイルは英語版 [README](./README.md) のコミュニティ翻訳です。**英語版が正となります。**
-> 同期 / Last synced: d5bc023
+> 同期 / Last synced: f0bdb58
 
 - すべての Futu OpenAPI サービスをカバーする 184 個の protobuf 型
 - 環境変数設定によるワンライナー接続 (`NewClientFromEnv`)
