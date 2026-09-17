@@ -1,10 +1,10 @@
 # FutuAPI4Go SDK — Implementation Complete
 
-> **Version:** v0.15.1 | **Date:** 2026-08-05 | **Status:** COMPLETE
+> **Version:** v0.19.0 | **Date:** 2026-09-17 | **Status:** COMPLETE
 
 ## Overview
 
-The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.15.1 (Futu Protocol v10.9.6908), the SDK has achieved **100% API coverage** (176/176 OpenAPI ProtoIDs wrapped: 151 Qot, 22 Trd, 7 Sys; 12 push-only notifications covered by typed parsers), full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and 113 demo examples. All phases from v0.5.0 through v0.15.1 are complete.
+The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.19.0 (Futu Protocol v10.10.7008), the SDK has achieved **100% API coverage** (184/184 OpenAPI ProtoIDs wrapped: 151 Qot, 22 Trd, 7 Sys; 12 push-only notifications covered by typed parsers), full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and 113 demo examples. All phases from v0.5.0 through v0.19.0 are complete.
 
 ---
 
@@ -179,7 +179,7 @@ All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 
 ## References
 
-- `CHANGELOG.md` — Full version history from v0.0.1 through v0.15.1
+- `CHANGELOG.md` — Full version history from v0.0.1 through v0.19.0
 - `docs/IMPLEMENTATION_COMPLETE.md` — Original enhancement plan with current state
 - `docs/PROTO_FIELD_COMPLETION_PLAN.md` — Phase I proto field enrichment (superseded)
 - `docs/PROTO_FIELD_COMPLETION_PLAN_v2.md` — Phase II-X audit with 30 issues (superseded)

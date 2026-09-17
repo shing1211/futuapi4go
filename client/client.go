@@ -443,12 +443,12 @@ func WithEnvConfig() Option {
 				data, err := os.ReadFile(v)
 				if err != nil {
 					slog.Warn("FUTU_RSA_PRIVATE_KEY: file exists but cannot be read", "path", v, "error", err)
-					o.RSAPrivateKey = v
+					o.RSAPrivateKey = constant.SensitiveString(v)
 				} else {
-					o.RSAPrivateKey = string(data)
+					o.RSAPrivateKey = constant.SensitiveString(data)
 				}
 			} else {
-				o.RSAPrivateKey = v
+				o.RSAPrivateKey = constant.SensitiveString(v)
 			}
 		}
 		if v := os.Getenv("FUTU_ENCRYPT"); v == "1" || v == "true" {

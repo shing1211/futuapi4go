@@ -504,6 +504,63 @@ func TestModifyOrder_Cancel(t *testing.T) {
 	server.AssertProtoID(t, 2205)
 }
 
+func TestCancelAllOrder_ForAll(t *testing.T) {
+	server := testutil.NewMockServer(t)
+
+	server.RegisterHandler(2205, func(req []byte) (proto.Message, error) {
+		var reqMsg trdmodifyorder.Request
+		if err := proto.Unmarshal(req, &reqMsg); err != nil {
+			return nil, err
+		}
+
+		if !reqMsg.C2S.GetForAll() {
+			t.Errorf("expected ForAll=true, got false")
+		}
+		if reqMsg.C2S.GetOrderID() != 0 {
+			t.Errorf("expected OrderID=0 when ForAll=true, got %d", reqMsg.C2S.GetOrderID())
+		}
+		if reqMsg.C2S.GetModifyOrderOp() != int32(constant.ModifyOrderOp_Cancel) {
+			t.Errorf("expected ModifyOrderOp=Cancel, got %d", reqMsg.C2S.GetModifyOrderOp())
+		}
+
+		trdEnv := int32(fixtures.TestTrdEnv)
+		accID := fixtures.TestAccID
+		trdMarket := int32(fixtures.TestTrdMkt)
+		s2c := &trdmodifyorder.S2C{
+			Header: &trdcommon.TrdHeader{
+				TrdEnv:    &trdEnv,
+				AccID:     &accID,
+				TrdMarket: &trdMarket,
+			},
+		}
+		return &trdmodifyorder.Response{S2C: s2c, RetType: proto.Int32(0)}, nil
+	})
+
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer server.Stop()
+
+	cli, cleanup := testutil.NewTestClient(t, server)
+	defer cleanup()
+
+	_, err := trd.ModifyOrder(context.Background(), cli, &trd.ModifyOrderRequest{
+		AccID:         fixtures.TestAccID,
+		TrdMarket:     fixtures.TestTrdMkt,
+		TrdEnv:        constant.TrdEnv_Simulate,
+		OrderID:       0,
+		ModifyOrderOp: constant.ModifyOrderOp_Cancel,
+		Price:         0,
+		Qty:           1,
+		ForAll:        true,
+	})
+	if err != nil {
+		t.Fatalf("ModifyOrder(ForAll=true) failed: %v", err)
+	}
+
+	server.AssertProtoID(t, 2205)
+}
+
 func TestGetOrderFillList_HSI(t *testing.T) {
 	server := testutil.NewMockServer(t)
 

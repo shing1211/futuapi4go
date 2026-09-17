@@ -247,8 +247,8 @@ type ClientOptions struct {
 	TLSConfig *tls.Config // TLS configuration (nil = no TLS)
 
 	// RSA
-	RSAPublicKey  string // RSA public key in PEM format for InitConnect encryption
-	RSAPrivateKey string // RSA private key in PEM format (required for encryption mode)
+	RSAPublicKey  string                   // RSA public key in PEM format for InitConnect encryption
+	RSAPrivateKey constant.SensitiveString // RSA private key in PEM format (required for encryption mode)
 
 	// Encryption
 	EncryptionEnabled bool // Enable FTAES encryption for all packets after InitConnect
@@ -360,7 +360,7 @@ func WithRSAPublicKey(pem string) Option {
 // Required when WithEncryption is enabled. The public key is extracted automatically,
 // so WithRSAPublicKey is not needed when using a private key PEM.
 func WithRSAPrivateKey(pem string) Option {
-	return func(o *ClientOptions) { o.RSAPrivateKey = pem }
+	return func(o *ClientOptions) { o.RSAPrivateKey = constant.SensitiveString(pem) }
 }
 
 // WithEncryption enables FTAES encryption for all packets after InitConnect.
@@ -748,15 +748,15 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	c.logInfo("[%s] ConnectWithRSA: Start, addr=%s, rsaKeyLen=%d", c.ts(), addr, len(rsaPublicKeyPEM))
 
 	// Determine encryption mode: use FTAES if EncryptionEnabled and private key is available
-	useEncryption := c.opts.EncryptionEnabled && c.opts.RSAPrivateKey != ""
-	if c.opts.EncryptionEnabled && c.opts.RSAPrivateKey == "" {
+	useEncryption := c.opts.EncryptionEnabled && !c.opts.RSAPrivateKey.IsEmpty()
+	if c.opts.EncryptionEnabled && c.opts.RSAPrivateKey.IsEmpty() {
 		return fmt.Errorf("encryption enabled but no RSA private key provided: use WithRSAPrivateKey()")
 	}
 
 	// Determine which PEM to use for RSA encrypt
 	rsaEncryptPEM := rsaPublicKeyPEM
 	if useEncryption && rsaEncryptPEM == "" {
-		rsaEncryptPEM = string(c.opts.RSAPrivateKey) // RSAEncrypt extracts public key from private key PEM
+		rsaEncryptPEM = c.opts.RSAPrivateKey.Raw() // RSAEncrypt extracts public key from private key PEM
 	}
 
 	if c.opts.TLSConfig != nil {
@@ -858,7 +858,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 	rspBody := respPkt.Body
 	if useEncryption {
 		c.logInfo("[%s] ConnectWithRSA: RSA decrypting InitConnect response body (%d bytes)...", c.ts(), len(rspBody))
-		decryptedBody, err := RSADecrypt(string(c.opts.RSAPrivateKey), rspBody)
+		decryptedBody, err := RSADecrypt(c.opts.RSAPrivateKey.Raw(), rspBody)
 		if err != nil {
 			c.conn.Close()
 			c.logError("[%s] ConnectWithRSA: RSA decrypt FAILED: %v", c.ts(), err)

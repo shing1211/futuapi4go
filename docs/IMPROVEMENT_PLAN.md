@@ -1,8 +1,22 @@
 # futuapi4go Robustness Improvement Plan
 
-> **Generated:** 2026-05-18 | **Updated:** 2026-06-29 | **Version:** v0.14.0 | **Status:** Substantially complete — all HIGH/MED priority fixes done, LOW polish items L01-L14 done
+> **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.0 | **Status:** COMPLETE — all HIGH/MED priority fixes (FIX-001 through FIX-007) resolved in v0.9.1 (commit `3b34ae3`); LOW polish items L01-L14 also complete
 >
 > **Related:** [DESIGN.md](DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
+
+## Resolution Summary
+
+All FIX-001 through FIX-007 were resolved in **v0.9.1** (commit `3b34ae3`, 2026-05-18) and later hardening. See the [CHANGELOG.md](../CHANGELOG.md) `[v0.9.1]` entry for details.
+
+| ID | Issue | Resolution | CHANGELOG |
+|----|-------|-----------|--------|
+| FIX-001 | `CancelAllOrder` rejected `ForAll=true` | `orders.go:248` added `&& !req.ForAll` guard | line 447 |
+| FIX-002 | `s2c.GetHeader().GetAccID()` nil-chain panic | `orders.go:331-334,408-411` store `respHeader` with nil checks | line 448 |
+| FIX-003 | `readLoop` goroutine leak on hung TCP | `conn.go:257` sets `SetReadDeadline(now+apiTimeout)`; default 30 s deadline | line 449 |
+| FIX-004 | `PlaceOrder` accepted `price<=0` for limit orders | `orders.go:117` rejects `price<=0` for non-market types | line 450 |
+| FIX-005 | `GetDelayStatistics` bypassed `EnsureConnected` | `system.go:338` calls `EnsureConnected()` before raw socket I/O | line 451 |
+| FIX-006 | `wrapError` switch redundant vs direct cast | Deliberately simplified to `ErrorCode(retType)` cast (switch is equivalent); trd/sys retain switch for clarity | line 455 |
+| FIX-007 | `RSAPrivateKey` stored as plain `string` | v0.20.0: field changed to `constant.SensitiveString` with `.Raw()`/`.IsEmpty()` | this release |
 
 ---
 
@@ -432,16 +446,16 @@ All findings evaluated against:
 
 ## 9. Quick Reference
 
-| Fix ID | Priority | File | Lines | Summary |
-|--------|----------|------|-------|---------|
-| FIX-001 | HIGH | `pkg/trd/orders.go` | 244-246 | CancelAllOrder broken |
-| FIX-002 | MEDIUM | `pkg/trd/orders.go` | 326,399 | GetHeader() nil chain |
-| FIX-003 | MEDIUM | `internal/client/client.go` | 943 | readLoop goroutine leak |
-| FIX-004 | MEDIUM | `pkg/trd/orders.go` | 140 | Price validation missing |
-| FIX-005 | MEDIUM | `pkg/sys/system.go` | 352 | DelayStats bypass |
-| FIX-006 | MEDIUM | `pkg/{qot,trd,sys}/*.go` | multiple | Error code granularity |
-| FIX-007 | MEDIUM | `internal/client/client.go` | 152 | RSA key plaintext |
-| L01-L14 | LOW | multiple | multiple | Polish items |
+| Fix ID | Priority | File | Lines | Summary | Status |
+|--------|----------|------|-------|---------|--------|
+| FIX-001 | HIGH | `pkg/trd/orders.go` | 248 | CancelAllOrder ForAll guard | DONE v0.9.1 |
+| FIX-002 | MEDIUM | `pkg/trd/orders.go` | 331-334, 408-411 | respHeader nil checks | DONE v0.9.1 |
+| FIX-003 | MEDIUM | `internal/client/conn.go` | 257 | SetReadDeadline in readOne | DONE v0.9.1 |
+| FIX-004 | MEDIUM | `pkg/trd/orders.go` | 117 | price<=0 rejection | DONE v0.9.1 |
+| FIX-005 | MEDIUM | `pkg/sys/system.go` | 338 | EnsureConnected before raw I/O | DONE v0.9.1 |
+| FIX-006 | MEDIUM | `pkg/{qot,trd,sys}/*.go` | multiple | wrapError direct cast (equivalent) | WONTFIX v0.9.1 |
+| FIX-007 | MEDIUM | `internal/client/client.go` | 251 | RSAPrivateKey→SensitiveString | DONE v0.20.0 |
+| L01-L14 | LOW | multiple | multiple | Polish items | DONE |
 
 ---
 
