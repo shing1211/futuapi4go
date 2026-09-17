@@ -704,7 +704,7 @@ Add all Phase 5 items under `[Unreleased]`:
 - Added middleware/interceptor pattern
 - Wired degradation manager, metrics callbacks, otel tracing
 
-### 10.2 Update IMPLEMENTATION_PLAN.md
+### 10.2 Update docs/IMPLEMENTATION_PLAN.md
 
 Mark Phase 5 items as DONE.
 

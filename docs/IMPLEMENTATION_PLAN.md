@@ -62,7 +62,7 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 - Processed ~30 files across `client/`, `pkg/trd/`, `pkg/qot/`, `pkg/sys/`, `pkg/push/`
 - ~1,200+ GetXxx() calls replaced
 - Known exclusions: `c.inner.GetConnID()`, `c.inner.GetServerVer()`, `c.inner.GetLoginUserID()` are NOT proto getters (internal client methods)
-- Detail plan: `PHASE3_PROTO_SAFETY_PLAN.md`
+- Detail plan: `docs/PHASE3_PROTO_SAFETY_PLAN.md`
 
 ## Phase 4: Missing High-Level API Coverage — DONE
 
@@ -94,7 +94,7 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 
 ## Phase 5: Bug Fixes, Missing APIs & Architecture Hardening — DONE
 
-*Detailed plan: PHASE5_BUGFIX_HARDENING_PLAN.md*
+*Detailed plan: docs/PHASE5_BUGFIX_HARDENING_PLAN.md*
 
 ### Step 1: Fix ProtoID Mismatch (P0 — CRITICAL)
 - `ProtoID_Qot_GetTradeDate = 3225` was WRONG — 3225 = `Qot_GetFinancialsEarningsPriceMove`
@@ -129,7 +129,7 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 
 ### Step 8: Documentation & Release
 - Updated CHANGELOG.md with all Phase 5 items
-- Updated IMPLEMENTATION_PLAN.md
+- Updated docs/IMPLEMENTATION_PLAN.md
 - Committed and pushed to origin/main and gitee/main
 
 ## Phase 6: Architecture Improvements — FUTURE

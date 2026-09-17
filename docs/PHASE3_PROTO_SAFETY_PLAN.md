@@ -81,7 +81,7 @@ The `pkg/` package needs the same helpers added to a shared utility file.
 2. Process `client/` files (Batch 1) — 5 files
 3. Process `pkg/` files (Batch 2) — ~10 files
 4. Run `go build ./... && go vet ./... && go test -race ./...` after each batch
-5. Update CHANGELOG.md and IMPLEMENTATION_PLAN.md
+5. Update CHANGELOG.md and docs/IMPLEMENTATION_PLAN.md
 
 ## Safety Rules
 

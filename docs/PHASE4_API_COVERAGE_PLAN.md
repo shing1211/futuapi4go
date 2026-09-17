@@ -889,8 +889,8 @@ go test -race ./pkg/qot/... ./client/...
 
 ### Step 6: Update docs
 - CHANGELOG.md: Add Phase 4 items under [Unreleased]
-- IMPLEMENTATION_PLAN.md: Mark Phase 4 as DONE
-- PHASE4_API_COVERAGE_PLAN.md: Update status
+- docs/IMPLEMENTATION_PLAN.md: Mark Phase 4 as DONE
+- docs/PHASE4_API_COVERAGE_PLAN.md: Update status
 
 ### Step 7: Commit & Push
 ```
@@ -939,5 +939,5 @@ git push gitee main
 - [ ] `go vet ./...` passes
 - [ ] `go test -race ./pkg/qot/... ./client/...` passes
 - [ ] CHANGELOG.md updated
-- [ ] IMPLEMENTATION_PLAN.md updated
+- [ ] docs/IMPLEMENTATION_PLAN.md updated
 - [ ] Changes committed and pushed to origin/main + gitee/main
