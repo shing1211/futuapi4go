@@ -14,6 +14,7 @@ references and which are point-in-time plans.
 | [USAGE.md](USAGE.md) | Detailed setup, environment variables, patterns (English + 中文) |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Package layout, execution flows, concurrency, protobuf layout |
 | [../DESIGN.md](../DESIGN.md) | Design decisions, wire protocol, security model, extension points |
+| [ERRORS.md](ERRORS.md) | Error codes, categories, recovery hints, retry guidance |
 | [VERSION_MAP.md](VERSION_MAP.md) | Futu protocol ↔ SDK tag mapping (authoritative) |
 
 ## Operations & policy

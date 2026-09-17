@@ -305,6 +305,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history and [docs/IMPLEMENTATIO
 - [Version Map](docs/VERSION_MAP.md) — which Futu OpenD protocol / proto count / `clientVer` each SDK release carries
 - [USAGE Guide](docs/USAGE.md) — detailed setup, environment, and advanced patterns
 - [ARCHITECTURE](docs/ARCHITECTURE.md) — package layout, execution flows, concurrency
+- [Error Codes](docs/ERRORS.md) — error codes, categories, recovery hints
 - [DESIGN](DESIGN.md) — design decisions, API patterns, security model
 - [Implementation status](docs/IMPLEMENTATION_COMPLETE.md) — API coverage and phase history
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — runnable examples for every feature
