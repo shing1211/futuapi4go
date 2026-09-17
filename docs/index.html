@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>futuapi4go — Futu OpenAPI Go SDK</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-orange: #d29922;
+      --code-bg: #1c2128;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .logo span { color: var(--accent); }
+
+    header .tagline {
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* ── Badges ── */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-top: 1.2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .badge-go    { background: #00add8; color: #fff; }
+    .badge-apache{ background: #4a7fc1; color: #fff; }
+    .badge-ops   { background: var(--accent-orange); color: #000; }
+    .badge-schemas { background: var(--accent); color: #fff; }
+    .badge-status { background: #f85149; color: #fff; }
+
+    /* ── Hero install ── */
+    .hero-install {
+      margin-top: 1.5rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+
+    .hero-install .dollar { color: var(--accent-green); margin-right: 0.5rem; }
+
+    /* ── Section titles ── */
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-top: 2.5rem;
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .card a {
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    /* ── Links section ── */
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .quick-links a {
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+      padding: 1.5rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a { color: var(--text-muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr; }
+      .badges { gap: 0.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">futu<span>api4</span>go</div>
+    <p class="tagline">Futu OpenAPI Go SDK — market data, trading &amp; real-time push</p>
+    <div class="badges">
+      <span class="badge badge-go">Go 1.26+</span>
+      <span class="badge badge-apache">Apache-2.0</span>
+      <span class="badge badge-ops">v0.18.1</span>
+      <span class="badge badge-schemas">Proto v10.10.7008</span>
+      <span class="badge badge-status">active development</span>
+    </div>
+    <div class="hero-install">
+      <span class="dollar">$</span>go get github.com/shing1211/futuapi4go@v0.18.1
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <h2>Documentation</h2>
+  <div class="cards">
+
+    <div class="card">
+      <h3>USAGE.md</h3>
+      <p>Quick start — setup, environment config, and advanced patterns</p>
+      <a href="./USAGE.md">USAGE.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>ARCHITECTURE.md</h3>
+      <p>Layering, TCP packet framing, connection state machine, and reconnect</p>
+      <a href="./ARCHITECTURE.md">ARCHITECTURE.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>VERSION_MAP.md</h3>
+      <p>SDK release ↔ Futu OpenD protocol / proto-count mapping</p>
+      <a href="./VERSION_MAP.md">VERSION_MAP.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>IMPLEMENTATION_COMPLETE.md</h3>
+      <p>API coverage summary — ProtoIDs wrapped across Qot, Trd, and Sys</p>
+      <a href="./IMPLEMENTATION_COMPLETE.md">IMPLEMENTATION_COMPLETE.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>IMPROVEMENT_PLAN.md</h3>
+      <p>Robustness hardening — validation, nil-safety, and concurrency fixes</p>
+      <a href="./IMPROVEMENT_PLAN.md">IMPROVEMENT_PLAN.md →</a>
+    </div>
+
+  </div>
+
+  <h2>Guides &amp; Reference</h2>
+  <div class="cards">
+
+    <div class="card">
+      <h3>DESIGN.md</h3>
+      <p>Architecture and design decisions</p>
+      <a href="https://github.com/shing1211/futuapi4go/blob/main/DESIGN.md">DESIGN.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>CHANGELOG.md</h3>
+      <p>Version history and release notes</p>
+      <a href="https://github.com/shing1211/futuapi4go/blob/main/CHANGELOG.md">CHANGELOG.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>IMPLEMENTATION_PLAN.md</h3>
+      <p>Phased implementation plan</p>
+      <a href="https://github.com/shing1211/futuapi4go/blob/main/IMPLEMENTATION_PLAN.md">IMPLEMENTATION_PLAN.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>UPGRADE_PLAN.md</h3>
+      <p>Protocol upgrade plan and migration notes</p>
+      <a href="https://github.com/shing1211/futuapi4go/blob/main/UPGRADE_PLAN.md">UPGRADE_PLAN.md →</a>
+    </div>
+
+    <div class="card">
+      <h3>SECURITY.md</h3>
+      <p>Security policy and responsible disclosure</p>
+      <a href="https://github.com/shing1211/futuapi4go/blob/main/SECURITY.md">SECURITY.md →</a>
+    </div>
+
+  </div>
+
+  <h2>Quick Links</h2>
+  <div class="quick-links">
+    <a href="https://github.com/shing1211/futuapi4go">GitHub Repository →</a>
+    <a href="https://github.com/shing1211/futuapi4go/issues">Issue Tracker →</a>
+    <a href="https://github.com/shing1211/futuapi4go/discussions">Discussions →</a>
+    <a href="https://github.com/shing1211/futuapi4go-demo">Examples (demo) →</a>
+    <a href="https://pkg.go.dev/github.com/shing1211/futuapi4go">pkg.go.dev →</a>
+    <a href="https://github.com/shing1211/futuapi4go/blob/main/LICENSE">License (Apache-2.0) →</a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p>futuapi4go &mdash; Apache License 2.0 &mdash; &copy; 2026 shing1211</p>
+  </div>
+</footer>
+
+</body>
+</html>

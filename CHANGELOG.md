@@ -59,6 +59,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Docs website** (`docs/index.html`) — branded GitHub Pages landing page served
+  from the `docs/` folder at <https://shing1211.github.io/futuapi4go/>, plus a
+  Docs badge in `README.md`.
+
 - **Version map** (`docs/VERSION_MAP.md`) — maps each SDK release range to the
   Futu OpenD protocol version, proto count, and `clientVer`. The SDK's own
   `v0.x.y` tags do not encode the protocol version, so this is the authoritative
