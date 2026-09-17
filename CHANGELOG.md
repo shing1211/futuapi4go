@@ -5,6 +5,29 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **CI workflows** (`.github/workflows/`): `ci.yml` runs `go build`, `go vet`,
+  `go test -race`, and the README-translation check on every push and PR;
+  `govulncheck.yml` scans dependencies weekly; `codeql.yml` runs CodeQL for Go.
+
+### Fixed
+
+- **Response dispatch race** (`internal/client/conn.go`) — a fast OpenD reply
+  could be dispatched before the caller reached `ReadResponse`, so the response
+  was dropped and the call blocked until the API timeout. Against a localhost
+  mock this made the `test/qot_api` and `test/trd_api` suites hang intermittently
+  for 30–40 s on random tests. `writePacketCommon` now reserves the serial before
+  the request is written, `Dispatch` buffers a response that arrives before the
+  reader registers, and `ReadResponse`/`ReadResponseContext` consume it.
+- **Data race on the connection** (`internal/client/conn.go`) — `readOne` and
+  `writePacketCommon` read `c.conn` without the lock while `Conn.Close` set it to
+  nil, and `apiTimeout` was accessed unlocked. All accesses now snapshot the
+  connection (and timeout) under the mutex. Fixes the `-race` failures in the
+  mock and API test suites.
+
 ## [0.19.0] - 2026-09-17
 
 ### Changed

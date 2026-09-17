@@ -70,23 +70,30 @@ type ConnInterface interface {
 }
 
 type Conn struct {
-	conn     net.Conn
-	reader   *bufio.Reader
-	mu       sync.Mutex
+	conn      net.Conn
+	reader    *bufio.Reader
+	mu        sync.Mutex
 	tlsConfig *tls.Config
 
-	dispMu   sync.Mutex
-	disp     map[uint32]chan *Packet
+	dispMu sync.Mutex
+	disp   map[uint32]chan *Packet
+	early  map[uint32]*Packet
 
 	pushHandler PacketHandler
 	apiTimeout  time.Duration
 }
+
+// maxEarlyResponses bounds the buffer of responses that arrive before their
+// reader has registered interest (see Dispatch). It is a safety valve; in
+// normal operation a reader consumes an early response immediately.
+const maxEarlyResponses = 128
 
 func NewConn(conn net.Conn) *Conn {
 	return &Conn{
 		conn:   conn,
 		reader: bufio.NewReaderSize(conn, 64*1024),
 		disp:   make(map[uint32]chan *Packet),
+		early:  make(map[uint32]*Packet),
 	}
 }
 
@@ -97,11 +104,23 @@ func (c *Conn) SetPushHandler(handler PacketHandler) {
 }
 
 func (c *Conn) APITimeout() time.Duration {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.apiTimeout
 }
 
 func (c *Conn) SetAPITimeout(timeout time.Duration) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.apiTimeout = timeout
+}
+
+// currentConn returns the underlying connection under the lock. Callers use the
+// returned value so a concurrent Close cannot nil it mid-use.
+func (c *Conn) currentConn() net.Conn {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.conn
 }
 
 func (c *Conn) Dial(addr string) error {
@@ -137,17 +156,19 @@ func (c *Conn) Close() error {
 }
 
 func (c *Conn) SetReadDeadline(t time.Time) error {
-	if c.conn == nil {
+	conn := c.currentConn()
+	if conn == nil {
 		return NewErrorWithWrap(CodeNotConnected, "set read deadline", ErrNotConnected)
 	}
-	return c.conn.SetReadDeadline(t)
+	return conn.SetReadDeadline(t)
 }
 
 func (c *Conn) SetWriteDeadline(t time.Time) error {
-	if c.conn == nil {
+	conn := c.currentConn()
+	if conn == nil {
 		return NewErrorWithWrap(CodeNotConnected, "set write deadline", ErrNotConnected)
 	}
-	return c.conn.SetWriteDeadline(t)
+	return conn.SetWriteDeadline(t)
 }
 
 func (c *Conn) LocalAddr() net.Addr {
@@ -173,16 +194,27 @@ func (c *Conn) RemoteAddr() net.Addr {
 func (c *Conn) Dispatch(pkt *Packet) {
 	c.dispMu.Lock()
 	ch, ok := c.disp[pkt.Header.SerialNo]
-	delete(c.disp, pkt.Header.SerialNo)
-	c.dispMu.Unlock()
-
 	if ok {
+		delete(c.disp, pkt.Header.SerialNo)
+		// A nil channel is a reservation placed by writePacketCommon: the
+		// request was written but ReadResponse has not registered yet. Buffer
+		// the response so it is not lost to the dispatch race.
+		if ch == nil {
+			if len(c.early) < maxEarlyResponses {
+				c.early[pkt.Header.SerialNo] = pkt
+			}
+			c.dispMu.Unlock()
+			return
+		}
+		c.dispMu.Unlock()
+
 		select {
 		case ch <- pkt:
 		default:
 		}
 		return
 	}
+	c.dispMu.Unlock()
 
 	c.mu.Lock()
 	h := c.pushHandler
@@ -217,18 +249,19 @@ func (c *Conn) dispatchToPushHandler(pkt *Packet) {
 }
 
 func (c *Conn) readOne() (*Packet, error) {
-	if c.conn == nil {
+	conn := c.currentConn()
+	if conn == nil {
 		return nil, NewErrorWithWrap(CodeNotConnected, "read packet", ErrNotConnected)
 	}
 
-	if c.apiTimeout > 0 {
-		if err := c.conn.SetReadDeadline(time.Now().Add(c.apiTimeout)); err != nil {
+	if apiTimeout := c.APITimeout(); apiTimeout > 0 {
+		if err := conn.SetReadDeadline(time.Now().Add(apiTimeout)); err != nil {
 			return nil, fmt.Errorf("set read deadline: %w", err)
 		}
 	}
 
 	header := make([]byte, HeaderLen)
-	n, err := io.ReadFull(c.conn, header)
+	n, err := io.ReadFull(conn, header)
 	if err != nil {
 		return nil, fmt.Errorf("read header (%d/%d bytes): %w", n, HeaderLen, err)
 	}
@@ -253,7 +286,7 @@ func (c *Conn) readOne() (*Packet, error) {
 
 	body := make([]byte, h.BodyLen)
 	if h.BodyLen > 0 {
-		n, err := io.ReadFull(c.conn, body)
+		n, err := io.ReadFull(conn, body)
 		if err != nil {
 			return nil, fmt.Errorf("read body (%d/%d bytes): %w", n, h.BodyLen, err)
 		}
@@ -272,6 +305,13 @@ func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, erro
 	ch := make(chan *Packet, 1)
 
 	c.dispMu.Lock()
+	// The response may have arrived before this reader registered; consume it.
+	if pkt, ok := c.early[serial]; ok {
+		delete(c.early, serial)
+		delete(c.disp, serial)
+		c.dispMu.Unlock()
+		return pkt, nil
+	}
 	c.disp[serial] = ch
 	c.dispMu.Unlock()
 
@@ -297,6 +337,13 @@ func (c *Conn) ReadResponseContext(ctx context.Context, serial uint32, timeout t
 	ch := make(chan *Packet, 1)
 
 	c.dispMu.Lock()
+	// The response may have arrived before this reader registered; consume it.
+	if pkt, ok := c.early[serial]; ok {
+		delete(c.early, serial)
+		delete(c.disp, serial)
+		c.dispMu.Unlock()
+		return pkt, nil
+	}
 	c.disp[serial] = ch
 	c.dispMu.Unlock()
 
@@ -349,7 +396,8 @@ func (c *Conn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBo
 }
 
 func (c *Conn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) error {
-	if c.conn == nil {
+	conn := c.currentConn()
+	if conn == nil {
 		return fmt.Errorf("write packet: %w", ErrNotConnected)
 	}
 
@@ -370,12 +418,33 @@ func (c *Conn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, s
 	binary.LittleEndian.PutUint32(header[12:], uint32(len(body)))
 	copy(header[16:36], sha1Hash[:])
 
-	if _, err := c.conn.Write(header); err != nil {
+	// Reserve the response slot before the request hits the wire. A fast server
+	// can reply before the caller reaches ReadResponse; Dispatch treats this
+	// nil reservation as "response expected, reader not yet registered" and
+	// buffers the packet instead of dropping it. All writes are paired with a
+	// ReadResponse, which removes the reservation.
+	c.dispMu.Lock()
+	if _, exists := c.disp[serialNo]; !exists {
+		c.disp[serialNo] = nil
+	}
+	c.dispMu.Unlock()
+
+	clearReservation := func() {
+		c.dispMu.Lock()
+		if ch, ok := c.disp[serialNo]; ok && ch == nil {
+			delete(c.disp, serialNo)
+		}
+		c.dispMu.Unlock()
+	}
+
+	if _, err := conn.Write(header); err != nil {
+		clearReservation()
 		return fmt.Errorf("write header: %w", err)
 	}
 
 	if len(body) > 0 {
-		if _, err := c.conn.Write(body); err != nil {
+		if _, err := conn.Write(body); err != nil {
+			clearReservation()
 			return fmt.Errorf("write body: %w", err)
 		}
 	}
