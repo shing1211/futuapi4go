@@ -16,6 +16,8 @@
 
 > **Go-native. Type-safe. Production-ready.** The most complete and ergonomic Go SDK for [Futu OpenAPI](https://www.futunn.com/en/overview) — market data, trading, and real-time push. All communication via Protocol Buffers over TCP.
 
+[English](./README.md) · [简体中文](./README.zh-Hans.md) · [繁體中文](./README.zh-Hant.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md)
+
 - 184 protobuf types covering every Futu OpenAPI service
 - One-liner connect with automatic env config (`NewClientFromEnv`)
 - Real-time push via channels or typed callbacks

@@ -1,0 +1,9 @@
+# GitHub Sponsors and funding links
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-funding-files
+
+github:
+  - shing1211 # GitHub Sponsor profile
+
+# Custom funding message
+custom:
+  - "futuapi4go: open-source, Apache-2.0 licensed"
