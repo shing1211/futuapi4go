@@ -290,7 +290,7 @@ Toda la comunicación es mediante Protocol Buffers sobre TCP. Consulta [DESIGN.m
 5. Ejecuta `go vet ./...` y corrige cualquier advertencia.
 6. Abre una pull request.
 
-Consulta [CHANGELOG.md](CHANGELOG.md) para el historial de versiones y [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md) para la hoja de ruta.
+Consulta [CHANGELOG.md](CHANGELOG.md) para el historial de versiones y [ENHANCEMENT_PLAN.md](docs/IMPLEMENTATION_COMPLETE.md) para la hoja de ruta.
 
 ## Véase también
 
@@ -298,7 +298,7 @@ Consulta [CHANGELOG.md](CHANGELOG.md) para el historial de versiones y [ENHANCEM
 - [Version Map](docs/VERSION_MAP.md) — qué protocolo de Futu OpenD / recuento de proto / `clientVer` incluye cada versión del SDK
 - [USAGE Guide](docs/USAGE.md) — configuración detallada, entorno y patrones avanzados
 - [DESIGN](DESIGN.md) — arquitectura, decisiones de diseño, patrones de API
-- [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — próximas funcionalidades y hoja de ruta
+- [ENHANCEMENT_PLAN](docs/IMPLEMENTATION_COMPLETE.md) — próximas funcionalidades y hoja de ruta
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — ejemplos ejecutables para cada funcionalidad
 
 ## Licencia

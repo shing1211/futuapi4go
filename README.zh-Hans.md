@@ -290,7 +290,7 @@ Application
 5. 运行 `go vet ./...` 并修复所有警告。
 6. 提交拉取请求。
 
-版本历史参见 [CHANGELOG.md](CHANGELOG.md)，路线图参见 [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md)。
+版本历史参见 [CHANGELOG.md](CHANGELOG.md)，路线图参见 [ENHANCEMENT_PLAN.md](docs/IMPLEMENTATION_COMPLETE.md)。
 
 ## 参见
 
@@ -298,7 +298,7 @@ Application
 - [Version Map](docs/VERSION_MAP.md) —— 每个 SDK 版本所携带的 Futu OpenD 协议 / proto 数量 / `clientVer`
 - [USAGE Guide](docs/USAGE.md) —— 详细设置、环境与高级模式
 - [DESIGN](DESIGN.md) —— 架构、设计决策、API 模式
-- [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) —— 即将推出的功能与路线图
+- [ENHANCEMENT_PLAN](docs/IMPLEMENTATION_COMPLETE.md) —— 即将推出的功能与路线图
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) —— 每个特性的可运行示例
 
 ## 许可证

@@ -290,7 +290,7 @@ Application
 5. `go vet ./...` を実行し、警告を修正します。
 6. プルリクエストを開きます。
 
-バージョン履歴については [CHANGELOG.md](CHANGELOG.md) を、ロードマップについては [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md) を参照してください。
+バージョン履歴については [CHANGELOG.md](CHANGELOG.md) を、ロードマップについては [ENHANCEMENT_PLAN.md](docs/IMPLEMENTATION_COMPLETE.md) を参照してください。
 
 ## 関連情報
 
@@ -298,7 +298,7 @@ Application
 - [Version Map](docs/VERSION_MAP.md) — 各 SDK リリースが携える Futu OpenD プロトコル / proto 数 / `clientVer`
 - [USAGE Guide](docs/USAGE.md) — 詳細なセットアップ、環境、高度なパターン
 - [DESIGN](DESIGN.md) — アーキテクチャ、設計判断、API パターン
-- [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — 今後の機能とロードマップ
+- [ENHANCEMENT_PLAN](docs/IMPLEMENTATION_COMPLETE.md) — 今後の機能とロードマップ
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — すべての機能の実行可能なサンプル
 
 ## ライセンス

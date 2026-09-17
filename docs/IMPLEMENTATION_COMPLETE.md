@@ -180,6 +180,6 @@ All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 ## References
 
 - `CHANGELOG.md` — Full version history from v0.0.1 through v0.15.1
-- `ENHANCEMENT_PLAN.md` — Original enhancement plan with current state
+- `docs/IMPLEMENTATION_COMPLETE.md` — Original enhancement plan with current state
 - `docs/PROTO_FIELD_COMPLETION_PLAN.md` — Phase I proto field enrichment (superseded)
 - `docs/PROTO_FIELD_COMPLETION_PLAN_v2.md` — Phase II-X audit with 30 issues (superseded)

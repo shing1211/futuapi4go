@@ -290,7 +290,7 @@ Application
 5. `go vet ./...`를 실행하고 경고를 수정합니다.
 6. 풀 리퀘스트를 엽니다.
 
-버전 내역은 [CHANGELOG.md](CHANGELOG.md)를, 로드맵은 [ENHANCEMENT_PLAN.md](ENHANCEMENT_PLAN.md)를 참조하십시오.
+버전 내역은 [CHANGELOG.md](CHANGELOG.md)를, 로드맵은 [ENHANCEMENT_PLAN.md](docs/IMPLEMENTATION_COMPLETE.md)를 참조하십시오.
 
 ## 참고 항목
 
@@ -298,7 +298,7 @@ Application
 - [Version Map](docs/VERSION_MAP.md) — 각 SDK 릴리스가 포함하는 Futu OpenD 프로토콜 / proto 수 / `clientVer`
 - [USAGE Guide](docs/USAGE.md) — 자세한 설정, 환경, 고급 패턴
 - [DESIGN](DESIGN.md) — 아키텍처, 설계 결정, API 패턴
-- [ENHANCEMENT_PLAN](ENHANCEMENT_PLAN.md) — 예정된 기능 및 로드맵
+- [ENHANCEMENT_PLAN](docs/IMPLEMENTATION_COMPLETE.md) — 예정된 기능 및 로드맵
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — 모든 기능에 대한 실행 가능한 예제
 
 ## 라이선스
