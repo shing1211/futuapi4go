@@ -152,7 +152,7 @@ git add -A && git commit -m "release vx.y.z: summary"
 # 3. Tag and push to both remotes
 git tag vx.y.z
 git push origin vx.y.z
-git push github vx.y.z
+git push gitee vx.y.z
 
 # 4. Create GitHub release
 make release          # macOS/Linux — requires goreleaser
