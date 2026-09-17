@@ -3,7 +3,7 @@
 *Generated: 2026-05-20*
 
 > **Status: COMPLETE — historical plan.** Proto-safety helpers and the
-> `GetXxx()` replacements shipped. Current release: v0.19.2 — see
+> `GetXxx()` replacements shipped. Current release: v0.19.3 — see
 > [VERSION_MAP.md](VERSION_MAP.md). The counts below are a point-in-time
 > snapshot, not current.
 

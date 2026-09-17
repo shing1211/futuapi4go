@@ -2,7 +2,7 @@
 
 Go SDK for the Futu OpenD / OpenAPI protocol. Pure library (no `main`
 package), module `github.com/shing1211/futuapi4go`, Go 1.26.6+, Apache-2.0.
-Latest release: **v0.19.2** (Futu protocol v10.10.7008, 184 protos).
+Latest release: **v0.19.3** (Futu protocol v10.10.7008, 184 protos).
 
 **Read [AGENTS.md](./AGENTS.md) first** — it is the primary agent guide
 (architecture, CI gates, release process, troubleshooting).

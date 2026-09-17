@@ -1,6 +1,6 @@
 # futuapi4go Architecture
 
-> **Version:** v0.19.2 | **Futu Protocol:** v10.10.7008 | **Updated:** 2026-09-17
+> **Version:** v0.19.3 | **Futu Protocol:** v10.10.7008 | **Updated:** 2026-09-17
 >
 > See [VERSION_MAP.md](VERSION_MAP.md) for the authoritative protocol/tag mapping.
 
@@ -565,7 +565,8 @@ The authoritative table lives in [VERSION_MAP.md](VERSION_MAP.md). Summary:
 
 | SDK Version | Proto Version | Notable Changes |
 |-------------|---------------|-----------------|
-| v0.19.2 | v10.10.7008 | Latest — LICENSE/module-doc/release-workflow housekeeping |
+| v0.19.3 | v10.10.7008 | Latest — documentation overhaul + ADRs; protobuf 1.36.12, otel 1.46.0, prometheus 1.24.1 |
+| v0.19.2 | v10.10.7008 | LICENSE / module-doc / release-workflow housekeeping |
 | v0.19.0 | v10.10.7008 | `clientVer` 1100, `SubType` enum aligned to the wire, CI (build/vet/race/gofmt/docs) |
 | v0.18.0 | v10.10.7008 | Human-readable opt-in packet logging, injectable `slog` logger, `handshakeClientVer` constant |
 | v0.16.0 | v10.10.7008 | Protocol upgrade (184 protos) |

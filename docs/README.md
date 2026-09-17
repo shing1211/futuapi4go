@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Current release: **v0.19.2** · Futu OpenD protocol **v10.10.7008** (184 protos).
+> Current release: **v0.19.3** · Futu OpenD protocol **v10.10.7008** (184 protos).
 > The version authority is [VERSION_MAP.md](VERSION_MAP.md).
 
 This index lists every document and its status, so it is clear which are current
@@ -36,7 +36,7 @@ references and which are point-in-time plans.
 | [../TRANSLATING.md](../TRANSLATING.md) | README translation workflow |
 | [../CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Community standards |
 | [../DISCLAIMER.md](../DISCLAIMER.md) | Legal / no-warranty notice |
-| [../CHANGELOG.md](../CHANGELOG.md) | Release history (v0.0.1 → v0.19.2) |
+| [../CHANGELOG.md](../CHANGELOG.md) | Release history (v0.0.1 → v0.19.3) |
 
 ## Status & plans
 

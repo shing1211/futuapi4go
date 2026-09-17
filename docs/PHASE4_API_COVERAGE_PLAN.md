@@ -4,7 +4,7 @@
 *SDK Version at writing: v0.14.0 (Futu Protocol v10.8.6808)*
 
 > **Status: COMPLETE — historical plan.** Implemented in v0.14.0. Current
-> release: v0.19.2 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
+> release: v0.19.3 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
 > The coverage counts and deferral lists below are a point-in-time snapshot.
 
 ---
