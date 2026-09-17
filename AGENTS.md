@@ -146,18 +146,19 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 
 ```bash
 # 1. Update CHANGELOG.md: move [Unreleased] → [x.y.z] - YYYY-MM-DD
+#    Also update docs/VERSION_MAP.md "Current" to the new tag.
 # 2. Commit changes
 git add -A && git commit -m "release vx.y.z: summary"
 
-# 3. Tag and push to both remotes
-git tag vx.y.z
+# 3. Tag (annotated) and push
+git tag -a vx.y.z -m "vx.y.z: summary"
+git push origin main
 git push origin vx.y.z
-git push gitee vx.y.z
 
 # 4. Create GitHub release
-make release          # macOS/Linux — requires goreleaser
-# or:
-gh release create vx.y.z --title "vx.y.z" --notes "see CHANGELOG.md"
+#    Pushing the tag triggers .github/workflows/release.yml (goreleaser).
+#    If that job fails, create it manually:
+gh release create vx.y.z --title "vx.y.z" --notes-from-tag
 ```
 
 Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest`
@@ -172,7 +173,7 @@ Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest
 - **Testing Guide:** See README.md "Testing" section
 - **Enhancement Plan:** `docs/IMPLEMENTATION_COMPLETE.md` (advanced features — application-level, not core SDK)
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.0)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.1)
 
 ---
 
