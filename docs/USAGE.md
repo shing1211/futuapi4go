@@ -1,6 +1,6 @@
 # FutuAPI4Go — Quick Start Guide / 快速开始
 
-[English](#english) | [中文](#chinese)
+[English](#english) | [中文](#chinese-中文-简体)
 
 ---
 
@@ -18,8 +18,11 @@ go get github.com/shing1211/futuapi4go@latest
 package main
 
 import (
+	"context"
 	"log"
 
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
@@ -30,8 +33,12 @@ func main() {
 	}
 	defer cli.Close()
 
-	quote, _ := cli.GetQuote(ctx, "US.AAPL")
-	log.Printf("AAPL: %.2f", quote.CurPrice)
+	ctx := context.Background()
+	quote, err := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("AAPL: %.2f", quote.Price)
 }
 ```
 
@@ -45,11 +52,11 @@ if err := cli.Connect("127.0.0.1:11111"); err != nil {
 defer cli.Close()
 
 ctx := context.Background()
-quote, err := cli.GetQuote(ctx, "US.AAPL")
+quote, err := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 if err != nil {
 	log.Fatal(err)
 }
-log.Printf("AAPL: %.2f", quote.CurPrice)
+log.Printf("AAPL: %.2f", quote.Price)
 ```
 
 ### Environment Variables
@@ -61,7 +68,9 @@ log.Printf("AAPL: %.2f", quote.CurPrice)
 | `FUTU_RSA_PRIVATE_KEY` | RSA private key PEM (file path or inline) | — |
 | `FUTU_ENCRYPT` | Set to `"1"` or `"true"` to enable encryption | — |
 | `FUTU_LOG_LEVEL` | Log level: `0`=info, `1`=warn, `2`=error, `3`=silent | `0` |
-| `FUTU_TRD_ENV` | Trading environment: `"real"` or `"simulate"` | `"simulate"` |
+
+The trading environment is **not** read from the environment; set it with the
+`WithTradeEnv(trdEnv)` method (defaults to simulate).
 
 ### Core Patterns
 
@@ -100,10 +109,13 @@ cli.OnQuote(func(q *client.PushQuote) error {
 ```go
 import "github.com/shing1211/futuapi4go/pkg/trd"
 
-order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+order, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 	Buy("00700", 100).
 	At(350.0).
 	Build()
+if err != nil {
+	log.Fatal(err)
+}
 ```
 
 #### Circuit Breaker
@@ -113,10 +125,10 @@ import "github.com/shing1211/futuapi4go/pkg/breaker"
 
 cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
 result, err := cb.Do(func() (interface{}, error) {
-	return client.PlaceOrder(ctx, cli, accID, ...)
+	return client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 })
 if err == breaker.ErrOpen {
-	log.Println("Trading suspended — circuit open")
+	log.Println("Requests suspended — circuit open")
 }
 ```
 
@@ -137,7 +149,7 @@ for _, kl := range klines {
 #### Subscribe + Get
 
 ```go
-cli.Subscribe(ctx, []string{"US.AAPL"}, client.SubType_Basic, true)
+client.Subscribe(ctx, cli, constant.Market_US, "AAPL", []constant.SubType{constant.SubType_Basic})
 
 // Then call one-shot API
 quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
@@ -151,7 +163,7 @@ quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 | No data from `GetQuote` (US stocks) | Need to `Subscribe` first for US market data. |
 | `The packet body SHA1 signature is incorrect` | Outdated OpenD (< v10.5). Upgrade OpenD. |
 | `没有解锁交易` | Call `UnlockTrading` with your trading password MD5. |
-| `模拟交易不支持` | Feature unavailable in simulate mode. Use `FUTU_TRD_ENV=real`. |
+| `模拟交易不支持` | Feature unavailable in simulate mode. Construct the client with `WithTradeEnv(constant.TrdEnv_Real)`. |
 
 ### Distributed Tracing
 
@@ -184,23 +196,21 @@ demo repository for a complete example with OTel stdout exporter.
 Monitor connection lifecycle with the built-in state machine:
 
 ```go
-import futuapi "github.com/shing1211/futuapi4go/internal/client"
-
-// Check current state
+// State constants are re-exported by the public client package.
 switch cli.State() {
-case futuapi.StateConnected:
+case client.StateConnected:
     fmt.Println("Connected")
-case futuapi.StateDisconnected:
+case client.StateDisconnected:
     fmt.Println("Disconnected")
-case futuapi.StateReconnecting:
+case client.StateReconnecting:
     fmt.Println("Reconnecting...")
-case futuapi.StateClosing:
+case client.StateClosing:
     fmt.Println("Closing")
 }
 
 // React to state transitions
 cli := client.New(
-    client.WithOnStateChange(func(old, new futuapi.ConnState) {
+    client.WithOnStateChange(func(old, new client.ConnState) {
         log.Printf("State: %d → %d", old, new)
     }),
 )
@@ -228,7 +238,7 @@ klCache := cache.NewKLCache(
     cache.WithMaxEntries(2000),
     cache.WithTTL(5*time.Minute),
 )
-cachedCli := cache.NewKLCachedClient(cli, klCache)
+cachedCli := cache.NewKLCachedClient(cli.Inner(), klCache)
 klines, err := cachedCli.GetKL(ctx, rehabType, klType, security)
 ```
 
@@ -260,7 +270,8 @@ Record all trade operations with structured slog output:
 ```go
 audit := trd.NewAuditLogger(slog.Default())
 
-resp, err := trd.PlaceOrder(ctx, cli, req)
+// trd.PlaceOrder takes the internal client; obtain it via cli.Inner().
+resp, err := trd.PlaceOrder(ctx, cli.Inner(), req)
 audit.LogPlaceOrder(req, resp.OrderID, err) // JSON: {"op":"PlaceOrder","code":"US.AAPL","success":true}
 ```
 
@@ -276,7 +287,7 @@ if err != nil {
     log.Fatal(err)
 }
 meter.RecordConnection("tcp")
-meter.RecordAPICall("3001", "success")
+meter.RecordAPICall("3001", "success", 12*time.Millisecond)
 ```
 
 ### Structured Logging
@@ -307,7 +318,7 @@ at the account-poll rate; `warn` is the recommended default.
 
 ---
 
-## Chinese 中文 (繁體)
+## Chinese 中文 (简体)
 
 ### 安裝
 
@@ -321,8 +332,11 @@ go get github.com/shing1211/futuapi4go@latest
 package main
 
 import (
+	"context"
 	"log"
 
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
@@ -333,8 +347,12 @@ func main() {
 	}
 	defer cli.Close()
 
-	quote, _ := cli.GetQuote(ctx, "HK.00700")
-	log.Printf("00700: %.2f", quote.CurPrice)
+	ctx := context.Background()
+	quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("00700: %.2f", quote.Price)
 }
 ```
 
@@ -348,11 +366,11 @@ if err := cli.Connect("127.0.0.1:11111"); err != nil {
 defer cli.Close()
 
 ctx := context.Background()
-quote, err := cli.GetQuote(ctx, "HK.00700")
+quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 if err != nil {
 	log.Fatal(err)
 }
-log.Printf("00700: %.2f", quote.CurPrice)
+log.Printf("00700: %.2f", quote.Price)
 ```
 
 ### 環境變數配置
@@ -364,7 +382,8 @@ log.Printf("00700: %.2f", quote.CurPrice)
 | `FUTU_RSA_PRIVATE_KEY` | RSA 私鑰 PEM（檔案路徑或內容） | — |
 | `FUTU_ENCRYPT` | 設為 `"1"` 或 `"true"` 啟用加密 | — |
 | `FUTU_LOG_LEVEL` | 日誌級別：0=資訊, 1=警告, 2=錯誤, 3=靜默 | `0` |
-| `FUTU_TRD_ENV` | 交易環境：`"real"` 或 `"simulate"` | `"simulate"` |
+
+交易環境**不**從環境變數讀取；請使用 `WithTradeEnv(trdEnv)` 方法設定（預設為模擬）。
 
 ### 核心模式
 
@@ -427,7 +446,7 @@ klines, err := client.RequestHistoryKL(ctx, cli,
 #### 訂閱後查詢
 
 ```go
-cli.Subscribe(ctx, []string{"US.AAPL"}, client.SubType_Basic, true)
+client.Subscribe(ctx, cli, constant.Market_US, "AAPL", []constant.SubType{constant.SubType_Basic})
 quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 ```
 
@@ -438,7 +457,7 @@ quote, _ := client.GetQuote(ctx, cli, constant.Market_US, "AAPL")
 | `connection refused` | OpenD 未啟動。請檢查 `FUTU_OPEND_ADDR`。 |
 | US 股票 `GetQuote` 無資料 | 美股需要先 `Subscribe`。港股不需要。 |
 | `没有解锁交易` | 需要先呼叫 `UnlockTrading` 解鎖交易密碼。 |
-| `模拟交易不支持` | 模擬模式不支援該功能。使用 `FUTU_TRD_ENV=real`。 |
+| `模拟交易不支持` | 模擬模式不支援該功能。請以 `WithTradeEnv(constant.TrdEnv_Real)` 建立客戶端。 |
 
 ### 分散式追蹤
 
@@ -467,20 +486,18 @@ tracing.SetTracer(otel.NewTracer("my-trading-app"))
 監控連線生命週期的狀態機：
 
 ```go
-import futuapi "github.com/shing1211/futuapi4go/internal/client"
-
 switch cli.State() {
-case futuapi.StateConnected:
+case client.StateConnected:
     fmt.Println("已連線")
-case futuapi.StateDisconnected:
+case client.StateDisconnected:
     fmt.Println("未連線")
-case futuapi.StateReconnecting:
+case client.StateReconnecting:
     fmt.Println("重新連線中...")
 }
 
 // 監聽狀態變化
 cli := client.New(
-    client.WithOnStateChange(func(old, new futuapi.ConnState) {
+    client.WithOnStateChange(func(old, new client.ConnState) {
         log.Printf("狀態: %d → %d", old, new)
     }),
 )
@@ -504,7 +521,7 @@ if err := cli.Shutdown(5 * time.Second); err != nil {
 import "github.com/shing1211/futuapi4go/pkg/cache"
 
 klCache := cache.NewKLCache(cache.WithMaxEntries(2000))
-cachedCli := cache.NewKLCachedClient(cli, klCache)
+cachedCli := cache.NewKLCachedClient(cli.Inner(), klCache)
 klines, err := cachedCli.GetKL(ctx, rehabType, klType, security)
 ```
 
@@ -537,7 +554,7 @@ audit.LogPlaceOrder(req, resp.OrderID, err)
 
 ```go
 meter, err := otel.NewOTelMeter()
-meter.RecordAPICall("3001", "success")
+meter.RecordAPICall("3001", "success", 12*time.Millisecond)
 ```
 
 ### 結構化日誌
