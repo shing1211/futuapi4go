@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.18.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.19.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.10.7008-blue?style=flat-square" alt="Futu Proto Version">
   <a href="https://shing1211.github.io/futuapi4go/"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-97CAFF?style=flat-square&logo=github" alt="Docs"></a>
 </p>
@@ -29,7 +29,7 @@
 - 接続状態マシン、グレースフルシャットダウン、自動再接続
 - すべての API 呼び出しに組み込まれたレートリミッター、サーキットブレーカー、リトライ
 - K ラインデータキャッシュ (LRU + TTL)、注文の事前検証、監査ログ
-- goreleaser によるリリース自動化
+- タグ push で GitHub リリースを自動作成（CHANGELOG からノート生成）
 
 ## 目次
 
@@ -48,7 +48,7 @@
 ## インストール
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.18.1
+go get github.com/shing1211/futuapi4go@v0.19.1
 ```
 
 Go 1.26+ と、実行中の [Futu OpenD](https://www.futunn.com/en/overview) インスタンスが必要です。

@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.18.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.19.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.10.7008-blue?style=flat-square" alt="Futu Proto Version">
   <a href="https://shing1211.github.io/futuapi4go/"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-97CAFF?style=flat-square&logo=github" alt="Docs"></a>
 </p>
@@ -29,7 +29,7 @@
 - 連線狀態機、優雅關閉與自動重新連線
 - 限流器、斷路器與重試已接入每一次 API 呼叫
 - K 線資料快取（LRU + TTL）、下單預先檢查、稽核日誌
-- 使用 goreleaser 自動化發布
+- 推送標籤即自動建立 GitHub 發布，說明取自 CHANGELOG
 
 ## 目錄
 
@@ -48,7 +48,7 @@
 ## 安裝
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.18.1
+go get github.com/shing1211/futuapi4go@v0.19.1
 ```
 
 需要 Go 1.26+，以及一個正在執行的 [Futu OpenD](https://www.futunn.com/en/overview) 執行個體。

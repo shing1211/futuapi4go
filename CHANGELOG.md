@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Release automation** — the tag-triggered release workflow now uses the `gh`
+  CLI to publish a GitHub release with the curated CHANGELOG section as notes
+  (falling back to generated notes). Replaces goreleaser, which is a poor fit
+  for a pure library (no binaries) and whose auto-changelog drops the
+  `ci:`/`docs:`/`chore:` commits that dominate this repository's history.
+
+### Fixed
+
+- **`LICENSE` restored to the verbatim Apache-2.0 text** — two words in the
+  licence body had been altered (`the Licensor`, `patent license(s)`), dropping
+  detection coverage to 6.1% and making pkg.go.dev report `License: UNKNOWN`.
+- **Module page on pkg.go.dev had no synopsis** — the module root contained no Go
+  package, so the package page rendered no description. Added a root `doc.go`
+  (`package futuapi4go`) carrying the package comment.
+- **Stale `v0.18.1` references** in the six READMEs, `docs/index.html`, and
+  `SUPPORT.md` bumped to `v0.19.1`.
+
+### Removed
+
+- **`.goreleaser.yaml`** — no longer used; see the release-automation change above.
+
 ## [0.19.1] - 2026-09-17
 
 ### Added

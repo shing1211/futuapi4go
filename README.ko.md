@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.18.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.19.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.10.7008-blue?style=flat-square" alt="Futu Proto Version">
   <a href="https://shing1211.github.io/futuapi4go/"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-97CAFF?style=flat-square&logo=github" alt="Docs"></a>
 </p>
@@ -29,7 +29,7 @@
 - 연결 상태 머신, 정상 종료(graceful shutdown), 자동 재연결
 - 모든 API 호출에 내장된 속도 제한기, 서킷 브레이커, 재시도
 - K-Line 데이터 캐시(LRU + TTL), 주문 사전 검증, 감사 로깅
-- goreleaser를 통한 릴리스 자동화
+- 태그 푸시 시 CHANGELOG 기반 GitHub 릴리스 자동 생성
 
 ## 목차
 
@@ -48,7 +48,7 @@
 ## 설치
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.18.1
+go get github.com/shing1211/futuapi4go@v0.19.1
 ```
 
 Go 1.26+ 및 실행 중인 [Futu OpenD](https://www.futunn.com/en/overview) 인스턴스가 필요합니다.

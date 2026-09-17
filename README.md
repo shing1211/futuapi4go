@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.18.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.19.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.10.7008-blue?style=flat-square" alt="Futu Proto Version">
   <a href="https://shing1211.github.io/futuapi4go/"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-97CAFF?style=flat-square&logo=github" alt="Docs"></a>
 </p>
@@ -26,7 +26,7 @@
 - Connection state machine, graceful shutdown, and auto-reconnect
 - Rate limiter, circuit breaker, and retry wired into every API call
 - K-Line data cache (LRU + TTL), order pre-flight validation, audit logging
-- Release automation with goreleaser
+- Tag-triggered GitHub releases with changelog-derived notes
 
 ## Table of Contents
 
@@ -45,7 +45,7 @@
 ## Install
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.18.1
+go get github.com/shing1211/futuapi4go@v0.19.1
 ```
 
 Requires Go 1.26+ and a running [Futu OpenD](https://www.futunn.com/en/overview) instance.

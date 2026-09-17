@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go" alt="Go">
   <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/futuapi4go-v0.18.1-00ADD8?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/futuapi4go-v0.19.1-00ADD8?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Futu%20Proto-v10.10.7008-blue?style=flat-square" alt="Futu Proto Version">
   <a href="https://shing1211.github.io/futuapi4go/"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-97CAFF?style=flat-square&logo=github" alt="Docs"></a>
 </p>
@@ -29,7 +29,7 @@
 - Máquina de estados de conexión, cierre ordenado y reconexión automática
 - Limitador de tasa, cortacircuitos y reintentos integrados en cada llamada a la API
 - Caché de datos K-Line (LRU + TTL), validación previa de órdenes y registro de auditoría
-- Automatización de versiones con goreleaser
+- Publicación automática en GitHub a partir del CHANGELOG al etiquetar
 
 ## Tabla de contenidos
 
@@ -48,7 +48,7 @@
 ## Instalación
 
 ```bash
-go get github.com/shing1211/futuapi4go@v0.18.1
+go get github.com/shing1211/futuapi4go@v0.19.1
 ```
 
 Requiere Go 1.26+ y una instancia de [Futu OpenD](https://www.futunn.com/en/overview) en ejecución.

@@ -1,6 +1,6 @@
 # futuapi4go Robustness Improvement Plan
 
-> **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.0 | **Status:** COMPLETE — all HIGH/MED priority fixes (FIX-001 through FIX-007) resolved in v0.9.1 (commit `3b34ae3`); LOW polish items L01-L14 also complete
+> **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.1 | **Status:** COMPLETE — all HIGH/MED priority fixes (FIX-001 through FIX-007) resolved in v0.9.1 (commit `3b34ae3`); LOW polish items L01-L14 also complete
 >
 > **Related:** [DESIGN.md](DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
 
