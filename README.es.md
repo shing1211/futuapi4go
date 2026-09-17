@@ -19,7 +19,7 @@
 [English](./README.md) · [简体中文](./README.zh-Hans.md) · [繁體中文](./README.zh-Hant.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md)
 
 > Este archivo es una traducción comunitaria del [README](./README.md) en inglés. **La versión en inglés es la autoritativa.**
-> Sincronizado / Last synced: c417534
+> Sincronizado / Last synced: 131a146
 
 - 184 tipos protobuf que cubren todos los servicios de Futu OpenAPI
 - Conexión en una sola línea con configuración automática desde variables de entorno (`NewClientFromEnv`)

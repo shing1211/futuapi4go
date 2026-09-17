@@ -19,7 +19,7 @@
 [English](./README.md) · [简体中文](./README.zh-Hans.md) · [繁體中文](./README.zh-Hant.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md)
 
 > 이 문서는 영어 [README](./README.md)의 커뮤니티 번역입니다. **영어 버전이 기준입니다.**
-> 동기화 / Last synced: c417534
+> 동기화 / Last synced: 131a146
 
 - 모든 Futu OpenAPI 서비스를 포괄하는 184개의 protobuf 타입
 - 자동 환경 설정으로 한 줄 연결 (`NewClientFromEnv`)
