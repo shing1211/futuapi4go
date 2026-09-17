@@ -7,6 +7,13 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore(deps)
+    groups:
+      opentelemetry:
+        patterns:
+          - "go.opentelemetry.io/*"
+      prometheus:
+        patterns:
+          - "github.com/prometheus/*"
 
   - package-ecosystem: github-actions
     directory: /
