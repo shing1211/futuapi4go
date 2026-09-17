@@ -19,7 +19,7 @@
 [English](./README.md) · [简体中文](./README.zh-Hans.md) · [繁體中文](./README.zh-Hant.md) · [日本語](./README.ja.md) · [한국어](./README.ko.md) · [Español](./README.es.md)
 
 > 本文件是英文 [README](./README.md) 的社群翻譯。**英文版本為準。**
-> 同步於 / Last synced: 131a146
+> 同步於 / Last synced: d5bc023
 
 - 184 個 protobuf 型別，涵蓋所有 Futu OpenAPI 服務
 - 一行程式碼連線，自動讀取環境變數設定（`NewClientFromEnv`）
