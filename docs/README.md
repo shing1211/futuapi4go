@@ -12,6 +12,8 @@ references and which are point-in-time plans.
 |----------|------------|
 | [../README.md](../README.md) | Project overview, install, quick start, package map, common APIs |
 | [USAGE.md](USAGE.md) | Detailed setup, environment variables, patterns (English + 中文) |
+| [CONFIGURATION.md](CONFIGURATION.md) | All client options, environment variables, and defaults |
+| [TESTING.md](TESTING.md) | Test layout, the mock server, integration-test gate, benchmarks |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Package layout, execution flows, concurrency, protobuf layout |
 | [../DESIGN.md](../DESIGN.md) | Design decisions, wire protocol, security model, extension points |
 | [ERRORS.md](ERRORS.md) | Error codes, categories, recovery hints, retry guidance |
