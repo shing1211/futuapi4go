@@ -47,25 +47,25 @@ const (
 	CategoryConnection ErrorCategory = "connection"
 	CategoryTimeout    ErrorCategory = "timeout"
 	CategoryAPI        ErrorCategory = "api"
-	CategoryAccount   ErrorCategory = "account"
-	CategoryTrading   ErrorCategory = "trading"
-	CategorySubscribe ErrorCategory = "subscribe"
-	CategoryUnknown   ErrorCategory = "unknown"
+	CategoryAccount    ErrorCategory = "account"
+	CategoryTrading    ErrorCategory = "trading"
+	CategorySubscribe  ErrorCategory = "subscribe"
+	CategoryUnknown    ErrorCategory = "unknown"
 )
 
 var codeToCategory = map[ErrorCode]ErrorCategory{
-	ErrCodeSuccess:       CategoryAPI,
-	ErrCodeInvalidParams: CategoryAPI,
-	ErrCodeTimeout:       CategoryTimeout,
-	ErrCodeDisconnected:  CategoryConnection,
-	ErrCodeUnknown:       CategoryUnknown,
-	ErrCodeNetworkError:  CategoryConnection,
-	ErrCodeProtocolErr:   CategoryConnection,
-	ErrCodeServerBusy:    CategoryAPI,
-	ErrCodeAccNotFound:   CategoryAccount,
-	ErrCodeAccDisabled:   CategoryAccount,
-	ErrCodeAccLocked:     CategoryAccount,
-	ErrCodeAccAuthFail:   CategoryAccount,
+	ErrCodeSuccess:             CategoryAPI,
+	ErrCodeInvalidParams:       CategoryAPI,
+	ErrCodeTimeout:             CategoryTimeout,
+	ErrCodeDisconnected:        CategoryConnection,
+	ErrCodeUnknown:             CategoryUnknown,
+	ErrCodeNetworkError:        CategoryConnection,
+	ErrCodeProtocolErr:         CategoryConnection,
+	ErrCodeServerBusy:          CategoryAPI,
+	ErrCodeAccNotFound:         CategoryAccount,
+	ErrCodeAccDisabled:         CategoryAccount,
+	ErrCodeAccLocked:           CategoryAccount,
+	ErrCodeAccAuthFail:         CategoryAccount,
 	ErrCodeInsufficientBalance: CategoryTrading,
 	ErrCodeMarketClosed:        CategoryTrading,
 	ErrCodeOrderRejected:       CategoryTrading,

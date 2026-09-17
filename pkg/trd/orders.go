@@ -18,8 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	"google.golang.org/protobuf/proto"
 	"github.com/shing1211/futuapi4go/pkg/util"
+	"google.golang.org/protobuf/proto"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"

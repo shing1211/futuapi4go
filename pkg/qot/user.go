@@ -23,13 +23,13 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/util"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetipolist"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetpricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetusersecuritygroup"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotmodifyusersecurity"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsetpricereminder"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // GetUserSecurityResponse is the response type for GetUserSecurity.

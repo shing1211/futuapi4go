@@ -23,6 +23,15 @@ jobs:
       - name: Build
         run: go build ./...
 
+      - name: Format check
+        run: |
+          UNFORMATTED=$(gofmt -l .)
+          if [ -n "$UNFORMATTED" ]; then
+            echo "Files not gofmt-clean:"
+            echo "$UNFORMATTED"
+            exit 1
+          fi
+
       - name: Vet
         run: go vet ./...
 

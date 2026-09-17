@@ -47,9 +47,9 @@ func TestFormatPrice(t *testing.T) {
 
 func TestRoundToTickSize(t *testing.T) {
 	tests := []struct {
-		price   float64
-		tick    float64
-		want    float64
+		price float64
+		tick  float64
+		want  float64
 	}{
 		{350.055, 0.01, 350.05},
 		{350.05, 0.01, 350.05},

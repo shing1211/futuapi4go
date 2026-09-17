@@ -19,11 +19,11 @@ import (
 	"fmt"
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
-	"github.com/shing1211/futuapi4go/pkg/util"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdsubaccpush"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdunlocktrade"
+	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 // UnlockTradeRequest is the request to unlock or lock trading with a password.

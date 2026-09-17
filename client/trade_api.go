@@ -136,7 +136,7 @@ func GetPositionList(ctx context.Context, c *Client, accID uint64) ([]Position, 
 	for i, p := range resp.PositionList {
 		positions[i] = Position{
 			PositionID:       p.PositionID,
-			PositionSide:      p.PositionSide,
+			PositionSide:     p.PositionSide,
 			Code:             p.Code,
 			Name:             p.Name,
 			Market:           p.TrdMarket,
@@ -228,8 +228,8 @@ func GetAccountInfo(ctx context.Context, c *Client, accID uint64, market constan
 		CashInfoList:      cashList,
 		MarketInfoList:    marketList,
 		SecuritiesAssets:  f.SecuritiesAssets,
-		FundAssets:       f.FundAssets,
-		BondAssets:       f.BondAssets,
+		FundAssets:        f.FundAssets,
+		BondAssets:        f.BondAssets,
 	}, nil
 }
 

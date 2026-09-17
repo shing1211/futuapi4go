@@ -23,11 +23,11 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
+	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfee"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderfilllist"
 	"github.com/shing1211/futuapi4go/pkg/pb/trdgetorderlist"
-	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderfilllist"
-	"github.com/shing1211/futuapi4go/pkg/pb/trdgethistoryorderlist"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 

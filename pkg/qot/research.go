@@ -30,8 +30,8 @@ import (
 )
 
 const (
-	ProtoID_GetResearchAnalystConsensus = 3229
-	ProtoID_GetResearchRatingSummary    = 3230
+	ProtoID_GetResearchAnalystConsensus  = 3229
+	ProtoID_GetResearchRatingSummary     = 3230
 	ProtoID_GetResearchMorningstarReport = 3231
 )
 

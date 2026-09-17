@@ -50,15 +50,15 @@ type Attribute struct {
 	Value interface{}
 }
 
-func StringAttr(k, v string) Attribute  { return Attribute{Key: k, Value: v} }
-func IntAttr(k string, v int) Attribute  { return Attribute{Key: k, Value: v} }
+func StringAttr(k, v string) Attribute      { return Attribute{Key: k, Value: v} }
+func IntAttr(k string, v int) Attribute     { return Attribute{Key: k, Value: v} }
 func Int64Attr(k string, v int64) Attribute { return Attribute{Key: k, Value: v} }
 func BoolAttr(k string, v bool) Attribute   { return Attribute{Key: k, Value: v} }
 
 type noopSpan struct{}
 
 func (noopSpan) SetAttribute(string, interface{}) {}
-func (noopSpan) End()                            {}
+func (noopSpan) End()                             {}
 
 type NoopTracer struct{}
 

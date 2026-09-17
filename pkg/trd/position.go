@@ -70,18 +70,18 @@ type Funds struct {
 	RiskStatus        int32
 	MarginCallMargin  float64
 	// IsPDT indicates whether the account is a Pattern Day Trader (US margin accounts).
-	IsPDT             bool
+	IsPDT bool
 	// PDTSeq is the PDT sequence number.
-	PDTSeq            string
-	BeginningDTBP     float64
-	RemainingDTBP     float64
-	DtCallAmount      float64
-	DtStatus          int32
-	CashInfoList      []AccCashInfo
-	MarketInfoList    []AccMarketInfo
-	SecuritiesAssets  float64
-	FundAssets        float64
-	BondAssets        float64
+	PDTSeq           string
+	BeginningDTBP    float64
+	RemainingDTBP    float64
+	DtCallAmount     float64
+	DtStatus         int32
+	CashInfoList     []AccCashInfo
+	MarketInfoList   []AccMarketInfo
+	SecuritiesAssets float64
+	FundAssets       float64
+	BondAssets       float64
 }
 
 // GetFundsRequest is the request to retrieve account funds.

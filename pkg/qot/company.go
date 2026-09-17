@@ -23,17 +23,17 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyprofile"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyexecutives"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyexecutivebackground"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyexecutives"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyoperationalefficiency"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcompanyprofile"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
-	ProtoID_GetCompanyProfile             = 3243
-	ProtoID_GetCompanyExecutives          = 3244
-	ProtoID_GetCompanyExecutiveBackground = 3245
+	ProtoID_GetCompanyProfile               = 3243
+	ProtoID_GetCompanyExecutives            = 3244
+	ProtoID_GetCompanyExecutiveBackground   = 3245
 	ProtoID_GetCompanyOperationalEfficiency = 3246
 )
 
@@ -213,7 +213,7 @@ func GetCompanyOperationalEfficiency(ctx context.Context, c *futuapi.Client, req
 
 	return &GetCompanyOperationalEfficiencyResponse{
 		ItemList:     s2c.ItemList,
-		NextKey:     util.ProtoStr(s2c.NextKey),
+		NextKey:      util.ProtoStr(s2c.NextKey),
 		CurrencyCode: util.ProtoStr(s2c.CurrencyCode),
 	}, nil
 }

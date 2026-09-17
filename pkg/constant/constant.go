@@ -102,143 +102,143 @@ const (
 	ProtoID_Qot_UpdatePriceReminder = 3019 // 到价提醒通知
 
 	// Historical Data
-	ProtoID_Qot_GetRehab               = 3102 // 获取复权信息
+	ProtoID_Qot_GetRehab              = 3102 // 获取复权信息
 	ProtoID_Qot_RequestHistoryKL      = 3103 // 拉取历史K线
 	ProtoID_Qot_RequestHistoryKLQuota = 3104 // 拉取历史K线已经用掉的额度
 	ProtoID_Qot_RequestRehab          = 3105 // 获取除权信息
-	ProtoID_Qot_GetHistoryKLPoints     = 3106 // 获取历史K线数据点
+	ProtoID_Qot_GetHistoryKLPoints    = 3106 // 获取历史K线数据点
 
 	// Other Qot APIs
-	ProtoID_Qot_GetSuspend              = 3201 // 获取股票停牌信息
-	ProtoID_Qot_GetStaticInfo           = 3202 // 获取股票列表
-	ProtoID_Qot_GetSecuritySnapshot     = 3203 // 获取股票快照
-	ProtoID_Qot_GetPlateSet             = 3204 // 获取板块集合下的板块
-	ProtoID_Qot_GetPlateSecurity        = 3205 // 获取板块下的股票
-	ProtoID_Qot_GetReference            = 3206 // 获取正股相关股票，暂时只有窝轮
-	ProtoID_Qot_GetOwnerPlate           = 3207 // 获取股票所属板块
-	ProtoID_Qot_GetHoldingChangeList    = 3208 // 获取高管持股变动
-	ProtoID_Qot_GetOptionChain          = 3209 // 获取期权链
-	ProtoID_Qot_GetWarrant              = 3210 // 拉取窝轮信息
-	ProtoID_Qot_GetCapitalFlow          = 3211 // 获取资金流向
-	ProtoID_Qot_GetCapitalDistribution  = 3212 // 获取资金分布
-	ProtoID_Qot_GetUserSecurity         = 3213 // 获取自选股分组下的股票
-	ProtoID_Qot_ModifyUserSecurity      = 3214 // 修改自选股分组下的股票
-	ProtoID_Qot_StockFilter             = 3215 // 条件选股
-	ProtoID_Qot_GetCodeChange           = 3216 // 代码变换
-	ProtoID_Qot_GetIpoList              = 3217 // 获取新股Ipo
-	ProtoID_Qot_GetFutureInfo           = 3218 // 获取期货资料
-	ProtoID_Qot_RequestTradeDate        = 3219 // 在线拉取交易日
-	ProtoID_Qot_SetPriceReminder        = 3220 // 设置到价提醒
-	ProtoID_Qot_GetPriceReminder        = 3221 // 获取到价提醒
-	ProtoID_Qot_GetUserSecurityGroup    = 3222 // 获取自选股分组
-	ProtoID_Qot_GetMarketState          = 3223 // 获取指定品种的市场状态
-	ProtoID_Qot_GetOptionExpirationDate         = 3224 // 获取期权到期日
-	ProtoID_Qot_GetFinancialsEarningsPriceMove  = 3225 // 获取财报价格变动
+	ProtoID_Qot_GetSuspend                        = 3201 // 获取股票停牌信息
+	ProtoID_Qot_GetStaticInfo                     = 3202 // 获取股票列表
+	ProtoID_Qot_GetSecuritySnapshot               = 3203 // 获取股票快照
+	ProtoID_Qot_GetPlateSet                       = 3204 // 获取板块集合下的板块
+	ProtoID_Qot_GetPlateSecurity                  = 3205 // 获取板块下的股票
+	ProtoID_Qot_GetReference                      = 3206 // 获取正股相关股票，暂时只有窝轮
+	ProtoID_Qot_GetOwnerPlate                     = 3207 // 获取股票所属板块
+	ProtoID_Qot_GetHoldingChangeList              = 3208 // 获取高管持股变动
+	ProtoID_Qot_GetOptionChain                    = 3209 // 获取期权链
+	ProtoID_Qot_GetWarrant                        = 3210 // 拉取窝轮信息
+	ProtoID_Qot_GetCapitalFlow                    = 3211 // 获取资金流向
+	ProtoID_Qot_GetCapitalDistribution            = 3212 // 获取资金分布
+	ProtoID_Qot_GetUserSecurity                   = 3213 // 获取自选股分组下的股票
+	ProtoID_Qot_ModifyUserSecurity                = 3214 // 修改自选股分组下的股票
+	ProtoID_Qot_StockFilter                       = 3215 // 条件选股
+	ProtoID_Qot_GetCodeChange                     = 3216 // 代码变换
+	ProtoID_Qot_GetIpoList                        = 3217 // 获取新股Ipo
+	ProtoID_Qot_GetFutureInfo                     = 3218 // 获取期货资料
+	ProtoID_Qot_RequestTradeDate                  = 3219 // 在线拉取交易日
+	ProtoID_Qot_SetPriceReminder                  = 3220 // 设置到价提醒
+	ProtoID_Qot_GetPriceReminder                  = 3221 // 获取到价提醒
+	ProtoID_Qot_GetUserSecurityGroup              = 3222 // 获取自选股分组
+	ProtoID_Qot_GetMarketState                    = 3223 // 获取指定品种的市场状态
+	ProtoID_Qot_GetOptionExpirationDate           = 3224 // 获取期权到期日
+	ProtoID_Qot_GetFinancialsEarningsPriceMove    = 3225 // 获取财报价格变动
 	ProtoID_Qot_GetFinancialsEarningsPriceHistory = 3226 // 获取财报价格历史
-	ProtoID_Qot_GetFinancialsStatements         = 3227 // 获取财务报表
-	ProtoID_Qot_GetFinancialsRevenueBreakdown = 3228 // 获取营收 breakdown
-	ProtoID_Qot_GetResearchAnalystConsensus   = 3229 // 获取研究分析师共识
-	ProtoID_Qot_GetResearchRatingSummary      = 3230 // 获取研究评级摘要
-	ProtoID_Qot_GetResearchMorningstarReport  = 3231 // 获取晨星研究报告
-	ProtoID_Qot_GetValuationDetail           = 3232 // 获取估值详情
-	ProtoID_Qot_GetValuationPlateStockList    = 3233 // 获取估值板块股票列表
-	ProtoID_Qot_GetCorporateActionsDividends  = 3234 // 获取股息红利
-	ProtoID_Qot_GetCorporateActionsBuybacks   = 3235 // 获取回购
-	ProtoID_Qot_GetCorporateActionsStockSplits = 3236 // 获取拆股
-	ProtoID_Qot_GetShareholdersOverview        = 3237 // 获取股东概况
-	ProtoID_Qot_GetShareholdersHoldingChanges = 3238 // 获取股东持股变动
-	ProtoID_Qot_GetShareholdersHolderDetail   = 3239 // 获取股东详情
-	ProtoID_Qot_GetShareholdersInstitutional   = 3240 // 获取机构股东
-	ProtoID_Qot_GetInsiderHolderList          = 3241 // 获取内部人列表
-	ProtoID_Qot_GetInsiderTradeList           = 3242 // 获取内部人交易列表
-	ProtoID_Qot_GetCompanyProfile             = 3243 // 获取公司概况
-	ProtoID_Qot_GetCompanyExecutives           = 3244 // 获取公司高管
-	ProtoID_Qot_GetCompanyExecutiveBackground  = 3245 // 获取高管背景
-	ProtoID_Qot_GetCompanyOperationalEfficiency = 3246 // 获取经营效率
-	ProtoID_Qot_GetTopTenBuySellBrokers        = 3247 // 获取十大买卖券商
-	ProtoID_Qot_GetDailyShortVolume           = 3248 // 获取每日short volume
-	ProtoID_Qot_GetShortInterest              = 3249 // 获取做空利息
-	ProtoID_Qot_GetOptionVolatility           = 3250 // 获取期权波动率
-	ProtoID_Qot_GetOptionExerciseProbability  = 3251 // 获取期权行权概率
+	ProtoID_Qot_GetFinancialsStatements           = 3227 // 获取财务报表
+	ProtoID_Qot_GetFinancialsRevenueBreakdown     = 3228 // 获取营收 breakdown
+	ProtoID_Qot_GetResearchAnalystConsensus       = 3229 // 获取研究分析师共识
+	ProtoID_Qot_GetResearchRatingSummary          = 3230 // 获取研究评级摘要
+	ProtoID_Qot_GetResearchMorningstarReport      = 3231 // 获取晨星研究报告
+	ProtoID_Qot_GetValuationDetail                = 3232 // 获取估值详情
+	ProtoID_Qot_GetValuationPlateStockList        = 3233 // 获取估值板块股票列表
+	ProtoID_Qot_GetCorporateActionsDividends      = 3234 // 获取股息红利
+	ProtoID_Qot_GetCorporateActionsBuybacks       = 3235 // 获取回购
+	ProtoID_Qot_GetCorporateActionsStockSplits    = 3236 // 获取拆股
+	ProtoID_Qot_GetShareholdersOverview           = 3237 // 获取股东概况
+	ProtoID_Qot_GetShareholdersHoldingChanges     = 3238 // 获取股东持股变动
+	ProtoID_Qot_GetShareholdersHolderDetail       = 3239 // 获取股东详情
+	ProtoID_Qot_GetShareholdersInstitutional      = 3240 // 获取机构股东
+	ProtoID_Qot_GetInsiderHolderList              = 3241 // 获取内部人列表
+	ProtoID_Qot_GetInsiderTradeList               = 3242 // 获取内部人交易列表
+	ProtoID_Qot_GetCompanyProfile                 = 3243 // 获取公司概况
+	ProtoID_Qot_GetCompanyExecutives              = 3244 // 获取公司高管
+	ProtoID_Qot_GetCompanyExecutiveBackground     = 3245 // 获取高管背景
+	ProtoID_Qot_GetCompanyOperationalEfficiency   = 3246 // 获取经营效率
+	ProtoID_Qot_GetTopTenBuySellBrokers           = 3247 // 获取十大买卖券商
+	ProtoID_Qot_GetDailyShortVolume               = 3248 // 获取每日short volume
+	ProtoID_Qot_GetShortInterest                  = 3249 // 获取做空利息
+	ProtoID_Qot_GetOptionVolatility               = 3250 // 获取期权波动率
+	ProtoID_Qot_GetOptionExerciseProbability      = 3251 // 获取期权行权概率
 
 	// v10.6+ Screen APIs (C++-only OpenD)
-	ProtoID_Qot_StockScreen      = 3252 // 条件选股(新版股票筛选)
-	ProtoID_Qot_OptionScreen     = 3253 // 期权筛选
-	ProtoID_Qot_WarrantScreen    = 3254 // 窝轮筛选
-	ProtoID_Qot_GetOptionQuote   = 3255 // 获取期权实时行情
-	ProtoID_Qot_GetOptionStrategy = 3256 // 获取期权策略组合列表
+	ProtoID_Qot_StockScreen               = 3252 // 条件选股(新版股票筛选)
+	ProtoID_Qot_OptionScreen              = 3253 // 期权筛选
+	ProtoID_Qot_WarrantScreen             = 3254 // 窝轮筛选
+	ProtoID_Qot_GetOptionQuote            = 3255 // 获取期权实时行情
+	ProtoID_Qot_GetOptionStrategy         = 3256 // 获取期权策略组合列表
 	ProtoID_Qot_GetOptionStrategyAnalysis = 3257 // 获取期权策略组合分析
-	ProtoID_Qot_GetOptionStrategySpread  = 3258 // 获取期权策略价差列表
+	ProtoID_Qot_GetOptionStrategySpread   = 3258 // 获取期权策略价差列表
 
 	// v10.7+ Combo Trade APIs
 	ProtoID_Trd_GetComboMaxTrdQtys = 2112 // 查询组合最大可交易数量
 	ProtoID_Trd_PlaceComboOrder    = 2227 // 组合下单
 
 	// v10.8+ Indicator & Search APIs
-	ProtoID_Qot_GetIndicatorList  = 3259 // 获取指标列表
+	ProtoID_Qot_GetIndicatorList     = 3259 // 获取指标列表
 	ProtoID_Qot_RequestIndicatorCalc = 3260 // 请求异步指标计算
-	ProtoID_Qot_PushIndicatorCalc = 3261 // 指标计算推送
-	ProtoID_Qot_GetSearchQuote    = 3262 // 搜索报价
-	ProtoID_Qot_GetSearchNews     = 3263 // 搜索新闻
+	ProtoID_Qot_PushIndicatorCalc    = 3261 // 指标计算推送
+	ProtoID_Qot_GetSearchQuote       = 3262 // 搜索报价
+	ProtoID_Qot_GetSearchNews        = 3263 // 搜索新闻
 
 	// v10.8+ Option Analytics APIs (3301-3314)
-	ProtoID_Qot_GetOptionMarketStatistic = 3301 // 获取期权市场统计
-	ProtoID_Qot_GetOptionUnderlyingHisStatistic = 3302 // 获取期权标的的历史统计
-	ProtoID_Qot_GetOptionUnderlyingOverview = 3303 // 批量获取期权标的概览
+	ProtoID_Qot_GetOptionMarketStatistic         = 3301 // 获取期权市场统计
+	ProtoID_Qot_GetOptionUnderlyingHisStatistic  = 3302 // 获取期权标的的历史统计
+	ProtoID_Qot_GetOptionUnderlyingOverview      = 3303 // 批量获取期权标的概览
 	ProtoID_Qot_GetOptionUnderlyingHisVolatility = 3304 // 获取期权标的历史波动率
-	ProtoID_Qot_GetOptionUnderlyingRank = 3305 // 获取期权标的排名
-	ProtoID_Qot_GetOptionRank      = 3306 // 获取期权合约排名
-	ProtoID_Qot_GetOptionEvent     = 3307 // 获取期权大事件
-	ProtoID_Qot_GetOptionEventAlert = 3308 // 获取期权大事件提醒
-	ProtoID_Qot_SetOptionEventAlert = 3309 // 设置期权大事件提醒
-	ProtoID_Qot_UpdateOptionEvent  = 3310 // 推送期权大事件
-	ProtoID_Qot_GetOptionZeroDteScreener = 3311 // 获取0DTE期权筛选
-	ProtoID_Qot_GetOptionZeroDteContract = 3312 // 获取0DTE期权合约
-	ProtoID_Qot_GetOptionEarningsScreener = 3313 // 获取期权财报筛选
-	ProtoID_Qot_GetOptionSellerScreener  = 3314 // 获取期权卖方筛选
+	ProtoID_Qot_GetOptionUnderlyingRank          = 3305 // 获取期权标的排名
+	ProtoID_Qot_GetOptionRank                    = 3306 // 获取期权合约排名
+	ProtoID_Qot_GetOptionEvent                   = 3307 // 获取期权大事件
+	ProtoID_Qot_GetOptionEventAlert              = 3308 // 获取期权大事件提醒
+	ProtoID_Qot_SetOptionEventAlert              = 3309 // 设置期权大事件提醒
+	ProtoID_Qot_UpdateOptionEvent                = 3310 // 推送期权大事件
+	ProtoID_Qot_GetOptionZeroDteScreener         = 3311 // 获取0DTE期权筛选
+	ProtoID_Qot_GetOptionZeroDteContract         = 3312 // 获取0DTE期权合约
+	ProtoID_Qot_GetOptionEarningsScreener        = 3313 // 获取期权财报筛选
+	ProtoID_Qot_GetOptionSellerScreener          = 3314 // 获取期权卖方筛选
 
 	// v10.8+ Market Fundamentals APIs (3401-3417)
-	ProtoID_Qot_GetEarningsCalendar = 3401 // 获取财报日历
-	ProtoID_Qot_GetMacroIndicatorList = 3402 // 获取宏观指标列表
+	ProtoID_Qot_GetEarningsCalendar      = 3401 // 获取财报日历
+	ProtoID_Qot_GetMacroIndicatorList    = 3402 // 获取宏观指标列表
 	ProtoID_Qot_GetMacroIndicatorHistory = 3403 // 获取宏观指标历史
-	ProtoID_Qot_GetFedWatchTargetRate = 3404 // 获取FedWatch目标利率概率
-	ProtoID_Qot_GetFedWatchDotPlot = 3405 // 获取FedWatch点阵图
-	ProtoID_Qot_GetEarningsBeatRank = 3406 // 获取财报超预期排名
-	ProtoID_Qot_GetDividendRank    = 3407 // 获取股息排名
-	ProtoID_Qot_GetDividendCalendar = 3408 // 获取股息日历
-	ProtoID_Qot_GetEconomicCalendar = 3409 // 获取经济日历
-	ProtoID_Qot_GetUSPreMarketRank = 3410 // 获取美股盘前排名
-	ProtoID_Qot_GetUSAfterHoursRank = 3411 // 获取美股盘后排名
-	ProtoID_Qot_GetUSOvernightRank = 3412 // 获取美股隔夜排名
-	ProtoID_Qot_GetTopMoversRank   = 3413 // 获取热门异动排名
-	ProtoID_Qot_GetHotList         = 3414 // 获取热门榜单
-	ProtoID_Qot_GetShortSellingRank = 3415 // 获取做空排名
-	ProtoID_Qot_GetPeriodChangeRank = 3416 // 获取区间涨跌排名
-	ProtoID_Qot_GetHighDividendSOERank = 3417 // 获取高股息国企排名
+	ProtoID_Qot_GetFedWatchTargetRate    = 3404 // 获取FedWatch目标利率概率
+	ProtoID_Qot_GetFedWatchDotPlot       = 3405 // 获取FedWatch点阵图
+	ProtoID_Qot_GetEarningsBeatRank      = 3406 // 获取财报超预期排名
+	ProtoID_Qot_GetDividendRank          = 3407 // 获取股息排名
+	ProtoID_Qot_GetDividendCalendar      = 3408 // 获取股息日历
+	ProtoID_Qot_GetEconomicCalendar      = 3409 // 获取经济日历
+	ProtoID_Qot_GetUSPreMarketRank       = 3410 // 获取美股盘前排名
+	ProtoID_Qot_GetUSAfterHoursRank      = 3411 // 获取美股盘后排名
+	ProtoID_Qot_GetUSOvernightRank       = 3412 // 获取美股隔夜排名
+	ProtoID_Qot_GetTopMoversRank         = 3413 // 获取热门异动排名
+	ProtoID_Qot_GetHotList               = 3414 // 获取热门榜单
+	ProtoID_Qot_GetShortSellingRank      = 3415 // 获取做空排名
+	ProtoID_Qot_GetPeriodChangeRank      = 3416 // 获取区间涨跌排名
+	ProtoID_Qot_GetHighDividendSOERank   = 3417 // 获取高股息国企排名
 
 	// v10.8+ Institutional APIs (3418-3425)
-	ProtoID_Qot_GetInstitutionList = 3418 // 获取机构列表
-	ProtoID_Qot_GetInstitutionProfile = 3419 // 获取机构简介
-	ProtoID_Qot_GetInstitutionDistribution = 3420 // 获取机构配置分布
+	ProtoID_Qot_GetInstitutionList          = 3418 // 获取机构列表
+	ProtoID_Qot_GetInstitutionProfile       = 3419 // 获取机构简介
+	ProtoID_Qot_GetInstitutionDistribution  = 3420 // 获取机构配置分布
 	ProtoID_Qot_GetInstitutionHoldingChange = 3421 // 获取机构持仓变动
-	ProtoID_Qot_GetInstitutionHoldingList = 3422 // 获取机构持仓列表
-	ProtoID_Qot_GetArkFundHolding = 3423 // 获取ARK基金持仓
-	ProtoID_Qot_GetArkStockDynamic = 3424 // 获取ARK个股动态
-	ProtoID_Qot_GetArkActiveTransaction = 3425 // 获取ARK主动交易
+	ProtoID_Qot_GetInstitutionHoldingList   = 3422 // 获取机构持仓列表
+	ProtoID_Qot_GetArkFundHolding           = 3423 // 获取ARK基金持仓
+	ProtoID_Qot_GetArkStockDynamic          = 3424 // 获取ARK个股动态
+	ProtoID_Qot_GetArkActiveTransaction     = 3425 // 获取ARK主动交易
 
 	// v10.8+ Other APIs (3426-3433)
-	ProtoID_Qot_GetRatingChange   = 3426 // 获取评级变动
-	ProtoID_Qot_GetIndustrialChainList = 3427 // 获取产业链列表
-	ProtoID_Qot_GetIndustrialChainDetail = 3428 // 获取产业链详情
+	ProtoID_Qot_GetRatingChange           = 3426 // 获取评级变动
+	ProtoID_Qot_GetIndustrialChainList    = 3427 // 获取产业链列表
+	ProtoID_Qot_GetIndustrialChainDetail  = 3428 // 获取产业链详情
 	ProtoID_Qot_GetIndustrialChainByPlate = 3429 // 根据板块获取产业链
-	ProtoID_Qot_GetIndustrialPlateInfo = 3430 // 获取产业板块信息
-	ProtoID_Qot_GetIndustrialPlateStock = 3431 // 获取产业板块成分股
-	ProtoID_Qot_GetHeatMapData    = 3432 // 获取热力图数据
-	ProtoID_Qot_GetRiseFallDistribution = 3433 // 获取涨跌分布
+	ProtoID_Qot_GetIndustrialPlateInfo    = 3430 // 获取产业板块信息
+	ProtoID_Qot_GetIndustrialPlateStock   = 3431 // 获取产业板块成分股
+	ProtoID_Qot_GetHeatMapData            = 3432 // 获取热力图数据
+	ProtoID_Qot_GetRiseFallDistribution   = 3433 // 获取涨跌分布
 
 	// v10.9+ Event Contract / Prediction Market APIs (3434-3456)
 	ProtoID_Qot_GetEventContractCategory      = 3434 // 获取事件合约分类列表
-	ProtoID_Qot_FilterCompetition            = 3435 // 事件合约赛事筛选
+	ProtoID_Qot_FilterCompetition             = 3435 // 事件合约赛事筛选
 	ProtoID_Qot_GetEventContractSeriesList    = 3436 // 获取事件合约 Series 列表
 	ProtoID_Qot_GetEventContractEventList     = 3437 // 获取事件合约 Event 列表
 	ProtoID_Qot_GetEventContract              = 3438 // 获取事件合约 Contract 列表
@@ -306,17 +306,17 @@ func IsPushID(p int32) bool {
 type Market int32
 
 const (
-	Market_None = 0  // 未知市场
-	Market_HK   = 1  // 香港市场
-	Market_US   = 11 // 美国市场
-	Market_SH   = 21 // 沪市
-	Market_SZ   = 22 // 深市
-	Market_SG   = 31 // 新加坡市场
-	Market_JP   = 41 // 日本市场
-	Market_AU   = 51 // 澳大利亚市场
-	Market_MY   = 61 // 马来西亚市场
-	Market_CA   = 71 // 加拿大市场
-	Market_FX   = 81 // 外汇市场
+	Market_None = 0   // 未知市场
+	Market_HK   = 1   // 香港市场
+	Market_US   = 11  // 美国市场
+	Market_SH   = 21  // 沪市
+	Market_SZ   = 22  // 深市
+	Market_SG   = 31  // 新加坡市场
+	Market_JP   = 41  // 日本市场
+	Market_AU   = 51  // 澳大利亚市场
+	Market_MY   = 61  // 马来西亚市场
+	Market_CA   = 71  // 加拿大市场
+	Market_FX   = 81  // 外汇市场
 	Market_CC   = 101 // 加密货币市场
 )
 
@@ -533,37 +533,37 @@ const (
 type MarketState int32
 
 const (
-	MarketState_None             MarketState = 0  // 无交易,美股未开盘
-	MarketState_Auction          MarketState = 1  // 竞价
-	MarketState_WaitingOpen      MarketState = 2  // 早盘前等待开盘
-	MarketState_Morning          MarketState = 3  // 早盘
-	MarketState_Rest             MarketState = 4  // 午间休市
-	MarketState_Afternoon        MarketState = 5  // 午盘
-	MarketState_Closed           MarketState = 6  // 收盘
-	MarketState_PreMarketBegin   MarketState = 7  // 盘前开始
-	MarketState_PreMarketEnd     MarketState = 8  // 盘前结束
-	MarketState_AfterHoursBegin  MarketState = 9  // 盘后开始
-	MarketState_AfterHoursEnd    MarketState = 10 // 盘后结束
-	MarketState_NightOpen        MarketState = 11 // 夜市开盘
-	MarketState_NightEnd         MarketState = 12 // 夜市收盘
-	MarketState_FutureDayOpen    MarketState = 13 // 期指日市开盘
-	MarketState_FutureDayBreak   MarketState = 14 // 期指日市休市
-	MarketState_FutureDayClose   MarketState = 15 // 期指日市收盘
-	MarketState_FutureDayWait    MarketState = 16 // 期指日市等待开盘
-	MarketState_HK_CAS           MarketState = 17 // 港股盘后竞价
-	MarketState_FutureNightWait  MarketState = 18 // 夜市等待开盘
-	MarketState_FutureAfternoon  MarketState = 19 // 期货下午开盘
-	MarketState_FutureSwitchDate MarketState = 20 // 期货切交易日
-	MarketState_FutureOpen       MarketState = 21 // 期货开盘
-	MarketState_FutureBreak      MarketState = 22 // 期货中盘休息
-	MarketState_FutureBreakOver  MarketState = 23 // 期货休息后开盘
-	MarketState_FutureClose      MarketState = 24 // 期货收盘
-	MarketState_StibAfterHoursWait MarketState = 25 // 盘后竞价等待
+	MarketState_None                MarketState = 0  // 无交易,美股未开盘
+	MarketState_Auction             MarketState = 1  // 竞价
+	MarketState_WaitingOpen         MarketState = 2  // 早盘前等待开盘
+	MarketState_Morning             MarketState = 3  // 早盘
+	MarketState_Rest                MarketState = 4  // 午间休市
+	MarketState_Afternoon           MarketState = 5  // 午盘
+	MarketState_Closed              MarketState = 6  // 收盘
+	MarketState_PreMarketBegin      MarketState = 7  // 盘前开始
+	MarketState_PreMarketEnd        MarketState = 8  // 盘前结束
+	MarketState_AfterHoursBegin     MarketState = 9  // 盘后开始
+	MarketState_AfterHoursEnd       MarketState = 10 // 盘后结束
+	MarketState_NightOpen           MarketState = 11 // 夜市开盘
+	MarketState_NightEnd            MarketState = 12 // 夜市收盘
+	MarketState_FutureDayOpen       MarketState = 13 // 期指日市开盘
+	MarketState_FutureDayBreak      MarketState = 14 // 期指日市休市
+	MarketState_FutureDayClose      MarketState = 15 // 期指日市收盘
+	MarketState_FutureDayWait       MarketState = 16 // 期指日市等待开盘
+	MarketState_HK_CAS              MarketState = 17 // 港股盘后竞价
+	MarketState_FutureNightWait     MarketState = 18 // 夜市等待开盘
+	MarketState_FutureAfternoon     MarketState = 19 // 期货下午开盘
+	MarketState_FutureSwitchDate    MarketState = 20 // 期货切交易日
+	MarketState_FutureOpen          MarketState = 21 // 期货开盘
+	MarketState_FutureBreak         MarketState = 22 // 期货中盘休息
+	MarketState_FutureBreakOver     MarketState = 23 // 期货休息后开盘
+	MarketState_FutureClose         MarketState = 24 // 期货收盘
+	MarketState_StibAfterHoursWait  MarketState = 25 // 盘后竞价等待
 	MarketState_StibAfterHoursBegin MarketState = 26 // 盘后竞价开始
-	MarketState_StibAfterHoursEnd MarketState = 27 // 盘后竞价结束
-	MarketState_Night             MarketState = 28 // 夜间交易
-	MarketState_TradeAtLast       MarketState = 29 // 收盘集合竞价
-	MarketState_Overnight         MarketState = 30 // 隔夜交易
+	MarketState_StibAfterHoursEnd   MarketState = 27 // 盘后竞价结束
+	MarketState_Night               MarketState = 28 // 夜间交易
+	MarketState_TradeAtLast         MarketState = 29 // 收盘集合竞价
+	MarketState_Overnight           MarketState = 30 // 隔夜交易
 )
 
 // =============================================================================
@@ -1650,19 +1650,19 @@ const (
 type IndicatorShape int32
 
 const (
-	IndicatorShape_Unknown        IndicatorShape = 0  // 未知
-	IndicatorShape_XCross         IndicatorShape = 1  // X型交叉
-	IndicatorShape_Cross          IndicatorShape = 2  // 十字
-	IndicatorShape_Circle         IndicatorShape = 3  // 圆形
-	IndicatorShape_TriangleUp     IndicatorShape = 4  // 三角向上
-	IndicatorShape_TriangleDown   IndicatorShape = 5  // 三角向下
-	IndicatorShape_Flag           IndicatorShape = 6  // 旗帜
-	IndicatorShape_ArrowUp        IndicatorShape = 7  // 箭头向上
-	IndicatorShape_ArrowDown      IndicatorShape = 8  // 箭头向下
-	IndicatorShape_Square         IndicatorShape = 9  // 方形
-	IndicatorShape_Diamond        IndicatorShape = 10 // 菱形
-	IndicatorShape_LabelUp        IndicatorShape = 11 // 标签向上
-	IndicatorShape_LabelDown      IndicatorShape = 12 // 标签向下
+	IndicatorShape_Unknown      IndicatorShape = 0  // 未知
+	IndicatorShape_XCross       IndicatorShape = 1  // X型交叉
+	IndicatorShape_Cross        IndicatorShape = 2  // 十字
+	IndicatorShape_Circle       IndicatorShape = 3  // 圆形
+	IndicatorShape_TriangleUp   IndicatorShape = 4  // 三角向上
+	IndicatorShape_TriangleDown IndicatorShape = 5  // 三角向下
+	IndicatorShape_Flag         IndicatorShape = 6  // 旗帜
+	IndicatorShape_ArrowUp      IndicatorShape = 7  // 箭头向上
+	IndicatorShape_ArrowDown    IndicatorShape = 8  // 箭头向下
+	IndicatorShape_Square       IndicatorShape = 9  // 方形
+	IndicatorShape_Diamond      IndicatorShape = 10 // 菱形
+	IndicatorShape_LabelUp      IndicatorShape = 11 // 标签向上
+	IndicatorShape_LabelDown    IndicatorShape = 12 // 标签向下
 )
 
 // =============================================================================
@@ -1673,16 +1673,16 @@ const (
 type IndicatorLineType int32
 
 const (
-	IndicatorLineType_Unknown        IndicatorLineType = 0 // 未知
-	IndicatorLineType_Solid          IndicatorLineType = 1 // 实线
-	IndicatorLineType_Dashed         IndicatorLineType = 2 // 虚线
-	IndicatorLineType_Dot            IndicatorLineType = 3 // 点线
-	IndicatorLineType_Cross          IndicatorLineType = 4 // 十字
-	IndicatorLineType_Circle         IndicatorLineType = 5 // 圆形
-	IndicatorLineType_Histogram      IndicatorLineType = 6 // 柱状图
-	IndicatorLineType_HistogramLine  IndicatorLineType = 7 // 柱状线
-	IndicatorLineType_Step           IndicatorLineType = 8 // 阶梯
-	IndicatorLineType_StepDiamonds   IndicatorLineType = 9 // 阶梯菱形
+	IndicatorLineType_Unknown       IndicatorLineType = 0 // 未知
+	IndicatorLineType_Solid         IndicatorLineType = 1 // 实线
+	IndicatorLineType_Dashed        IndicatorLineType = 2 // 虚线
+	IndicatorLineType_Dot           IndicatorLineType = 3 // 点线
+	IndicatorLineType_Cross         IndicatorLineType = 4 // 十字
+	IndicatorLineType_Circle        IndicatorLineType = 5 // 圆形
+	IndicatorLineType_Histogram     IndicatorLineType = 6 // 柱状图
+	IndicatorLineType_HistogramLine IndicatorLineType = 7 // 柱状线
+	IndicatorLineType_Step          IndicatorLineType = 8 // 阶梯
+	IndicatorLineType_StepDiamonds  IndicatorLineType = 9 // 阶梯菱形
 )
 
 // =============================================================================
@@ -1707,11 +1707,11 @@ const (
 type OptionMarket int32
 
 const (
-	OptionMarket_Unknown    OptionMarket = 0 // 未知
+	OptionMarket_Unknown     OptionMarket = 0 // 未知
 	OptionMarket_US_Security OptionMarket = 1 // 美股期权
-	OptionMarket_US_Index   OptionMarket = 2 // 美股指数期权
+	OptionMarket_US_Index    OptionMarket = 2 // 美股指数期权
 	OptionMarket_HK_Security OptionMarket = 3 // 港股期权
-	OptionMarket_HK_Index   OptionMarket = 4 // 港股指数期权
+	OptionMarket_HK_Index    OptionMarket = 4 // 港股指数期权
 )
 
 // =============================================================================
@@ -1749,20 +1749,20 @@ const (
 type UnderlyingRankSortType int32
 
 const (
-	UnderlyingRankSortType_Unknown                  UnderlyingRankSortType = 0  // 未知
-	UnderlyingRankSortType_Volume                   UnderlyingRankSortType = 1  // 成交量
-	UnderlyingRankSortType_OpenInterest             UnderlyingRankSortType = 2  // 持仓量
-	UnderlyingRankSortType_IV                       UnderlyingRankSortType = 3  // 隐含波动率
-	UnderlyingRankSortType_HV                       UnderlyingRankSortType = 4  // 历史波动率
-	UnderlyingRankSortType_IVRank                   UnderlyingRankSortType = 5  // IV分位
-	UnderlyingRankSortType_IVPercentile             UnderlyingRankSortType = 6  // IV百分位
-	UnderlyingRankSortType_IVChange                 UnderlyingRankSortType = 7  // IV变化
-	UnderlyingRankSortType_HVChange                 UnderlyingRankSortType = 8  // HV变化
-	UnderlyingRankSortType_VolumeRatio              UnderlyingRankSortType = 9  // 量比
-	UnderlyingRankSortType_OIRatio                  UnderlyingRankSortType = 10 // 持仓量比
-	UnderlyingRankSortType_MarketCap                UnderlyingRankSortType = 11 // 市值
-	UnderlyingRankSortType_ChangeRatio              UnderlyingRankSortType = 12 // 涨跌幅
-	UnderlyingRankSortType_Price                    UnderlyingRankSortType = 13 // 价格
+	UnderlyingRankSortType_Unknown      UnderlyingRankSortType = 0  // 未知
+	UnderlyingRankSortType_Volume       UnderlyingRankSortType = 1  // 成交量
+	UnderlyingRankSortType_OpenInterest UnderlyingRankSortType = 2  // 持仓量
+	UnderlyingRankSortType_IV           UnderlyingRankSortType = 3  // 隐含波动率
+	UnderlyingRankSortType_HV           UnderlyingRankSortType = 4  // 历史波动率
+	UnderlyingRankSortType_IVRank       UnderlyingRankSortType = 5  // IV分位
+	UnderlyingRankSortType_IVPercentile UnderlyingRankSortType = 6  // IV百分位
+	UnderlyingRankSortType_IVChange     UnderlyingRankSortType = 7  // IV变化
+	UnderlyingRankSortType_HVChange     UnderlyingRankSortType = 8  // HV变化
+	UnderlyingRankSortType_VolumeRatio  UnderlyingRankSortType = 9  // 量比
+	UnderlyingRankSortType_OIRatio      UnderlyingRankSortType = 10 // 持仓量比
+	UnderlyingRankSortType_MarketCap    UnderlyingRankSortType = 11 // 市值
+	UnderlyingRankSortType_ChangeRatio  UnderlyingRankSortType = 12 // 涨跌幅
+	UnderlyingRankSortType_Price        UnderlyingRankSortType = 13 // 价格
 )
 
 // =============================================================================
@@ -1773,17 +1773,17 @@ const (
 type OptionRankType int32
 
 const (
-	OptionRankType_Unknown         OptionRankType = 0  // 未知
-	OptionRankType_Volume          OptionRankType = 1  // 成交量
-	OptionRankType_OpenInterest    OptionRankType = 2  // 持仓量
-	OptionRankType_VolumeChange    OptionRankType = 3  // 成交量变化
-	OptionRankType_OIChange        OptionRankType = 4  // 持仓量变化
-	OptionRankType_IV              OptionRankType = 5  // 隐含波动率
-	OptionRankType_HV              OptionRankType = 6  // 历史波动率
-	OptionRankType_IVRank          OptionRankType = 7  // IV分位
-	OptionRankType_IVPercentile    OptionRankType = 8  // IV百分位
-	OptionRankType_PriceChange     OptionRankType = 9  // 价格变化
-	OptionRankType_Premium         OptionRankType = 10 // 权利金
+	OptionRankType_Unknown      OptionRankType = 0  // 未知
+	OptionRankType_Volume       OptionRankType = 1  // 成交量
+	OptionRankType_OpenInterest OptionRankType = 2  // 持仓量
+	OptionRankType_VolumeChange OptionRankType = 3  // 成交量变化
+	OptionRankType_OIChange     OptionRankType = 4  // 持仓量变化
+	OptionRankType_IV           OptionRankType = 5  // 隐含波动率
+	OptionRankType_HV           OptionRankType = 6  // 历史波动率
+	OptionRankType_IVRank       OptionRankType = 7  // IV分位
+	OptionRankType_IVPercentile OptionRankType = 8  // IV百分位
+	OptionRankType_PriceChange  OptionRankType = 9  // 价格变化
+	OptionRankType_Premium      OptionRankType = 10 // 权利金
 )
 
 // =============================================================================
@@ -1794,12 +1794,12 @@ const (
 type ZeroDteSortType int32
 
 const (
-	ZeroDteSortType_Unknown     ZeroDteSortType = 0 // 未知
-	ZeroDteSortType_Volume      ZeroDteSortType = 1 // 成交量
-	ZeroDteSortType_IV          ZeroDteSortType = 2 // 隐含波动率
-	ZeroDteSortType_ChangeRatio ZeroDteSortType = 3 // 涨跌幅
+	ZeroDteSortType_Unknown      ZeroDteSortType = 0 // 未知
+	ZeroDteSortType_Volume       ZeroDteSortType = 1 // 成交量
+	ZeroDteSortType_IV           ZeroDteSortType = 2 // 隐含波动率
+	ZeroDteSortType_ChangeRatio  ZeroDteSortType = 3 // 涨跌幅
 	ZeroDteSortType_OpenInterest ZeroDteSortType = 4 // 持仓量
-	ZeroDteSortType_MarketCap   ZeroDteSortType = 5 // 市值
+	ZeroDteSortType_MarketCap    ZeroDteSortType = 5 // 市值
 )
 
 // =============================================================================
@@ -1810,17 +1810,17 @@ const (
 type ZeroDteIndicatorType int32
 
 const (
-	ZeroDteIndicatorType_Unknown          ZeroDteIndicatorType = 0  // 未知
-	ZeroDteIndicatorType_OwnerList        ZeroDteIndicatorType = 1  // 持有列表
-	ZeroDteIndicatorType_HasEarningsWeek  ZeroDteIndicatorType = 2  // 本周有财报
-	ZeroDteIndicatorType_Volume           ZeroDteIndicatorType = 3  // 成交量
-	ZeroDteIndicatorType_OpenInterest     ZeroDteIndicatorType = 4  // 持仓量
-	ZeroDteIndicatorType_IV               ZeroDteIndicatorType = 5  // 隐含波动率
-	ZeroDteIndicatorType_HV               ZeroDteIndicatorType = 6  // 历史波动率
-	ZeroDteIndicatorType_IVRank           ZeroDteIndicatorType = 7  // IV分位
-	ZeroDteIndicatorType_IVPercentile     ZeroDteIndicatorType = 8  // IV百分位
-	ZeroDteIndicatorType_Price            ZeroDteIndicatorType = 9  // 价格
-	ZeroDteIndicatorType_ChangeRatio      ZeroDteIndicatorType = 10 // 涨跌幅
+	ZeroDteIndicatorType_Unknown         ZeroDteIndicatorType = 0  // 未知
+	ZeroDteIndicatorType_OwnerList       ZeroDteIndicatorType = 1  // 持有列表
+	ZeroDteIndicatorType_HasEarningsWeek ZeroDteIndicatorType = 2  // 本周有财报
+	ZeroDteIndicatorType_Volume          ZeroDteIndicatorType = 3  // 成交量
+	ZeroDteIndicatorType_OpenInterest    ZeroDteIndicatorType = 4  // 持仓量
+	ZeroDteIndicatorType_IV              ZeroDteIndicatorType = 5  // 隐含波动率
+	ZeroDteIndicatorType_HV              ZeroDteIndicatorType = 6  // 历史波动率
+	ZeroDteIndicatorType_IVRank          ZeroDteIndicatorType = 7  // IV分位
+	ZeroDteIndicatorType_IVPercentile    ZeroDteIndicatorType = 8  // IV百分位
+	ZeroDteIndicatorType_Price           ZeroDteIndicatorType = 9  // 价格
+	ZeroDteIndicatorType_ChangeRatio     ZeroDteIndicatorType = 10 // 涨跌幅
 )
 
 // =============================================================================
@@ -1831,11 +1831,11 @@ const (
 type ZeroDteContractSortType int32
 
 const (
-	ZeroDteContractSortType_Unknown     ZeroDteContractSortType = 0 // 未知
-	ZeroDteContractSortType_Volume      ZeroDteContractSortType = 1 // 成交量
+	ZeroDteContractSortType_Unknown      ZeroDteContractSortType = 0 // 未知
+	ZeroDteContractSortType_Volume       ZeroDteContractSortType = 1 // 成交量
 	ZeroDteContractSortType_OpenInterest ZeroDteContractSortType = 2 // 持仓量
-	ZeroDteContractSortType_IV          ZeroDteContractSortType = 3 // 隐含波动率
-	ZeroDteContractSortType_Delta       ZeroDteContractSortType = 4 // Delta
+	ZeroDteContractSortType_IV           ZeroDteContractSortType = 3 // 隐含波动率
+	ZeroDteContractSortType_Delta        ZeroDteContractSortType = 4 // Delta
 )
 
 // =============================================================================
@@ -1846,22 +1846,22 @@ const (
 type ZeroDteContractIndicatorType int32
 
 const (
-	ZeroDteContractIndicatorType_Unknown             ZeroDteContractIndicatorType = 0  // 未知
-	ZeroDteContractIndicatorType_OptionType          ZeroDteContractIndicatorType = 1  // 期权类型
-	ZeroDteContractIndicatorType_Volume              ZeroDteContractIndicatorType = 2  // 成交量
-	ZeroDteContractIndicatorType_OpenInterest        ZeroDteContractIndicatorType = 3  // 持仓量
-	ZeroDteContractIndicatorType_IV                  ZeroDteContractIndicatorType = 4  // 隐含波动率
-	ZeroDteContractIndicatorType_Delta               ZeroDteContractIndicatorType = 5  // Delta
-	ZeroDteContractIndicatorType_Gamma               ZeroDteContractIndicatorType = 6  // Gamma
-	ZeroDteContractIndicatorType_Theta               ZeroDteContractIndicatorType = 7  // Theta
-	ZeroDteContractIndicatorType_Vega                ZeroDteContractIndicatorType = 8  // Vega
-	ZeroDteContractIndicatorType_Rho                 ZeroDteContractIndicatorType = 9  // Rho
-	ZeroDteContractIndicatorType_Price               ZeroDteContractIndicatorType = 10 // 价格
-	ZeroDteContractIndicatorType_ChangeRatio         ZeroDteContractIndicatorType = 11 // 涨跌幅
-	ZeroDteContractIndicatorType_BreakEvenPoint      ZeroDteContractIndicatorType = 12 // 盈亏平衡点
-	ZeroDteContractIndicatorType_ToBEP               ZeroDteContractIndicatorType = 13 // 距离盈亏平衡点
-	ZeroDteContractIndicatorType_BuyProfitProb       ZeroDteContractIndicatorType = 14 // 买入盈利概率
-	ZeroDteContractIndicatorType_SellProfitProb      ZeroDteContractIndicatorType = 15 // 卖出盈利概率
+	ZeroDteContractIndicatorType_Unknown        ZeroDteContractIndicatorType = 0  // 未知
+	ZeroDteContractIndicatorType_OptionType     ZeroDteContractIndicatorType = 1  // 期权类型
+	ZeroDteContractIndicatorType_Volume         ZeroDteContractIndicatorType = 2  // 成交量
+	ZeroDteContractIndicatorType_OpenInterest   ZeroDteContractIndicatorType = 3  // 持仓量
+	ZeroDteContractIndicatorType_IV             ZeroDteContractIndicatorType = 4  // 隐含波动率
+	ZeroDteContractIndicatorType_Delta          ZeroDteContractIndicatorType = 5  // Delta
+	ZeroDteContractIndicatorType_Gamma          ZeroDteContractIndicatorType = 6  // Gamma
+	ZeroDteContractIndicatorType_Theta          ZeroDteContractIndicatorType = 7  // Theta
+	ZeroDteContractIndicatorType_Vega           ZeroDteContractIndicatorType = 8  // Vega
+	ZeroDteContractIndicatorType_Rho            ZeroDteContractIndicatorType = 9  // Rho
+	ZeroDteContractIndicatorType_Price          ZeroDteContractIndicatorType = 10 // 价格
+	ZeroDteContractIndicatorType_ChangeRatio    ZeroDteContractIndicatorType = 11 // 涨跌幅
+	ZeroDteContractIndicatorType_BreakEvenPoint ZeroDteContractIndicatorType = 12 // 盈亏平衡点
+	ZeroDteContractIndicatorType_ToBEP          ZeroDteContractIndicatorType = 13 // 距离盈亏平衡点
+	ZeroDteContractIndicatorType_BuyProfitProb  ZeroDteContractIndicatorType = 14 // 买入盈利概率
+	ZeroDteContractIndicatorType_SellProfitProb ZeroDteContractIndicatorType = 15 // 卖出盈利概率
 )
 
 // =============================================================================
@@ -1872,24 +1872,24 @@ const (
 type EarningsSortType int32
 
 const (
-	EarningsSortType_Unknown              EarningsSortType = 0  // 未知
-	EarningsSortType_EarningsDate         EarningsSortType = 1  // 财报日期
-	EarningsSortType_Volume               EarningsSortType = 2  // 成交量
-	EarningsSortType_IV                   EarningsSortType = 3  // 隐含波动率
-	EarningsSortType_MarketCap            EarningsSortType = 4  // 市值
-	EarningsSortType_ChangeRatio          EarningsSortType = 5  // 涨跌幅
-	EarningsSortType_Price                EarningsSortType = 6  // 价格
-	EarningsSortType_IVRank               EarningsSortType = 7  // IV分位
-	EarningsSortType_IVPercentile         EarningsSortType = 8  // IV百分位
-	EarningsSortType_HV                   EarningsSortType = 9  // 历史波动率
-	EarningsSortType_OpenInterest         EarningsSortType = 10 // 持仓量
-	EarningsSortType_LastReportIVCrush    EarningsSortType = 11 // 上次财报IV平仓
-	EarningsSortType_HistoryReportIVCrush EarningsSortType = 12 // 历史财报IV平仓
-	EarningsSortType_LastReportChgRatio   EarningsSortType = 13 // 上次财报涨跌幅
+	EarningsSortType_Unknown               EarningsSortType = 0  // 未知
+	EarningsSortType_EarningsDate          EarningsSortType = 1  // 财报日期
+	EarningsSortType_Volume                EarningsSortType = 2  // 成交量
+	EarningsSortType_IV                    EarningsSortType = 3  // 隐含波动率
+	EarningsSortType_MarketCap             EarningsSortType = 4  // 市值
+	EarningsSortType_ChangeRatio           EarningsSortType = 5  // 涨跌幅
+	EarningsSortType_Price                 EarningsSortType = 6  // 价格
+	EarningsSortType_IVRank                EarningsSortType = 7  // IV分位
+	EarningsSortType_IVPercentile          EarningsSortType = 8  // IV百分位
+	EarningsSortType_HV                    EarningsSortType = 9  // 历史波动率
+	EarningsSortType_OpenInterest          EarningsSortType = 10 // 持仓量
+	EarningsSortType_LastReportIVCrush     EarningsSortType = 11 // 上次财报IV平仓
+	EarningsSortType_HistoryReportIVCrush  EarningsSortType = 12 // 历史财报IV平仓
+	EarningsSortType_LastReportChgRatio    EarningsSortType = 13 // 上次财报涨跌幅
 	EarningsSortType_HistoryReportChgRatio EarningsSortType = 14 // 历史财报涨跌幅
-	EarningsSortType_EstimateEPSYoY       EarningsSortType = 15 // 预估EPS同比
-	EarningsSortType_EstimateRevenueYoY   EarningsSortType = 16 // 预估营收同比
-	EarningsSortType_ExpectedMoveRatio    EarningsSortType = 17 // 预期波动幅度
+	EarningsSortType_EstimateEPSYoY        EarningsSortType = 15 // 预估EPS同比
+	EarningsSortType_EstimateRevenueYoY    EarningsSortType = 16 // 预估营收同比
+	EarningsSortType_ExpectedMoveRatio     EarningsSortType = 17 // 预期波动幅度
 )
 
 // =============================================================================
@@ -1928,11 +1928,11 @@ const (
 type ExpirationType int32
 
 const (
-	ExpirationType_Unknown     ExpirationType = 0 // 未知
-	ExpirationType_Monthly     ExpirationType = 1 // 月度
-	ExpirationType_Weekly      ExpirationType = 2 // 周度
-	ExpirationType_EndOfMonth  ExpirationType = 3 // 月末
-	ExpirationType_Quarterly   ExpirationType = 4 // 季度
+	ExpirationType_Unknown    ExpirationType = 0 // 未知
+	ExpirationType_Monthly    ExpirationType = 1 // 月度
+	ExpirationType_Weekly     ExpirationType = 2 // 周度
+	ExpirationType_EndOfMonth ExpirationType = 3 // 月末
+	ExpirationType_Quarterly  ExpirationType = 4 // 季度
 )
 
 // =============================================================================
@@ -1956,8 +1956,8 @@ const (
 type SellerType int32
 
 const (
-	SellerType_Unknown      SellerType = 0 // 未知
-	SellerType_CoveredCall   SellerType = 1 // 备兑开仓
+	SellerType_Unknown        SellerType = 0 // 未知
+	SellerType_CoveredCall    SellerType = 1 // 备兑开仓
 	SellerType_CashSecuredPut SellerType = 2 // 现金担保看跌
 )
 
@@ -2016,10 +2016,10 @@ const (
 type EarningsCalendarEstimateType int32
 
 const (
-	EarningsCalendarEstimateType_Unknown  EarningsCalendarEstimateType = 0 // 未知
-	EarningsCalendarEstimateType_EPS      EarningsCalendarEstimateType = 1 // 每股收益
-	EarningsCalendarEstimateType_Revenue  EarningsCalendarEstimateType = 2 // 营收
-	EarningsCalendarEstimateType_EBIT     EarningsCalendarEstimateType = 3 // 息税前利润
+	EarningsCalendarEstimateType_Unknown EarningsCalendarEstimateType = 0 // 未知
+	EarningsCalendarEstimateType_EPS     EarningsCalendarEstimateType = 1 // 每股收益
+	EarningsCalendarEstimateType_Revenue EarningsCalendarEstimateType = 2 // 营收
+	EarningsCalendarEstimateType_EBIT    EarningsCalendarEstimateType = 3 // 息税前利润
 )
 
 // =============================================================================
@@ -2030,10 +2030,10 @@ const (
 type EarningsCalendarPeriodType int32
 
 const (
-	EarningsCalendarPeriodType_Unknown     EarningsCalendarPeriodType = 0 // 未知
-	EarningsCalendarPeriodType_Quarterly   EarningsCalendarPeriodType = 1 // 季度
-	EarningsCalendarPeriodType_SemiAnnual  EarningsCalendarPeriodType = 2 // 半年度
-	EarningsCalendarPeriodType_Annual      EarningsCalendarPeriodType = 3 // 年度
+	EarningsCalendarPeriodType_Unknown    EarningsCalendarPeriodType = 0 // 未知
+	EarningsCalendarPeriodType_Quarterly  EarningsCalendarPeriodType = 1 // 季度
+	EarningsCalendarPeriodType_SemiAnnual EarningsCalendarPeriodType = 2 // 半年度
+	EarningsCalendarPeriodType_Annual     EarningsCalendarPeriodType = 3 // 年度
 )
 
 // =============================================================================
@@ -2044,10 +2044,10 @@ const (
 type EarningsCalendarStockListType int32
 
 const (
-	EarningsCalendarStockListType_Unknown  EarningsCalendarStockListType = 0 // 未知
+	EarningsCalendarStockListType_Unknown   EarningsCalendarStockListType = 0 // 未知
 	EarningsCalendarStockListType_Watchlist EarningsCalendarStockListType = 1 // 自选股
-	EarningsCalendarStockListType_Position EarningsCalendarStockListType = 2 // 持仓
-	EarningsCalendarStockListType_Special  EarningsCalendarStockListType = 3 // 特别关注
+	EarningsCalendarStockListType_Position  EarningsCalendarStockListType = 2 // 持仓
+	EarningsCalendarStockListType_Special   EarningsCalendarStockListType = 3 // 特别关注
 )
 
 // =============================================================================
@@ -2105,11 +2105,11 @@ const (
 type BeatTerm int32
 
 const (
-	BeatTerm_Latest         BeatTerm = 0 // 最新
-	BeatTerm_LatestQuarter  BeatTerm = 1 // 最新季度
-	BeatTerm_LatestHalf     BeatTerm = 2 // 最新半年度
-	BeatTerm_LatestAnnual   BeatTerm = 3 // 最新年度
-	BeatTerm_All            BeatTerm = 4 // 全部
+	BeatTerm_Latest        BeatTerm = 0 // 最新
+	BeatTerm_LatestQuarter BeatTerm = 1 // 最新季度
+	BeatTerm_LatestHalf    BeatTerm = 2 // 最新半年度
+	BeatTerm_LatestAnnual  BeatTerm = 3 // 最新年度
+	BeatTerm_All           BeatTerm = 4 // 全部
 )
 
 // =============================================================================
@@ -2120,10 +2120,10 @@ const (
 type PostPeriodType int32
 
 const (
-	PostPeriodType_Unknown        PostPeriodType = 0 // 未知
-	PostPeriodType_Regular        PostPeriodType = 1 // 常规
-	PostPeriodType_Before         PostPeriodType = 2 // 盘前
-	PostPeriodType_After          PostPeriodType = 3 // 盘后
+	PostPeriodType_Unknown         PostPeriodType = 0 // 未知
+	PostPeriodType_Regular         PostPeriodType = 1 // 常规
+	PostPeriodType_Before          PostPeriodType = 2 // 盘前
+	PostPeriodType_After           PostPeriodType = 3 // 盘后
 	PostPeriodType_IntradayTrading PostPeriodType = 4 // 盘中交易
 )
 
@@ -2150,8 +2150,8 @@ const (
 type DividendRankType int32
 
 const (
-	DividendRankType_Unknown      DividendRankType = 0 // 未知
-	DividendRankType_HighYield    DividendRankType = 1 // 高股息
+	DividendRankType_Unknown        DividendRankType = 0 // 未知
+	DividendRankType_HighYield      DividendRankType = 1 // 高股息
 	DividendRankType_DividendGrowth DividendRankType = 2 // 股息增长
 )
 
@@ -2203,13 +2203,13 @@ const (
 type PriceFilter int32
 
 const (
-	PriceFilter_All               PriceFilter = 0 // 全部
-	PriceFilter_LessThan1         PriceFilter = 1 // 小于1
-	PriceFilter_Between1And10     PriceFilter = 2 // 1-10
-	PriceFilter_Between10And100   PriceFilter = 3 // 10-100
-	PriceFilter_GreaterThan100    PriceFilter = 4 // 大于100
-	PriceFilter_Near52WeekHigh    PriceFilter = 5 // 接近52周高点
-	PriceFilter_Near52WeekLow     PriceFilter = 6 // 接近52周低点
+	PriceFilter_All             PriceFilter = 0 // 全部
+	PriceFilter_LessThan1       PriceFilter = 1 // 小于1
+	PriceFilter_Between1And10   PriceFilter = 2 // 1-10
+	PriceFilter_Between10And100 PriceFilter = 3 // 10-100
+	PriceFilter_GreaterThan100  PriceFilter = 4 // 大于100
+	PriceFilter_Near52WeekHigh  PriceFilter = 5 // 接近52周高点
+	PriceFilter_Near52WeekLow   PriceFilter = 6 // 接近52周低点
 )
 
 // =============================================================================
@@ -2220,10 +2220,10 @@ const (
 type HotListSortField int32
 
 const (
-	HotListSortField_Unknown    HotListSortField = 0 // 未知
-	HotListSortField_TradeHeat  HotListSortField = 1 // 交易热度
-	HotListSortField_SearchHeat HotListSortField = 2 // 搜索热度
-	HotListSortField_NewsHeat   HotListSortField = 3 // 新闻热度
+	HotListSortField_Unknown     HotListSortField = 0 // 未知
+	HotListSortField_TradeHeat   HotListSortField = 1 // 交易热度
+	HotListSortField_SearchHeat  HotListSortField = 2 // 搜索热度
+	HotListSortField_NewsHeat    HotListSortField = 3 // 新闻热度
 	HotListSortField_AverageHeat HotListSortField = 4 // 平均热度
 )
 
@@ -2235,19 +2235,19 @@ const (
 type ShortSellingSortField int32
 
 const (
-	ShortSellingSortField_Unknown            ShortSellingSortField = 0  // 未知
-	ShortSellingSortField_ShortNumberChange  ShortSellingSortField = 1  // 做空数量变化
-	ShortSellingSortField_ShortRatioChange   ShortSellingSortField = 2  // 做空比例变化
-	ShortSellingSortField_ShortNumber        ShortSellingSortField = 3  // 做空数量
-	ShortSellingSortField_ShortRatio         ShortSellingSortField = 4  // 做空比例
-	ShortSellingSortField_Volume             ShortSellingSortField = 5  // 成交量
-	ShortSellingSortField_PositionVolume     ShortSellingSortField = 6  // 持仓量
-	ShortSellingSortField_PositionRatio      ShortSellingSortField = 7  // 持仓占比
-	ShortSellingSortField_DaysToCover        ShortSellingSortField = 8  // 回补天数
-	ShortSellingSortField_WeekAvgVolume      ShortSellingSortField = 9  // 周均成交量
-	ShortSellingSortField_WeekAvgShortNumber ShortSellingSortField = 10 // 周均做空量
-	ShortSellingSortField_WeekAvgShortRatio  ShortSellingSortField = 11 // 周均做空比
-	ShortSellingSortField_MonthAvgVolume     ShortSellingSortField = 12 // 月均成交量
+	ShortSellingSortField_Unknown             ShortSellingSortField = 0  // 未知
+	ShortSellingSortField_ShortNumberChange   ShortSellingSortField = 1  // 做空数量变化
+	ShortSellingSortField_ShortRatioChange    ShortSellingSortField = 2  // 做空比例变化
+	ShortSellingSortField_ShortNumber         ShortSellingSortField = 3  // 做空数量
+	ShortSellingSortField_ShortRatio          ShortSellingSortField = 4  // 做空比例
+	ShortSellingSortField_Volume              ShortSellingSortField = 5  // 成交量
+	ShortSellingSortField_PositionVolume      ShortSellingSortField = 6  // 持仓量
+	ShortSellingSortField_PositionRatio       ShortSellingSortField = 7  // 持仓占比
+	ShortSellingSortField_DaysToCover         ShortSellingSortField = 8  // 回补天数
+	ShortSellingSortField_WeekAvgVolume       ShortSellingSortField = 9  // 周均成交量
+	ShortSellingSortField_WeekAvgShortNumber  ShortSellingSortField = 10 // 周均做空量
+	ShortSellingSortField_WeekAvgShortRatio   ShortSellingSortField = 11 // 周均做空比
+	ShortSellingSortField_MonthAvgVolume      ShortSellingSortField = 12 // 月均成交量
 	ShortSellingSortField_MonthAvgShortNumber ShortSellingSortField = 13 // 月均做空量
 	ShortSellingSortField_MonthAvgShortRatio  ShortSellingSortField = 14 // 月均做空比
 )
@@ -2260,7 +2260,7 @@ const (
 type RankPeriodType int32
 
 const (
-	RankPeriodType_Unknown  RankPeriodType = 0 // 未知
+	RankPeriodType_Unknown RankPeriodType = 0 // 未知
 	RankPeriodType_5Min    RankPeriodType = 1 // 5分钟
 	RankPeriodType_1Day    RankPeriodType = 2 // 1日
 	RankPeriodType_5Day    RankPeriodType = 3 // 5日
@@ -2279,10 +2279,10 @@ const (
 type InstitutionListSortField int32
 
 const (
-	InstitutionListSortField_Unknown            InstitutionListSortField = 0 // 未知
-	InstitutionListSortField_PositionValue      InstitutionListSortField = 1 // 持仓市值
+	InstitutionListSortField_Unknown             InstitutionListSortField = 0 // 未知
+	InstitutionListSortField_PositionValue       InstitutionListSortField = 1 // 持仓市值
 	InstitutionListSortField_PositionValueChange InstitutionListSortField = 2 // 持仓市值变化
-	InstitutionListSortField_PositionCount      InstitutionListSortField = 3 // 持仓数量
+	InstitutionListSortField_PositionCount       InstitutionListSortField = 3 // 持仓数量
 	InstitutionListSortField_PositionCountChange InstitutionListSortField = 4 // 持仓数量变化
 )
 
@@ -2324,11 +2324,11 @@ const (
 type ArkCycleType int32
 
 const (
-	ArkCycleType_1Day   ArkCycleType = 0 // 1日
-	ArkCycleType_5Day   ArkCycleType = 1 // 5日
-	ArkCycleType_10Day  ArkCycleType = 2 // 10日
-	ArkCycleType_30Day  ArkCycleType = 3 // 30日
-	ArkCycleType_60Day  ArkCycleType = 4 // 60日
+	ArkCycleType_1Day  ArkCycleType = 0 // 1日
+	ArkCycleType_5Day  ArkCycleType = 1 // 5日
+	ArkCycleType_10Day ArkCycleType = 2 // 10日
+	ArkCycleType_30Day ArkCycleType = 3 // 30日
+	ArkCycleType_60Day ArkCycleType = 4 // 60日
 )
 
 // =============================================================================
@@ -2339,11 +2339,11 @@ const (
 type ArkDynamicType int32
 
 const (
-	ArkDynamicType_Unknown               ArkDynamicType = 0 // 未知
-	ArkDynamicType_ConsecutiveSameDir    ArkDynamicType = 1 // 连续同向
-	ArkDynamicType_RecentTransaction     ArkDynamicType = 2 // 近期交易
-	ArkDynamicType_LastTransaction       ArkDynamicType = 3 // 最后交易
-	ArkDynamicType_NoDynamic             ArkDynamicType = 4 // 无动态
+	ArkDynamicType_Unknown            ArkDynamicType = 0 // 未知
+	ArkDynamicType_ConsecutiveSameDir ArkDynamicType = 1 // 连续同向
+	ArkDynamicType_RecentTransaction  ArkDynamicType = 2 // 近期交易
+	ArkDynamicType_LastTransaction    ArkDynamicType = 3 // 最后交易
+	ArkDynamicType_NoDynamic          ArkDynamicType = 4 // 无动态
 )
 
 // =============================================================================
@@ -2440,10 +2440,10 @@ const (
 type RiseFallDistributionType int32
 
 const (
-	RiseFallDistributionType_Unknown           RiseFallDistributionType = 0 // 未知
-	RiseFallDistributionType_RiseLimit         RiseFallDistributionType = 1 // 涨停
-	RiseFallDistributionType_PositiveInfinity  RiseFallDistributionType = 2 // 涨幅7%以上
-	RiseFallDistributionType_NormalRange       RiseFallDistributionType = 3 // 正常区间
-	RiseFallDistributionType_NegativeInfinity  RiseFallDistributionType = 4 // 跌幅7%以上
-	RiseFallDistributionType_FallLimit         RiseFallDistributionType = 5 // 跌停
+	RiseFallDistributionType_Unknown          RiseFallDistributionType = 0 // 未知
+	RiseFallDistributionType_RiseLimit        RiseFallDistributionType = 1 // 涨停
+	RiseFallDistributionType_PositiveInfinity RiseFallDistributionType = 2 // 涨幅7%以上
+	RiseFallDistributionType_NormalRange      RiseFallDistributionType = 3 // 正常区间
+	RiseFallDistributionType_NegativeInfinity RiseFallDistributionType = 4 // 跌幅7%以上
+	RiseFallDistributionType_FallLimit        RiseFallDistributionType = 5 // 跌停
 )

@@ -570,13 +570,13 @@ func TestTradingWorkflow_Complete(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
 	// Register all handlers
-server.RegisterHandler(2001, func(req []byte) (proto.Message, error) {
+	server.RegisterHandler(2001, func(req []byte) (proto.Message, error) {
 		accID := fixtures.TestAccID
 		s2c := &trdgetacclist.S2C{
 			AccList: []*trdcommon.TrdAcc{
 				{
-					AccID:     &accID,
-					TrdEnv:    proto.Int32(fixtures.TestTrdEnv),
+					AccID:  &accID,
+					TrdEnv: proto.Int32(fixtures.TestTrdEnv),
 				},
 			},
 		}

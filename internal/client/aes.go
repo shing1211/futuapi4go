@@ -10,9 +10,10 @@ import (
 // Trailer: 16-byte block where last byte = original len % 16 (how many nulls were added).
 //
 // Layout:
-//   padded     = plaintext + (\x00 * padLen)   where padLen = (16 - len%16) % 16
-//   encrypted  = AES_ECB_encrypt(padded)
-//   result     = encrypted + trailer(16 bytes: \x00*15 + [padLen])
+//
+//	padded     = plaintext + (\x00 * padLen)   where padLen = (16 - len%16) % 16
+//	encrypted  = AES_ECB_encrypt(padded)
+//	result     = encrypted + trailer(16 bytes: \x00*15 + [padLen])
 func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 	if len(key) != 16 {
 		return nil, NewError(CodeEncryptionFailed, "FTAES key must be 16 bytes")
@@ -55,12 +56,12 @@ func ftaesEncrypt(key []byte, plaintext []byte) ([]byte, error) {
 
 // ftaesDecrypt decrypts data using the Futu FTAES_ECB variant.
 //
-//   1. Validate ciphertext length is at least 16 bytes and the encrypted portion
-//      (excluding 16-byte trailer) is a multiple of the AES block size.
-//   2. Read trailer's last byte → original remainder (how many nulls were padded)
-//   3. Remove the 16-byte trailer
-//   4. AES/ECB decrypt
-//   5. Strip padLen null bytes from the end
+//  1. Validate ciphertext length is at least 16 bytes and the encrypted portion
+//     (excluding 16-byte trailer) is a multiple of the AES block size.
+//  2. Read trailer's last byte → original remainder (how many nulls were padded)
+//  3. Remove the 16-byte trailer
+//  4. AES/ECB decrypt
+//  5. Strip padLen null bytes from the end
 //
 // Returns ErrNotEncrypted if the data does not match FTAES format (not a full
 // block after trailer removal). Callers should fall back to treating the body

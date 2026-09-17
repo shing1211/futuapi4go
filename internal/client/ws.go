@@ -52,7 +52,7 @@ func IsWebSocketAddr(addr string) bool {
 }
 
 type wsConn struct {
-	conn   *websocket.Conn
+	conn       *websocket.Conn
 	apiTimeout time.Duration
 
 	dispMu sync.Mutex
@@ -67,8 +67,8 @@ type wsConn struct {
 
 func newWSConn(conn *websocket.Conn) *wsConn {
 	ws := &wsConn{
-		conn:   conn,
-		disp:   make(map[uint32]chan *Packet),
+		conn:    conn,
+		disp:    make(map[uint32]chan *Packet),
 		readCh:  make(chan *Packet, 10),
 		closeCh: make(chan struct{}),
 	}

@@ -72,8 +72,8 @@ const (
 	ProtoID_SubAccPush              = 2008
 	ProtoID_ReconfirmOrder          = 2209
 	ProtoID_GetFlowSummary          = 2226
-	ProtoID_GetComboMaxTrdQtys     = 2112
-	ProtoID_PlaceComboOrder        = 2227
+	ProtoID_GetComboMaxTrdQtys      = 2112
+	ProtoID_PlaceComboOrder         = 2227
 )
 
 // Acc represents a trading account with its environment, ID, type, and status.

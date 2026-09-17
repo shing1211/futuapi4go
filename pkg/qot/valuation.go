@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	ProtoID_GetValuationDetail          = 3232
-	ProtoID_GetValuationPlateStockList  = 3233
+	ProtoID_GetValuationDetail         = 3232
+	ProtoID_GetValuationPlateStockList = 3233
 )
 
 type GetValuationDetailRequest struct {

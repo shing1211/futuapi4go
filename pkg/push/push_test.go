@@ -24,10 +24,10 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/notify"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotpushindicatorcalc"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateoptionevent"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatebroker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatekl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateoptionevent"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdateorderbook"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatepricereminder"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotupdatert"
@@ -944,8 +944,8 @@ func TestParseUpdateOptionEventValidData(t *testing.T) {
 	resp := &qotupdateoptionevent.Response{
 		RetType: &retType,
 		S2C: &qotupdateoptionevent.S2C{
-			Owner:  &qotcommon.Security{Market: &ownerMarket, Code: &ownerCode},
-			Option: &qotcommon.Security{Market: &optMarket, Code: &optionCode},
+			Owner:   &qotcommon.Security{Market: &ownerMarket, Code: &ownerCode},
+			Option:  &qotcommon.Security{Market: &optMarket, Code: &optionCode},
 			Message: &msg,
 		},
 	}

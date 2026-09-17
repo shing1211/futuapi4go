@@ -78,8 +78,8 @@ const (
 	ProtoID_GetCodeChange           = 3216
 	ProtoID_GetFutureInfo           = 3218
 	ProtoID_GetIpoList              = 3217
-	ProtoID_GetHistoryKL           = 3101
-	ProtoID_Qot_GetRehab              = 3102
+	ProtoID_GetHistoryKL            = 3101
+	ProtoID_Qot_GetRehab            = 3102
 	ProtoID_GetHoldingChangeList    = 3208
 	ProtoID_RequestRehab            = 3105
 	ProtoID_GetUserSecurityGroup    = 3222
@@ -100,35 +100,35 @@ const (
 	ProtoID_RequestHistoryKLQuota   = 3104
 
 	// Screen APIs (v10.6+)
-	ProtoID_StockScreen                = 3252
-	ProtoID_OptionScreen               = 3253
-	ProtoID_WarrantScreen              = 3254
-	ProtoID_GetOptionQuote             = 3255
-	ProtoID_GetOptionStrategy          = 3256
-	ProtoID_GetOptionStrategyAnalysis  = 3257
-	ProtoID_GetOptionStrategySpread    = 3258
+	ProtoID_StockScreen               = 3252
+	ProtoID_OptionScreen              = 3253
+	ProtoID_WarrantScreen             = 3254
+	ProtoID_GetOptionQuote            = 3255
+	ProtoID_GetOptionStrategy         = 3256
+	ProtoID_GetOptionStrategyAnalysis = 3257
+	ProtoID_GetOptionStrategySpread   = 3258
 )
 
 // BasicQot represents basic quote data for a security.
 type BasicQot struct {
-	Security       *qotcommon.Security
-	Name           string
-	IsSuspended    bool
-	UpdateTime     string
-	HighPrice      float64
-	OpenPrice      float64
-	LowPrice       float64
-	CurPrice       float64
-	LastClosePrice float64
-	Volume         int64
-	Turnover       float64
-	TurnoverRate   float64
-	Amplitude      float64
-	ListTime         string
-	PriceSpread      float64
-	DarkStatus       int32
-	ListTimestamp    float64
-	UpdateTimestamp  float64
+	Security        *qotcommon.Security
+	Name            string
+	IsSuspended     bool
+	UpdateTime      string
+	HighPrice       float64
+	OpenPrice       float64
+	LowPrice        float64
+	CurPrice        float64
+	LastClosePrice  float64
+	Volume          int64
+	Turnover        float64
+	TurnoverRate    float64
+	Amplitude       float64
+	ListTime        string
+	PriceSpread     float64
+	DarkStatus      int32
+	ListTimestamp   float64
+	UpdateTimestamp float64
 	SecStatus       int32
 	OptionExData    *qotcommon.OptionBasicQotExData
 	PreMarket       *qotcommon.PreAfterMarketData
@@ -168,31 +168,31 @@ func GetBasicQot(ctx context.Context, c *futuapi.Client, securityList []*qotcomm
 			continue
 		}
 		result = append(result, &BasicQot{
-			Security:       bq.Security,
-			Name:           util.ProtoStr(bq.Name),
-			IsSuspended:    util.ProtoBool(bq.IsSuspended),
-			UpdateTime:     util.ProtoStr(bq.UpdateTime),
-			HighPrice:      util.ProtoFloat64(bq.HighPrice),
-			OpenPrice:      util.ProtoFloat64(bq.OpenPrice),
-			LowPrice:       util.ProtoFloat64(bq.LowPrice),
-			CurPrice:       util.ProtoFloat64(bq.CurPrice),
-			LastClosePrice: util.ProtoFloat64(bq.LastClosePrice),
-			Volume:         util.ProtoInt64(bq.Volume),
-			Turnover:       util.ProtoFloat64(bq.Turnover),
-			TurnoverRate:   util.ProtoFloat64(bq.TurnoverRate),
-			Amplitude:      util.ProtoFloat64(bq.Amplitude),
+			Security:        bq.Security,
+			Name:            util.ProtoStr(bq.Name),
+			IsSuspended:     util.ProtoBool(bq.IsSuspended),
+			UpdateTime:      util.ProtoStr(bq.UpdateTime),
+			HighPrice:       util.ProtoFloat64(bq.HighPrice),
+			OpenPrice:       util.ProtoFloat64(bq.OpenPrice),
+			LowPrice:        util.ProtoFloat64(bq.LowPrice),
+			CurPrice:        util.ProtoFloat64(bq.CurPrice),
+			LastClosePrice:  util.ProtoFloat64(bq.LastClosePrice),
+			Volume:          util.ProtoInt64(bq.Volume),
+			Turnover:        util.ProtoFloat64(bq.Turnover),
+			TurnoverRate:    util.ProtoFloat64(bq.TurnoverRate),
+			Amplitude:       util.ProtoFloat64(bq.Amplitude),
 			ListTime:        util.ProtoStr(bq.ListTime),
 			PriceSpread:     util.ProtoFloat64(bq.PriceSpread),
 			DarkStatus:      util.ProtoInt32(bq.DarkStatus),
 			ListTimestamp:   util.ProtoFloat64(bq.ListTimestamp),
 			UpdateTimestamp: util.ProtoFloat64(bq.UpdateTimestamp),
 			SecStatus:       util.ProtoInt32(bq.SecStatus),
-			OptionExData:   bq.OptionExData,
+			OptionExData:    bq.OptionExData,
 			PreMarket:       bq.PreMarket,
 			AfterMarket:     bq.AfterMarket,
-			FutureExData:   bq.FutureExData,
+			FutureExData:    bq.FutureExData,
 			Overnight:       bq.Overnight,
-			WarrantExData:  bq.WarrantExData,
+			WarrantExData:   bq.WarrantExData,
 		})
 	}
 
@@ -443,7 +443,6 @@ func GetOptionStrategySpread(ctx context.Context, c *futuapi.Client, req *GetOpt
 		SpreadList: s2c.SpreadList,
 	}, nil
 }
-
 
 // GetKLRequest defines parameters for GetKL.
 type GetKLRequest struct {

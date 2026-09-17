@@ -7,7 +7,7 @@ import (
 
 func TestParseCode(t *testing.T) {
 	tests := []struct {
-		name        string
+		name       string
 		code       string
 		wantExpiry time.Time
 		wantStrike float64
@@ -15,14 +15,14 @@ func TestParseCode(t *testing.T) {
 		wantErr    bool
 	}{
 		{
-			name:        "HK Put",
+			name:       "HK Put",
 			code:       "24011900700P",
 			wantExpiry: time.Date(2024, 1, 19, 0, 0, 0, 0, time.UTC),
 			wantStrike: 700,
 			wantType:   OptionTypePut,
 		},
 		{
-			name:        "HK Call",
+			name:       "HK Call",
 			code:       "24021600180C",
 			wantExpiry: time.Date(2024, 2, 16, 0, 0, 0, 0, time.UTC),
 			wantStrike: 180,

@@ -148,15 +148,15 @@ func GetOrderBook(ctx context.Context, c *futuapi.Client, req *GetOrderBookReque
 
 // Ticker represents a single trade tick data point.
 type Ticker struct {
-	Time      string
-	Sequence  int64
-	Dir       int32
-	Price     float64
-	Volume    int64
-	Turnover  float64
-	RecvTime  float64
-	Type      int32
-	TypeSign  int32
+	Time         string
+	Sequence     int64
+	Dir          int32
+	Price        float64
+	Volume       int64
+	Turnover     float64
+	RecvTime     float64
+	Type         int32
+	TypeSign     int32
 	Timestamp    float64
 	PushDataType int32
 }
@@ -215,16 +215,16 @@ func GetTicker(ctx context.Context, c *futuapi.Client, req *GetTickerRequest) (*
 			continue
 		}
 		result.TickerList = append(result.TickerList, &Ticker{
-			Time:        util.ProtoStr(t.Time),
-Sequence:     util.ProtoInt64(t.Sequence),
-			Dir:         util.ProtoInt32(t.Dir),
-			Price:       util.ProtoFloat64(t.Price),
-			Volume:      util.ProtoInt64(t.Volume),
-			Turnover:    util.ProtoFloat64(t.Turnover),
-			RecvTime:    util.ProtoFloat64(t.RecvTime),
-			Type:        util.ProtoInt32(t.Type),
-			TypeSign:    util.ProtoInt32(t.TypeSign),
-			Timestamp:   util.ProtoFloat64(t.Timestamp),
+			Time:         util.ProtoStr(t.Time),
+			Sequence:     util.ProtoInt64(t.Sequence),
+			Dir:          util.ProtoInt32(t.Dir),
+			Price:        util.ProtoFloat64(t.Price),
+			Volume:       util.ProtoInt64(t.Volume),
+			Turnover:     util.ProtoFloat64(t.Turnover),
+			RecvTime:     util.ProtoFloat64(t.RecvTime),
+			Type:         util.ProtoInt32(t.Type),
+			TypeSign:     util.ProtoInt32(t.TypeSign),
+			Timestamp:    util.ProtoFloat64(t.Timestamp),
 			PushDataType: util.ProtoInt32(t.PushDataType),
 		})
 	}

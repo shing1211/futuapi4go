@@ -11,8 +11,8 @@ import (
 type OperationType string
 
 const (
-	OpPlaceOrder    OperationType = "PlaceOrder"
-	OpModifyOrder   OperationType = "ModifyOrder"
+	OpPlaceOrder     OperationType = "PlaceOrder"
+	OpModifyOrder    OperationType = "ModifyOrder"
 	OpReconfirmOrder OperationType = "ReconfirmOrder"
 )
 

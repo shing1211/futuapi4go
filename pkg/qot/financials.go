@@ -35,12 +35,12 @@ const (
 )
 
 type GetFinancialsStatementsRequest struct {
-	Security       *qotcommon.Security
-	StatementType  int32
-	FinancialType  int32
-	CurrencyCode   string
-	NextKey        string
-	Num            int32
+	Security      *qotcommon.Security
+	StatementType int32
+	FinancialType int32
+	CurrencyCode  string
+	NextKey       string
+	Num           int32
 }
 
 type GetFinancialsStatementsResponse struct {
@@ -95,7 +95,7 @@ func GetFinancialsStatements(ctx context.Context, c *futuapi.Client, req *GetFin
 	return &GetFinancialsStatementsResponse{
 		StructureList: s2c.StructureList,
 		ReportList:    s2c.ReportList,
-		NextKey:      util.ProtoStr(s2c.NextKey),
+		NextKey:       util.ProtoStr(s2c.NextKey),
 	}, nil
 }
 
@@ -150,9 +150,9 @@ func GetFinancialsRevenueBreakdown(ctx context.Context, c *futuapi.Client, req *
 	}
 
 	return &GetFinancialsRevenueBreakdownResponse{
-		Period:        util.ProtoStr(s2c.Period),
-		BreakdownList: s2c.BreakdownList,
-		CurrencyCode:  util.ProtoStr(s2c.CurrencyCode),
+		Period:         util.ProtoStr(s2c.Period),
+		BreakdownList:  s2c.BreakdownList,
+		CurrencyCode:   util.ProtoStr(s2c.CurrencyCode),
 		ScreenDateList: s2c.ScreenDateList,
 	}, nil
 }

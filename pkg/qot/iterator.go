@@ -24,14 +24,14 @@ import (
 // HistoryKLineIterator paginates through historical K-line data using NextReqKey.
 // It is safe for concurrent use from multiple goroutines.
 type HistoryKLineIterator struct {
-	ctx         context.Context
-	client      *futuapi.Client
-	req         *RequestHistoryKLRequest
-	mu          sync.Mutex
-	err         error
-	atEnd       bool
+	ctx          context.Context
+	client       *futuapi.Client
+	req          *RequestHistoryKLRequest
+	mu           sync.Mutex
+	err          error
+	atEnd        bool
 	totalFetched int
-	pageCount   int
+	pageCount    int
 }
 
 // NewHistoryKLineIterator creates a new iterator for paginated historical K-line requests.

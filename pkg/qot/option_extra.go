@@ -26,13 +26,13 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionvolatility"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionexerciseprobability"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionvolatility"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 
 const (
-	ProtoID_GetOptionVolatility         = 3250
+	ProtoID_GetOptionVolatility          = 3250
 	ProtoID_GetOptionExerciseProbability = 3251
 )
 

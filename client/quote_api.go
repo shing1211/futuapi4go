@@ -316,11 +316,11 @@ func RegQotPush(ctx context.Context, c *Client, market constant.Market, code str
 	}
 
 	err := qot.RegQotPush(ctx, c.inner, &qot.RegQotPushRequest{
-		SecurityList:   []*qotcommon.Security{sec},
-		SubTypeList:    subTypesConverted,
-		RehabTypeList:  rehabTypesConverted,
-		IsRegOrUnReg:   isReg,
-		IsFirstPush:    isFirstPush,
+		SecurityList:  []*qotcommon.Security{sec},
+		SubTypeList:   subTypesConverted,
+		RehabTypeList: rehabTypesConverted,
+		IsRegOrUnReg:  isReg,
+		IsFirstPush:   isFirstPush,
 	})
 	return err
 }
@@ -1363,11 +1363,11 @@ func GetOptionExpirationDate(ctx context.Context, c *Client, market constant.Mar
 			continue
 		}
 		expirations = append(expirations, OptionExpiration{
-			Date:           e.StrikeTime,
-			Days:           e.OptionExpiryDateDistance,
-			Desc:           fmt.Sprintf("Cycle %d", e.Cycle),
+			Date:            e.StrikeTime,
+			Days:            e.OptionExpiryDateDistance,
+			Desc:            fmt.Sprintf("Cycle %d", e.Cycle),
 			StrikeTimestamp: e.StrikeTimestamp,
-			Cycle:          e.Cycle,
+			Cycle:           e.Cycle,
 		})
 	}
 	return expirations, nil
@@ -1851,10 +1851,10 @@ func GetHistoryKLPoints(ctx context.Context, c *Client, market constant.Market, 
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	return qot.GetHistoryKLPoints(ctx, c.inner, &qot.GetHistoryKLPointsRequest{
 		RehabType:  rehabType,
-		KLType:    klType,
+		KLType:     klType,
 		NoDataMode: noDataMode,
 		Securities: []*qotcommon.Security{sec},
-		Times:     times,
+		Times:      times,
 	})
 }
 
@@ -1895,12 +1895,12 @@ func GetFinancialsStatements(ctx context.Context, c *Client, market constant.Mar
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	return qot.GetFinancialsStatements(ctx, c.inner, &qot.GetFinancialsStatementsRequest{
-		Security:       sec,
-		StatementType:  statementType,
-		FinancialType:  financialType,
-		CurrencyCode:   currencyCode,
-		NextKey:        nextKey,
-		Num:            num,
+		Security:      sec,
+		StatementType: statementType,
+		FinancialType: financialType,
+		CurrencyCode:  currencyCode,
+		NextKey:       nextKey,
+		Num:           num,
 	})
 }
 
@@ -2144,7 +2144,7 @@ func GetCompanyOperationalEfficiency(ctx context.Context, c *Client, market cons
 		NextKey:       nextKey,
 		Num:           num,
 		CurrencyCode:  currencyCode,
-		FinancialType:  financialType,
+		FinancialType: financialType,
 	})
 }
 
@@ -2193,9 +2193,9 @@ func GetOptionVolatility(ctx context.Context, c *Client, market constant.Market,
 	marketPtr := int32(market)
 	sec := &qotcommon.Security{Market: &marketPtr, Code: &code}
 	return qot.GetOptionVolatility(ctx, c.inner, &qot.GetOptionVolatilityRequest{
-		Security:         sec,
-		QueryTimePeriod:  queryTimePeriod,
-		HvTimePeriod:     hvTimePeriod,
+		Security:        sec,
+		QueryTimePeriod: queryTimePeriod,
+		HvTimePeriod:    hvTimePeriod,
 	})
 }
 

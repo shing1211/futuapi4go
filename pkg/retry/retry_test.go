@@ -26,7 +26,7 @@ func TestDo_SuccessFirstAttempt(t *testing.T) {
 func TestDo_RetryOnRecoverableError(t *testing.T) {
 	calls := 0
 	err := Do(context.Background(), Config{
-		MaxAttempts:    3,
+		MaxAttempts:   3,
 		BaseDelay:     1 * time.Millisecond,
 		MaxDelay:      10 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -48,7 +48,7 @@ func TestDo_RetryOnRecoverableError(t *testing.T) {
 func TestDo_UnrecoverableError(t *testing.T) {
 	calls := 0
 	err := Do(context.Background(), Config{
-		MaxAttempts:    3,
+		MaxAttempts:   3,
 		BaseDelay:     1 * time.Millisecond,
 		MaxDelay:      10 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -67,7 +67,7 @@ func TestDo_UnrecoverableError(t *testing.T) {
 func TestDo_AllAttemptsFail(t *testing.T) {
 	calls := 0
 	cfg := Config{
-		MaxAttempts:    2,
+		MaxAttempts:   2,
 		BaseDelay:     1 * time.Millisecond,
 		MaxDelay:      10 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -88,8 +88,8 @@ func TestDo_ContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
 	defer cancel()
 	calls := 0
-err := Do(ctx, Config{
-		MaxAttempts:    100,
+	err := Do(ctx, Config{
+		MaxAttempts:   100,
 		BaseDelay:     500 * time.Millisecond,
 		MaxDelay:      500 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -110,7 +110,7 @@ func TestDo_ContextCancelBeforeDelay(t *testing.T) {
 	cancel() // cancel immediately
 	calls := 0
 	err := Do(ctx, Config{
-		MaxAttempts:    3,
+		MaxAttempts:   3,
 		BaseDelay:     1 * time.Second,
 		MaxDelay:      1 * time.Second,
 		IsRecoverable: defaultIsRecoverable,
@@ -141,7 +141,7 @@ func TestDoWithResult_Success(t *testing.T) {
 func TestDoWithResult_RetryWithResult(t *testing.T) {
 	calls := 0
 	result, err := DoWithResult(context.Background(), Config{
-		MaxAttempts:    3,
+		MaxAttempts:   3,
 		BaseDelay:     1 * time.Millisecond,
 		MaxDelay:      10 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -164,8 +164,8 @@ func TestDoWithResult_RetryWithResult(t *testing.T) {
 }
 
 func TestDoWithResult_Unrecoverable(t *testing.T) {
-_, err := DoWithResult(context.Background(), Config{
-		MaxAttempts:    3,
+	_, err := DoWithResult(context.Background(), Config{
+		MaxAttempts:   3,
 		BaseDelay:     1 * time.Millisecond,
 		MaxDelay:      10 * time.Millisecond,
 		IsRecoverable: defaultIsRecoverable,
@@ -251,8 +251,8 @@ func TestDefaultConfig(t *testing.T) {
 
 func TestDefaultIsRecoverable(t *testing.T) {
 	tests := []struct {
-		name     string
-		err      error
+		name        string
+		err         error
 		recoverable bool
 	}{
 		{"timeout", constant.NewFutuError(constant.ErrCodeTimeout, "TestDefaultIsRecoverable", "timeout"), true},

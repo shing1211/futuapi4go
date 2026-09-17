@@ -100,8 +100,8 @@ func TestBasicQotStructFieldsComplete(t *testing.T) {
 		ListTime:        "2004-06-16",
 		PriceSpread:     0.01,
 		DarkStatus:      0,
-		ListTimestamp:    1087267200.0,
-		UpdateTimestamp:  1744162200.0,
+		ListTimestamp:   1087267200.0,
+		UpdateTimestamp: 1744162200.0,
 		SecStatus:       0,
 	}
 
@@ -302,16 +302,16 @@ func TestGetOrderBookResponseConstruction(t *testing.T) {
 
 func TestTickerFields(t *testing.T) {
 	ticker := &Ticker{
-		Time:        "2026-04-08 15:00:00",
-		Sequence:   123456,
-		Dir:         1,
-		Price:       350.50,
-		Volume:      1000,
-		Turnover:    350500.00,
-		RecvTime:    1775635200.0,
-		Type:        0,
-		TypeSign:    1,
-		Timestamp:   1775635200.0,
+		Time:         "2026-04-08 15:00:00",
+		Sequence:     123456,
+		Dir:          1,
+		Price:        350.50,
+		Volume:       1000,
+		Turnover:     350500.00,
+		RecvTime:     1775635200.0,
+		Type:         0,
+		TypeSign:     1,
+		Timestamp:    1775635200.0,
 		PushDataType: 1,
 	}
 
@@ -721,7 +721,6 @@ func TestSubscribeRequestFullConstruction(t *testing.T) {
 		t.Error("expected IsUnsubAll false")
 	}
 }
-
 
 func TestGetCapitalFlowRequestConstruction(t *testing.T) {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
@@ -1354,8 +1353,6 @@ func TestRegQotPushRequestConstruction(t *testing.T) {
 		t.Error("expected IsFirstPush true")
 	}
 }
-
-
 
 func TestRequestRehabRequestConstruction(t *testing.T) {
 	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)

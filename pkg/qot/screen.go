@@ -110,9 +110,9 @@ type WarrantScreenRequest struct {
 
 // WarrantScreenResponse is the response type for WarrantScreen.
 type WarrantScreenResponse struct {
-	LastPage  bool
-	AllCount  int32
-	Warrants  []*qotwarrantscreen.WarrantItem
+	LastPage bool
+	AllCount int32
+	Warrants []*qotwarrantscreen.WarrantItem
 }
 
 // WarrantScreen filters warrants (窝轮) using the v10.6 screening engine.

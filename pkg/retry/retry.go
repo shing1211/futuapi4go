@@ -10,16 +10,16 @@ import (
 )
 
 type Config struct {
-	MaxAttempts int
-	BaseDelay   time.Duration
-	MaxDelay    time.Duration
-	Jitter      bool
+	MaxAttempts   int
+	BaseDelay     time.Duration
+	MaxDelay      time.Duration
+	Jitter        bool
 	IsRecoverable func(error) bool
 }
 
 func DefaultConfig() Config {
 	return Config{
-		MaxAttempts:    3,
+		MaxAttempts:   3,
 		BaseDelay:     500 * time.Millisecond,
 		MaxDelay:      10 * time.Second,
 		Jitter:        true,

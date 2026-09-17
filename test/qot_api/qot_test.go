@@ -149,7 +149,7 @@ func TestGetKL_HSI_Day(t *testing.T) {
 func TestGetKL_HSI_Min1(t *testing.T) {
 	server := testutil.NewMockServer(t)
 
-server.RegisterHandler(3006, func(req []byte) (proto.Message, error) {
+	server.RegisterHandler(3006, func(req []byte) (proto.Message, error) {
 		var reqMsg qotgetkl.Request
 		if err := proto.Unmarshal(req, &reqMsg); err != nil {
 			return nil, err

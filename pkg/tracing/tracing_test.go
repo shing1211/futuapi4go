@@ -15,7 +15,7 @@ func TestNoopTracer(t *testing.T) {
 		t.Error("expected non-nil span")
 	}
 	span.SetAttribute("key", "value") // should not panic
-	span.End()                         // should not panic
+	span.End()                        // should not panic
 }
 
 func TestNoopTracer_StartReturnsNoopSpan(t *testing.T) {

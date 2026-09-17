@@ -61,12 +61,12 @@ func wrapError(funcName string, retType int32, retMsg string) error {
 }
 
 const (
-	ProtoID_GetGlobalState      = 1002
+	ProtoID_GetGlobalState     = 1002
 	ProtoID_GetUserInfo        = 1005
 	ProtoID_Verification       = 1006
 	ProtoID_TestCmd            = 1008
-	ProtoID_GetDelayStatistics  = 1007
-	ProtoID_UsedQuota        = 1010
+	ProtoID_GetDelayStatistics = 1007
+	ProtoID_UsedQuota          = 1010
 )
 
 // GetGlobalStateResponse represents the global connection state including server info, login status, and market availability.
@@ -114,7 +114,7 @@ func GetGlobalState(ctx context.Context, c *futuapi.Client) (*GetGlobalStateResp
 		return nil, wrapError("GetGlobalState", int32(common.RetType_RetType_Unknown), "s2c is nil")
 	}
 
-return &GetGlobalStateResponse{
+	return &GetGlobalStateResponse{
 		ConnID:         util.ProtoUint64(s2c.ConnID),
 		ServerVer:      util.ProtoInt32(s2c.ServerVer),
 		ServerBuildNo:  util.ProtoInt32(s2c.ServerBuildNo),
@@ -249,8 +249,8 @@ type GetDelayStatisticsRequest struct {
 // GetDelayStatisticsResponse represents delay statistics for quote push, request-reply, and order placement.
 type GetDelayStatisticsResponse struct {
 	QotPushStatisticsList    []*QotPushDelayStatistics
-	ReqReplyStatisticsList    []*ReqReplyDelayStatistics
-	PlaceOrderStatisticsList  []*PlaceOrderDelayStatistics
+	ReqReplyStatisticsList   []*ReqReplyDelayStatistics
+	PlaceOrderStatisticsList []*PlaceOrderDelayStatistics
 }
 
 // QotPushDelayStatistics represents quote push delay statistics.
@@ -263,21 +263,21 @@ type QotPushDelayStatistics struct {
 
 // DelayStatisticsItem represents a single delay statistics item.
 type DelayStatisticsItem struct {
-	Begin          int32
-	End            int32
-	Count          int32
-	Proportion     float32
+	Begin           int32
+	End             int32
+	Count           int32
+	Proportion      float32
 	CumulativeRatio float32
 }
 
 // ReqReplyDelayStatistics represents request-reply delay statistics.
 type ReqReplyDelayStatistics struct {
-	ProtoID       int32
-	Count         int32
-	TotalCostAvg  float32
-	OpenDCostAvg  float32
-	NetDelayAvg   float32
-	IsLocalReply  bool
+	ProtoID      int32
+	Count        int32
+	TotalCostAvg float32
+	OpenDCostAvg float32
+	NetDelayAvg  float32
+	IsLocalReply bool
 }
 
 // PlaceOrderDelayStatistics represents order placement delay statistics.
@@ -443,8 +443,8 @@ func GetDelayStatistics(ctx context.Context, c *futuapi.Client, req *GetDelaySta
 
 	return &GetDelayStatisticsResponse{
 		QotPushStatisticsList:    qotList,
-		ReqReplyStatisticsList:    reqReplyList,
-		PlaceOrderStatisticsList:  placeOrderList,
+		ReqReplyStatisticsList:   reqReplyList,
+		PlaceOrderStatisticsList: placeOrderList,
 	}, nil
 }
 

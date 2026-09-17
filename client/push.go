@@ -142,17 +142,17 @@ func ParsePushRT(body []byte) (*PushRT, error) {
 	}
 	rt := data.RTList[0]
 	return &PushRT{
-		Market:        getInt32(data.Security.Market),
-		Code:          getStr(data.Security.Code),
-		Name:          data.Name,
-		Time:          getStr(rt.Time),
-		Price:         getFloat64(rt.Price),
-		Volume:        getInt64(rt.Volume),
+		Market:         getInt32(data.Security.Market),
+		Code:           getStr(data.Security.Code),
+		Name:           data.Name,
+		Time:           getStr(rt.Time),
+		Price:          getFloat64(rt.Price),
+		Volume:         getInt64(rt.Volume),
 		AvgPrice:       getFloat64(rt.AvgPrice),
-		Turnover:      getFloat64(rt.Turnover),
-		Minute:        getInt32(rt.Minute),
-		IsBlank:       getBool(rt.IsBlank),
-		Timestamp:     getFloat64(rt.Timestamp),
+		Turnover:       getFloat64(rt.Turnover),
+		Minute:         getInt32(rt.Minute),
+		IsBlank:        getBool(rt.IsBlank),
+		Timestamp:      getFloat64(rt.Timestamp),
 		LastClosePrice: getFloat64(rt.LastClosePrice),
 	}, nil
 }

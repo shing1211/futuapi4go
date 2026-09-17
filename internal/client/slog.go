@@ -123,8 +123,8 @@ func WithSlogWriter(w io.Writer, level Level) func(*ClientOptions) {
 }
 
 type SlogMetrics struct {
-	logger     *slog.Logger
-	attrAttrs  []slog.Attr
+	logger    *slog.Logger
+	attrAttrs []slog.Attr
 	startTime time.Time
 }
 

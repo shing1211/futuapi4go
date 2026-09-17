@@ -58,8 +58,8 @@ type sha1Validation struct {
 }
 
 type connState struct {
-	aesKey       []byte
-	connID       uint64
+	aesKey         []byte
+	connID         uint64
 	encryptEnabled bool
 }
 
@@ -80,11 +80,11 @@ type MockServer struct {
 	sha1Results   []sha1Validation
 	sha1ResultsMu sync.Mutex
 
-	running     int32
-	wg          sync.WaitGroup
-	privKeyPEM  string
-	pubKeyPEM   string
-	StrictSHA1  bool
+	running    int32
+	wg         sync.WaitGroup
+	privKeyPEM string
+	pubKeyPEM  string
+	StrictSHA1 bool
 }
 
 func NewMockServer(t *testing.T) *MockServer {

@@ -293,27 +293,37 @@ func (t TrdMarket) Prefix() string {
 }
 
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (m Market) Int32() int32  { return int32(m) }
+func (m Market) Int32() int32 { return int32(m) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
 func (t TrdMarket) Int32() int32 { return int32(t) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (t TrdEnv) Int32() int32    { return int32(t) }
+func (t TrdEnv) Int32() int32 { return int32(t) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (s TrdSide) Int32() int32   { return int32(s) }
+func (s TrdSide) Int32() int32 { return int32(s) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
 func (o OrderType) Int32() int32 { return int32(o) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (k KLType) Int32() int32    { return int32(k) }
+func (k KLType) Int32() int32 { return int32(k) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (s SubType) Int32() int32   { return int32(s) }
+func (s SubType) Int32() int32 { return int32(s) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
 func (r RehabType) Int32() int32 { return int32(r) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
 func (m ModifyOrderOp) Int32() int32 { return int32(m) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (s TrdSecMarket) Int32() int32  { return int32(s) }
+func (s TrdSecMarket) Int32() int32 { return int32(s) }
+
 // Int32 converts the enum value to int32 for use in protobuf request fields.
-func (t TimeInForce) Int32() int32   { return int32(t) }
+func (t TimeInForce) Int32() int32 { return int32(t) }
 
 func (m Market) IsValid() bool {
 	switch m {

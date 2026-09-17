@@ -74,8 +74,8 @@ type RateLimitError struct{}
 func (e *RateLimitError) Error() string { return "rate limit exceeded" }
 
 type ProtoLimiter struct {
-	mu      sync.RWMutex
-	global  *Limiter
+	mu       sync.RWMutex
+	global   *Limiter
 	perProto map[uint32]*Limiter
 }
 

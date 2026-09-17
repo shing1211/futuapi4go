@@ -7,9 +7,9 @@ import (
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchquote"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchnews"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetindicatorlist"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchnews"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsearchquote"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotrequestindicatorcalc"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )

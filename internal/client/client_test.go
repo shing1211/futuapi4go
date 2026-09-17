@@ -219,10 +219,10 @@ func TestSerialNoIncrement(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 type mockConn struct {
-	writePacketFn    func(protoID uint32, serialNo uint32, body []byte) error
-	readResponseFn   func(serialNo uint32, timeout time.Duration) (*Packet, error)
-	closeFn          func()
-	apiTimeout       time.Duration
+	writePacketFn  func(protoID uint32, serialNo uint32, body []byte) error
+	readResponseFn func(serialNo uint32, timeout time.Duration) (*Packet, error)
+	closeFn        func()
+	apiTimeout     time.Duration
 }
 
 func (m *mockConn) Close() error {
@@ -326,11 +326,11 @@ func TestRateLimiterBlocksWhenExhausted(t *testing.T) {
 func TestRetryOnTransientFailure(t *testing.T) {
 	attempts := 0
 	client := New(WithRetryConfig(retry.Config{
-		MaxAttempts:    3,
-		BaseDelay:      1 * time.Millisecond,
-		MaxDelay:       10 * time.Millisecond,
-		Jitter:         false,
-		IsRecoverable:  func(err error) bool { return errors.Is(err, ErrRequestTimeout) },
+		MaxAttempts:   3,
+		BaseDelay:     1 * time.Millisecond,
+		MaxDelay:      10 * time.Millisecond,
+		Jitter:        false,
+		IsRecoverable: func(err error) bool { return errors.Is(err, ErrRequestTimeout) },
 	}))
 	defer client.Close()
 

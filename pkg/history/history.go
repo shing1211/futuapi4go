@@ -65,26 +65,26 @@ const (
 )
 
 type KLineRequest struct {
-	Code     string
-	Market   Market
-	KLType   KLType
-	StartDate string
-	EndDate  string
+	Code       string
+	Market     Market
+	KLType     KLType
+	StartDate  string
+	EndDate    string
 	MaxPerPage int32
 }
 
 type DownloadProgress struct {
 	Downloaded int
-	Total     int
-	Speed     float64 // bars per second
-	ETA       time.Duration
+	Total      int
+	Speed      float64 // bars per second
+	ETA        time.Duration
 }
 
 type ProgressCallback func(DownloadProgress)
 
 type Downloader struct {
-	client       *client.Client
-	progress    ProgressCallback
+	client     *client.Client
+	progress   ProgressCallback
 	maxRetries int
 	pageDelay  time.Duration
 	mu         sync.Mutex
@@ -112,10 +112,10 @@ func WithPageDelay(delay time.Duration) Option {
 
 func NewDownloader(cli *client.Client, opts ...Option) *Downloader {
 	d := &Downloader{
-		client:       cli,
-		maxRetries:   3,
-		pageDelay:    100 * time.Millisecond,
-		progress:    func(p DownloadProgress) {},
+		client:     cli,
+		maxRetries: 3,
+		pageDelay:  100 * time.Millisecond,
+		progress:   func(p DownloadProgress) {},
 	}
 
 	for _, opt := range opts {
@@ -146,10 +146,10 @@ func (d *Downloader) DownloadKLine(ctx context.Context, req KLineRequest) error 
 		sec := &qotcommon.Security{Market: &marketPtr, Code: &req.Code}
 
 		qotReq := &qot.RequestHistoryKLRequest{
-			Security:  sec,
-			KlType:    int32(req.KLType),
-			BeginTime: req.StartDate,
-			EndTime:   req.EndDate,
+			Security:    sec,
+			KlType:      int32(req.KLType),
+			BeginTime:   req.StartDate,
+			EndTime:     req.EndDate,
 			MaxAckKLNum: req.MaxPerPage,
 		}
 
@@ -193,7 +193,7 @@ func (d *Downloader) DownloadKLine(ctx context.Context, req KLineRequest) error 
 		// Report progress
 		progress := DownloadProgress{
 			Downloaded: len(allBars),
-			Total:     -1, // Unknown until done
+			Total:      -1, // Unknown until done
 		}
 		d.progress(progress)
 
@@ -243,10 +243,10 @@ func (d *Downloader) DownloadWithStats(ctx context.Context, req KLineRequest) ([
 		sec := &qotcommon.Security{Market: &marketPtr, Code: &req.Code}
 
 		qotReq := &qot.RequestHistoryKLRequest{
-			Security:  sec,
-			KlType:    int32(req.KLType),
-			BeginTime: req.StartDate,
-			EndTime:   req.EndDate,
+			Security:    sec,
+			KlType:      int32(req.KLType),
+			BeginTime:   req.StartDate,
+			EndTime:     req.EndDate,
 			MaxAckKLNum: req.MaxPerPage,
 		}
 
@@ -301,7 +301,7 @@ func (d *Downloader) DownloadWithStats(ctx context.Context, req KLineRequest) ([
 }
 
 type ConcurrentDownloader struct {
-	client     *client.Client
+	client    *client.Client
 	workers   int
 	pageDelay time.Duration
 	progress  ProgressCallback
@@ -317,10 +317,10 @@ func WithWorkers(n int) ConcurrentOption {
 
 func NewConcurrentDownloader(cli *client.Client, opts ...ConcurrentOption) *ConcurrentDownloader {
 	cd := &ConcurrentDownloader{
-		client:   cli,
-		workers:  4,
+		client:    cli,
+		workers:   4,
 		pageDelay: 50 * time.Millisecond,
-		progress: func(p DownloadProgress) {},
+		progress:  func(p DownloadProgress) {},
 	}
 
 	for _, opt := range opts {
@@ -369,25 +369,25 @@ func (cd *ConcurrentDownloader) DownloadMultiple(ctx context.Context, reqs []KLi
 type ConcurrentResult struct {
 	Request KLineRequest
 	Bars    []qot.KLine
-	Stats  *DownloadStats
-	Error  error
+	Stats   *DownloadStats
+	Error   error
 }
 
 type ProgressTracker struct {
-	mu           sync.Mutex
-	downloaded   int32
-	total        int
-	startTime   time.Time
-	lastUpdate  time.Time
-	callback    ProgressCallback
+	mu         sync.Mutex
+	downloaded int32
+	total      int
+	startTime  time.Time
+	lastUpdate time.Time
+	callback   ProgressCallback
 }
 
 func NewProgressTracker(total int, callback ProgressCallback) *ProgressTracker {
 	return &ProgressTracker{
-		total:       total,
-		startTime:   time.Now(),
-		lastUpdate:  time.Now(),
-		callback:    callback,
+		total:      total,
+		startTime:  time.Now(),
+		lastUpdate: time.Now(),
+		callback:   callback,
 	}
 }
 
@@ -413,9 +413,9 @@ func (p *ProgressTracker) Add(n int) {
 
 	p.callback(DownloadProgress{
 		Downloaded: downloaded,
-		Total:     p.total,
-		Speed:     speed,
-		ETA:       eta,
+		Total:      p.total,
+		Speed:      speed,
+		ETA:        eta,
 	})
 }
 

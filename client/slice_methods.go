@@ -38,8 +38,8 @@ func csvLine(v ...string) string {
 
 type QuoteSlice []Quote
 
-func (s QuoteSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s QuoteSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s QuoteSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s QuoteSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s QuoteSlice) Filter(fn func(Quote) bool) QuoteSlice {
 	var r QuoteSlice
 	for _, v := range s {
@@ -62,8 +62,8 @@ func (s QuoteSlice) ToCSV() string {
 
 type KLineSlice []KLine
 
-func (s KLineSlice) ToJSON() string             { return util.ToJSON(s) }
-func (s KLineSlice) ToJSONPretty() string       { return util.ToJSONPretty(s) }
+func (s KLineSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s KLineSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s KLineSlice) Filter(fn func(KLine) bool) KLineSlice {
 	var r KLineSlice
 	for _, v := range s {
@@ -86,8 +86,8 @@ func (s KLineSlice) ToCSV() string {
 
 type PositionSlice []Position
 
-func (s PositionSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s PositionSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s PositionSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PositionSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PositionSlice) Filter(fn func(Position) bool) PositionSlice {
 	var r PositionSlice
 	for _, v := range s {
@@ -110,8 +110,8 @@ func (s PositionSlice) ToCSV() string {
 
 type OrderSlice []Order
 
-func (s OrderSlice) ToJSON() string             { return util.ToJSON(s) }
-func (s OrderSlice) ToJSONPretty() string       { return util.ToJSONPretty(s) }
+func (s OrderSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OrderSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OrderSlice) Filter(fn func(Order) bool) OrderSlice {
 	var r OrderSlice
 	for _, v := range s {
@@ -134,8 +134,8 @@ func (s OrderSlice) ToCSV() string {
 
 type OrderFillSlice []OrderFill
 
-func (s OrderFillSlice) ToJSON() string                { return util.ToJSON(s) }
-func (s OrderFillSlice) ToJSONPretty() string          { return util.ToJSONPretty(s) }
+func (s OrderFillSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OrderFillSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OrderFillSlice) Filter(fn func(OrderFill) bool) OrderFillSlice {
 	var r OrderFillSlice
 	for _, v := range s {
@@ -158,8 +158,8 @@ func (s OrderFillSlice) ToCSV() string {
 
 type TickerSlice []Ticker
 
-func (s TickerSlice) ToJSON() string              { return util.ToJSON(s) }
-func (s TickerSlice) ToJSONPretty() string        { return util.ToJSONPretty(s) }
+func (s TickerSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s TickerSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s TickerSlice) Filter(fn func(Ticker) bool) TickerSlice {
 	var r TickerSlice
 	for _, v := range s {
@@ -182,8 +182,8 @@ func (s TickerSlice) ToCSV() string {
 
 type BrokerSlice []Broker
 
-func (s BrokerSlice) ToJSON() string              { return util.ToJSON(s) }
-func (s BrokerSlice) ToJSONPretty() string        { return util.ToJSONPretty(s) }
+func (s BrokerSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s BrokerSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s BrokerSlice) Filter(fn func(Broker) bool) BrokerSlice {
 	var r BrokerSlice
 	for _, v := range s {
@@ -206,8 +206,8 @@ func (s BrokerSlice) ToCSV() string {
 
 type OrderBookItemSlice []OrderBookItem
 
-func (s OrderBookItemSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s OrderBookItemSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s OrderBookItemSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OrderBookItemSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OrderBookItemSlice) Filter(fn func(OrderBookItem) bool) OrderBookItemSlice {
 	var r OrderBookItemSlice
 	for _, v := range s {
@@ -230,8 +230,8 @@ func (s OrderBookItemSlice) ToCSV() string {
 
 type CapitalFlowSlice []CapitalFlow
 
-func (s CapitalFlowSlice) ToJSON() string                  { return util.ToJSON(s) }
-func (s CapitalFlowSlice) ToJSONPretty() string            { return util.ToJSONPretty(s) }
+func (s CapitalFlowSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s CapitalFlowSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s CapitalFlowSlice) Filter(fn func(CapitalFlow) bool) CapitalFlowSlice {
 	var r CapitalFlowSlice
 	for _, v := range s {
@@ -254,8 +254,8 @@ func (s CapitalFlowSlice) ToCSV() string {
 
 type CapitalDistributionSlice []CapitalDistribution
 
-func (s CapitalDistributionSlice) ToJSON() string                         { return util.ToJSON(s) }
-func (s CapitalDistributionSlice) ToJSONPretty() string                   { return util.ToJSONPretty(s) }
+func (s CapitalDistributionSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s CapitalDistributionSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s CapitalDistributionSlice) Filter(fn func(CapitalDistribution) bool) CapitalDistributionSlice {
 	var r CapitalDistributionSlice
 	for _, v := range s {
@@ -278,8 +278,8 @@ func (s CapitalDistributionSlice) ToCSV() string {
 
 type FundsSlice []Funds
 
-func (s FundsSlice) ToJSON() string             { return util.ToJSON(s) }
-func (s FundsSlice) ToJSONPretty() string       { return util.ToJSONPretty(s) }
+func (s FundsSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s FundsSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s FundsSlice) Filter(fn func(Funds) bool) FundsSlice {
 	var r FundsSlice
 	for _, v := range s {
@@ -302,8 +302,8 @@ func (s FundsSlice) ToCSV() string {
 
 type AccountSlice []Account
 
-func (s AccountSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s AccountSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s AccountSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s AccountSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s AccountSlice) Filter(fn func(Account) bool) AccountSlice {
 	var r AccountSlice
 	for _, v := range s {
@@ -326,8 +326,8 @@ func (s AccountSlice) ToCSV() string {
 
 type AccCashInfoSlice []AccCashInfo
 
-func (s AccCashInfoSlice) ToJSON() string                  { return util.ToJSON(s) }
-func (s AccCashInfoSlice) ToJSONPretty() string            { return util.ToJSONPretty(s) }
+func (s AccCashInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s AccCashInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s AccCashInfoSlice) Filter(fn func(AccCashInfo) bool) AccCashInfoSlice {
 	var r AccCashInfoSlice
 	for _, v := range s {
@@ -350,8 +350,8 @@ func (s AccCashInfoSlice) ToCSV() string {
 
 type AccMarketInfoSlice []AccMarketInfo
 
-func (s AccMarketInfoSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s AccMarketInfoSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s AccMarketInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s AccMarketInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s AccMarketInfoSlice) Filter(fn func(AccMarketInfo) bool) AccMarketInfoSlice {
 	var r AccMarketInfoSlice
 	for _, v := range s {
@@ -374,8 +374,8 @@ func (s AccMarketInfoSlice) ToCSV() string {
 
 type StockFilterResultSlice []StockFilterResult
 
-func (s StockFilterResultSlice) ToJSON() string                      { return util.ToJSON(s) }
-func (s StockFilterResultSlice) ToJSONPretty() string                { return util.ToJSONPretty(s) }
+func (s StockFilterResultSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s StockFilterResultSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s StockFilterResultSlice) Filter(fn func(StockFilterResult) bool) StockFilterResultSlice {
 	var r StockFilterResultSlice
 	for _, v := range s {
@@ -399,8 +399,8 @@ func (s StockFilterResultSlice) ToCSV() string {
 
 type HoldingChangeInfoSlice []HoldingChangeInfo
 
-func (s HoldingChangeInfoSlice) ToJSON() string                       { return util.ToJSON(s) }
-func (s HoldingChangeInfoSlice) ToJSONPretty() string                 { return util.ToJSONPretty(s) }
+func (s HoldingChangeInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s HoldingChangeInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s HoldingChangeInfoSlice) Filter(fn func(HoldingChangeInfo) bool) HoldingChangeInfoSlice {
 	var r HoldingChangeInfoSlice
 	for _, v := range s {
@@ -423,8 +423,8 @@ func (s HoldingChangeInfoSlice) ToCSV() string {
 
 type RTSlice []RT
 
-func (s RTSlice) ToJSON() string         { return util.ToJSON(s) }
-func (s RTSlice) ToJSONPretty() string   { return util.ToJSONPretty(s) }
+func (s RTSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s RTSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s RTSlice) Filter(fn func(RT) bool) RTSlice {
 	var r RTSlice
 	for _, v := range s {
@@ -447,8 +447,8 @@ func (s RTSlice) ToCSV() string {
 
 type StaticInfoSlice []StaticInfo
 
-func (s StaticInfoSlice) ToJSON() string                { return util.ToJSON(s) }
-func (s StaticInfoSlice) ToJSONPretty() string          { return util.ToJSONPretty(s) }
+func (s StaticInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s StaticInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s StaticInfoSlice) Filter(fn func(StaticInfo) bool) StaticInfoSlice {
 	var r StaticInfoSlice
 	for _, v := range s {
@@ -471,8 +471,8 @@ func (s StaticInfoSlice) ToCSV() string {
 
 type SuspendInfoSlice []SuspendInfo
 
-func (s SuspendInfoSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s SuspendInfoSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s SuspendInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s SuspendInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s SuspendInfoSlice) Filter(fn func(SuspendInfo) bool) SuspendInfoSlice {
 	var r SuspendInfoSlice
 	for _, v := range s {
@@ -495,8 +495,8 @@ func (s SuspendInfoSlice) ToCSV() string {
 
 type BrokerItemSlice []BrokerItem
 
-func (s BrokerItemSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s BrokerItemSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s BrokerItemSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s BrokerItemSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s BrokerItemSlice) Filter(fn func(BrokerItem) bool) BrokerItemSlice {
 	var r BrokerItemSlice
 	for _, v := range s {
@@ -519,8 +519,8 @@ func (s BrokerItemSlice) ToCSV() string {
 
 type OBItemSlice []OBItem
 
-func (s OBItemSlice) ToJSON() string         { return util.ToJSON(s) }
-func (s OBItemSlice) ToJSONPretty() string   { return util.ToJSONPretty(s) }
+func (s OBItemSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OBItemSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OBItemSlice) Filter(fn func(OBItem) bool) OBItemSlice {
 	var r OBItemSlice
 	for _, v := range s {
@@ -543,8 +543,8 @@ func (s OBItemSlice) ToCSV() string {
 
 type RehabInfoSlice []RehabInfo
 
-func (s RehabInfoSlice) ToJSON() string              { return util.ToJSON(s) }
-func (s RehabInfoSlice) ToJSONPretty() string        { return util.ToJSONPretty(s) }
+func (s RehabInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s RehabInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s RehabInfoSlice) Filter(fn func(RehabInfo) bool) RehabInfoSlice {
 	var r RehabInfoSlice
 	for _, v := range s {
@@ -567,8 +567,8 @@ func (s RehabInfoSlice) ToCSV() string {
 
 type OrderFeeItemInfoSlice []OrderFeeItemInfo
 
-func (s OrderFeeItemInfoSlice) ToJSON() string                    { return util.ToJSON(s) }
-func (s OrderFeeItemInfoSlice) ToJSONPretty() string              { return util.ToJSONPretty(s) }
+func (s OrderFeeItemInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OrderFeeItemInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OrderFeeItemInfoSlice) Filter(fn func(OrderFeeItemInfo) bool) OrderFeeItemInfoSlice {
 	var r OrderFeeItemInfoSlice
 	for _, v := range s {
@@ -591,8 +591,8 @@ func (s OrderFeeItemInfoSlice) ToCSV() string {
 
 type PushQuoteSlice []PushQuote
 
-func (s PushQuoteSlice) ToJSON() string              { return util.ToJSON(s) }
-func (s PushQuoteSlice) ToJSONPretty() string        { return util.ToJSONPretty(s) }
+func (s PushQuoteSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PushQuoteSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PushQuoteSlice) Filter(fn func(PushQuote) bool) PushQuoteSlice {
 	var r PushQuoteSlice
 	for _, v := range s {
@@ -615,8 +615,8 @@ func (s PushQuoteSlice) ToCSV() string {
 
 type PushKLineSlice []PushKLine
 
-func (s PushKLineSlice) ToJSON() string               { return util.ToJSON(s) }
-func (s PushKLineSlice) ToJSONPretty() string         { return util.ToJSONPretty(s) }
+func (s PushKLineSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PushKLineSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PushKLineSlice) Filter(fn func(PushKLine) bool) PushKLineSlice {
 	var r PushKLineSlice
 	for _, v := range s {
@@ -639,8 +639,8 @@ func (s PushKLineSlice) ToCSV() string {
 
 type PushOrderUpdateSlice []PushOrderUpdate
 
-func (s PushOrderUpdateSlice) ToJSON() string                     { return util.ToJSON(s) }
-func (s PushOrderUpdateSlice) ToJSONPretty() string               { return util.ToJSONPretty(s) }
+func (s PushOrderUpdateSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PushOrderUpdateSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PushOrderUpdateSlice) Filter(fn func(PushOrderUpdate) bool) PushOrderUpdateSlice {
 	var r PushOrderUpdateSlice
 	for _, v := range s {
@@ -663,8 +663,8 @@ func (s PushOrderUpdateSlice) ToCSV() string {
 
 type PushOrderFillSlice []PushOrderFill
 
-func (s PushOrderFillSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s PushOrderFillSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s PushOrderFillSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PushOrderFillSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PushOrderFillSlice) Filter(fn func(PushOrderFill) bool) PushOrderFillSlice {
 	var r PushOrderFillSlice
 	for _, v := range s {
@@ -687,8 +687,8 @@ func (s PushOrderFillSlice) ToCSV() string {
 
 type PriceReminderItemInfoSlice []PriceReminderItemInfo
 
-func (s PriceReminderItemInfoSlice) ToJSON() string                         { return util.ToJSON(s) }
-func (s PriceReminderItemInfoSlice) ToJSONPretty() string                   { return util.ToJSONPretty(s) }
+func (s PriceReminderItemInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s PriceReminderItemInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s PriceReminderItemInfoSlice) Filter(fn func(PriceReminderItemInfo) bool) PriceReminderItemInfoSlice {
 	var r PriceReminderItemInfoSlice
 	for _, v := range s {
@@ -711,8 +711,8 @@ func (s PriceReminderItemInfoSlice) ToCSV() string {
 
 type FlowSummaryInfoSlice []FlowSummaryInfo
 
-func (s FlowSummaryInfoSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s FlowSummaryInfoSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s FlowSummaryInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s FlowSummaryInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s FlowSummaryInfoSlice) Filter(fn func(FlowSummaryInfo) bool) FlowSummaryInfoSlice {
 	var r FlowSummaryInfoSlice
 	for _, v := range s {
@@ -735,8 +735,8 @@ func (s FlowSummaryInfoSlice) ToCSV() string {
 
 type AccTradingInfoSlice []AccTradingInfo
 
-func (s AccTradingInfoSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s AccTradingInfoSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s AccTradingInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s AccTradingInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s AccTradingInfoSlice) Filter(fn func(AccTradingInfo) bool) AccTradingInfoSlice {
 	var r AccTradingInfoSlice
 	for _, v := range s {
@@ -759,8 +759,8 @@ func (s AccTradingInfoSlice) ToCSV() string {
 
 type OrderBookDetailSlice []OrderBookDetail
 
-func (s OrderBookDetailSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s OrderBookDetailSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s OrderBookDetailSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s OrderBookDetailSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s OrderBookDetailSlice) Filter(fn func(OrderBookDetail) bool) OrderBookDetailSlice {
 	var r OrderBookDetailSlice
 	for _, v := range s {
@@ -783,8 +783,8 @@ func (s OrderBookDetailSlice) ToCSV() string {
 
 type MaxTrdQtysInfoSlice []MaxTrdQtysInfo
 
-func (s MaxTrdQtysInfoSlice) ToJSON() string                   { return util.ToJSON(s) }
-func (s MaxTrdQtysInfoSlice) ToJSONPretty() string             { return util.ToJSONPretty(s) }
+func (s MaxTrdQtysInfoSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s MaxTrdQtysInfoSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s MaxTrdQtysInfoSlice) Filter(fn func(MaxTrdQtysInfo) bool) MaxTrdQtysInfoSlice {
 	var r MaxTrdQtysInfoSlice
 	for _, v := range s {
@@ -807,8 +807,8 @@ func (s MaxTrdQtysInfoSlice) ToCSV() string {
 
 type DelayStatisticsItemSlice []DelayStatisticsItem
 
-func (s DelayStatisticsItemSlice) ToJSON() string                       { return util.ToJSON(s) }
-func (s DelayStatisticsItemSlice) ToJSONPretty() string                 { return util.ToJSONPretty(s) }
+func (s DelayStatisticsItemSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s DelayStatisticsItemSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s DelayStatisticsItemSlice) Filter(fn func(DelayStatisticsItem) bool) DelayStatisticsItemSlice {
 	var r DelayStatisticsItemSlice
 	for _, v := range s {
@@ -831,8 +831,8 @@ func (s DelayStatisticsItemSlice) ToCSV() string {
 
 type ReqReplyStatisticsItemSlice []ReqReplyStatisticsItem
 
-func (s ReqReplyStatisticsItemSlice) ToJSON() string                       { return util.ToJSON(s) }
-func (s ReqReplyStatisticsItemSlice) ToJSONPretty() string                 { return util.ToJSONPretty(s) }
+func (s ReqReplyStatisticsItemSlice) ToJSON() string       { return util.ToJSON(s) }
+func (s ReqReplyStatisticsItemSlice) ToJSONPretty() string { return util.ToJSONPretty(s) }
 func (s ReqReplyStatisticsItemSlice) Filter(fn func(ReqReplyStatisticsItem) bool) ReqReplyStatisticsItemSlice {
 	var r ReqReplyStatisticsItemSlice
 	for _, v := range s {

@@ -162,7 +162,6 @@ type noopGetHistoryKLResponse struct{}
 
 func (noopGetHistoryKLResponse) GetCachedSchema() any { return nil }
 
-
 // NoDataMode specifies how to return data when the requested time point is empty.
 // Deprecated: Removed in Futu v10.6 proto — proto package qotgethistoryklpoints no longer exists.
 type NoDataMode = int32
@@ -187,19 +186,19 @@ const (
 // GetHistoryKLPointsRequest represents the request for historical K-line points.
 type GetHistoryKLPointsRequest struct {
 	RehabType           constant.RehabType
-	KLType             constant.KLType
-	NoDataMode         NoDataMode
-	Securities         []*qotcommon.Security
-	Times              []string
+	KLType              constant.KLType
+	NoDataMode          NoDataMode
+	Securities          []*qotcommon.Security
+	Times               []string
 	MaxReqSecuritiesNum int32
-	NeedKLFieldsFlag   int64
+	NeedKLFieldsFlag    int64
 }
 
 // HistoryPointsKL represents a single K-line data point at a specific time.
 type HistoryPointsKL struct {
 	Status  DataStatus
 	ReqTime string
-	KL     *qotcommon.KLine
+	KL      *qotcommon.KLine
 }
 
 // SecurityHistoryKLPoints represents K-line points for a single security.

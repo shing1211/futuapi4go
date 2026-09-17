@@ -35,11 +35,11 @@ const (
 )
 
 type OptionCode struct {
-	Code     string    // Full option code (e.g., "24011900700P")
-	Expiry   time.Time // Expiration date
-	Strike   float64  // Strike price
-	Type     OptionType // Call or Put
-	Underlying string  // Underlying code (e.g., "00700")
+	Code       string     // Full option code (e.g., "24011900700P")
+	Expiry     time.Time  // Expiration date
+	Strike     float64    // Strike price
+	Type       OptionType // Call or Put
+	Underlying string     // Underlying code (e.g., "00700")
 }
 
 // ParseCode parses a Futu option code into its components.
@@ -151,10 +151,10 @@ func ParseCode(code string) (*OptionCode, error) {
 	}
 
 	return &OptionCode{
-		Code:     code,
-		Expiry:   expiry,
-		Strike:   strike,
-		Type:     optType,
+		Code:       code,
+		Expiry:     expiry,
+		Strike:     strike,
+		Type:       optType,
 		Underlying: underlying,
 	}, nil
 }

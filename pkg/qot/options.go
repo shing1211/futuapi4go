@@ -22,10 +22,10 @@ import (
 
 	futuapi "github.com/shing1211/futuapi4go/internal/client"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
+	getoptionexpirationdate "github.com/shing1211/futuapi4go/pkg/pb/getoptionexpirationdate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetfutureinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionchain"
-	getoptionexpirationdate "github.com/shing1211/futuapi4go/pkg/pb/getoptionexpirationdate"
 	"github.com/shing1211/futuapi4go/pkg/util"
 )
 

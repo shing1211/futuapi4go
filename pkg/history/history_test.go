@@ -10,10 +10,10 @@ import (
 
 func TestDownloadProgress_Percent(t *testing.T) {
 	tests := []struct {
-		name     string
+		name       string
 		downloaded int
-		total    int
-		want     float64
+		total      int
+		want       float64
 	}{
 		{"zero total", 5, 0, 0},
 		{"half", 50, 100, 50.0},
@@ -94,11 +94,11 @@ func TestProgressTracker_AddConcurrent(t *testing.T) {
 
 func TestKLineRequest_Defaults(t *testing.T) {
 	req := KLineRequest{
-		Code:     "00700",
-		Market:   constant.Market_HK,
-		KLType:   KLType_1Day,
+		Code:      "00700",
+		Market:    constant.Market_HK,
+		KLType:    KLType_1Day,
 		StartDate: "2020-01-01",
-		EndDate:  "2024-01-01",
+		EndDate:   "2024-01-01",
 	}
 	if req.MaxPerPage != 0 {
 		t.Errorf("default MaxPerPage should be 0, got %d", req.MaxPerPage)

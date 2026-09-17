@@ -39,28 +39,28 @@ const (
 type SubType int32
 
 const (
-	SubType_Basic      SubType = 1
-	SubType_OrderBook  SubType = 2
-	SubType_Ticker     SubType = 4
-	SubType_RT         SubType = 5
-	SubType_KL_Day     SubType = 6
-	SubType_KL_5Min    SubType = 7
-	SubType_KL_15Min   SubType = 8
-	SubType_KL_30Min   SubType = 9
-	SubType_KL_60Min   SubType = 10
-	SubType_KL_1Min    SubType = 11
-	SubType_KL_Week    SubType = 12
-	SubType_KL_Month   SubType = 13
-	SubType_Broker     SubType = 14
-	SubType_KL_Quarter SubType = 15
-	SubType_KL_Year    SubType = 16
-	SubType_KL_3Min    SubType = 17
-	SubType_KL_10Min   SubType = 18
-	SubType_KL_120Min  SubType = 19
-	SubType_KL_180Min  SubType = 20
-	SubType_KL_240Min  SubType = 21
+	SubType_Basic        SubType = 1
+	SubType_OrderBook    SubType = 2
+	SubType_Ticker       SubType = 4
+	SubType_RT           SubType = 5
+	SubType_KL_Day       SubType = 6
+	SubType_KL_5Min      SubType = 7
+	SubType_KL_15Min     SubType = 8
+	SubType_KL_30Min     SubType = 9
+	SubType_KL_60Min     SubType = 10
+	SubType_KL_1Min      SubType = 11
+	SubType_KL_Week      SubType = 12
+	SubType_KL_Month     SubType = 13
+	SubType_Broker       SubType = 14
+	SubType_KL_Quarter   SubType = 15
+	SubType_KL_Year      SubType = 16
+	SubType_KL_3Min      SubType = 17
+	SubType_KL_10Min     SubType = 18
+	SubType_KL_120Min    SubType = 19
+	SubType_KL_180Min    SubType = 20
+	SubType_KL_240Min    SubType = 21
 	SubType_OrderBookOdd SubType = 22
-	SubType_KL         SubType = 6
+	SubType_KL           SubType = 6
 )
 
 // SubscribeRequest defines parameters for Subscribe.

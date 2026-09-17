@@ -24,12 +24,12 @@ import (
 type Market string
 
 const (
-	MarketHK       Market = "HK"  // Hong Kong
-	MarketUS       Market = "US"  // United States
-	MarketCN       Market = "CN"  // China (SH/SZ)
-	MarketSG       Market = "SG"  // Singapore
-	MarketJP       Market = "JP"  // Japan
-	MarketAU       Market = "AU"  // Australia
+	MarketHK Market = "HK" // Hong Kong
+	MarketUS Market = "US" // United States
+	MarketCN Market = "CN" // China (SH/SZ)
+	MarketSG Market = "SG" // Singapore
+	MarketJP Market = "JP" // Japan
+	MarketAU Market = "AU" // Australia
 )
 
 // Session represents a trading session within a market day
@@ -54,14 +54,14 @@ var (
 // Standard US market sessions (EST/EDT)
 var (
 	USSessionPreMarket = Session{Name: "PreMarket", Start: 4 * 60, End: 9*60 + 30}
-	USSessionCore = Session{Name: "Core", Start: 9*60 + 30, End: 16 * 60}
-	USSessionAfter = Session{Name: "After", Start: 16 * 60, End: 20 * 60}
+	USSessionCore      = Session{Name: "Core", Start: 9*60 + 30, End: 16 * 60}
+	USSessionAfter     = Session{Name: "After", Start: 16 * 60, End: 20 * 60}
 )
 
 // Standard CN market sessions
 var (
- CNSessionMorning = Session{Name: "Morning", Start: 9*60 + 30, End: 11 * 60 + 30}
- CNSessionAfternoon = Session{Name: "Afternoon", Start: 13 * 60, End: 15 * 60}
+	CNSessionMorning   = Session{Name: "Morning", Start: 9*60 + 30, End: 11*60 + 30}
+	CNSessionAfternoon = Session{Name: "Afternoon", Start: 13 * 60, End: 15 * 60}
 )
 
 // IsHKOpen checks if the HK market is currently open for trading
@@ -260,16 +260,16 @@ func NextOpen(m Market, t time.Time) time.Duration {
 	// Simple implementation - returns next day morning session start
 	loc := time.FixedZone("HKST", 8*3600)
 	next := time.Date(t.Year(), t.Month(), t.Day(), 9, 15, 0, 0, loc)
-	
+
 	if t.After(next) {
 		next = next.AddDate(1, 0, 0)
 	}
-	
+
 	// Skip weekends
 	for next.Weekday() == time.Saturday || next.Weekday() == time.Sunday {
 		next = next.AddDate(1, 0, 0)
 	}
-	
+
 	return next.Sub(t)
 }
 

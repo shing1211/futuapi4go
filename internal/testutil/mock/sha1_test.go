@@ -236,5 +236,3 @@ func readResponse(t *testing.T, conn net.Conn) []byte {
 	}
 	return body
 }
-
-

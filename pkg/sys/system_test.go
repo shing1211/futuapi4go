@@ -16,8 +16,6 @@ package sys
 
 import (
 	"testing"
-
-	
 )
 
 func TestGetGlobalStateResponseFields(t *testing.T) {

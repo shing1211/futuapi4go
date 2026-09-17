@@ -34,10 +34,10 @@ import (
 )
 
 const (
-	ProtoID_GetShareholdersOverview    = 3237
+	ProtoID_GetShareholdersOverview       = 3237
 	ProtoID_GetShareholdersHoldingChanges = 3238
-	ProtoID_GetShareholdersHolderDetail = 3239
-	ProtoID_GetShareholdersInstitutional = 3240
+	ProtoID_GetShareholdersHolderDetail   = 3239
+	ProtoID_GetShareholdersInstitutional  = 3240
 )
 
 type GetShareholdersOverviewRequest struct {
