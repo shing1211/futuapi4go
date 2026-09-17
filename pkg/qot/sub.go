@@ -55,6 +55,11 @@ const (
 	SubType_KL_Quarter SubType = 15
 	SubType_KL_Year    SubType = 16
 	SubType_KL_3Min    SubType = 17
+	SubType_KL_10Min   SubType = 18
+	SubType_KL_120Min  SubType = 19
+	SubType_KL_180Min  SubType = 20
+	SubType_KL_240Min  SubType = 21
+	SubType_OrderBookOdd SubType = 22
 	SubType_KL         SubType = 6
 )
 

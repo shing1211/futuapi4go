@@ -125,6 +125,16 @@ func (s SubType) String() string {
 		return "SubType_K_Quarter"
 	case SubType_K_Year:
 		return "SubType_K_Year"
+	case SubType_K_10Min:
+		return "SubType_K_10Min"
+	case SubType_K_120Min:
+		return "SubType_K_120Min"
+	case SubType_K_180Min:
+		return "SubType_K_180Min"
+	case SubType_K_240Min:
+		return "SubType_K_240Min"
+	case SubType_OrderBookOdd:
+		return "SubType_OrderBookOdd"
 	default:
 		return "SubType_Unknown"
 	}
@@ -156,6 +166,14 @@ func (k KLType) String() string {
 		return "KLType_K_Quarter"
 	case KLType_K_Year:
 		return "KLType_K_Year"
+	case KLType_K_10Min:
+		return "KLType_K_10Min"
+	case KLType_K_120Min:
+		return "KLType_K_120Min"
+	case KLType_K_180Min:
+		return "KLType_K_180Min"
+	case KLType_K_240Min:
+		return "KLType_K_240Min"
 	default:
 		return "KLType_Unknown"
 	}
@@ -324,7 +342,10 @@ func (o OrderType) IsValid() bool {
 
 func (k KLType) IsValid() bool {
 	switch k {
-	case KLType_K_1Min, KLType_K_3Min, KLType_K_5Min, KLType_K_15Min, KLType_K_30Min, KLType_K_60Min, KLType_K_Day, KLType_K_Week, KLType_K_Month, KLType_K_Quarter, KLType_K_Year:
+	case KLType_K_1Min, KLType_K_3Min, KLType_K_5Min, KLType_K_10Min,
+		KLType_K_15Min, KLType_K_30Min, KLType_K_60Min, KLType_K_120Min,
+		KLType_K_180Min, KLType_K_240Min, KLType_K_Day, KLType_K_Week,
+		KLType_K_Month, KLType_K_Quarter, KLType_K_Year:
 		return true
 	default:
 		return false
@@ -333,10 +354,12 @@ func (k KLType) IsValid() bool {
 
 func (s SubType) IsValid() bool {
 	switch s {
-	case SubType_Quote, SubType_OrderBook, SubType_Ticker, SubType_Broker, SubType_RT, SubType_K_1Min, SubType_K_3Min, SubType_K_5Min, SubType_K_15Min, SubType_K_30Min, SubType_K_60Min, SubType_K_Day, SubType_K_Week, SubType_K_Month, SubType_K_Quarter, SubType_K_Year:
+	case SubType_Quote, SubType_OrderBook, SubType_Ticker, SubType_Broker,
+		SubType_RT, SubType_OrderBookOdd:
 		return true
 	default:
-		return false
+		// Every K-line SubType is valid; delegate so there is one list of them.
+		return s.IsKLType()
 	}
 }
 

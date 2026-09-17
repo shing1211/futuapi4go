@@ -56,6 +56,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [docs/VERSION_MAP.md](docs/VERSION_MAP.md) — note that Futu's own SDKs pin a
   fixed value here (`300` in every release from 10.5.6508 to 10.10.7008), so
   this remains a local convention rather than a protocol requirement.
+- **`constant.SubType_OrderBookOdd` corrected from 18 to 22, and `constant.SubType`
+  reordered to match the wire.** The wire assigns `SubType_KL_10Min` the value 18
+  and `SubType_OrderBook_Odd` the value 22, so the constant as written made a
+  request for the odd-lot order book ask for 10-minute bars instead. The enum is now
+  listed in wire order, which makes the collision visible rather than implied, and
+  the four missing K-line values are present.
 
 ### Added
 
@@ -84,6 +90,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `pkg/product/fetcher.go` — shared HTTP/1.1 client with TLS 1.2 workaround
 - **Dashboard products page** (`dashboard/src/pages/Products.tsx`): filter bar, paginated table, refresh button, stats cards
 - **Product catalog documentation** (`docs/PROJECT_STATUS.md`, `docs/PROJECT_PLAN.md`)
+- **`constant.KLType.ToSubType()` and `constant.SubType.ToKLType()`**
+  (`pkg/constant/convert.go`). `KLType` and `SubType` number differently —
+  `KLType_K_1Min` is 1 while `SubType_K_1Min` is 11, and `SubType` has no value 3 —
+  so the two can never be converted by a numeric cast. This is now the single place
+  that correspondence is expressed, and `pkg/push/chan`'s private `klTypeToSubType`
+  is deleted in favour of it.
+- **`constant.KLType_K_10Min/120Min/180Min/240Min`** (12-15) and the matching
+  `SubType` values (18-21) — intervals the wire already defined but this package did
+  not. `KLType.IsValid`, `KLType.String`, `SubType.String` and `SubType.IsValid` all
+  cover them; `SubType.IsValid` now delegates to `IsKLType` for the K types so there
+  is one list of them rather than two that can drift apart.
+- **Completed the `client` package's `SubType_*` and `KLType_*` re-exports.** They
+  omitted `KL_3Min`, `KL_Quarter` and `KL_Year`, so a consumer could not name those
+  without reaching for the internal enum.
+- **`pkg/constant/wire_drift_test.go`** — table-driven tests asserting every
+  `SubType` and `KLType` value equals its `qotcommon` counterpart, plus a
+  `ToSubType`/`ToKLType` round trip over every interval and negative cases for the
+  non-K types. Compared by value, never by name, because the generated enum spells
+  quarter `Qurater` (an upstream Futu typo this package does not reproduce).
 
 ### Removed
 

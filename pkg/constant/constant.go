@@ -366,32 +366,41 @@ const (
 type SubType int32
 
 const (
-	SubType_None      SubType = 0  // 无
-	SubType_Quote     SubType = 1  // 报价
-	SubType_OrderBook SubType = 2  // 买卖摆盘
-	SubType_Ticker    SubType = 4  // 逐笔
-	SubType_Broker    SubType = 14 // 买卖经纪
-	SubType_RT        SubType = 5  // 分时
-	SubType_K_1Min    SubType = 11 // 1分钟K线
-	SubType_K_3Min    SubType = 17 // 3分钟K线
-	SubType_K_5Min    SubType = 7  // 5分钟K线
-	SubType_K_15Min   SubType = 8  // 15分钟K线
-	SubType_K_30Min   SubType = 9  // 30分钟K线
-	SubType_K_60Min   SubType = 10 // 60分钟K线
-	SubType_K_Day     SubType = 6  // 日K线
-	SubType_K_Week    SubType = 12 // 周K线
-	SubType_K_Month   SubType = 13 // 月K线
-	SubType_K_Quarter SubType = 15 // 季度K线
-	SubType_K_Year     SubType = 16 // 年K线
-	SubType_OrderBookOdd SubType = 18 // 碎股买卖摆盘
+	SubType_None         SubType = 0  // 无
+	SubType_Quote        SubType = 1  // 报价
+	SubType_OrderBook    SubType = 2  // 买卖摆盘
+	SubType_Ticker       SubType = 4  // 逐笔
+	SubType_RT           SubType = 5  // 分时
+	SubType_K_Day        SubType = 6  // 日K线
+	SubType_K_5Min       SubType = 7  // 5分钟K线
+	SubType_K_15Min      SubType = 8  // 15分钟K线
+	SubType_K_30Min      SubType = 9  // 30分钟K线
+	SubType_K_60Min      SubType = 10 // 60分钟K线
+	SubType_K_1Min       SubType = 11 // 1分钟K线
+	SubType_K_Week       SubType = 12 // 周K线
+	SubType_K_Month      SubType = 13 // 月K线
+	SubType_Broker       SubType = 14 // 买卖经纪
+	SubType_K_Quarter    SubType = 15 // 季度K线
+	SubType_K_Year       SubType = 16 // 年K线
+	SubType_K_3Min       SubType = 17 // 3分钟K线
+	SubType_K_10Min      SubType = 18 // 10分钟K线
+	SubType_K_120Min     SubType = 19 // 120分钟K线
+	SubType_K_180Min     SubType = 20 // 180分钟K线
+	SubType_K_240Min     SubType = 21 // 240分钟K线
+	SubType_OrderBookOdd SubType = 22 // 碎股买卖摆盘
 )
 
 // IsKLType returns true if the SubType is a K-line type
 func (s SubType) IsKLType() bool {
-	return s == SubType_K_1Min || s == SubType_K_3Min || s == SubType_K_5Min ||
-		s == SubType_K_15Min || s == SubType_K_30Min || s == SubType_K_60Min ||
-		s == SubType_K_Day || s == SubType_K_Week || s == SubType_K_Month ||
-		s == SubType_K_Quarter || s == SubType_K_Year
+	switch s {
+	case SubType_K_1Min, SubType_K_3Min, SubType_K_5Min, SubType_K_10Min,
+		SubType_K_15Min, SubType_K_30Min, SubType_K_60Min, SubType_K_120Min,
+		SubType_K_180Min, SubType_K_240Min, SubType_K_Day, SubType_K_Week,
+		SubType_K_Month, SubType_K_Quarter, SubType_K_Year:
+		return true
+	default:
+		return false
+	}
 }
 
 // =============================================================================
@@ -414,6 +423,10 @@ const (
 	KLType_K_60Min   KLType = 9  // 60分钟
 	KLType_K_3Min    KLType = 10 // 3分钟
 	KLType_K_Quarter KLType = 11 // 季度K
+	KLType_K_10Min   KLType = 12 // 10分钟
+	KLType_K_120Min  KLType = 13 // 120分钟
+	KLType_K_180Min  KLType = 14 // 180分钟
+	KLType_K_240Min  KLType = 15 // 240分钟
 )
 
 // =============================================================================

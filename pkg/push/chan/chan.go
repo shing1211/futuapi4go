@@ -62,7 +62,6 @@ package chanpkg
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"sync"
 
@@ -182,7 +181,7 @@ func SubscribeQuote(ctx context.Context, cli *client.Client, market constant.Mar
 
 func SubscribeKLine(ctx context.Context, cli *client.Client, market constant.Market, code string, klType constant.KLType, ch chan<- *push.UpdateKL) (func(), error) {
 	return subscribeOne(ctx, cli, push.ProtoID_Qot_UpdateKL, ch, push.ParseUpdateKL, func() error {
-		st, err := klTypeToSubType(klType)
+		st, err := klType.ToSubType()
 		if err != nil {
 			return err
 		}
@@ -214,42 +213,13 @@ func SubscribeKLines(ctx context.Context, cli *client.Client, market constant.Ma
 func subscribe(ctx context.Context, cli *client.Client, market constant.Market, code string, kTypes []constant.KLType) error {
 	subtypes := make([]constant.SubType, 0, len(kTypes))
 	for _, kt := range kTypes {
-		st, err := klTypeToSubType(kt)
+		st, err := kt.ToSubType()
 		if err != nil {
 			return err
 		}
 		subtypes = append(subtypes, st)
 	}
 	return client.Subscribe(ctx, cli, market, code, subtypes)
-}
-
-func klTypeToSubType(k constant.KLType) (constant.SubType, error) {
-	switch k {
-	case constant.KLType_K_1Min:
-		return constant.SubType_K_1Min, nil
-	case constant.KLType_K_5Min:
-		return constant.SubType_K_5Min, nil
-	case constant.KLType_K_15Min:
-		return constant.SubType_K_15Min, nil
-	case constant.KLType_K_30Min:
-		return constant.SubType_K_30Min, nil
-	case constant.KLType_K_60Min:
-		return constant.SubType_K_60Min, nil
-	case constant.KLType_K_Day:
-		return constant.SubType_K_Day, nil
-	case constant.KLType_K_Week:
-		return constant.SubType_K_Week, nil
-	case constant.KLType_K_Month:
-		return constant.SubType_K_Month, nil
-	case constant.KLType_K_Quarter:
-		return constant.SubType_K_Quarter, nil
-	case constant.KLType_K_Year:
-		return constant.SubType_K_Year, nil
-	case constant.KLType_K_3Min:
-		return constant.SubType_K_3Min, nil
-	default:
-		return constant.SubType_K_1Min, fmt.Errorf("unknown KLType: %d", k)
-	}
 }
 
 func SubscribeTicker(ctx context.Context, cli *client.Client, market constant.Market, code string, ch chan<- *push.UpdateTicker) (func(), error) {
@@ -361,7 +331,7 @@ func SubscribeEventContractOrderBook(ctx context.Context, cli *client.Client, co
 }
 
 func SubscribeEventContractKLine(ctx context.Context, cli *client.Client, code string, klType constant.KLType, ch chan<- *push.UpdateEventContractKline) (func(), error) {
-	st, err := klTypeToSubType(klType)
+	st, err := klType.ToSubType()
 	if err != nil {
 		return nil, err
 	}
