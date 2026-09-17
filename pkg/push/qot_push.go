@@ -221,6 +221,11 @@ type UpdateOrderBook struct {
 	SvrRecvTimeBidTimestamp float64
 	SvrRecvTimeAsk          string
 	SvrRecvTimeAskTimestamp float64
+	// OrderBookType distinguishes the whole-lot book (0) from the odd-lot book
+	// (1) - Qot_Common.OrderBookType. One SubType_OrderBook subscription can
+	// serve both, so without this field a consumer cannot tell which book a
+	// push belongs to.
+	OrderBookType int32
 }
 
 // ParseUpdateOrderBook parses an order book push notification from a raw protobuf body.
@@ -245,6 +250,7 @@ func ParseUpdateOrderBook(body []byte) (*UpdateOrderBook, error) {
 		SvrRecvTimeBidTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeBidTimestamp),
 		SvrRecvTimeAsk:          util.ProtoStr(s2c.SvrRecvTimeAsk),
 		SvrRecvTimeAskTimestamp: util.ProtoFloat64(s2c.SvrRecvTimeAskTimestamp),
+		OrderBookType:           util.ProtoInt32(s2c.OrderBookType),
 	}, nil
 }
 

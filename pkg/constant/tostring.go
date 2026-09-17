@@ -140,6 +140,21 @@ func (s SubType) String() string {
 	}
 }
 
+func (o OrderBookType) String() string {
+	switch o {
+	case OrderBookType_Normal:
+		return "OrderBookType_Normal"
+	case OrderBookType_Odd:
+		return "OrderBookType_Odd"
+	default:
+		return "OrderBookType_Unknown"
+	}
+}
+
+func (o OrderBookType) IsValid() bool {
+	return o == OrderBookType_Normal || o == OrderBookType_Odd
+}
+
 func (k KLType) String() string {
 	switch k {
 	case KLType_None:

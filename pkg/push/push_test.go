@@ -19,6 +19,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/notify"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
@@ -450,6 +451,41 @@ func TestParseUpdateOrderBookValidData(t *testing.T) {
 	}
 	if result.SvrRecvTimeBid != "10:00:00" {
 		t.Errorf("expected SvrRecvTimeBid 10:00:00, got %s", result.SvrRecvTimeBid)
+	}
+}
+
+// The push carries an orderBookType saying whether the levels belong to the
+// whole-lot book (0) or the odd-lot book (1). A single SubType_OrderBook
+// subscription can serve both, so a consumer that cannot see this field cannot
+// tell which book it just received.
+func TestParseUpdateOrderBookRetainsOrderBookType(t *testing.T) {
+	hkMarket := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	code := "00700"
+	retType := int32(common.RetType_RetType_Succeed)
+	odd := int32(constant.OrderBookType_Odd)
+
+	resp := &qotupdateorderbook.Response{
+		RetType: &retType,
+		S2C: &qotupdateorderbook.S2C{
+			Security:      &qotcommon.Security{Market: &hkMarket, Code: &code},
+			OrderBookType: &odd,
+		},
+	}
+
+	body, err := proto.Marshal(resp)
+	if err != nil {
+		t.Fatalf("failed to marshal protobuf: %v", err)
+	}
+
+	result, err := ParseUpdateOrderBook(body)
+	if err != nil {
+		t.Fatalf("ParseUpdateOrderBook failed: %v", err)
+	}
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+	if result.OrderBookType != int32(constant.OrderBookType_Odd) {
+		t.Errorf("expected OrderBookType %d (odd lot), got %d", int32(constant.OrderBookType_Odd), result.OrderBookType)
 	}
 }
 

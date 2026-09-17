@@ -53,6 +53,23 @@ func TestSubTypeMatchesWire(t *testing.T) {
 	}
 }
 
+func TestOrderBookTypeMatchesWire(t *testing.T) {
+	pairs := []struct {
+		name string
+		got  OrderBookType
+		want qotcommon.OrderBookType
+	}{
+		{"OrderBookType_Normal", OrderBookType_Normal, qotcommon.OrderBookType_OrderBookType_Normal},
+		{"OrderBookType_Odd", OrderBookType_Odd, qotcommon.OrderBookType_OrderBookType_Odd},
+	}
+
+	for _, p := range pairs {
+		if int32(p.got) != int32(p.want) {
+			t.Errorf("%s = %d, but the wire value is %d", p.name, int32(p.got), int32(p.want))
+		}
+	}
+}
+
 func TestKLTypeMatchesWire(t *testing.T) {
 	pairs := []struct {
 		name string

@@ -404,6 +404,20 @@ func (s SubType) IsKLType() bool {
 }
 
 // =============================================================================
+// OrderBookType (摆盘类型)
+// =============================================================================
+
+// OrderBookType selects which order book a depth subscription or push refers to.
+// A single SubType_OrderBook subscription can serve both books, so each push
+// carries this value to say which one it is.
+type OrderBookType int32
+
+const (
+	OrderBookType_Normal OrderBookType = 0 // 整股盘(默认)
+	OrderBookType_Odd    OrderBookType = 1 // 碎股盘
+)
+
+// =============================================================================
 // KLType (K线类型)
 // =============================================================================
 

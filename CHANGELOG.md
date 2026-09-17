@@ -118,6 +118,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ToSubType`/`ToKLType` round trip over every interval and negative cases for the
   non-K types. Compared by value, never by name, because the generated enum spells
   quarter `Qurater` (an upstream Futu typo this package does not reproduce).
+- **`OrderBookType` on order-book pushes** (`pkg/push`). `ParseUpdateOrderBook`
+  discarded the `orderBookType` field the wire always sends, which distinguishes the
+  whole-lot book (0) from the odd-lot book (1). One `SubType_OrderBook` subscription
+  serves both books, so without this field a consumer could not tell which one a
+  push belonged to - it would have had to assume, and the two books hold different
+  levels. The matching `constant.OrderBookType` enum is added so the value can be
+  interpreted without reaching into protobuf, and the drift test covers it.
 
 ### Removed
 
