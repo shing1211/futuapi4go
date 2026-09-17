@@ -5,46 +5,7 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.1] - 2026-09-17
-
-### Added
-
-- **`ParseLogLevel(name)` and `WithLogLevelName(name)`.** v0.18.0 added
-  `LogLevelDebug` but did not re-export the level constants from the public
-  `client` package, so a consumer could not name a level without hardcoding the
-  numeric scale. A caller can now pass its own configuration string
-  (`debug|info|warn|error|silent`, case-insensitive, with the usual aliases);
-  an unknown or empty name falls back to **warn**, which keeps per-packet
-  transport detail off.
-- Both are re-exported from the public `client` package alongside
-  `WithLogLevel`.
-
-## [0.18.0] - 2026-09-17
-
-### Added
-
-- **`ProtoIDName`** (`pkg/constant/protoid_name.go`) maps a wire protoID to its
-  protobuf message name, generated from the `ProtoID_*` table so it cannot drift.
-  Unknown ids fall back to `protoID_<n>`. This is what makes the transport log
-  readable: `recv Trd_GetFunds (2101) serial=535 bytes=121`.
-- **`LogLevelDebug` (`-1`)** and a `logDebug` helper. Per-packet transport
-  logging now sits below Info, so it is opt-in rather than emitted for every
-  inbound packet at the default level.
-- **`WithSlogLogger(*slog.Logger)`**, re-exported from the public `client`
-  package (the structured-logger hooks previously lived only in `internal/`).
-  A consumer can now route SDK events into its own logging pipeline with levels
-  and attributes preserved; the client's `conn_id`/`user_id` attributes are still
-  added to every event.
-
-### Changed
-
-- The `readLoop` packet line is no longer `readLoop: got packet protoID=%d
-  serialNo=%d bodyLen=%d dispatching...` at Info. It is now a debug-level,
-  human-readable `recv <message> (<protoID>) serial=<n> bytes=<n>`, and the
-  duplicate `[timestamp]` prefix was dropped (the stdlib logger already stamps
-  the line).
-
-## [Unreleased]
+## [0.19.0] - 2026-09-17
 
 ### Changed
 
@@ -178,6 +139,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asserting an error on exhaustion, which is unsatisfiable under a waiting contract;
   it now uses a bounded context, matching the concurrency tests in the same file that
   already depended on that behaviour and were likewise blocked by this defect.
+
+## [0.18.1] - 2026-09-17
+
+### Added
+
+- **`ParseLogLevel(name)` and `WithLogLevelName(name)`.** v0.18.0 added
+  `LogLevelDebug` but did not re-export the level constants from the public
+  `client` package, so a consumer could not name a level without hardcoding the
+  numeric scale. A caller can now pass its own configuration string
+  (`debug|info|warn|error|silent`, case-insensitive, with the usual aliases);
+  an unknown or empty name falls back to **warn**, which keeps per-packet
+  transport detail off.
+- Both are re-exported from the public `client` package alongside
+  `WithLogLevel`.
+
+## [0.18.0] - 2026-09-17
+
+### Added
+
+- **`ProtoIDName`** (`pkg/constant/protoid_name.go`) maps a wire protoID to its
+  protobuf message name, generated from the `ProtoID_*` table so it cannot drift.
+  Unknown ids fall back to `protoID_<n>`. This is what makes the transport log
+  readable: `recv Trd_GetFunds (2101) serial=535 bytes=121`.
+- **`LogLevelDebug` (`-1`)** and a `logDebug` helper. Per-packet transport
+  logging now sits below Info, so it is opt-in rather than emitted for every
+  inbound packet at the default level.
+- **`WithSlogLogger(*slog.Logger)`**, re-exported from the public `client`
+  package (the structured-logger hooks previously lived only in `internal/`).
+  A consumer can now route SDK events into its own logging pipeline with levels
+  and attributes preserved; the client's `conn_id`/`user_id` attributes are still
+  added to every event.
+
+### Changed
+
+- The `readLoop` packet line is no longer `readLoop: got packet protoID=%d
+  serialNo=%d bodyLen=%d dispatching...` at Info. It is now a debug-level,
+  human-readable `recv <message> (<protoID>) serial=<n> bytes=<n>`, and the
+  duplicate `[timestamp]` prefix was dropped (the stdlib logger already stamps
+  the line).
 
 ## [v0.17.0] - 2026-09-07
 
