@@ -1,6 +1,6 @@
 # futuapi4go Design Document
 
-> **Version:** v0.14.0 | **Last Updated:** 2026-06-29
+> **Version:** v0.19.2 | **Last Updated:** 2026-09-17 | **Futu Protocol:** v10.10.7008 (184 protos)
 
 ---
 
@@ -44,7 +44,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Key Constraint:** All communication is via Protocol Buffers over TCP. No JSON by default.
+**Key Constraint:** All communication is via Protocol Buffers over TCP (or the optional WebSocket transport). There is no JSON/HTTP API.
 
 ---
 
@@ -56,16 +56,20 @@
 |----------|-----------|
 | Binary over TCP | Performance, low latency |
 | Protobuf serialization | Type safety, schema evolution |
-| Custom 46-byte header | Magic "FT" + ProtoID + SerialNo + BodyLen |
+| Custom 44-byte header (see `internal/client/conn.go`) | Magic "FT" + ProtoID + ProtoFmt/ProtoVer + SerialNo + BodyLen + SHA-1 + Reserved |
 | No async/await | Go-native concurrency via goroutines |
 
-**Packet Format:**
+**Packet Format** (44-byte header, little-endian, then the protobuf body):
+
 ```
-┌──────────┬─────────┬─────────┬──────────┬─────────────┐
-│ Magic(2) │ ProtoID │ SerialNo│ BodyLen │   Body    │
-│   "FT"   │ 4 bytes │ 4 bytes │ 4 bytes │  N bytes  │
-└──────────┴─────────┴─────────┴──────────┴─────────────┘
+┌────────┬────────┬────────┬────────┬─────────┬─────────┬───────────┬──────────┐
+│ Magic  │ ProtoID│ProtoFmt│ProtoVer│ SerialNo│ BodyLen │ BodySHA1  │ Reserved │
+│ 2 "FT" │ 4      │ 1      │ 1      │ 4       │ 4       │ 20        │ 8        │
+└────────┴────────┴────────┴────────┴─────────┴─────────┴───────────┴──────────┘
 ```
+
+The 20-byte `BodySHA1` is verified on every read (`readOne`) and written by
+`WritePacket`; `ProtoFmt`/`ProtoVer` select the wire format (proto2/proto3).
 
 ---
 
@@ -80,9 +84,21 @@
 | `pkg/push/` | Push parsers | `ParseUpdateBasicQot()` |
 | `pkg/push/chan/` | Channel push | `SubscribeQuote()` |
 | `pkg/breaker/` | Circuit breaker | `New()`, `Do()` |
+| `pkg/ratelimit/` | Rate limiting | `NewLimiter()`, `NewProtoLimiter()` |
+| `pkg/retry/` | Retry with backoff | `New()`, `Do()` |
+| `pkg/metrics/` | Metrics | counters/histograms |
+| `pkg/cache/` | K-line LRU+TTL cache | `NewKLCache()` |
+| `pkg/degradation/` | Graceful degradation | manager |
+| `pkg/health/` | Health checks | monitoring helpers |
+| `pkg/history/` | Historical data helpers | pagination |
+| `pkg/market/` | Market hours/session helpers | `IsOpen()` etc. |
+| `pkg/option/` | Options analytics helpers | greeks, chains |
+| `pkg/tracing/` + `pkg/tracing/otel/` | Tracing | opt-in OTel |
 | `pkg/logger/` | Logging | `New()`, `Info()`, etc. |
-| `pkg/constant/` | Constants | Typed enums |
+| `pkg/constant/` | Constants | Typed enums, error codes |
 | `pkg/util/` | Utilities | `ParseCode()`, `FormatCode()` |
+| `pkg/futuapi/` | Public re-export | `NewClientFromEnv()` |
+| `pkg/pb/` | Generated protobuf | 184 packages |
 | `internal/client/` | Core TCP | Connection, packet I/O |
 
 ---
@@ -91,26 +107,29 @@
 
 ```go
 type FutuError struct {
-    Code    ErrorCode
-    Message string
-    Category ErrorCategory  // API, Connection, Timeout, Trading
-    Recovery string        // Suggestion for recovery
+    Code     ErrorCode
+    Message  string
+    Category ErrorCategory  // connection, timeout, api, account, trading, subscribe, unknown
+    Recovery string         // Suggestion for recovery
 }
 
 // Usage
 fe, ok := constant.AsFutuError(err)
-if ok && fe.Category == constant.ErrorCategoryAPI {
+if ok && fe.Category == constant.CategoryAPI {
     // handle API error
 }
 ```
 
-**Error Categories:**
+**Error Categories** (see `pkg/constant/errors.go`):
 | Category | Description | Recovery |
 |----------|-------------|----------|
-| API | Server returned error | Check RetType, retry |
+| API | Server returned an error | Check `RetType`/`RetMsg`, retry if transient |
 | Connection | TCP/socket error | Reconnect |
 | Timeout | Request timeout | Retry with backoff |
+| Account | Account/authentication problem | Check account ID, unlock, permissions |
 | Trading | Order rejected | Check order params |
+| Subscribe | Subscription problem | Check subscription state |
+| Unknown | Unclassified | Inspect the raw code/message |
 
 ---
 
@@ -225,21 +244,25 @@ resp, err := qot.GetKL(ctx, cli, req)
 // Place order with typed constants
 result, err := client.PlaceOrder(ctx, cli,
     accID,
-    constant.TrdMarket_HK,      // trading market
-    "00700",                    // code
-    constant.TrdSide_Buy,        // side
-    constant.OrderType_Normal,   // order type
-    350.0,                     // price
-    100,                       // quantity
+    constant.TrdMarket_HK,        // trading market
+    "00700",                      // code
+    constant.TrdSide_Buy,         // side
+    constant.OrderType_Normal,    // order type
+    350.0,                        // price
+    100,                          // quantity
+    constant.TrdSecMarket_HK,     // security market
 )
 ```
 
-**OrderBuilder pattern:**
+**OrderBuilder pattern** (`Build` returns the request and an error):
 ```go
-order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+req, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
     Buy("00700", 100).
     At(350.0).
     Build()
+if err != nil {
+    return err
+}
 ```
 
 ---
@@ -249,7 +272,10 @@ order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 **Channel-based (recommended):**
 ```go
 ch := make(chan *push.UpdateBasicQot, 100)
-stop := chanpkg.SubscribeQuote(cli, constant.Market_HK, "00700", ch)
+stop, err := chanpkg.SubscribeQuote(ctx, cli, constant.Market_HK, "00700", ch)
+if err != nil {
+    return err
+}
 defer stop()
 
 for q := range ch {
@@ -295,14 +321,14 @@ cli.RegisterHandler(constant.ProtoID_Qot_UpdateBasicQot, func(pid uint32, body [
 type SensitiveString string
 
 func (s SensitiveString) String() string {
-    return "***"
+    return "[REDACTED]"
 }
 
-// Usage: Password redacted in all fmt output
+// Usage: the value is redacted in all fmt output.
 req := &trd.UnlockTradeRequest{
     PwdMD5: constant.SensitiveString("actual_password"),
 }
-fmt.Printf("%v", req) // Prints: {PwdMD5: ***}
+fmt.Printf("%v", req) // Prints: {PwdMD5:[REDACTED]}
 ```
 
 ---
@@ -342,8 +368,10 @@ cli.RegisterHandler(constant.ProtoID_Qot_UpdateBasicQot,
 
 ### 8.2 Connection Pool
 ```go
-pool := futuapi.NewClientPool(config)
-cli, _ := pool.Get(ctx, PoolTypeMarketData)
+// The client pool lives in internal/client/pool.go and is intended for
+// in-module use (it is not part of the public client API).
+pool := futuapi.NewClientPool(cfg)
+cli, err := pool.Get(ctx, futuapi.PoolTypeMarketData)
 defer pool.Put(cli)
 ```
 
@@ -361,14 +389,16 @@ result, err := cb.Do(func() (interface{}, error) {
 
 ### 8.4 Rate Limiter
 ```go
-limiter := rate.NewLimiter(rate.WithLimit(100)) // 100 req/sec
-cli.SetRateLimiter(limiter)
+// pkg/ratelimit — token bucket. rate and capacity are caller-supplied.
+limiter := ratelimit.NewProtoLimiter(100, 100, ratelimit.ModeWait) // 100 req/s, burst 100
+// Wired into a client via the internal option (internal/client.WithRateLimiter);
+// it is not yet re-exported on the public client package.
 ```
 
 ### 8.5 Custom Logger
 ```go
-cli.SetLogger(log.New(os.Stderr, "", 0))
-// or use pkg/logger for structured logging
+// Route SDK logs through a caller-supplied *slog.Logger.
+cli, err := client.New(client.WithSlogLogger(slog.Default()))
 ```
 
 ---
@@ -377,11 +407,16 @@ cli.SetLogger(log.New(os.Stderr, "", 0))
 
 ### Direct (go.mod)
 ```
-google.golang.org/protobuf v1.x.x
+github.com/gorilla/websocket            v1.5.3    // WebSocket transport
+github.com/prometheus/client_golang     v1.20.5   // metrics bridge
+go.opentelemetry.io/otel                v1.43.0   // tracing
+go.opentelemetry.io/otel/metric         v1.43.0
+go.opentelemetry.io/otel/trace          v1.43.0
+google.golang.org/protobuf              v1.36.11  // wire messages
 ```
 
 ### Generated (pkg/pb/)
-- 78 protobuf message types (v10.4.6408)
+- 184 generated protobuf packages (Futu protocol v10.10.7008)
 - All under `github.com/shing1211/futuapi4go/pkg/pb/`
 
 ---
@@ -390,9 +425,9 @@ google.golang.org/protobuf v1.x.x
 
 | Component | Version |
 |------------|---------|
-| Go | 1.26+ |
-| OpenD | v10.4.6408 (recommended) |
-| Protobuf | proto3 |
+| Go | 1.26.6+ (`go.mod`) |
+| OpenD | v10.10.7008 (matches the generated protos; see [docs/VERSION_MAP.md](docs/VERSION_MAP.md)) |
+| Protobuf | proto2 + proto3 (mixed on the wire) |
 
 ---
 
@@ -402,8 +437,8 @@ google.golang.org/protobuf v1.x.x
 |------------|------|
 | Connect | `cli.Connect("127.0.0.1:11111")` |
 | Get quote | `client.GetQuote(ctx, cli, Market_HK, "00700")` |
-| Place order | `client.PlaceOrder(ctx, cli, accID, TrdMarket_HK, code, TrdSide_Buy, OrderType_Normal, price, qty)` |
-| Subscribe | `client.Subscribe(ctx, cli, Market_HK, "00700", []SubType{SubType_Quote})` |
+| Place order | `client.PlaceOrder(ctx, cli, accID, TrdMarket_HK, code, TrdSide_Buy, OrderType_Normal, price, qty, TrdSecMarket_HK)` |
+| Subscribe | `client.Subscribe(ctx, cli, Market_HK, "00700", []constant.SubType{constant.SubType_Basic})` |
 | Close | `cli.Close()` |
 
 See [README.md](README.md) for complete API reference.
