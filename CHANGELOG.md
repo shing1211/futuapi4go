@@ -28,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   connection (and timeout) under the mutex. Fixes the `-race` failures in the
   mock and API test suites.
 
+### Security
+
+- **Minimum Go raised to 1.26.2** (`go.mod`). `govulncheck` reported 11 standard
+  library vulnerabilities in Go 1.26.1 — `crypto/x509` and `crypto/tls` — that are
+  reachable through the TLS dial, read, and write paths. All are fixed in Go
+  1.26.2+. CI now uses the latest 1.26.x patch.
+
 ## [0.19.0] - 2026-09-17
 
 ### Changed
