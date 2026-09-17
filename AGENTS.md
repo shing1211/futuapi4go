@@ -156,12 +156,12 @@ git push origin main
 git push origin vx.y.z
 
 # 4. Create GitHub release
-#    Pushing the tag triggers .github/workflows/release.yml (goreleaser).
-#    If that job fails, create it manually:
+#    Pushing the tag triggers .github/workflows/release.yml, which publishes
+#    a release using the CHANGELOG section for that version. If the job fails:
 gh release create vx.y.z --title "vx.y.z" --notes-from-tag
 ```
 
-Prerequisites (macOS/Linux): `go install github.com/goreleaser/goreleaser@latest`
+Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no extra tooling is required.
 
 ---
 

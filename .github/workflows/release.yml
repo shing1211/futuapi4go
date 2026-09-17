@@ -17,14 +17,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-go@v7
-        with:
-          go-version: '1.26'
-          check-latest: true
-
-      - uses: goreleaser/goreleaser-action@v6
-        with:
-          version: '~> v2'
-          args: release --clean
+      - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          ver="${tag#v}"
+          # Use the curated CHANGELOG section for this version, if present.
+          awk -v v="$ver" 'BEGIN{gsub(/\./,"\\.",v)}
+            $0 ~ ("^## \\[v?" v "\\]") {f=1; next}
+            f && /^## \[/ {exit}
+            f {print}' CHANGELOG.md > notes.md
+          if [ -s notes.md ] && grep -q '[^[:space:]]' notes.md; then
+            gh release create "$tag" --title "$tag" --notes-file notes.md --latest
+          else
+            gh release create "$tag" --title "$tag" --generate-notes --latest
+          fi

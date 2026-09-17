@@ -58,15 +58,15 @@ test-pkg:
 test-integration:
 	go test -tags=integration ./test/integration/...
 
-# Run goreleaser release (requires git tag)
-# Note: goreleaser requires macOS/Linux. For cross-platform, use: gh release create
+# Create a GitHub release for the tag at HEAD (manual fallback; normally
+# handled by .github/workflows/release.yml when a v* tag is pushed).
 release:
-	@command -v goreleaser >/dev/null 2>&1 && goreleaser release --clean || { \
-		echo "goreleaser not found. Install from https://goreleaser.com/install/"; \
-		echo "Or create release manually:"; \
-		echo "  git tag vX.Y.Z && git push origin vX.Y.Z"; \
-		echo "  gh release create vX.Y.Z --title 'vX.Y.Z' --notes 'See CHANGELOG.md'" ; \
-	}
+	@tag=$$(git describe --tags --exact-match 2>/dev/null) || { \
+		echo "HEAD is not tagged. Create and push a tag first:"; \
+		echo "  git tag -a vX.Y.Z -m 'vX.Y.Z' && git push origin vX.Y.Z"; \
+		exit 1; \
+	}; \
+	gh release create "$$tag" --title "$$tag" --generate-notes
 
 # Check README translations are consistent with the English canonical
 docs-check:
