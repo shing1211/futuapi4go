@@ -37,7 +37,7 @@ A comprehensive robustness audit of the futuapi4go Go SDK was conducted across *
 | Connection Robustness | 7/10 | Reconnect with backoff; circuit breaker; WebSocket + TCP | Goroutine leak; no read deadline in readOne |
 | Resource Leaks | 8/10 | WaitGroup tracked; DrainDispatches on close | readOne goroutine not cancellable |
 | Trading Safety | 7/10 | Pre-flight validation; SensitiveString for passwords | Price validation not mandatory; no duplicate order prevention |
-| Security | 9/10 | `crypto/rand`; `SensitiveString`; no hardcoded secrets | `RSAPrivateKey` stored as plain string in options |
+| Security | 9/10 | `crypto/rand`; `SensitiveString`; no hardcoded secrets | (no gaps) |
 
 ### Executive Recommendation
 
