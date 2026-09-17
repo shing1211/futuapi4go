@@ -20,14 +20,25 @@ github.com/gorilla/websocket
   License: BSD 2-Clause
   https://github.com/gorilla/websocket
 
+github.com/prometheus/client_golang
+  Copyright (c) The Prometheus Authors
+  License: Apache-2.0
+  https://github.com/prometheus/client_golang
+
+go.opentelemetry.io/otel (with /metric and /trace)
+  Copyright (c) The OpenTelemetry Authors
+  License: Apache-2.0
+  https://github.com/open-telemetry/opentelemetry-go
+
 ---
 
 Futu OpenAPI Protocol
 
-This SDK implements a client for the Futu OpenD protocol based on publicly
-available API documentation from Futu Holdings Limited. This implementation is
-a clean-room reverse engineering effort and does not contain any proprietary
-code from Futu Holdings Limited.
+This SDK implements a client for the Futu OpenD protocol. The protobuf
+definitions under `api/proto/` are derived from Futu's publicly published
+OpenAPI protocol definitions, and the Go bindings under `pkg/pb/` are
+generated from them. The SDK does not contain any proprietary source code
+from Futu Holdings Limited.
 
 Futu OpenAPI documentation is Copyright (c) Futu Holdings Limited.
 Official documentation: https://openapi.futunn.com/

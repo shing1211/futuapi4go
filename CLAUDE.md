@@ -1,3 +1,23 @@
+# futuapi4go — Agent Guide
+
+Go SDK for the Futu OpenD / OpenAPI protocol. Pure library (no `main`
+package), module `github.com/shing1211/futuapi4go`, Go 1.26.6+, Apache-2.0.
+Latest release: **v0.19.2** (Futu protocol v10.10.7008, 184 protos).
+
+**Read [AGENTS.md](./AGENTS.md) first** — it is the primary agent guide
+(architecture, CI gates, release process, troubleshooting).
+
+Hard rules:
+- `context.Context` is the first parameter of every public API.
+- Do not auto-retry order-mutation calls.
+- Run `gitnexus_impact` before editing a symbol and `gitnexus_detect_changes`
+  before committing.
+
+Commands: `make check` (gofmt-fix + vet + build), `make test` (race),
+`make fmt` (format check), `make docs-check` (translations).
+
+---
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

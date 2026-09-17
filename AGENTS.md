@@ -167,13 +167,30 @@ Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no 
 
 ## Official Documentation References
 
-- **API Reference:** See README.md "Full API Reference" section
+- **API Reference:** See README.md "Common APIs" and "Package Map" sections
 - **Changelog:** `CHANGELOG.md`
 - **Developer Guide:** This file (AGENTS.md)
-- **Testing Guide:** See README.md "Testing" section
-- **Enhancement Plan:** `docs/IMPLEMENTATION_COMPLETE.md` (advanced features — application-level, not core SDK)
+- **Testing Guide:** See README.md "Build & Test"; integration tests are gated by the `FUTU_INTEGRATION_TESTS=1` environment variable (not a build tag)
+- **Protocol / version map:** `docs/VERSION_MAP.md` (authoritative for Futu protocol ↔ SDK tag)
+- **Robustness audit:** `docs/IMPROVEMENT_PLAN.md`
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.2)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.2; requires Go 1.26.6+)
+
+---
+
+## CI & Quality Gates
+
+Workflows live in `.github/workflows/`:
+
+| Workflow | Trigger | Enforces |
+|----------|---------|----------|
+| `ci.yml` | push / PR | `go build`, strict `gofmt -l .`, `go vet`, `go test -race -count=1`, coverage artifact, README-translation check |
+| `govulncheck.yml` | push / PR + weekly | `govulncheck ./...` |
+| `codeql.yml` | push / PR + weekly | CodeQL (Go) |
+| `release.yml` | `v*` tag | publishes a GitHub release using the CHANGELOG section for that tag |
+
+Local equivalents: `make check` (gofmt-fix + vet + build), `make test` (race),
+`make docs-check` (translations), `make fmt` (format check, no writes).
 
 ---
 
@@ -208,7 +225,7 @@ Before ending a work session, confirm:
 
 ---
 
-*Last updated: 2026-05-21*
+*Last updated: 2026-09-17*
 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence

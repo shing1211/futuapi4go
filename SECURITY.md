@@ -10,6 +10,30 @@ Go to [Security Advisories](https://github.com/shing1211/futuapi4go/security/adv
 ### Option 2 — Email
 Send to **shing1211@users.noreply.github.com** with subject: `[SECURITY] futuapi4go vulnerability report`
 
+## Supported Versions
+
+Only the latest release receives security fixes. The SDK tracks the current
+Futu OpenD protocol — see [docs/VERSION_MAP.md](docs/VERSION_MAP.md).
+
+| Version | Supported |
+|---------|-----------|
+| Latest `v0.19.x` | ✅ |
+| Older releases | ❌ |
+
+## Response Targets
+
+- Acknowledgement within **7 days**.
+- Triage and severity assessment within **14 days**.
+- A fix is released as a patch; the reporter is credited in the release notes
+  unless they prefer to remain anonymous.
+
+## Scope
+
+- **In scope:** this repository's Go code — connection handling, crypto
+  (RSA/AES), packet parsing, and request construction.
+- **Out of scope:** the Futu OpenD binary, Futu's servers, and user
+  misconfiguration (e.g. exposing the OpenD port or hardcoding credentials).
+
 ## Best Practices
 
 - Never hardcode credentials — use environment variables

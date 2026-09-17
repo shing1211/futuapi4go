@@ -14,7 +14,7 @@ Thank you for your interest in contributing!
 
 ### Prerequisites
 
-- Go 1.26+
+- Go 1.26.6+ (`go.mod` declares `go 1.26.6`)
 - A running [Futu OpenD](https://www.futunn.com/en/overview) instance (for
   integration tests; unit tests use an in-process mock)
 - `protoc` / the repo scripts, only if you change `.proto` files
@@ -41,7 +41,7 @@ go test -race ./...   # full test suite with the race detector
 ├── internal/        # Connection, TCP I/O, packet framing
 ├── api/proto/       # Futu protocol definitions
 ├── scripts/         # Proto regeneration + checks
-├── test/            # Integration tests (build tag: integration)
+├── test/            # Unit/integration tests (integration gated by FUTU_INTEGRATION_TESTS=1)
 └── docs/            # Architecture, usage, version map
 ```
 
@@ -72,10 +72,12 @@ Branch naming: `feat/`, `fix/`, `docs/`, `test/`, `chore/` prefixes.
 ### 3. Run Checks
 
 ```bash
-make check          # gofmt + go vet + build
+make check          # gofmt -w (writes) + go vet + go build — no tests
 
-# Or the full gate:
-go build ./... && go vet ./... && go test -race ./...
+# Or the full local gate CI runs:
+make fmt-fix        # gofmt -w .
+make test           # go test -race ./...
+make docs-check     # README translation guard
 ```
 
 ### 4. Commit
@@ -122,7 +124,13 @@ See [AGENTS.md](./AGENTS.md) for the full review checklist.
 | Test Type | Location | Needs OpenD |
 |-----------|----------|-------------|
 | Unit tests | `*_test.go` alongside source | No (mock server) |
-| Integration tests | `test/integration/` (`-tags=integration`) | Yes |
+| Integration tests | `test/integration/`, gated by `FUTU_INTEGRATION_TESTS=1` | Yes |
+
+Run integration tests with:
+
+```bash
+FUTU_INTEGRATION_TESTS=1 go test -race ./test/integration/...
+```
 
 Always run with `-race`. See the [README](./README.md) "Build & Test" section.
 
