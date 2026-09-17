@@ -180,7 +180,7 @@ Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no 
 - **Architecture decisions:** `docs/adr/` (ADRs — read before reversing a deliberate choice)
 - **Robustness audit:** `docs/IMPROVEMENT_PLAN.md`
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
-- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.2; requires Go 1.26.6+)
+- **Go module:** `github.com/shing1211/futuapi4go` (current: v0.19.3; requires Go 1.26.6+)
 
 ---
 

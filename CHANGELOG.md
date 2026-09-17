@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.3] - 2026-09-17
+
 ### Changed
 
 - **Documentation overhaul** — corrected stale facts and non-compiling code
@@ -20,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md),
   [`docs/TESTING.md`](docs/TESTING.md), and an
   [ADR index](docs/adr/README.md) with 11 architecture decision records.
+- **Dependabot grouping** (`.github/dependabot.yml`) — `go.opentelemetry.io/*`
+  and `github.com/prometheus/*` updates now arrive as a single PR. Raising any
+  one otel module forces MVS to raise all three (`otel`, `otel/metric`,
+  `otel/trace`), so the previous per-module PRs were identical duplicates.
+- **CI** — `actions/upload-artifact` bumped from v4 to v7.
+
+### Dependencies
+
+- `google.golang.org/protobuf` 1.36.11 → **1.36.12**
+- `go.opentelemetry.io/otel` (+ `/metric`, `/trace`) 1.43.0 → **1.46.0**
+- `github.com/prometheus/client_golang` 1.20.5 → **1.24.1**
 
 ## [0.19.2] - 2026-09-17
 
