@@ -51,9 +51,9 @@ OpenD logs. Consequences:
 - The value is *not* gated by OpenD, so a stale value does not break anything —
   but it silently misreports which protocol a client was built against.
 - `v0.16.0` upgraded the protos to v10.10.7008 but left `clientVer` at 1090.
-  Fixed in `v0.17.0`-era unreleased work: the value now lives in a single
-  constant (`handshakeClientVer`) so the two handshake paths cannot drift apart
-  again, and is set to 1100 for v10.10.7008.
+  Corrected in `v0.18.0`, where the value moved into a single constant
+  (`handshakeClientVer`) so the two handshake paths cannot drift apart again; it
+  is set to 1100 for v10.10.7008.
 
 **Proto count is a reliable fingerprint.** For a given protocol version the
 number of generated `.pb.go` files is stable, so it is the quickest way to

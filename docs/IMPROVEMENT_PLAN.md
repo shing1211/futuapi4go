@@ -1,6 +1,6 @@
 # futuapi4go Robustness Improvement Plan
 
-> **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.2 | **Status:** COMPLETE — all HIGH/MED priority fixes (FIX-001 through FIX-007) resolved in v0.9.1 (commit `3b34ae3`); LOW polish items L01-L14 also complete
+> **Generated:** 2026-05-18 | **Updated:** 2026-09-17 | **Version:** v0.19.2 | **Status:** COMPLETE — FIX-001…FIX-006 resolved in v0.9.1 (commit `3b34ae3`), FIX-007 (RSA key) in v0.19.1; LOW polish items L01-L14 also complete
 >
 > **Related:** [DESIGN.md](DESIGN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md) · [AGENTS.md](../AGENTS.md)
 
@@ -16,7 +16,7 @@ All FIX-001 through FIX-007 were resolved in **v0.9.1** (commit `3b34ae3`, 2026-
 | FIX-004 | `PlaceOrder` accepted `price<=0` for limit orders | `orders.go:117` rejects `price<=0` for non-market types | line 450 |
 | FIX-005 | `GetDelayStatistics` bypassed `EnsureConnected` | `system.go:338` calls `EnsureConnected()` before raw socket I/O | line 451 |
 | FIX-006 | `wrapError` switch redundant vs direct cast | Deliberately simplified to `ErrorCode(retType)` cast (switch is equivalent); trd/sys retain switch for clarity | line 455 |
-| FIX-007 | `RSAPrivateKey` stored as plain `string` | v0.20.0: field changed to `constant.SensitiveString` with `.Raw()`/`.IsEmpty()` | this release |
+| FIX-007 | `RSAPrivateKey` stored as plain `string` | v0.19.1: field changed to `constant.SensitiveString` with `.Raw()`/`.IsEmpty()` | [0.19.1] |
 
 ---
 
@@ -454,7 +454,7 @@ All findings evaluated against:
 | FIX-004 | MEDIUM | `pkg/trd/orders.go` | 117 | price<=0 rejection | DONE v0.9.1 |
 | FIX-005 | MEDIUM | `pkg/sys/system.go` | 338 | EnsureConnected before raw I/O | DONE v0.9.1 |
 | FIX-006 | MEDIUM | `pkg/{qot,trd,sys}/*.go` | multiple | wrapError direct cast (equivalent) | WONTFIX v0.9.1 |
-| FIX-007 | MEDIUM | `internal/client/client.go` | 251 | RSAPrivateKey→SensitiveString | DONE v0.20.0 |
+| FIX-007 | MEDIUM | `internal/client/client.go` | 251 | RSAPrivateKey→SensitiveString | DONE v0.19.1 |
 | L01-L14 | LOW | multiple | multiple | Polish items | DONE |
 
 ---
@@ -465,6 +465,6 @@ All findings evaluated against:
 |----------|---------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture, layers, execution flows |
 | [DESIGN.md](DESIGN.md) | Design decisions, API patterns, security model |
-| [CHANGELOG.md](../CHANGELOG.md) | Release history (v0.5.7 → v0.9.0) |
+| [CHANGELOG.md](../CHANGELOG.md) | Release history (v0.5.7 → v0.19.2) |
 | [AGENTS.md](../AGENTS.md) | Development standards, code review checklist |
 | [README.md](../README.md) | API reference, installation, quick start |
