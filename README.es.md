@@ -63,6 +63,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
@@ -75,12 +77,12 @@ func main() {
 	defer cli.Close()
 
 	ctx := context.Background()
-	quote, err := cli.GetQuote(ctx, "HK.00700")
+	quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s: price=%.2f high=%.2f low=%.2f vol=%d\n",
-		quote.Code, quote.CurPrice, quote.HighPrice, quote.LowPrice, quote.Volume)
+		quote.Symbol, quote.Price, quote.High, quote.Low, quote.Volume)
 }
 ```
 
@@ -102,10 +104,12 @@ for q := range ch {
 }
 
 // Opción 2: Callbacks tipados (encadenables en el cliente)
-cli.OnQuote(func(q *push.UpdateBasicQot) {
-	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
-}).OnOrder(func(o *push.TrdUpdateOrder) {
-	fmt.Printf("Order %s: status=%d\n", o.GetOrderIDEx(), o.GetOrderStatus())
+cli.OnQuote(func(q *client.PushQuote) error {
+	fmt.Printf("[%s] price=%.2f\n", q.Code, q.CurPrice)
+	return nil
+}).OnOrder(func(o *client.PushOrderUpdate) error {
+	fmt.Printf("Order %s: status=%d\n", o.OrderIDEx, o.OrderStatus)
+	return nil
 })
 ```
 
@@ -130,10 +134,11 @@ accID := accounts[0].AccID
 client.UnlockTrading(ctx, cli, "md5_password")
 result, _ := client.PlaceOrder(ctx, cli, accID,
 	constant.TrdMarket_HK, "00700",
-	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
+	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100,
+	constant.TrdSecMarket_HK)
 
-// Constructor de órdenes fluido
-order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+// Constructor de órdenes fluido (Build devuelve la petición y un error)
+req, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 	Buy("00700", 100).At(350.0).Build()
 ```
 
@@ -142,12 +147,12 @@ order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 ```go
 // Cortacircuitos
 cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
-result, _ := cb.Do(func() (interface{}, error) {
-	return client.PlaceOrder(ctx, cli, accID, ...)
+res, err := cb.Do(func() (interface{}, error) {
+	return client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 })
 
 // Registro estructurado
-l := futulogger.New(futulogger.WithLevel(futulogger.LevelDebug))
+l := logger.New(logger.WithLevel(logger.LevelDebug))
 l.Info("connected", "addr", "127.0.0.1:11111")
 
 // Utilidades de códigos
@@ -203,7 +208,7 @@ cli := client.New(
 ).WithTradeEnv(constant.TrdEnv_Simulate)
 
 // Desde variables de entorno: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
-cli, _ := client.NewClientFromEnv()
+cli, _ := futuapi.NewClientFromEnv()
 
 cli.Connect("127.0.0.1:11111")
 // cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.GetLoginUserID()
@@ -222,7 +227,7 @@ cli.Connect("127.0.0.1:11111")
 | `GetSecuritySnapshot(ctx, c, securities)` | Instantánea completa de múltiples valores |
 | `GetCapitalFlow(ctx, c, market, code)` | Flujo de capital |
 | `RequestHistoryKL(ctx, c, market, code, klType, start, end)` | K-lines históricas (paginación automática) |
-| `RequestHistoryKLQuota(ctx, c)` | Uso de cuota de la API |
+| `GetHistoryKLQuota(ctx, c)` | Uso de cuota de la API |
 
 ### Trading
 
@@ -242,8 +247,8 @@ cli.Connect("127.0.0.1:11111")
 
 | Función | Descripción |
 |---|---|
-| `Subscribe(ctx, c, market, code, []SubType)` | Suscribirse a tipos de push |
-| `Unsubscribe(ctx, c, market, code, []SubType)` | Cancelar suscripción |
+| `Subscribe(ctx, c, market, code, []constant.SubType)` | Suscribirse a tipos de push |
+| `Unsubscribe(ctx, c, market, code, []constant.SubType)` | Cancelar suscripción |
 | `chanpkg.SubscribeQuote(ctx, cli, market, code, ch)` | Push de cotizaciones por canal |
 | `chanpkg.SubscribeKLine(ctx, cli, market, code, klType, ch)` | Push de una sola K-line por canal |
 | `chanpkg.SubscribeKLines(ctx, cli, market, code, []klTypes, ch)` | Push de múltiples K-lines con filtro |

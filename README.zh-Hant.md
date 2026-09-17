@@ -63,6 +63,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
@@ -75,12 +77,12 @@ func main() {
 	defer cli.Close()
 
 	ctx := context.Background()
-	quote, err := cli.GetQuote(ctx, "HK.00700")
+	quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s: price=%.2f high=%.2f low=%.2f vol=%d\n",
-		quote.Code, quote.CurPrice, quote.HighPrice, quote.LowPrice, quote.Volume)
+		quote.Symbol, quote.Price, quote.High, quote.Low, quote.Volume)
 }
 ```
 
@@ -102,10 +104,12 @@ for q := range ch {
 }
 
 // Option 2: Typed callbacks (chainable on client)
-cli.OnQuote(func(q *push.UpdateBasicQot) {
-	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
-}).OnOrder(func(o *push.TrdUpdateOrder) {
-	fmt.Printf("Order %s: status=%d\n", o.GetOrderIDEx(), o.GetOrderStatus())
+cli.OnQuote(func(q *client.PushQuote) error {
+	fmt.Printf("[%s] price=%.2f\n", q.Code, q.CurPrice)
+	return nil
+}).OnOrder(func(o *client.PushOrderUpdate) error {
+	fmt.Printf("Order %s: status=%d\n", o.OrderIDEx, o.OrderStatus)
+	return nil
 })
 ```
 
@@ -130,10 +134,11 @@ accID := accounts[0].AccID
 client.UnlockTrading(ctx, cli, "md5_password")
 result, _ := client.PlaceOrder(ctx, cli, accID,
 	constant.TrdMarket_HK, "00700",
-	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
+	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100,
+	constant.TrdSecMarket_HK)
 
-// Fluent order builder
-order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+// Fluent order builder (Build returns the request and an error)
+req, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 	Buy("00700", 100).At(350.0).Build()
 ```
 
@@ -142,12 +147,12 @@ order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 ```go
 // Circuit breaker
 cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
-result, _ := cb.Do(func() (interface{}, error) {
-	return client.PlaceOrder(ctx, cli, accID, ...)
+res, err := cb.Do(func() (interface{}, error) {
+	return client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 })
 
 // Structured logging
-l := futulogger.New(futulogger.WithLevel(futulogger.LevelDebug))
+l := logger.New(logger.WithLevel(logger.LevelDebug))
 l.Info("connected", "addr", "127.0.0.1:11111")
 
 // Code helpers
@@ -203,7 +208,7 @@ cli := client.New(
 ).WithTradeEnv(constant.TrdEnv_Simulate)
 
 // From env vars: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
-cli, _ := client.NewClientFromEnv()
+cli, _ := futuapi.NewClientFromEnv()
 
 cli.Connect("127.0.0.1:11111")
 // cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.GetLoginUserID()
@@ -222,7 +227,7 @@ cli.Connect("127.0.0.1:11111")
 | `GetSecuritySnapshot(ctx, c, securities)` | 多檔證券的完整快照 |
 | `GetCapitalFlow(ctx, c, market, code)` | 資金流向 |
 | `RequestHistoryKL(ctx, c, market, code, klType, start, end)` | 歷史 K 線（自動分頁） |
-| `RequestHistoryKLQuota(ctx, c)` | API 配額使用情形 |
+| `GetHistoryKLQuota(ctx, c)` | API 配額使用情形 |
 
 ### 交易
 
@@ -242,8 +247,8 @@ cli.Connect("127.0.0.1:11111")
 
 | 函式 | 說明 |
 |---|---|
-| `Subscribe(ctx, c, market, code, []SubType)` | 訂閱推送型別 |
-| `Unsubscribe(ctx, c, market, code, []SubType)` | 取消訂閱 |
+| `Subscribe(ctx, c, market, code, []constant.SubType)` | 訂閱推送型別 |
+| `Unsubscribe(ctx, c, market, code, []constant.SubType)` | 取消訂閱 |
 | `chanpkg.SubscribeQuote(ctx, cli, market, code, ch)` | 透過 channel 推送報價 |
 | `chanpkg.SubscribeKLine(ctx, cli, market, code, klType, ch)` | 透過 channel 推送單一 K 線 |
 | `chanpkg.SubscribeKLines(ctx, cli, market, code, []klTypes, ch)` | 帶篩選的多 K 線推送 |

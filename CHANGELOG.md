@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Documentation overhaul** — corrected stale facts and non-compiling code
+  examples across the six READMEs, `docs/USAGE.md`, `docs/ARCHITECTURE.md`,
+  `DESIGN.md`, and the historical plan docs. Removed references to the retired
+  `gitee` remote, the nonexistent `FUTU_TRD_ENV`, and the removed goreleaser
+  config; fixed the packet-header size (44 bytes), the protobuf package layout,
+  resilience defaults, and error categories. Added
+  [`docs/README.md`](docs/README.md) (documentation index) and
+  [`docs/ERRORS.md`](docs/ERRORS.md) (error-code reference).
+
 ## [0.19.2] - 2026-09-17
 
 ### Changed
