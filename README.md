@@ -300,6 +300,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history and [docs/IMPLEMENTATIO
 
 ## See Also
 
+- [Docs Index](docs/README.md) — every document and its status
 - [CHANGELOG](CHANGELOG.md) — version history and release notes
 - [Version Map](docs/VERSION_MAP.md) — which Futu OpenD protocol / proto count / `clientVer` each SDK release carries
 - [USAGE Guide](docs/USAGE.md) — detailed setup, environment, and advanced patterns

@@ -171,6 +171,7 @@ Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no 
 - **Changelog:** `CHANGELOG.md`
 - **Developer Guide:** This file (AGENTS.md)
 - **Testing Guide:** See README.md "Build & Test"; integration tests are gated by the `FUTU_INTEGRATION_TESTS=1` environment variable (not a build tag)
+- **Docs index:** `docs/README.md` — every document and its status (current vs historical)
 - **Protocol / version map:** `docs/VERSION_MAP.md` (authoritative for Futu protocol ↔ SDK tag)
 - **Robustness audit:** `docs/IMPROVEMENT_PLAN.md`
 - **Proto Reference:** https://openapi.futunn.com/futu-api-doc/en/
