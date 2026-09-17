@@ -723,7 +723,7 @@ Mark Phase 5 items as DONE.
 git add -A
 git commit -m "phase5: bug fixes, missing APIs, architecture hardening"
 git push origin main
-git push origin main
+git push gitee main
 ```
 
 ---

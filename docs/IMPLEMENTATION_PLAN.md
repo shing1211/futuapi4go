@@ -133,7 +133,7 @@ Every function accepting `accID` validates `accID != 0`. `UnlockTrading` validat
 ### Step 8: Documentation & Release
 - Updated CHANGELOG.md with all Phase 5 items
 - Updated docs/IMPLEMENTATION_PLAN.md
-- Committed and pushed to origin/main (the gitee mirror has been retired)
+- Committed and pushed to origin/main and gitee/main
 
 ## Phase 6: Architecture Improvements — FUTURE
 - PoolType-aware routing

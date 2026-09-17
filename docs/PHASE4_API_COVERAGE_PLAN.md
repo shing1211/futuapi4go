@@ -900,7 +900,7 @@ go test -race ./pkg/qot/... ./client/...
 ```
 git add -A && git commit -m "feat: Phase 4 — add 25 new quote APIs + client wrappers"
 git push origin main
-git push origin main
+git push gitee main
 ```
 
 ---

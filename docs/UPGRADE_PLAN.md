@@ -151,4 +151,4 @@ go test -race ./...
 
 - **SDK version**: v0.11.0
 - **Tag**: `v0.11.0`
-- **Push to**: origin (gitee mirror retired)
+- **Push to**: origin + gitee (dual push)

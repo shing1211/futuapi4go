@@ -150,16 +150,20 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 # 2. Commit changes
 git add -A && git commit -m "release vx.y.z: summary"
 
-# 3. Tag (annotated) and push
+# 3. Tag (annotated) and push to both remotes
 git tag -a vx.y.z -m "vx.y.z: summary"
-git push origin main
-git push origin vx.y.z
+git push origin main && git push gitee main
+git push origin vx.y.z && git push gitee vx.y.z
 
 # 4. Create GitHub release
 #    Pushing the tag triggers .github/workflows/release.yml, which publishes
 #    a release using the CHANGELOG section for that version. If the job fails:
 gh release create vx.y.z --title "vx.y.z" --notes-from-tag
 ```
+
+Remotes: `origin` = GitHub (`shing1211/futuapi4go`), `gitee` = Gitee mirror
+(`gitee.com/shing1211/futuapi4go`). If `gitee` is missing:
+`git remote add gitee https://gitee.com/shing1211/futuapi4go.git`.
 
 Prerequisites: the release workflow uses the runner's preinstalled `gh` CLI; no extra tooling is required.
 
