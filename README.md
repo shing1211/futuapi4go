@@ -60,6 +60,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/shing1211/futuapi4go/client"
+	"github.com/shing1211/futuapi4go/pkg/constant"
 	futuapi "github.com/shing1211/futuapi4go/pkg/futuapi"
 )
 
@@ -72,12 +74,12 @@ func main() {
 	defer cli.Close()
 
 	ctx := context.Background()
-	quote, err := cli.GetQuote(ctx, "HK.00700")
+	quote, err := client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s: price=%.2f high=%.2f low=%.2f vol=%d\n",
-		quote.Code, quote.CurPrice, quote.HighPrice, quote.LowPrice, quote.Volume)
+		quote.Symbol, quote.Price, quote.High, quote.Low, quote.Volume)
 }
 ```
 
@@ -98,11 +100,13 @@ for q := range ch {
 	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
 }
 
-// Option 2: Typed callbacks (chainable on client)
-cli.OnQuote(func(q *push.UpdateBasicQot) {
-	fmt.Printf("[%s] price=%.2f\n", q.Security.GetCode(), q.CurPrice)
-}).OnOrder(func(o *push.TrdUpdateOrder) {
-	fmt.Printf("Order %s: status=%d\n", o.GetOrderIDEx(), o.GetOrderStatus())
+// Option 2: Typed callbacks (chainable on client; each returns an error)
+cli.OnQuote(func(q *client.PushQuote) error {
+	fmt.Printf("[%s] price=%.2f\n", q.Code, q.CurPrice)
+	return nil
+}).OnOrder(func(o *client.PushOrderUpdate) error {
+	fmt.Printf("Order %s: status=%d\n", o.OrderIDEx, o.OrderStatus)
+	return nil
 })
 ```
 
@@ -127,10 +131,11 @@ accID := accounts[0].AccID
 client.UnlockTrading(ctx, cli, "md5_password")
 result, _ := client.PlaceOrder(ctx, cli, accID,
 	constant.TrdMarket_HK, "00700",
-	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100)
+	constant.TrdSide_Buy, constant.OrderType_Normal, 350.0, 100,
+	constant.TrdSecMarket_HK)
 
-// Fluent order builder
-order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
+// Fluent order builder (Build returns the request and an error)
+req, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 	Buy("00700", 100).At(350.0).Build()
 ```
 
@@ -139,12 +144,12 @@ order := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate).
 ```go
 // Circuit breaker
 cb := breaker.New(breaker.WithThreshold(5), breaker.WithCooldown(30*time.Second))
-result, _ := cb.Do(func() (interface{}, error) {
-	return client.PlaceOrder(ctx, cli, accID, ...)
+res, err := cb.Do(func() (interface{}, error) {
+	return client.GetQuote(ctx, cli, constant.Market_HK, "00700")
 })
 
-// Structured logging
-l := futulogger.New(futulogger.WithLevel(futulogger.LevelDebug))
+// Structured logging (pkg/logger)
+l := logger.New(logger.WithLevel(logger.LevelDebug))
 l.Info("connected", "addr", "127.0.0.1:11111")
 
 // Code helpers
@@ -200,7 +205,8 @@ cli := client.New(
 ).WithTradeEnv(constant.TrdEnv_Simulate)
 
 // From env vars: FUTU_OPEND_ADDR, FUTU_RSA_PUBLIC_KEY, FUTU_ENCRYPT, FUTU_LOG_LEVEL
-cli, _ := client.NewClientFromEnv()
+// (futuapi is github.com/shing1211/futuapi4go/pkg/futuapi)
+cli, _ := futuapi.NewClientFromEnv()
 
 cli.Connect("127.0.0.1:11111")
 // cli.GetConnID(), cli.GetServerVer(), cli.IsEncrypt(), cli.GetLoginUserID()
@@ -219,7 +225,7 @@ cli.Connect("127.0.0.1:11111")
 | `GetSecuritySnapshot(ctx, c, securities)` | Full snapshot for multiple securities |
 | `GetCapitalFlow(ctx, c, market, code)` | Capital flow |
 | `RequestHistoryKL(ctx, c, market, code, klType, start, end)` | Historical K-lines (auto-paginated) |
-| `RequestHistoryKLQuota(ctx, c)` | API quota usage |
+| `GetHistoryKLQuota(ctx, c)` | API quota usage |
 
 ### Trading
 
@@ -228,7 +234,7 @@ cli.Connect("127.0.0.1:11111")
 | `GetAccountList(ctx, c)` | All trading accounts |
 | `UnlockTrading(ctx, c, pwdMD5)` | Unlock trading |
 | `GetFunds(ctx, c, accID)` | Account funds and power |
-| `PlaceOrder(ctx, c, accID, market, code, side, orderType, price, qty)` | Place order |
+| `PlaceOrder(ctx, c, accID, market, code, side, orderType, price, qty, secMarket)` | Place order |
 | `ModifyOrder(ctx, c, accID, market, orderID, op, price, qty)` | Modify or cancel order |
 | `GetOrderList(ctx, c, accID)` | Active orders |
 | `GetPositionList(ctx, c, accID)` | Current positions with P&L |
@@ -239,8 +245,8 @@ cli.Connect("127.0.0.1:11111")
 
 | Function | Description |
 |---|---|
-| `Subscribe(ctx, c, market, code, []SubType)` | Subscribe to push types |
-| `Unsubscribe(ctx, c, market, code, []SubType)` | Unsubscribe |
+| `Subscribe(ctx, c, market, code, []constant.SubType)` | Subscribe to push types |
+| `Unsubscribe(ctx, c, market, code, []constant.SubType)` | Unsubscribe |
 | `chanpkg.SubscribeQuote(ctx, cli, market, code, ch)` | Quote push via channel |
 | `chanpkg.SubscribeKLine(ctx, cli, market, code, klType, ch)` | Single K-line push via channel |
 | `chanpkg.SubscribeKLines(ctx, cli, market, code, []klTypes, ch)` | Multi K-line push with filter |
@@ -250,9 +256,12 @@ cli.Connect("127.0.0.1:11111")
 ## Build & Test
 
 ```bash
-go build ./...      # Compile everything
-go vet ./...        # Lint
-go test -race ./... # Full suite with race detector
+make check          # gofmt -w + go vet + go build
+make test           # go test -race ./...
+make docs-check     # README-translation guard
+
+# Integration tests (require a running OpenD)
+FUTU_INTEGRATION_TESTS=1 go test -race ./test/integration/...
 ```
 
 ## Architecture
@@ -287,15 +296,16 @@ All communication is via Protocol Buffers over TCP. See [DESIGN.md](DESIGN.md) f
 5. Run `go vet ./...` and fix any warnings.
 6. Open a pull request.
 
-See [CHANGELOG.md](CHANGELOG.md) for the version history and [ENHANCEMENT_PLAN.md](docs/IMPLEMENTATION_COMPLETE.md) for the roadmap.
+See [CHANGELOG.md](CHANGELOG.md) for the version history and [docs/IMPLEMENTATION_COMPLETE.md](docs/IMPLEMENTATION_COMPLETE.md) for API-coverage and phase status.
 
 ## See Also
 
 - [CHANGELOG](CHANGELOG.md) — version history and release notes
 - [Version Map](docs/VERSION_MAP.md) — which Futu OpenD protocol / proto count / `clientVer` each SDK release carries
 - [USAGE Guide](docs/USAGE.md) — detailed setup, environment, and advanced patterns
-- [DESIGN](DESIGN.md) — architecture, design decisions, API patterns
-- [ENHANCEMENT_PLAN](docs/IMPLEMENTATION_COMPLETE.md) — upcoming features and roadmap
+- [ARCHITECTURE](docs/ARCHITECTURE.md) — package layout, execution flows, concurrency
+- [DESIGN](DESIGN.md) — design decisions, API patterns, security model
+- [Implementation status](docs/IMPLEMENTATION_COMPLETE.md) — API coverage and phase history
 - [futuapi4go-demo](https://github.com/shing1211/futuapi4go-demo) — runnable examples for every feature
 
 ## License
