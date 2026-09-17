@@ -184,7 +184,14 @@ func TestPoolMaxSizeLimit(t *testing.T) {
 		t.Skip("Cannot connect to server:", err)
 	}
 
-	_, err = pool.Get(context.Background(), PoolTypeGeneral)
+	// Get waits for a connection to be released, bounded by the caller's
+	// context. At capacity with no Put in flight it must return once the
+	// context expires rather than blocking forever, which is the contract the
+	// concurrency tests below also rely on.
+	ctx, cancel := context.WithTimeout(context.Background(), 250*time.Millisecond)
+	defer cancel()
+
+	_, err = pool.Get(ctx, PoolTypeGeneral)
 	if err == nil {
 		t.Error("Expected error when pool exhausted, got nil")
 	}

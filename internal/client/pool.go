@@ -84,7 +84,12 @@ type ClientPool struct {
 	cancel      context.CancelFunc
 	wg          sync.WaitGroup
 	closed      bool
-	cond        *sync.Cond
+
+	// notify is closed and replaced under mu whenever the pool's contents or
+	// closed state change, so Get can wait in a select and honour context
+	// cancellation. sync.Cond cannot be interrupted, which made Get's
+	// "context timed out waiting" error unreachable.
+	notify chan struct{}
 }
 
 func NewClientPool(config *PoolConfig) *ClientPool {
@@ -93,26 +98,26 @@ func NewClientPool(config *PoolConfig) *ClientPool {
 		config:      config,
 		clients:     make(map[PoolType][]*PoolConn),
 		clientIndex: make(map[*Client]*PoolConn),
-		ctx:        ctx,
-		cancel:     cancel,
+		ctx:         ctx,
+		cancel:      cancel,
+		notify:      make(chan struct{}),
 	}
-	p.cond = sync.NewCond(&p.mu)
 	return p
 }
 
+// wakeLocked releases every goroutine waiting in Get. The caller must hold mu.
+func (p *ClientPool) wakeLocked() {
+	close(p.notify)
+	p.notify = make(chan struct{})
+}
+
 func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	if p.closed {
-		return nil, NewError(CodePoolClosed, "pool is closed")
-	}
-
 	for {
-		select {
-		case <-ctx.Done():
-			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
-		default:
+		p.mu.Lock()
+
+		if p.closed {
+			p.mu.Unlock()
+			return nil, NewError(CodePoolClosed, "pool is closed")
 		}
 
 		conns := p.clients[poolType]
@@ -121,6 +126,7 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 			if !pc.InUse && time.Since(pc.LastUsed) < p.config.MaxIdleTime {
 				pc.InUse = true
 				pc.LastUsed = time.Now()
+				p.mu.Unlock()
 				return pc.Client, nil
 			}
 		}
@@ -128,6 +134,7 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 		if len(conns) < p.config.MaxSize {
 			client, err := p.newClientLocked()
 			if err != nil {
+				p.mu.Unlock()
 				return nil, fmt.Errorf("create new client: %w", err)
 			}
 			pc := &PoolConn{
@@ -139,14 +146,22 @@ func (p *ClientPool) Get(ctx context.Context, poolType PoolType) (*Client, error
 			}
 			p.clients[poolType] = append(conns, pc)
 			p.clientIndex[client] = pc
+			p.mu.Unlock()
 			return client, nil
 		}
 
-		// Wait efficiently using sync.Cond — blocks without burning CPU
-		p.cond.Wait()
+		// At capacity: wait for a connection to be released, for the pool to
+		// close, or for the caller's context to expire. The lock is released
+		// while waiting so that Put, Remove and Close can make progress.
+		wait := p.notify
+		p.mu.Unlock()
 
-		if p.closed {
+		select {
+		case <-ctx.Done():
+			return nil, NewError(CodePoolExhausted, "pool exhausted: context timed out waiting for available connection")
+		case <-p.ctx.Done():
 			return nil, NewError(CodePoolClosed, "pool is closed")
+		case <-wait:
 		}
 	}
 }
@@ -161,7 +176,7 @@ func (p *ClientPool) Put(client *Client) {
 	}
 	pc.InUse = false
 	pc.LastUsed = time.Now()
-	p.cond.Signal()
+	p.wakeLocked()
 }
 
 // Remove removes a client from the pool (e.g., if it's broken).
@@ -187,6 +202,7 @@ func (p *ClientPool) Remove(client *Client) {
 
 	// Remove from index
 	delete(p.clientIndex, client)
+	p.wakeLocked()
 }
 
 // Size returns the number of connections in the pool for a given type.
@@ -211,9 +227,9 @@ func (p *ClientPool) Available(poolType PoolType) int {
 
 // PoolStats holds connection pool statistics for a single pool type.
 type PoolStats struct {
-	Total  int // Total connections in the pool
-	InUse  int // Connections currently in use
-	Idle   int // Connections available for use
+	Total int // Total connections in the pool
+	InUse int // Connections currently in use
+	Idle  int // Connections available for use
 }
 
 // Stats returns a snapshot of pool statistics keyed by PoolType.
@@ -256,7 +272,7 @@ func (p *ClientPool) Close() error {
 	}
 	p.closed = true
 	p.cancel()
-	p.cond.Broadcast()
+	p.wakeLocked()
 
 	for _, conns := range p.clients {
 		for _, pc := range conns {

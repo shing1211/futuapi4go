@@ -91,6 +91,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **HK XLSX download**: proxy was returning HTML instead of zip; switched to `wget` exec + temp file
 - **Upsert duplicate key**: `UpsertProducts()` now DELETEs all rows before `CopyFrom` within a transaction
 - **Lot size parsing**: fixed digit-concatenation bug (was appending to default 500 instead of replacing)
+- **`Conn.ReadResponse` deadlocked instead of timing out**: it called `timer.Stop()`
+  immediately after `time.NewTimer` and stored the result in `stopped`, so the timer
+  was stopped before it could ever fire and the following `select` blocked on
+  `timer.C` forever whenever no response arrived. On the five request paths that use
+  it (`internal/client/client.go:662,849,986,1397,1503`) a slow or unresponsive OpenD
+  hung the caller's goroutine permanently instead of returning
+  `read response: i/o timeout`. It now uses the same `defer timer.Stop()` shape as
+  `ReadResponseContext`, which was already correct.
+- **`tracing.SetTracer` panicked**: the tracer lived in an `atomic.Value` that
+  `init()` seeded with `NoopTracer{}` — a concrete value — while `SetTracer` stored
+  the interface's dynamic type, so the first real call panicked with
+  `sync/atomic: store of inconsistently typed value into Value`. `atomic.Value`
+  requires every store to share one concrete type. It is now an
+  `atomic.Pointer[Tracer]`, which stores a single concrete type by construction and
+  needs no assertion on load.
+- **`ClientPool.Get` ignored context cancellation and blocked forever**: it waited on
+  a `sync.Cond`, which returns only on `Signal`/`Broadcast`, so the `ctx.Done()` check
+  at the top of the loop was unreachable while blocked and the documented
+  `"pool exhausted: context timed out waiting for available connection"` error could
+  never be returned. The pool now wakes waiters through a broadcast channel that every
+  state change closes and replaces, so `Get` waits in a `select` over the caller's
+  context, the pool's own context, and that channel. `NewClientPool` no longer builds
+  a `sync.Cond`, and the lock is released while waiting so `Put`, `Remove` and `Close`
+  can make progress. `TestPoolMaxSizeLimit` passed `context.Background()` while
+  asserting an error on exhaustion, which is unsatisfiable under a waiting contract;
+  it now uses a bounded context, matching the concurrency tests in the same file that
+  already depended on that behaviour and were likewise blocked by this defect.
 
 ## [v0.17.0] - 2026-09-07
 

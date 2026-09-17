@@ -5,20 +5,24 @@ import (
 	"sync/atomic"
 )
 
-var defaultTracer atomic.Value
+var defaultTracer atomic.Pointer[Tracer]
 
 func init() {
-	defaultTracer.Store(NoopTracer{})
+	var t Tracer = NoopTracer{}
+	defaultTracer.Store(&t)
 }
 
 func SetTracer(t Tracer) {
 	if t != nil {
-		defaultTracer.Store(t)
+		defaultTracer.Store(&t)
 	}
 }
 
 func GetTracer() Tracer {
-	return defaultTracer.Load().(Tracer)
+	if p := defaultTracer.Load(); p != nil {
+		return *p
+	}
+	return NoopTracer{}
 }
 
 func StartSpan(ctx context.Context, name string, attrs ...Attribute) (context.Context, Span) {

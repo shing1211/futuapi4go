@@ -282,12 +282,7 @@ func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, erro
 	}()
 
 	timer := time.NewTimer(timeout)
-	stopped := timer.Stop()
-	defer func() {
-		if !stopped {
-			<-timer.C
-		}
-	}()
+	defer timer.Stop()
 
 	select {
 	case pkt := <-ch:
