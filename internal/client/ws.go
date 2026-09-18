@@ -62,6 +62,7 @@ type wsConn struct {
 
 	readCh  chan *Packet
 	closeCh chan struct{}
+	errCh   chan error // signals when readPump exits with error
 	wg      sync.WaitGroup
 }
 
@@ -71,6 +72,7 @@ func newWSConn(conn *websocket.Conn) *wsConn {
 		disp:    make(map[uint32]chan *Packet),
 		readCh:  make(chan *Packet, 10),
 		closeCh: make(chan struct{}),
+		errCh:   make(chan error, 1),
 	}
 
 	ws.wg.Add(1)
@@ -89,7 +91,9 @@ func (c *wsConn) readPump() {
 		default:
 		}
 
-		c.conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+		if err := c.conn.SetReadDeadline(time.Now().Add(1 * time.Second)); err != nil {
+			logf("ws: SetReadDeadline error: %v", err)
+		}
 
 		var data []byte
 		var err error
@@ -113,6 +117,11 @@ func (c *wsConn) readPump() {
 			}
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				return
+			}
+			// Signal connection lost to trigger reconnection
+			select {
+			case c.errCh <- err:
+			default:
 			}
 			return
 		}
@@ -205,6 +214,10 @@ func (c *wsConn) SetAPITimeout(timeout time.Duration) {
 
 func (c *wsConn) SetTLSConfig(_ *tls.Config) {}
 
+func (c *wsConn) ErrCh() <-chan error {
+	return c.errCh
+}
+
 func (c *wsConn) Close() error {
 	select {
 	case <-c.closeCh:
@@ -212,6 +225,7 @@ func (c *wsConn) Close() error {
 	default:
 		close(c.closeCh)
 	}
+	close(c.errCh)
 	c.wg.Wait()
 	if c.conn != nil {
 		return c.conn.Close()

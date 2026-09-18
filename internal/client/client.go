@@ -236,7 +236,8 @@ type ClientOptions struct {
 	LogLevel   int         // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent. Use LogLevel* constants.
 
 	// WebSocket
-	WSSecretKey string // Secret key for WebSocket authentication
+	WSSecretKey  string // Secret key for WebSocket authentication
+	WSReconnect  bool   // Enable auto-reconnect on WebSocket connection loss (default: false)
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
@@ -396,6 +397,12 @@ func WithSlogLogger(l *slog.Logger) Option {
 
 func WithTLS(cfg *tls.Config) Option {
 	return func(o *ClientOptions) { o.TLSConfig = cfg }
+}
+
+// WithWebSocketReconnect enables automatic reconnection when a WebSocket
+// connection is lost. Default is false (maintains current behavior).
+func WithWebSocketReconnect(enable bool) Option {
+	return func(o *ClientOptions) { o.WSReconnect = enable }
 }
 
 func WithRateLimiter(rl *ratelimit.ProtoLimiter) Option {
@@ -728,6 +735,25 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 	}
 	if keepAliveInterval > 0 {
 		go c.keepAliveLoop(keepAliveInterval)
+	}
+
+	// Monitor WebSocket connection and trigger reconnection on loss
+	if c.opts.WSReconnect {
+		if ws, ok := c.conn.(*wsConn); ok {
+			go func() {
+				err := <-ws.ErrCh()
+				if err == nil {
+					return // closed normally
+				}
+				c.mu.Lock()
+				if c.IsConnected() {
+					c.setState(StateDisconnected)
+					c.logWarn("ws: connection lost (reconnect enabled): %v", err)
+					go c.reconnect()
+				}
+				c.mu.Unlock()
+			}()
+		}
 	}
 
 	return nil

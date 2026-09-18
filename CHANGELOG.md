@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-09-18
+
+### Added
+
+- **`FutuError.Recoverable()` method** (`pkg/constant/errors.go`) — returns
+  true for CategoryTimeout and CategoryConnection errors, indicating retry is safe
+- **`constant.IsRecoverable(err error)` predicate** (`pkg/constant/errors.go`) —
+  extracts FutuError and calls Recoverable(); returns false for nil or non-FutuError
+- **`constant.WrapError()`** (`pkg/constant/errors.go`) — unified error wrapping
+  function with full explicit mapping for all 21 error codes; used by pkg/qot,
+  pkg/trd, pkg/sys for consistent error code mapping
+- **`WithWebSocketReconnect(bool)` option** (`internal/client/client.go`) — enables
+  automatic reconnection when WebSocket connection is lost (default: false)
+- **`KLCachedClient.GetKL(..., forceRefresh bool)`** (`pkg/cache/kl_cache.go`) —
+  optional forceRefresh parameter bypasses cache and fetches fresh data
+
+### Fixed
+
+- **WebSocket reconnection** (`internal/client/ws.go`, `internal/client/client.go`) —
+  readPump now signals connection loss via errCh, triggering automatic
+  reconnection when WS drops (requires WithWebSocketReconnect(true))
+- **WebSocket SetReadDeadline error** (`internal/client/ws.go`) — error was
+  silently discarded; now logged via logf
+- **Pool MinIdle floor** (`internal/client/pool.go`) — clarified comment that
+  healthCheck maintains MinIdle connections
+
+### Changed
+
+- **wrapError unification** — pkg/qot, pkg/trd, pkg/sys all now delegate to
+  constant.WrapError() for consistent error code mapping
+
+### Tests Added
+
+- `pkg/constant/errors_test.go` — FutuError.Recoverable(), IsRecoverable(),
+  WrapError() tests with all 21 error codes
+- `pkg/trd/orders_test.go` — PlaceOrder/ModifyOrder validation tests
+- `pkg/trd/position_test.go` — GetFlowSummary nil-item handling, request validation
+- `internal/client/client_test.go` — goroutine leak detection tests
+
+### Documentation
+
+- **README.md** — added retry warning for trading operations (PlaceOrder,
+  ModifyOrder, CancelOrder)
+- **docs/ERRORS.md** — documented Recoverable() method, IsRecoverable predicate,
+  and the retry guidance section
+
 ## [0.19.3] - 2026-09-17
 
 ### Changed

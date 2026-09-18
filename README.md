@@ -139,6 +139,10 @@ req, err := trd.NewOrder(accID, constant.TrdMarket_HK, constant.TrdEnv_Simulate)
 	Buy("00700", 100).At(350.0).Build()
 ```
 
+> **Warning:** Never use `retry.Do()` with `PlaceOrder`, `ModifyOrder`, or `CancelOrder`.
+> These operations are not idempotent — retrying may place duplicate orders.
+> The SDK disables retry for trading operations by design (see `pkg/retry`).
+
 ### Utilities
 
 ```go

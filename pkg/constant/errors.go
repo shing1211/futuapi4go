@@ -179,6 +179,29 @@ func (e *FutuError) FullMessage() string {
 	return sb.String()
 }
 
+// Recoverable returns true if retrying the operation might succeed. Errors in
+// CategoryTimeout or CategoryConnection are considered recoverable; all others
+// (API, account, trading, subscribe) are not.
+func (e *FutuError) Recoverable() bool {
+	cat := e.Category
+	if cat == "" {
+		cat = codeToCategory[e.Code]
+	}
+	return cat == CategoryTimeout || cat == CategoryConnection
+}
+
+// IsRecoverable reports whether err is a FutuError and its Recoverable() returns true.
+// Returns false if err is nil or is not a FutuError.
+func IsRecoverable(err error) bool {
+	if err == nil {
+		return false
+	}
+	if fe, ok := getFutuError(err); ok {
+		return fe.Recoverable()
+	}
+	return false
+}
+
 // CodeString returns the symbolic name of the error code (e.g. "ErrCodeTimeout").
 // Falls back to "ErrCode_<number>" for unknown codes.
 func (e *FutuError) CodeString() string {
@@ -379,4 +402,64 @@ func NewFutuErrorWithWrap(code ErrorCode, funcName, msg string, inner error) *Fu
 func AsFutuError(err error) (*FutuError, bool) {
 	fe, ok := err.(*FutuError)
 	return fe, ok
+}
+
+// WrapError creates a FutuError from a function name, retType, and retMsg.
+// It maps the retType to the appropriate ErrorCode with explicit handling for
+// all known Futu API error codes.
+func WrapError(funcName string, retType int32, retMsg string) *FutuError {
+	var code ErrorCode
+	switch retType {
+	case 0:
+		code = ErrCodeSuccess
+	case -1:
+		code = ErrCodeInvalidParams
+	case -100:
+		code = ErrCodeTimeout
+	case -101:
+		code = ErrCodeNetworkError
+	case -102:
+		code = ErrCodeProtocolErr
+	case -103:
+		code = ErrCodeServerBusy
+	case -200:
+		code = ErrCodeDisconnected
+	case -201:
+		code = ErrCodeAccNotFound
+	case -202:
+		code = ErrCodeAccDisabled
+	case -203:
+		code = ErrCodeAccLocked
+	case -204:
+		code = ErrCodeAccAuthFail
+	case -301:
+		code = ErrCodeInsufficientBalance
+	case -302:
+		code = ErrCodeMarketClosed
+	case -303:
+		code = ErrCodeOrderRejected
+	case -304:
+		code = ErrCodePriceOutOfRange
+	case -305:
+		code = ErrCodeQtyTooLarge
+	case -306:
+		code = ErrCodeTradingDisabled
+	case -307:
+		code = ErrCodeInvalidSecurity
+	case -308:
+		code = ErrCodeNoPermission
+	case -400:
+		code = ErrCodeUnknown
+	case -401:
+		code = ErrCodeAlreadySubbed
+	case -402:
+		code = ErrCodeNotSubbed
+	default:
+		if retType > 0 {
+			code = ErrCodeUnknown
+		} else {
+			code = ErrorCode(retType)
+		}
+	}
+	return NewFutuError(code, funcName, retMsg)
 }

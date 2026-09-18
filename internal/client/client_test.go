@@ -18,6 +18,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"runtime"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -458,5 +459,60 @@ func TestShutdownRejectsRequests(t *testing.T) {
 func WithOnStateChange(fn func(oldState, newState ConnState)) Option {
 	return func(o *ClientOptions) {
 		o.OnStateChange = fn
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Goroutine leak detection tests
+// ---------------------------------------------------------------------------
+
+func countGoroutines() int {
+	return runtime.NumGoroutine()
+}
+
+func TestCloseNoGoroutineLeak(t *testing.T) {
+	// Create client with options that spawn background goroutines
+	client := New(
+		WithKeepAliveInterval(1*time.Second),
+	)
+
+	// Establish baseline before any connection
+	runtime.GC()
+	time.Sleep(10 * time.Millisecond)
+	baseline := countGoroutines()
+
+	// Close without ever connecting - should not leak goroutines
+	client.Close()
+
+	// Allow time for cleanup goroutines to exit
+	time.Sleep(50 * time.Millisecond)
+
+	after := countGoroutines()
+	// Allow for some variance due to runtime goroutines
+	if after > baseline+5 {
+		t.Errorf("goroutine leak detected after Close(): baseline=%d, after=%d, diff=%d",
+			baseline, after, after-baseline)
+	}
+}
+
+func TestShutdownClosesAllGoroutines(t *testing.T) {
+	client := New(
+		WithKeepAliveInterval(1*time.Second),
+	)
+
+	runtime.GC()
+	time.Sleep(10 * time.Millisecond)
+	baseline := countGoroutines()
+
+	// Simulate shutdown
+	client.setState(StateClosing)
+	client.Close()
+
+	time.Sleep(50 * time.Millisecond)
+
+	after := countGoroutines()
+	if after > baseline+5 {
+		t.Errorf("goroutine leak after shutdown: baseline=%d, after=%d, diff=%d",
+			baseline, after, after-baseline)
 	}
 }

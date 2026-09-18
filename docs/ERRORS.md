@@ -53,7 +53,7 @@ if err != nil {
   `IsDisconnected`, `IsNetworkError`, `IsServerBusy`, `IsServerError`,
   `IsAPIError`, `IsAccountError`, `IsInsufficientBalance`, `IsMarketClosed`,
   `IsOrderRejected`, `IsSubscriptionError`, `IsConnectionError`,
-  `IsTradingError`
+  `IsTradingError`, `IsRecoverable`
 
 ## Categories
 
@@ -104,3 +104,27 @@ errors. **Never** auto-retry order-mutation calls (`PlaceOrder`, `ModifyOrder`,
 `CancelOrder`, `ReconfirmOrder`) — see
 [CONTRIBUTING.md](../CONTRIBUTING.md) and the trading-safety notes in
 [DESIGN.md](../DESIGN.md).
+
+## Recoverable errors
+
+`FutuError.Recoverable()` returns true when retrying an operation might succeed:
+
+```go
+if fe, ok := constant.AsFutuError(err); ok && fe.Recoverable() {
+    // safe to retry with backoff
+}
+
+// Or use the predicate:
+if constant.IsRecoverable(err) {
+    // safe to retry with backoff
+}
+```
+
+| Category | Recoverable? |
+|----------|--------------|
+| `timeout` | ✅ yes |
+| `connection` | ✅ yes |
+| `api` | ❌ no |
+| `account` | ❌ no |
+| `trading` | ❌ no |
+| `subscribe` | ❌ no |

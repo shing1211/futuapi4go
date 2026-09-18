@@ -278,6 +278,110 @@ func TestFutuErrorFormatting(t *testing.T) {
 	}
 }
 
+func TestFutuErrorRecoverable(t *testing.T) {
+	tests := []struct {
+		code        ErrorCode
+		recoverable bool
+	}{
+		{ErrCodeTimeout, true},
+		{ErrCodeDisconnected, true},
+		{ErrCodeNetworkError, true},
+		{ErrCodeProtocolErr, true},
+		{ErrCodeInvalidParams, false},
+		{ErrCodeServerBusy, false},
+		{ErrCodeAccNotFound, false},
+		{ErrCodeAccDisabled, false},
+		{ErrCodeInsufficientBalance, false},
+		{ErrCodeMarketClosed, false},
+		{ErrCodeOrderRejected, false},
+		{ErrCodeTradingDisabled, false},
+		{ErrCodeAlreadySubbed, false},
+		{ErrCodeNotSubbed, false},
+	}
+
+	for _, tt := range tests {
+		err := &FutuError{Code: tt.code, Message: "test"}
+		got := err.Recoverable()
+		if got != tt.recoverable {
+			t.Errorf("Recoverable() for code=%d = %v, want %v", tt.code, got, tt.recoverable)
+		}
+	}
+}
+
+func TestIsRecoverable(t *testing.T) {
+	tests := []struct {
+		name        string
+		err         error
+		recoverable bool
+	}{
+		{"nil error", nil, false},
+		{"timeout error", &FutuError{Code: ErrCodeTimeout, Message: "test"}, true},
+		{"disconnected error", &FutuError{Code: ErrCodeDisconnected, Message: "test"}, true},
+		{"network error", &FutuError{Code: ErrCodeNetworkError, Message: "test"}, true},
+		{"invalid params", &FutuError{Code: ErrCodeInvalidParams, Message: "test"}, false},
+		{"trading error", &FutuError{Code: ErrCodeOrderRejected, Message: "test"}, false},
+		{"account error", &FutuError{Code: ErrCodeAccNotFound, Message: "test"}, false},
+		{"non-FutuError", errors.New("plain error"), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := IsRecoverable(tt.err)
+			if got != tt.recoverable {
+				t.Errorf("IsRecoverable() = %v, want %v", got, tt.recoverable)
+			}
+		})
+	}
+}
+
+func TestWrapError(t *testing.T) {
+	tests := []struct {
+		name        string
+		retType     int32
+		wantCode    ErrorCode
+	}{
+		{"success", 0, ErrCodeSuccess},
+		{"invalid params", -1, ErrCodeInvalidParams},
+		{"timeout", -100, ErrCodeTimeout},
+		{"network error", -101, ErrCodeNetworkError},
+		{"protocol error", -102, ErrCodeProtocolErr},
+		{"server busy", -103, ErrCodeServerBusy},
+		{"disconnected", -200, ErrCodeDisconnected},
+		{"acc not found", -201, ErrCodeAccNotFound},
+		{"acc disabled", -202, ErrCodeAccDisabled},
+		{"acc locked", -203, ErrCodeAccLocked},
+		{"acc auth fail", -204, ErrCodeAccAuthFail},
+		{"insufficient balance", -301, ErrCodeInsufficientBalance},
+		{"market closed", -302, ErrCodeMarketClosed},
+		{"order rejected", -303, ErrCodeOrderRejected},
+		{"price out of range", -304, ErrCodePriceOutOfRange},
+		{"qty too large", -305, ErrCodeQtyTooLarge},
+		{"trading disabled", -306, ErrCodeTradingDisabled},
+		{"invalid security", -307, ErrCodeInvalidSecurity},
+		{"no permission", -308, ErrCodeNoPermission},
+		{"unknown", -400, ErrCodeUnknown},
+		{"already subbed", -401, ErrCodeAlreadySubbed},
+		{"not subbed", -402, ErrCodeNotSubbed},
+		{"positive retType", 1, ErrCodeUnknown},
+		{"unknown negative", -9999, ErrorCode(-9999)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WrapError("TestFunc", tt.retType, "test message")
+			if err.Code != tt.wantCode {
+				t.Errorf("WrapError code = %d, want %d", err.Code, tt.wantCode)
+			}
+			if err.Func != "TestFunc" {
+				t.Errorf("WrapError Func = %q, want %q", err.Func, "TestFunc")
+			}
+			if err.Message != "test message" {
+				t.Errorf("WrapError Message = %q, want %q", err.Message, "test message")
+			}
+		})
+	}
+}
+
 func contains(s, substr string) bool {
 	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsStr(s, substr))
 }

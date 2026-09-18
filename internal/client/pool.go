@@ -333,7 +333,7 @@ func (p *ClientPool) healthCheck() {
 			}
 		}
 
-		// Ensure minimum idle connections
+		// Ensure minimum idle connections (MinIdle floor prevents shrinking to zero)
 		for len(healthy) < p.config.MinIdle {
 			client, err := p.newClientLocked()
 			if err != nil {

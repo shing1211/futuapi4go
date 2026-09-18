@@ -218,9 +218,11 @@ func NewKLCachedClient(client *futuapi.Client, cache *KLCache) *KLCachedClient {
 	}
 }
 
-func (kc *KLCachedClient) GetKL(ctx context.Context, rehabType, klType int32, security *qotcommon.Security) ([]*qot.KLine, error) {
-	if cached, ok := kc.cache.Get(security, klType, rehabType); ok {
-		return cached, nil
+func (kc *KLCachedClient) GetKL(ctx context.Context, rehabType, klType int32, security *qotcommon.Security, forceRefresh ...bool) ([]*qot.KLine, error) {
+	if len(forceRefresh) == 0 || !forceRefresh[0] {
+		if cached, ok := kc.cache.Get(security, klType, rehabType); ok {
+			return cached, nil
+		}
 	}
 
 	klines, err := qot.RequestHistoryKL(ctx, kc.client, &qot.RequestHistoryKLRequest{
