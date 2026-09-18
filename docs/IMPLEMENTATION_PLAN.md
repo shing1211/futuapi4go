@@ -3,7 +3,7 @@
 *Generated: 2026-05-20 | Updated: 2026-05-21*
 
 > **Status: COMPLETE — historical plan.** All phases shipped. Current release:
-> v0.19.3 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
+> v0.20.0 / Futu OpenD v10.10.7008 — see [VERSION_MAP.md](VERSION_MAP.md).
 
 ## Phase 1: Bug Fixes (High Priority) — DONE
 

@@ -1,10 +1,10 @@
 # FutuAPI4Go SDK — Implementation Complete
 
-> **Version:** v0.19.3 | **Date:** 2026-09-17 | **Status:** COMPLETE
+> **Version:** v0.20.0 | **Date:** 2026-09-18 | **Status:** COMPLETE
 
 ## Overview
 
-The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.19.3 (Futu Protocol v10.10.7008) it wraps all **184** Futu OpenD proto files (151 Qot, 22 Trd, 11 shared/protocol/system), with push notifications covered by typed parsers. It provides full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and a companion demo repository (`futuapi4go-demo`) with runnable examples. All phases from v0.5.0 through v0.19.3 are complete.
+The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.20.0 (Futu Protocol v10.10.7008) it wraps all **184** Futu OpenD proto files (151 Qot, 22 Trd, 11 shared/protocol/system), with push notifications covered by typed parsers. It provides full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and a companion demo repository (`futuapi4go-demo`) with runnable examples. All phases from v0.5.0 through v0.19.3 are complete.
 
 ---
 
@@ -163,7 +163,7 @@ Counts below describe the companion `futuapi4go-demo` repository (128 examples a
 | v0.8.3 | 2026-05-17 | Plate.PlateType field added |
 | v0.8.5 | 2026-05-17 | GetDelayStatistics typed wrappers, GetFlowSummaryResponse wrapped type, cross-layer field audit |
 
-_This table records the early phases only. For the full history through v0.19.3
+_This table records the early phases only. For the full history through v0.20.0
 (protocol upgrades v10.6 → v10.10, CI, races, and API coverage), see
 [CHANGELOG.md](../CHANGELOG.md)._
 
@@ -182,6 +182,6 @@ All ENHANCEMENT_PLAN items are now complete. The SDK is production-ready.
 
 ## References
 
-- [`CHANGELOG.md`](../CHANGELOG.md) — full version history (v0.0.1 → v0.19.3)
+- [`CHANGELOG.md`](../CHANGELOG.md) — full version history (v0.0.1 → v0.20.0)
 - [`docs/VERSION_MAP.md`](VERSION_MAP.md) — SDK-tag ↔ Futu OpenD protocol mapping
 - [`docs/IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) — robustness audit (all items resolved)

@@ -1,6 +1,6 @@
 # futuapi4go Design Document
 
-> **Version:** v0.19.3 | **Last Updated:** 2026-09-17 | **Futu Protocol:** v10.10.7008 (184 protos)
+> **Version:** v0.20.0 | **Last Updated:** 2026-09-18 | **Futu Protocol:** v10.10.7008 (184 protos)
 
 ---
 

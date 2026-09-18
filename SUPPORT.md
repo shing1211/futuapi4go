@@ -26,7 +26,7 @@ Please check, in order:
 ## What to include in a bug report
 
 - `go version`
-- futuapi4go version (commit SHA or tag, e.g. `v0.19.3`)
+- futuapi4go version (commit SHA or tag, e.g. `v0.20.0`)
 - Futu OpenD version / protocol version (see [docs/VERSION_MAP.md](./docs/VERSION_MAP.md))
 - Whether you use simulate or real trading
 - A **minimal reproduction** (smallest code + exact command)
