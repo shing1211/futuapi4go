@@ -17,7 +17,7 @@ Futu OpenD protocol — see [docs/VERSION_MAP.md](docs/VERSION_MAP.md).
 
 | Version | Supported |
 |---------|-----------|
-| Latest `v0.19.x` | ✅ |
+| Latest `v0.20.x` | ✅ |
 | Older releases | ❌ |
 
 ## Response Targets

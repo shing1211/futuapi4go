@@ -4,7 +4,7 @@
 
 ## Overview
 
-The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.20.0 (Futu Protocol v10.10.7008) it wraps all **184** Futu OpenD proto files (151 Qot, 22 Trd, 11 shared/protocol/system), with push notifications covered by typed parsers. It provides full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and a companion demo repository (`futuapi4go-demo`) with runnable examples. All phases from v0.5.0 through v0.19.3 are complete.
+The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-over-TCP protocol for market data (Qot) and trading (Trd) APIs. As of v0.20.0 (Futu Protocol v10.10.7008) it wraps all **184** Futu OpenD proto files (151 Qot, 22 Trd, 11 shared/protocol/system), with push notifications covered by typed parsers. It provides full context support, a connection state machine, graceful shutdown, rate limiting, circuit breakers, retry logic, WebSocket transport with auto-reconnect, TLS, OpenTelemetry instrumentation, a K-Line LRU cache, order pre-flight validation, audit logging, the Prediction Market / Event Contract (Moomoo US) API set, and a companion demo repository (`futuapi4go-demo`) with runnable examples. All phases from v0.5.0 through v0.20.0 are complete.
 
 ---
 
@@ -122,7 +122,7 @@ The futuapi4go SDK provides typed Go wrappers around the Futu OpenD protobuf-ove
 
 ## Example Coverage
 
-Counts below describe the companion `futuapi4go-demo` repository (128 examples as of v0.19.3):
+Counts below describe the companion `futuapi4go-demo` repository (117 examples as of v0.16.0):
 
 | Category | Count | Status |
 |----------|-------|--------|

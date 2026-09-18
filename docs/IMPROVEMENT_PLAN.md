@@ -465,6 +465,6 @@ All findings evaluated against:
 |----------|---------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture, layers, execution flows |
 | [DESIGN.md](../DESIGN.md) | Design decisions, API patterns, security model |
-| [CHANGELOG.md](../CHANGELOG.md) | Release history (v0.5.7 → v0.19.3) |
+| [CHANGELOG.md](../CHANGELOG.md) | Release history (v0.5.7 → v0.20.0) |
 | [AGENTS.md](../AGENTS.md) | Development standards, code review checklist |
 | [README.md](../README.md) | API reference, installation, quick start |
