@@ -336,9 +336,9 @@ func TestIsRecoverable(t *testing.T) {
 
 func TestWrapError(t *testing.T) {
 	tests := []struct {
-		name        string
-		retType     int32
-		wantCode    ErrorCode
+		name     string
+		retType  int32
+		wantCode ErrorCode
 	}{
 		{"success", 0, ErrCodeSuccess},
 		{"invalid params", -1, ErrCodeInvalidParams},

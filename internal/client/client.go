@@ -236,8 +236,8 @@ type ClientOptions struct {
 	LogLevel   int         // Log level: 0=Info, 1=Warn, 2=Error, 3=Silent. Use LogLevel* constants.
 
 	// WebSocket
-	WSSecretKey  string // Secret key for WebSocket authentication
-	WSReconnect  bool   // Enable auto-reconnect on WebSocket connection loss (default: false)
+	WSSecretKey string // Secret key for WebSocket authentication
+	WSReconnect bool   // Enable auto-reconnect on WebSocket connection loss (default: false)
 
 	// Push notifications
 	PushHandler PacketHandler // Handler for incoming push notifications
