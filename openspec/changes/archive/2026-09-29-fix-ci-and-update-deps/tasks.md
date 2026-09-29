@@ -39,4 +39,4 @@
 - [x] 5.3 Push the tag to both remotes: `git push origin v0.21.0 && git push gitee v0.21.0`
 - [x] 5.4 Confirm `release.yml` published a GitHub release whose body came from the CHANGELOG section rather than generated notes: `gh release view v0.21.0`
 - [x] 5.5 Verify all three refs agree, rather than trusting push output: `git rev-parse HEAD`, `git ls-remote origin refs/heads/main`, and `git ls-remote gitee refs/heads/main` all report the merge commit
-- [ ] 5.6 Raise a follow-up to set `enforce_admins: true` on `main`, so direct pushes can no longer bypass the required status checks; do not apply it as part of this change
+- [x] 5.6 Set `enforce_admins: true` on `main`, so direct pushes can no longer bypass the required status checks — applied after the release, on approval. Verified by an actual direct push, which was rejected with `GH006: Protected branch update failed`; `enforce_admins` was the only key changed, all other protection settings left identical
