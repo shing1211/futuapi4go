@@ -1,32 +1,63 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Go SDK for the Futu OpenD protocol. All communication is Protocol Buffers
+  over TCP; no JSON transport. Go 1.26.6+.
+  Module: github.com/shing1211/futuapi4go.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Protos: 184 files in api/proto/ generate 184 files in pkg/pb/. Regenerate
+  with ./scripts/regen-all-protos.sh after any proto change; never hand-edit
+  pkg/pb. A new API requires a typed wrapper plus unit tests, not a raw proto
+  call.
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+  clientVer in the InitConnect handshake is a client-side identifier, not a
+  protocol-version mirror. docs/VERSION_MAP.md is authoritative for the
+  mapping between Futu OpenD protocol versions and SDK tags.
+
+  Wrapping conventions: context.Context is the first parameter on public APIs;
+  validate inputs at entry; use constant.WrapError for proto errors; never
+  call GetXxx() on proto messages (nil-check the field directly); nil-guard
+  every list iteration.
+
+  Non-idempotent trading calls (PlaceOrder, ModifyOrder, CancelOrder) must
+  never be retried. This is a hard money-safety rule, not a preference.
+
+  CI gates, all required to pass: gofmt -l . clean, go vet ./..., and
+  go test -race ./... . govulncheck ./... runs on push and weekly.
+  Integration tests are opt-in via FUTU_INTEGRATION_TESTS=1.
+
+rules:
+  proposal:
+    - State the compatibility impact on the public API of client/ and pkg/
+    - Say which of the 184 protos are affected, or "none"
+  tasks:
+    - End each task with the verification command that proves it
+
+# ---------------------------------------------------------------------------
+# Reference examples (OpenSpec defaults). The blocks above are live config;
+# everything below is commented reference material.
+#
+# context: |
+#   Tech stack: TypeScript, React, Node.js
+#   We use conventional commits
+#   Domain: e-commerce platform
+#
+# rules:
+#   proposal:
+#     - Keep proposals under 500 words
+#     - Always include a "Non-goals" section
+#   tasks:
+#     - Break tasks into chunks of max 2 hours
+#
+# operations:            # advisory guidance for apply/archive only
+#   apply:
+#     guidance:
+#       - Keep test summaries concise
+#   archive:
+#     guidance:
+#       - Summarize the archive outcome before finishing
+#
+# context is injected into every artifact. Keep it to facts that should shape
+# every plan; omit anything an agent can learn by reading the code. Limit 50KB.
+# rules are keyed by artifact id and never replace built-in guidance.
+# Note: `verify` receives neither rules nor operations.
