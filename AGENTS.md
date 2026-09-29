@@ -147,15 +147,29 @@ During connect, OpenD returns: `connID`, `loginUserID`, `aesKey`, `serverVer`, `
 ```bash
 # 1. Update CHANGELOG.md: move [Unreleased] → [x.y.z] - YYYY-MM-DD
 #    Also update docs/VERSION_MAP.md "Current" to the new tag.
-# 2. Commit changes
+
+# 2. Commit on a branch. main is protected: a direct push is rejected with
+#    GH006 even for administrators, so main advances only via a merged PR.
+git switch -c release/vx.y.z
 git add -A && git commit -m "release vx.y.z: summary"
+git push -u origin release/vx.y.z
 
-# 3. Tag (annotated) and push to both remotes
+# 3. Open a PR, wait for all four required checks, then merge
+#    Required checks: build & test, docs guards, scan, analyze
+gh pr create --title "release vx.y.z: summary" --body "summary"
+gh pr checks <pr-number> --watch
+gh pr merge <pr-number> --merge --delete-branch
+git switch main && git pull --ff-only
+
+# 4. Tag (annotated) and sync both remotes
+#    gitee is an UNPROTECTED mirror: it accepts direct pushes, so it can drift
+#    from GitHub silently. Sync it deliberately, after the merge, not alongside
+#    the tag push.
 git tag -a vx.y.z -m "vx.y.z: summary"
-git push origin main && git push gitee main
 git push origin vx.y.z && git push gitee vx.y.z
+git push gitee main
 
-# 4. Create GitHub release
+# 5. Create GitHub release
 #    Pushing the tag triggers .github/workflows/release.yml, which publishes
 #    a release using the CHANGELOG section for that version. If the job fails:
 gh release create vx.y.z --title "vx.y.z" --notes-from-tag
@@ -227,11 +241,12 @@ Before ending a work session, confirm:
 - [ ] All tests pass with race detection: `go test -race ./...` ✅
 - [ ] CHANGELOG.md updated with completed items under `[Unreleased]`
 - [ ] All changes committed with descriptive messages
+- [ ] Delivered via PR; all four required status checks green before merge
 - [ ] Demo project updated (if breaking changes)
 
 ---
 
-*Last updated: 2026-09-17*
+*Last updated: 2026-09-29*
 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
