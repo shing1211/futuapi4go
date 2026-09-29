@@ -473,7 +473,7 @@ func countGoroutines() int {
 func TestCloseNoGoroutineLeak(t *testing.T) {
 	// Create client with options that spawn background goroutines
 	client := New(
-		WithKeepAliveInterval(1*time.Second),
+		WithKeepAliveInterval(1 * time.Second),
 	)
 
 	// Establish baseline before any connection
@@ -497,7 +497,7 @@ func TestCloseNoGoroutineLeak(t *testing.T) {
 
 func TestShutdownClosesAllGoroutines(t *testing.T) {
 	client := New(
-		WithKeepAliveInterval(1*time.Second),
+		WithKeepAliveInterval(1 * time.Second),
 	)
 
 	runtime.GC()

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-09-29
+
+### Fixed
+
+- **gofmt compliance broken in v0.20.0** (`internal/client/client.go`,
+  `internal/client/client_test.go`, `pkg/constant/errors_test.go`) — release
+  commit `d435f9b` (2026-09-18) left three files not gofmt-clean, so the
+  `build & test` Format check failed on every commit since. Whitespace only:
+  7 insertions, 7 deletions. No identifier, type, or exported name changes.
+  The gate detected this correctly but could not act, because `main` has
+  `enforce_admins: false` and direct pushes bypass all four required status
+  checks. The v0.20.0 tag remains red and is not retroactively repaired.
+
+### Changed
+
+- **4 indirect dependencies updated** — `prometheus/client_model` v0.6.2→v0.6.3,
+  `prometheus/common` v0.70.1→v0.72.0, `prometheus/procfs` v0.21.1→v0.22.0,
+  `golang.org/x/sys` v0.47.0→v0.48.0. `go.sum` holds at 47 lines via a 1:1
+  hash swap. All six direct requires were already current and are untouched.
+  No protos and no public API in `client/` or `pkg/` are affected.
+
 ## [0.20.0] - 2026-09-18
 
 ### Added
