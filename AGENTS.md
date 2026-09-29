@@ -162,9 +162,10 @@ gh pr merge <pr-number> --merge --delete-branch
 git switch main && git pull --ff-only
 
 # 4. Tag (annotated) and sync both remotes
-#    gitee is an UNPROTECTED mirror: it accepts direct pushes, so it can drift
-#    from GitHub silently. Sync it deliberately, after the merge, not alongside
-#    the tag push.
+#    gitee is a MANUALLY MAINTAINED mirror: there is no auto-mirror from
+#    GitHub, so it only advances when this step runs. A skipped push leaves it
+#    stale with no warning. It is also unprotected, so it accepts direct
+#    pushes. Sync it deliberately, after the merge, not alongside the tag push.
 git tag -a vx.y.z -m "vx.y.z: summary"
 git push origin vx.y.z && git push gitee vx.y.z
 git push gitee main
@@ -175,7 +176,8 @@ git push gitee main
 gh release create vx.y.z --title "vx.y.z" --notes-from-tag
 ```
 
-Remotes: `origin` = GitHub (`shing1211/futuapi4go`), `gitee` = Gitee mirror
+Remotes: `origin` = GitHub (source of truth), `gitee` = Gitee mirror
+(manually synced — no auto-mirror from GitHub)
 (`gitee.com/shing1211/futuapi4go`). If `gitee` is missing:
 `git remote add gitee https://gitee.com/shing1211/futuapi4go.git`.
 
