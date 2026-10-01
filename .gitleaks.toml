@@ -1,0 +1,26 @@
+# gitleaks configuration for futuapi4go.
+#
+# See docs/adr/0012-ci-secret-scanning.md for the decision to run this scan.
+#
+# Every entry allowlists a *path*, never a rule class. Disabling a rule would
+# hide genuine findings everywhere; a narrow path with a stated reason keeps the
+# suppression reviewable in a normal pull request.
+
+title = "futuapi4go secret scan"
+
+[extend]
+# Inherit the upstream default rule set so new detection rules arrive with a
+# pinned gitleaks upgrade rather than being hand-listed here.
+useDefault = true
+
+[[allowlists]]
+description = "Hash-function test vectors. crypto_test.go exercises the MD5 helper with fixed inputs paired to their known digests (MD5(\"hello\") = 5d41402abc4b2a76b9719d911017c592, MD5(\"\") = d41d8cd98f00b204e9800998ecf8427e, MD5(\"password123\") = 482c811da5d5b4bc6d497ffa98491e38). The second column is a published digest, not a credential; the first column is the literal being hashed. gitleaks flags the pair as generic-api-key."
+paths = [
+  '''pkg/util/crypto_test\.go''',
+]
+
+[[allowlists]]
+description = "Generated protobuf packages under pkg/pb are imported from the Futu OpenAPI .proto definitions. They contain no credentials, and this tree is regenerated rather than hand-edited."
+paths = [
+  '''^pkg/pb/''',
+]

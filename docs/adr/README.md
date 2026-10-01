@@ -19,6 +19,7 @@ Format: [MADR](https://adr.github.io/madr/)-style, one file per decision.
 | [0009](0009-release-from-changelog.md) | Releases are published by `gh` from the CHANGELOG | Accepted |
 | [0010](0010-version-map-authority.md) | `docs/VERSION_MAP.md` is the version authority | Accepted |
 | [0011](0011-license-and-protocol-provenance.md) | Apache-2.0; protos derived from published definitions | Accepted |
+  | [0012](0012-ci-secret-scanning.md) | `gitleaks` as a CI-only dependency for credential scanning | Accepted |
 
 ## Adding a record
 
