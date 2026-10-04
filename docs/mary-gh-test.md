@@ -1,1 +1,0 @@
-# Mary identity test
