@@ -1832,10 +1832,6 @@ func RequestRehab(ctx context.Context, c *Client, market constant.Market, code s
 // Deprecated: Removed in Futu v10.6 proto — proto package qotgetrehab no longer exists.
 // Use RequestRehab instead.
 func GetRehab(ctx context.Context, c *Client, market constant.Market, code string) ([]*RehabInfo, error) {
-	_ = ctx
-	_ = c
-	_ = market
-	_ = code
 	return nil, fmt.Errorf("GetRehab: removed in Futu v10.6 — use RequestRehab instead")
 }
 
