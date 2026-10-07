@@ -77,7 +77,7 @@ jobs:
       # release must not change a security result without a commit.
       # See docs/adr/0012-ci-secret-scanning.md.
       - name: Scan repository history for credentials
-        uses: gitleaks/gitleaks-action@v2.3.9
+        uses: gitleaks/gitleaks-action@v3.0.0
         env:
           # Required by gitleaks-action v2 on pull_request events: the action
           # calls the GitHub API with this token to report a finding. Without
