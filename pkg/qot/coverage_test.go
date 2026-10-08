@@ -20,11 +20,16 @@ import (
 
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotcommon"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbasicqot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetbroker"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitaldistribution"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
@@ -82,7 +87,7 @@ func TestGetOrderBook_API(t *testing.T) {
 			RetType: okRet(),
 			S2C: &qotgetorderbook.S2C{
 				Security:             req.C2S.Security,
-				Name:                 &name,
+				Name:                &name,
 				OrderBookAskList: []*qotcommon.OrderBook{
 					{Price: &price1, Volume: &vol1, OrederCount: &oc1,
 						DetailList: []*qotcommon.OrderBookDetail{
@@ -168,7 +173,7 @@ func TestGetTicker_API(t *testing.T) {
 			RetType: okRet(),
 			S2C: &qotgetticker.S2C{
 				Security:   nil,
-				Name:       &name,
+				Name:      &name,
 				TickerList: []*qotcommon.Ticker{
 					{Time: &ts, Sequence: &seq, Dir: &dir, Price: &price, Volume: &vol,
 						Turnover: &turnover, RecvTime: &recvTime, Type: &typ, TypeSign: &typeSign,
@@ -307,7 +312,7 @@ func TestGetBroker_API(t *testing.T) {
 			RetType: okRet(),
 			S2C: &qotgetbroker.S2C{
 				Security:     nil,
-				Name:         &name,
+				Name:        &name,
 				BrokerAskList: []*qotcommon.Broker{
 					{Id: &id1, Name: &nm1, Pos: &pos1, Volume: &vol1, OrderID: &oid1},
 				},
@@ -647,7 +652,7 @@ func TestGetStaticInfo_API(t *testing.T) {
 }
 
 // =============================================================================
-// GetKL (3006) — qotgetkl, qotcommon.KLine
+// GetKL (3006) — qotgetkl + qotcommon.KLine
 // =============================================================================
 
 func TestGetKL_API(t *testing.T) {
@@ -727,7 +732,7 @@ func TestGetKL_API(t *testing.T) {
 }
 
 // =============================================================================
-// CapitalFlow (3009) — qotgetcapitalflow, CapitalFlowItem
+// CapitalFlow (3211) — qotgetcapitalflow + CapitalFlowItem
 // =============================================================================
 
 func TestCapitalFlow_API(t *testing.T) {
@@ -791,7 +796,7 @@ func TestCapitalFlow_API(t *testing.T) {
 }
 
 // =============================================================================
-// CapitalDistribution (3011) — qotgetcapitaldistribution
+// CapitalDistribution (3212) — qotgetcapitaldistribution
 // =============================================================================
 
 func TestCapitalDistribution_API(t *testing.T) {
@@ -826,10 +831,10 @@ func TestCapitalDistribution_API(t *testing.T) {
 	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
 	for _, tc := range []struct {
-		name        string
-		security    *qotcommon.Security
-		wantErr     bool
-		wantCapIn   float64
+		name      string
+		security  *qotcommon.Security
+		wantErr   bool
+		wantCapIn float64
 	}{
 		{"basic", sec, false, 5000000.0},
 		{"nil security", nil, true, 0},
@@ -850,6 +855,314 @@ func TestCapitalDistribution_API(t *testing.T) {
 				t.Errorf("CapitalInBig: want %.0f, got %.0f", tc.wantCapIn, rsp.CapitalDistribution.CapitalInBig)
 			}
 			srv.AssertProtoID(t, 3212)
+		})
+	}
+}
+
+// =============================================================================
+// GetBasicQot (3004) — qotgetbasicqot + qotcommon.BasicQot (14 required fields)
+// =============================================================================
+
+func TestGetBasicQot_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3004, func(reqBody []byte) (proto.Message, error) {
+		isSuspend := false
+		listTime, updateTime := "2004-06-16", "2024-01-15 14:30:00"
+		priceSpread, highPrice := 0.1, 352.0
+		openPrice, lowPrice := 348.0, 347.0
+		curPrice, lastClose := 350.5, 349.0
+		vol := int64(12345678)
+		turnover := 4321098765.0
+		turnoverRate, amplitude := 0.025, 0.03
+		listTS, updateTS := 1087248000.0, 1705312200.0
+		secStatus := int32(0)
+		return &qotgetbasicqot.Response{
+			RetType: okRet(),
+			S2C: &qotgetbasicqot.S2C{
+				BasicQotList: []*qotcommon.BasicQot{
+					{Security: nil, IsSuspended: &isSuspend,
+						ListTime: &listTime, PriceSpread: &priceSpread, UpdateTime: &updateTime,
+						HighPrice: &highPrice, OpenPrice: &openPrice, LowPrice: &lowPrice,
+						CurPrice: &curPrice, LastClosePrice: &lastClose, Volume: &vol,
+						Turnover: &turnover, TurnoverRate: &turnoverRate, Amplitude: &amplitude,
+						SecStatus: &secStatus, ListTimestamp: &listTS, UpdateTimestamp: &updateTS},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name     string
+		secList  []*qotcommon.Security
+		wantErr  bool
+		wantQots int
+	}{
+		{"basic", []*qotcommon.Security{sec}, false, 1},
+		{"nil seclist", nil, true, 0},
+		{"empty seclist", []*qotcommon.Security{}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetBasicQot(context.Background(), cli, tc.secList)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantQots > 0 && len(rsp) != tc.wantQots {
+				t.Errorf("qots: want %d, got %d", tc.wantQots, len(rsp))
+			}
+			srv.AssertProtoID(t, 3004)
+		})
+	}
+}
+
+// =============================================================================
+// GetPlateSet (3204) — qotgetplateset + qotcommon.PlateInfo
+// =============================================================================
+
+func TestGetPlateSet_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3204, func(reqBody []byte) (proto.Message, error) {
+		plateCode1, plateName1 := "BK001", "Technology"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		plateType := int32(1)
+		return &qotgetplateset.Response{
+			RetType: okRet(),
+			S2C: &qotgetplateset.S2C{
+				PlateInfoList: []*qotcommon.PlateInfo{
+					{Plate: &qotcommon.Security{Market: &market, Code: &plateCode1}, Name: &plateName1, PlateType: &plateType},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+
+	for _, tc := range []struct {
+		name        string
+		market      int32
+		plateSetType int32
+		wantErr     bool
+		wantPlates  int
+	}{
+		{"hk main board", 1, 1, false, 1},
+		{"zero market", 0, 1, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetPlateSet(context.Background(), cli, &GetPlateSetRequest{Market: tc.market, PlateSetType: tc.plateSetType})
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantPlates > 0 && len(rsp.PlateSetList) != tc.wantPlates {
+				t.Errorf("plates: want %d, got %d", tc.wantPlates, len(rsp.PlateSetList))
+			}
+			srv.AssertProtoID(t, 3204)
+		})
+	}
+}
+
+// =============================================================================
+// GetOwnerPlate (3207) — qotgetownerplate + qotgetownerplate.SecurityOwnerPlate
+// =============================================================================
+
+func TestGetOwnerPlate_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3207, func(reqBody []byte) (proto.Message, error) {
+		secCode, secName := "00700", "Tencent"
+		plateCode, plateName := "BK001", "Technology"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		return &qotgetownerplate.Response{
+			RetType: okRet(),
+			S2C: &qotgetownerplate.S2C{
+				OwnerPlateList: []*qotgetownerplate.SecurityOwnerPlate{
+					{Security: &qotcommon.Security{Market: &market, Code: &secCode}, Name: &secName,
+						PlateInfoList: []*qotcommon.PlateInfo{
+							{Plate: &qotcommon.Security{Market: &market, Code: &plateCode}, Name: &plateName},
+						}},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name       string
+		req        *GetOwnerPlateRequest
+		wantErr    bool
+		wantPlates int
+	}{
+		{"basic", &GetOwnerPlateRequest{SecurityList: []*qotcommon.Security{sec}}, false, 1},
+		{"nil req", nil, true, 0},
+		{"empty seclist", &GetOwnerPlateRequest{SecurityList: []*qotcommon.Security{}}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetOwnerPlate(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantPlates > 0 && len(rsp.OwnerPlateList) != tc.wantPlates {
+				t.Errorf("plates: want %d, got %d", tc.wantPlates, len(rsp.OwnerPlateList))
+			}
+			srv.AssertProtoID(t, 3207)
+		})
+	}
+}
+
+// =============================================================================
+// GetMarketState (3223) — qotgetmarketstate + qotgetmarketstate.MarketInfo
+// =============================================================================
+
+func TestGetMarketState_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3223, func(reqBody []byte) (proto.Message, error) {
+		secCode, name := "00700", "Tencent"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		marketState := int32(1)
+		return &qotgetmarketstate.Response{
+			RetType: okRet(),
+			S2C: &qotgetmarketstate.S2C{
+				MarketInfoList: []*qotgetmarketstate.MarketInfo{
+					{Security: &qotcommon.Security{Market: &market, Code: &secCode}, Name: &name, MarketState: &marketState},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name      string
+		req       *GetMarketStateRequest
+		wantErr   bool
+		wantInfos int
+	}{
+		{"basic", &GetMarketStateRequest{SecurityList: []*qotcommon.Security{sec}}, false, 1},
+		{"nil req", nil, true, 0},
+		{"empty seclist", &GetMarketStateRequest{SecurityList: []*qotcommon.Security{}}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetMarketState(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantInfos > 0 && len(rsp.MarketInfoList) != tc.wantInfos {
+				t.Errorf("infos: want %d, got %d", tc.wantInfos, len(rsp.MarketInfoList))
+			}
+			srv.AssertProtoID(t, 3223)
+		})
+	}
+}
+
+// =============================================================================
+// GetReference (3206) — qotgetreference + qotcommon.SecurityStaticInfo
+// =============================================================================
+
+func TestGetReference_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3206, func(reqBody []byte) (proto.Message, error) {
+		secCode := "00700"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		name, id := "Tencent", int64(1)
+		secType, lotSize := int32(1), int32(100)
+		listTime := "2004-06-16"
+		return &qotgetreference.Response{
+			RetType: okRet(),
+			S2C: &qotgetreference.S2C{
+				StaticInfoList: []*qotcommon.SecurityStaticInfo{
+					{Basic: &qotcommon.SecurityStaticBasic{
+						Security: &qotcommon.Security{Market: &market, Code: &secCode},
+						Id: &id, Name: &name, SecType: &secType, LotSize: &lotSize, ListTime: &listTime,
+					}},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("HSI2405")}
+
+	for _, tc := range []struct {
+		name     string
+		req      *GetReferenceRequest
+		wantErr  bool
+		wantRefs int
+	}{
+		{"basic", &GetReferenceRequest{Security: sec, ReferenceType: 1}, false, 1},
+		{"nil req", nil, true, 0},
+		{"nil security", &GetReferenceRequest{Security: nil, ReferenceType: 1}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetReference(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantRefs > 0 && len(rsp.StaticInfoList) != tc.wantRefs {
+				t.Errorf("refs: want %d, got %d", tc.wantRefs, len(rsp.StaticInfoList))
+			}
+			srv.AssertProtoID(t, 3206)
 		})
 	}
 }
