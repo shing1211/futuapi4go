@@ -16,7 +16,6 @@ package qot
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
 
 	"github.com/shing1211/futuapi4go/pkg/pb/common"
