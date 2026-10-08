@@ -116,7 +116,7 @@ func TestKLineStruct(t *testing.T) {
 		TurnoverRate:   0.025,
 		Pe:             25.5,
 		ChangeRate:     0.004,
-		Timestamp:       1705312200.0,
+		Timestamp:      1705312200.0,
 	}
 
 	if kl.ClosePrice != 350.5 {
@@ -170,28 +170,28 @@ func TestGetKLRequestStruct(t *testing.T) {
 		req       GetKLRequest
 		wantNum   int32
 		wantRehab int32
-		wantKL   int32
+		wantKL    int32
 	}{
 		{
 			name:      "day kline",
 			req:       GetKLRequest{Security: sec, RehabType: 0, KLType: 0, ReqNum: 10},
 			wantNum:   10,
 			wantRehab: 0,
-			wantKL:   0,
+			wantKL:    0,
 		},
 		{
 			name:      "1min kline",
 			req:       GetKLRequest{Security: sec, RehabType: 1, KLType: 1, ReqNum: 100},
 			wantNum:   100,
 			wantRehab: 1,
-			wantKL:   1,
+			wantKL:    1,
 		},
 		{
 			name:      "week kline",
 			req:       GetKLRequest{Security: sec, RehabType: 1, KLType: 3, ReqNum: 50},
 			wantNum:   50,
 			wantRehab: 1,
-			wantKL:   3,
+			wantKL:    3,
 		},
 	}
 

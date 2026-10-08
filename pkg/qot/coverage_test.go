@@ -86,8 +86,8 @@ func TestGetOrderBook_API(t *testing.T) {
 		return &qotgetorderbook.Response{
 			RetType: okRet(),
 			S2C: &qotgetorderbook.S2C{
-				Security:             req.C2S.Security,
-				Name:                &name,
+				Security: req.C2S.Security,
+				Name:     &name,
 				OrderBookAskList: []*qotcommon.OrderBook{
 					{Price: &price1, Volume: &vol1, OrederCount: &oc1,
 						DetailList: []*qotcommon.OrderBookDetail{
@@ -172,8 +172,8 @@ func TestGetTicker_API(t *testing.T) {
 		return &qotgetticker.Response{
 			RetType: okRet(),
 			S2C: &qotgetticker.S2C{
-				Security:   nil,
-				Name:      &name,
+				Security: nil,
+				Name:     &name,
 				TickerList: []*qotcommon.Ticker{
 					{Time: &ts, Sequence: &seq, Dir: &dir, Price: &price, Volume: &vol,
 						Turnover: &turnover, RecvTime: &recvTime, Type: &typ, TypeSign: &typeSign,
@@ -311,8 +311,8 @@ func TestGetBroker_API(t *testing.T) {
 		return &qotgetbroker.Response{
 			RetType: okRet(),
 			S2C: &qotgetbroker.S2C{
-				Security:     nil,
-				Name:        &name,
+				Security: nil,
+				Name:     &name,
 				BrokerAskList: []*qotcommon.Broker{
 					{Id: &id1, Name: &nm1, Pos: &pos1, Volume: &vol1, OrderID: &oid1},
 				},
@@ -956,11 +956,11 @@ func TestGetPlateSet_API(t *testing.T) {
 	defer cleanup()
 
 	for _, tc := range []struct {
-		name        string
-		market      int32
+		name         string
+		market       int32
 		plateSetType int32
-		wantErr     bool
-		wantPlates  int
+		wantErr      bool
+		wantPlates   int
 	}{
 		{"hk main board", 1, 1, false, 1},
 		{"zero market", 0, 1, true, 0},
@@ -1125,7 +1125,7 @@ func TestGetReference_API(t *testing.T) {
 				StaticInfoList: []*qotcommon.SecurityStaticInfo{
 					{Basic: &qotcommon.SecurityStaticBasic{
 						Security: &qotcommon.Security{Market: &market, Code: &secCode},
-						Id: &id, Name: &name, SecType: &secType, LotSize: &lotSize, ListTime: &listTime,
+						Id:       &id, Name: &name, SecType: &secType, LotSize: &lotSize, ListTime: &listTime,
 					}},
 				},
 			},

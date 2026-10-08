@@ -177,14 +177,14 @@ func TestGetCapitalFlowResponseEmpty(t *testing.T) {
 func TestCapitalDistributionFields_Qot(t *testing.T) {
 	cd := &CapitalDistribution{
 		CapitalInSuper:  5000000.0,
-		CapitalInBig:   3000000.0,
-		CapitalInMid:   2000000.0,
-		CapitalInSmall: 1000000.0,
+		CapitalInBig:    3000000.0,
+		CapitalInMid:    2000000.0,
+		CapitalInSmall:  1000000.0,
 		CapitalOutSuper: 4000000.0,
-		CapitalOutBig:  2000000.0,
-		CapitalOutMid:  1000000.0,
+		CapitalOutBig:   2000000.0,
+		CapitalOutMid:   1000000.0,
 		CapitalOutSmall: 500000.0,
-		UpdateTime:     "2024-01-15 16:00:00",
+		UpdateTime:      "2024-01-15 16:00:00",
 		UpdateTimestamp: 1705310400.0,
 	}
 
@@ -218,7 +218,7 @@ func TestCapitalDistributionZeroValues(t *testing.T) {
 
 func TestGetCapitalDistributionResponseFields(t *testing.T) {
 	cd := &CapitalDistribution{
-		CapitalInSuper:  5000000.0,
+		CapitalInSuper: 5000000.0,
 		CapitalInBig:   3000000.0,
 		CapitalInMid:   2000000.0,
 		CapitalInSmall: 1000000.0,
