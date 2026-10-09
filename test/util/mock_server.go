@@ -307,6 +307,9 @@ func (s *MockServer) fixupResponse(protoID uint32, msg proto.Message) proto.Mess
 	}
 	template, ok := respMap[protoID]
 	if !ok {
+		// Unknown protoID: the handler already returned a concretely-typed
+		// response, so fill its nil proto2 pointer fields in place.
+		fillNilPointers(msg)
 		return msg
 	}
 	// Use reflection to merge msg into template, then fill nil pointers

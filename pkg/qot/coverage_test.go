@@ -25,2192 +25,1144 @@ import (
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitaldistribution"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetcapitalflow"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetkl"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionquote"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategy"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategyanalysis"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotgetoptionstrategyspreads"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetmarketstate"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetorderbook"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetownerplate"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetplateset"
+	"github.com/shing1211/futuapi4go/pkg/pb/qotgetreference"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetrt"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsecuritysnapshot"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetstaticinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetsubinfo"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotgetticker"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistorykl"
-	"github.com/shing1211/futuapi4go/pkg/pb/qotrequesthistoryklquota"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotregqotpush"
 	"github.com/shing1211/futuapi4go/pkg/pb/qotsub"
-	futuapitestutil "github.com/shing1211/futuapi4go/test/util"
+	testutil "github.com/shing1211/futuapi4go/test/util"
 	"google.golang.org/protobuf/proto"
 )
 
-func hkSecurity(code string) *qotcommon.Security {
-	market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
-	return &qotcommon.Security{Market: &market, Code: &code}
+func okRet() *int32 {
+	v := int32(common.RetType_RetType_Succeed)
+	return &v
 }
 
-func newSuccessResponse(s2c any) proto.Message {
-	switch v := s2c.(type) {
-	case *qotgetbasicqot.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetbasicqot.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetkl.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetkl.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetorderbook.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetorderbook.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetticker.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetticker.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetrt.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetrt.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetbroker.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetbroker.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetcapitalflow.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetcapitalflow.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetcapitaldistribution.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetcapitaldistribution.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotsub.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotsub.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotregqotpush.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotregqotpush.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetsubinfo.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetsubinfo.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetsecuritysnapshot.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetsecuritysnapshot.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetstaticinfo.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetstaticinfo.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotrequesthistorykl.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotrequesthistorykl.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotrequesthistoryklquota.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotrequesthistoryklquota.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetoptionquote.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetoptionquote.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetoptionstrategy.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetoptionstrategy.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetoptionstrategyanalysis.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetoptionstrategyanalysis.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	case *qotgetoptionstrategyspreads.S2C:
-		retType := int32(common.RetType_RetType_Succeed)
-		return &qotgetoptionstrategyspreads.Response{RetType: &retType, RetMsg: proto.String("ok"), S2C: v}
-	default:
-		return nil
-	}
-}
+func strPtr(s string) *string { return &s }
 
-
-// =============================================================================
-// GetBasicQot
-// =============================================================================
-
-func TestGetBasicQot_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	code00700 := "00700"
-	nameTencent := "Tencent"
-	curPrice := 350.50
-	highPrice := 352.00
-	openPrice := 348.00
-	lowPrice := 347.00
-	lastClosePrice := 349.00
-	volume := int64(12345678)
-	turnover := 4321098765.00
-	turnoverRate := 0.025
-	amplitude := 0.030
-	updateTime := "09:30:00"
-	isSuspended := false
-	priceSpread := 0.01
-	listTime := "2004-06-16"
-	listTimestamp := 1087267200.0
-	updateTimestamp := 1744162200.0
-	secStatus := int32(0)
-
-	server.RegisterHandler(ProtoID_GetBasicQot, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetbasicqot.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetBasicQot request failed: %v", err)
+func strContains(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
 		}
-		if req.C2S == nil || len(req.C2S.SecurityList) == 0 {
-			t.Fatal("expected non-empty security list")
-		}
-		return newSuccessResponse(&qotgetbasicqot.S2C{
-			BasicQotList: []*qotcommon.BasicQot{
-				{
-					Security:        &qotcommon.Security{Market: func() *int32 { v := int32(1); return &v }(), Code: &code00700},
-					Name:            &nameTencent,
-					CurPrice:        &curPrice,
-					HighPrice:       &highPrice,
-					OpenPrice:       &openPrice,
-					LowPrice:        &lowPrice,
-					LastClosePrice:  &lastClosePrice,
-					Volume:          &volume,
-					Turnover:        &turnover,
-					TurnoverRate:    &turnoverRate,
-					Amplitude:       &amplitude,
-					UpdateTime:      &updateTime,
-					IsSuspended:     &isSuspended,
-					PriceSpread:     &priceSpread,
-					ListTime:        &listTime,
-					ListTimestamp:   &listTimestamp,
-					UpdateTimestamp: &updateTimestamp,
-					SecStatus:       &secStatus,
-				},
-			},
-		}), nil
-	})
-
-	ctx := context.Background()
-	result, err := GetBasicQot(ctx, cli, []*qotcommon.Security{hkSecurity("00700")})
-	if err != nil {
-		t.Fatalf("GetBasicQot failed: %v", err)
 	}
-
-	if len(result) != 1 {
-		t.Fatalf("expected 1 result, got %d", len(result))
-	}
-	bq := result[0]
-	if bq.Name != "Tencent" {
-		t.Errorf("expected Name Tencent, got %s", bq.Name)
-	}
-	if bq.CurPrice != 350.50 {
-		t.Errorf("expected CurPrice 350.50, got %f", bq.CurPrice)
-	}
-	if bq.Volume != 12345678 {
-		t.Errorf("expected Volume 12345678, got %d", bq.Volume)
-	}
-	if bq.Security.GetCode() != "00700" {
-		t.Errorf("expected code 00700, got %s", bq.Security.GetCode())
-	}
-
-	server.AssertProtoID(t, ProtoID_GetBasicQot)
+	return false
 }
-
-func TestGetBasicQot_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Failed)
-	retMsg := "failed"
-	server.RegisterHandler(ProtoID_GetBasicQot, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetbasicqot.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetBasicQot(ctx, cli, []*qotcommon.Security{hkSecurity("00700")})
-	if err == nil {
-		t.Fatal("expected error for failed RetType")
-	}
-}
-
-func TestGetBasicQot_EmptySecurityList(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetBasicQot(ctx, cli, []*qotcommon.Security{})
-	if err == nil {
-		t.Error("expected error for empty security list")
-	}
-}
-
 
 // =============================================================================
-// GetKL
+// GetOrderBook (3012)
 // =============================================================================
 
-func TestGetKL_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetOrderBook_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	klTime := "2026-04-08 15:00:00"
-	klClosePrice := 350.50
-	klOpenPrice := 348.00
-	klHighPrice := 352.00
-	klLowPrice := 347.00
-	klLastClosePrice := 349.00
-	klVolume := int64(12345678)
-	klTurnover := 4321098765.00
-	klChangeRate := 0.43
-	klTimestamp := 1775635200.0
-	klIsBlank := false
-
-	server.RegisterHandler(ProtoID_GetKL, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetkl.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetKL request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetkl.S2C{
-			Security: hkSecurity("00700"),
-			Name:     proto.String("Tencent"),
-			KlList: []*qotcommon.KLine{
-				{
-					Time:           &klTime,
-					ClosePrice:     &klClosePrice,
-					OpenPrice:      &klOpenPrice,
-					HighPrice:      &klHighPrice,
-					LowPrice:       &klLowPrice,
-					LastClosePrice: &klLastClosePrice,
-					Volume:         &klVolume,
-					Turnover:       &klTurnover,
-					ChangeRate:     &klChangeRate,
-					Timestamp:      &klTimestamp,
-					IsBlank:        &klIsBlank,
-				},
-			},
-		}), nil
-	})
-
-	ctx := context.Background()
-	req := &GetKLRequest{
-		Security:  hkSecurity("00700"),
-		RehabType: 0,
-		KLType:    6,
-		ReqNum:    10,
-	}
-	result, err := GetKL(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetKL failed: %v", err)
-	}
-
-	if len(result.KLList) != 1 {
-		t.Fatalf("expected 1 KLine, got %d", len(result.KLList))
-	}
-	kl := result.KLList[0]
-	if kl.ClosePrice != 350.50 {
-		t.Errorf("expected ClosePrice 350.50, got %f", kl.ClosePrice)
-	}
-	if kl.Volume != 12345678 {
-		t.Errorf("expected Volume 12345678, got %d", kl.Volume)
-	}
-	if result.Security.GetCode() != "00700" {
-		t.Errorf("expected code 00700, got %s", result.Security.GetCode())
-	}
-
-	server.AssertProtoID(t, ProtoID_GetKL)
-}
-
-func TestGetKL_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetKL(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetKL_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetKL(ctx, cli, &GetKLRequest{Security: nil, ReqNum: 10})
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestGetKL_NonPositiveReqNum(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetKL(ctx, cli, &GetKLRequest{Security: hkSecurity("00700"), ReqNum: 0})
-	if err == nil {
-		t.Error("expected error for ReqNum <= 0")
-	}
-}
-
-func TestGetKL_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetKL, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetkl.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetKL(ctx, cli, &GetKLRequest{Security: hkSecurity("00700"), ReqNum: 10})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-
-// =============================================================================
-// GetOrderBook
-// =============================================================================
-
-func TestGetOrderBook_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	askPrice := 351.00
-	askVolume := int64(5000)
-	askOrderCount := int32(3)
-	bidPrice := 350.00
-	bidVolume := int64(5000)
-	bidOrderCount := int32(3)
-	svrRecvTimeBid := "10:00:00"
-	svrRecvTimeBidTs := 1775635200.0
-	svrRecvTimeAsk := "10:00:00"
-	svrRecvTimeAskTs := 1775635200.0
-
-	server.RegisterHandler(ProtoID_GetOrderBook, func(reqBody []byte) (proto.Message, error) {
+	srv.RegisterHandler(3012, func(reqBody []byte) (proto.Message, error) {
 		var req qotgetorderbook.Request
 		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetOrderBook request failed: %v", err)
+			t.Fatalf("unmarshal: %v", err)
 		}
 		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
+			t.Fatal("expected C2S.Security")
 		}
-		return newSuccessResponse(&qotgetorderbook.S2C{
-			Security:             hkSecurity("00700"),
-			Name:                 proto.String("Tencent"),
-			OrderBookAskList: []*qotcommon.OrderBook{
-				{Price: &askPrice, Volume: &askVolume, OrederCount: &askOrderCount},
+		price1, price2 := 350.00, 351.00
+		vol1, vol2 := int64(5000), int64(5000)
+		oc1, oc2 := int32(3), int32(3)
+		oid1 := int64(12345)
+		detailVol := int64(500)
+		svrBid, svrAsk := "10:00:00", "10:00:00"
+		tsBid, tsAsk := 1775635200.0, 1775635200.0
+		name := "Tencent"
+
+		return &qotgetorderbook.Response{
+			RetType: okRet(),
+			S2C: &qotgetorderbook.S2C{
+				Security: req.C2S.Security,
+				Name:     &name,
+				OrderBookAskList: []*qotcommon.OrderBook{
+					{Price: &price1, Volume: &vol1, OrederCount: &oc1,
+						DetailList: []*qotcommon.OrderBookDetail{
+							{OrderID: &oid1, Volume: &detailVol},
+						}},
+				},
+				OrderBookBidList: []*qotcommon.OrderBook{
+					{Price: &price2, Volume: &vol2, OrederCount: &oc2},
+				},
+				SvrRecvTimeBid:          &svrBid,
+				SvrRecvTimeBidTimestamp: &tsBid,
+				SvrRecvTimeAsk:          &svrAsk,
+				SvrRecvTimeAskTimestamp: &tsAsk,
 			},
-			OrderBookBidList: []*qotcommon.OrderBook{
-				{Price: &bidPrice, Volume: &bidVolume, OrederCount: &bidOrderCount},
-			},
-			SvrRecvTimeBid:          &svrRecvTimeBid,
-			SvrRecvTimeBidTimestamp: &svrRecvTimeBidTs,
-			SvrRecvTimeAsk:          &svrRecvTimeAsk,
-			SvrRecvTimeAskTimestamp: &svrRecvTimeAskTs,
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetOrderBookRequest{
-		Security: hkSecurity("00700"),
-		Num:      10,
-	}
-	result, err := GetOrderBook(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetOrderBook failed: %v", err)
-	}
-
-	if len(result.OrderBookAskList) != 1 {
-		t.Fatalf("expected 1 ask level, got %d", len(result.OrderBookAskList))
-	}
-	if len(result.OrderBookBidList) != 1 {
-		t.Fatalf("expected 1 bid level, got %d", len(result.OrderBookBidList))
-	}
-	if result.OrderBookAskList[0].Price != 351.00 {
-		t.Errorf("expected ask price 351.00, got %f", result.OrderBookAskList[0].Price)
-	}
-	if result.OrderBookBidList[0].Price != 350.00 {
-		t.Errorf("expected bid price 350.00, got %f", result.OrderBookBidList[0].Price)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetOrderBook)
-}
-
-func TestGetOrderBook_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
 
-	ctx := context.Background()
-	_, err := GetOrderBook(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name      string
+		req       *GetOrderBookRequest
+		wantErr   bool
+		errSubStr string
+		wantAsks  int
+		wantBids  int
+	}{
+		{"basic", &GetOrderBookRequest{Security: sec, Num: 10}, false, "", 1, 1},
+		{"nil req", nil, true, "request is nil", 0, 0},
+		{"nil security", &GetOrderBookRequest{Security: nil, Num: 10}, true, "Security is nil", 0, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetOrderBook(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantAsks > 0 && len(rsp.OrderBookAskList) != tc.wantAsks {
+				t.Errorf("asks: want %d, got %d", tc.wantAsks, len(rsp.OrderBookAskList))
+			}
+			if tc.wantBids > 0 && len(rsp.OrderBookBidList) != tc.wantBids {
+				t.Errorf("bids: want %d, got %d", tc.wantBids, len(rsp.OrderBookBidList))
+			}
+			srv.AssertProtoID(t, 3012)
+		})
 	}
 }
-
-func TestGetOrderBook_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetOrderBook(ctx, cli, &GetOrderBookRequest{Security: nil})
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestGetOrderBook_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetOrderBook, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetorderbook.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetOrderBook(ctx, cli, &GetOrderBookRequest{Security: hkSecurity("00700"), Num: 10})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
 
 // =============================================================================
-// GetTicker
+// GetTicker (3010)
 // =============================================================================
 
-func TestGetTicker_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetTicker_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
+	srv.RegisterHandler(3010, func(reqBody []byte) (proto.Message, error) {
+		name := "Tencent"
+		ts := "10:00:00"
+		seq := int64(123456)
+		dir := int32(1)
+		price := 350.00
+		vol := int64(1000)
+		turnover := 350000.00
+		recvTime := 1775635200.0
+		typ, typeSign, pushType := int32(0), int32(1), int32(1)
 
-	tickerTime := "10:00:00"
-	tickerPrice := 350.0
-	tickerVolume := int64(500)
-	tickerDir := int32(1)
-	tickerTurnover := 175000.0
-	tickerSequence := int64(100)
-	tickerTimestamp := 1775635200.0
-	tickerType := int32(0)
-	tickerTypeSign := int32(1)
-	tickerRecvTime := 1775635200.0
-	tickerPushDataType := int32(1)
-
-	server.RegisterHandler(ProtoID_GetTicker, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetticker.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetTicker request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetticker.S2C{
-			Security: hkSecurity("00700"),
-			Name:     proto.String("Tencent"),
-			TickerList: []*qotcommon.Ticker{
-				{
-					Time:         &tickerTime,
-					Sequence:     &tickerSequence,
-					Dir:          &tickerDir,
-					Price:        &tickerPrice,
-					Volume:       &tickerVolume,
-					Turnover:     &tickerTurnover,
-					RecvTime:     &tickerRecvTime,
-					Type:         &tickerType,
-					TypeSign:     &tickerTypeSign,
-					Timestamp:    &tickerTimestamp,
-					PushDataType: &tickerPushDataType,
+		return &qotgetticker.Response{
+			RetType: okRet(),
+			S2C: &qotgetticker.S2C{
+				Security: nil,
+				Name:     &name,
+				TickerList: []*qotcommon.Ticker{
+					{Time: &ts, Sequence: &seq, Dir: &dir, Price: &price, Volume: &vol,
+						Turnover: &turnover, RecvTime: &recvTime, Type: &typ, TypeSign: &typeSign,
+						Timestamp: &recvTime, PushDataType: &pushType},
 				},
 			},
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetTickerRequest{
-		Security: hkSecurity("00700"),
-		Num:      100,
-	}
-	result, err := GetTicker(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetTicker failed: %v", err)
-	}
-
-	if len(result.TickerList) != 1 {
-		t.Fatalf("expected 1 ticker, got %d", len(result.TickerList))
-	}
-	tk := result.TickerList[0]
-	if tk.Price != 350.0 {
-		t.Errorf("expected Price 350.0, got %f", tk.Price)
-	}
-	if tk.Volume != 500 {
-		t.Errorf("expected Volume 500, got %d", tk.Volume)
-	}
-	if tk.Dir != 1 {
-		t.Errorf("expected Dir 1, got %d", tk.Dir)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetTicker)
-}
-
-func TestGetTicker_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetTicker(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
+	for _, tc := range []struct {
+		name      string
+		req       *GetTickerRequest
+		wantErr   bool
+		errSubStr string
+		wantTicks int
+	}{
+		{"basic", &GetTickerRequest{Security: sec, Num: 100}, false, "", 1},
+		{"nil req", nil, true, "request is nil", 0},
+		{"nil security", &GetTickerRequest{Security: nil, Num: 100}, true, "Security is nil", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetTicker(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantTicks > 0 && len(rsp.TickerList) != tc.wantTicks {
+				t.Errorf("tickers: want %d, got %d", tc.wantTicks, len(rsp.TickerList))
+			}
+			srv.AssertProtoID(t, 3010)
+		})
 	}
 }
-
-func TestGetTicker_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetTicker, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetticker.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetTicker(ctx, cli, &GetTickerRequest{Security: hkSecurity("00700"), Num: 100})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
 
 // =============================================================================
-// GetRT
+// GetRT (3008)
 // =============================================================================
 
-func TestGetRT_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetRT_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	rtTime := "10:00:00"
-	rtMinute := int32(600)
-	rtIsBlank := false
-	rtPrice := 350.0
-	rtLastClosePrice := 349.0
-	rtAvgPrice := 349.8
-	rtVolume := int64(12345678)
-	rtTurnover := 4321098765.00
-	rtTimestamp := 1744116000.0
-
-	server.RegisterHandler(ProtoID_GetRT, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetrt.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetRT request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetrt.S2C{
-			Security: hkSecurity("00700"),
-			Name:     proto.String("Tencent"),
-			RtList: []*qotcommon.TimeShare{
-				{
-					Time:           &rtTime,
-					Minute:         &rtMinute,
-					IsBlank:        &rtIsBlank,
-					Price:          &rtPrice,
-					LastClosePrice: &rtLastClosePrice,
-					AvgPrice:       &rtAvgPrice,
-					Volume:         &rtVolume,
-					Turnover:       &rtTurnover,
-					Timestamp:      &rtTimestamp,
+	srv.RegisterHandler(3008, func(reqBody []byte) (proto.Message, error) {
+		name := "Tencent"
+		ts := "10:00:00"
+		minute := int32(600)
+		isBlank := false
+		price, lastClose, avgPrice := 350.00, 349.00, 349.80
+		vol := int64(12345678)
+		turnover := 4321098765.00
+		tsF := 1744116000.0
+		return &qotgetrt.Response{
+			RetType: okRet(),
+			S2C: &qotgetrt.S2C{
+				Security: nil,
+				Name:     &name,
+				RtList: []*qotcommon.TimeShare{
+					{Time: &ts, Minute: &minute, IsBlank: &isBlank, Price: &price,
+						LastClosePrice: &lastClose, AvgPrice: &avgPrice, Volume: &vol,
+						Turnover: &turnover, Timestamp: &tsF},
 				},
 			},
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetRTRequest{
-		Security: hkSecurity("00700"),
-	}
-	result, err := GetRT(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetRT failed: %v", err)
-	}
-
-	if len(result.RTList) != 1 {
-		t.Fatalf("expected 1 RT, got %d", len(result.RTList))
-	}
-	rt := result.RTList[0]
-	if rt.Price != 350.0 {
-		t.Errorf("expected Price 350.0, got %f", rt.Price)
-	}
-	if rt.Minute != 600 {
-		t.Errorf("expected Minute 600, got %d", rt.Minute)
-	}
-	if rt.AvgPrice != 349.8 {
-		t.Errorf("expected AvgPrice 349.8, got %f", rt.AvgPrice)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetRT)
-}
-
-func TestGetRT_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetRT(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
+	for _, tc := range []struct {
+		name     string
+		req      *GetRTRequest
+		wantErr  bool
+		wantRTs  int
+		wantName string
+	}{
+		{"basic", &GetRTRequest{Security: sec}, false, 1, "Tencent"},
+		{"nil req", nil, true, 0, ""},
+		{"nil security", &GetRTRequest{Security: nil}, true, 0, ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetRT(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantName != "" && rsp.Name != tc.wantName {
+				t.Errorf("Name: want %q, got %q", tc.wantName, rsp.Name)
+			}
+			if tc.wantRTs > 0 && len(rsp.RTList) != tc.wantRTs {
+				t.Errorf("RTs: want %d, got %d", tc.wantRTs, len(rsp.RTList))
+			}
+			srv.AssertProtoID(t, 3008)
+		})
 	}
 }
-
-func TestGetRT_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetRT(ctx, cli, &GetRTRequest{Security: nil})
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestGetRT_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetRT, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetrt.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetRT(ctx, cli, &GetRTRequest{Security: hkSecurity("00700")})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
 
 // =============================================================================
-// GetBroker
+// GetBroker (3014)
 // =============================================================================
 
-func TestGetBroker_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetBroker_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	askBrokerID := int64(1)
-	askBrokerName := "Citi"
-	askBrokerPos := int32(1)
-	askBrokerVolume := int64(5000)
-	askBrokerOrderID := int64(100)
-	bidBrokerID := int64(2)
-	bidBrokerName := "HSBC"
-	bidBrokerPos := int32(1)
-	bidBrokerVolume := int64(6000)
-	bidBrokerOrderID := int64(200)
-
-	server.RegisterHandler(ProtoID_GetBroker, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetbroker.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetBroker request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetbroker.S2C{
-			Security: hkSecurity("00700"),
-			Name:     proto.String("Tencent"),
-			BrokerAskList: []*qotcommon.Broker{
-				{Id: &askBrokerID, Name: &askBrokerName, Pos: &askBrokerPos, Volume: &askBrokerVolume, OrderID: &askBrokerOrderID},
-			},
-			BrokerBidList: []*qotcommon.Broker{
-				{Id: &bidBrokerID, Name: &bidBrokerName, Pos: &bidBrokerPos, Volume: &bidBrokerVolume, OrderID: &bidBrokerOrderID},
-			},
-		}), nil
-	})
-
-	ctx := context.Background()
-	req := &GetBrokerRequest{
-		Security: hkSecurity("00700"),
-	}
-	result, err := GetBroker(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetBroker failed: %v", err)
-	}
-
-	if len(result.AskBrokerList) != 1 {
-		t.Fatalf("expected 1 ask broker, got %d", len(result.AskBrokerList))
-	}
-	if len(result.BidBrokerList) != 1 {
-		t.Fatalf("expected 1 bid broker, got %d", len(result.BidBrokerList))
-	}
-	if result.AskBrokerList[0].Name != "Citi" {
-		t.Errorf("expected ask broker Citi, got %s", result.AskBrokerList[0].Name)
-	}
-	if result.BidBrokerList[0].Name != "HSBC" {
-		t.Errorf("expected bid broker HSBC, got %s", result.BidBrokerList[0].Name)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetBroker)
-}
-
-func TestGetBroker_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetBroker(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetBroker_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetBroker, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetbroker.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetBroker(ctx, cli, &GetBrokerRequest{Security: hkSecurity("00700")})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-
-// =============================================================================
-// GetCapitalFlow
-// =============================================================================
-
-func TestGetCapitalFlow_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	inFlow := 1000000.0
-	flowTime := "2026-04-08"
-	flowTimestamp := 1775635200.0
-	mainInFlow := 800000.0
-	superInFlow := 200000.0
-	bigInFlow := 300000.0
-	midInFlow := 250000.0
-	smlInFlow := 250000.0
-	lastValidTime := "2026-04-08"
-	lastValidTs := 1775635200.0
-
-	server.RegisterHandler(ProtoID_GetCapitalFlow, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetcapitalflow.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetCapitalFlow request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetcapitalflow.S2C{
-			FlowItemList: []*qotgetcapitalflow.CapitalFlowItem{
-				{
-					InFlow:      &inFlow,
-					Time:        &flowTime,
-					Timestamp:   &flowTimestamp,
-					MainInFlow:  &mainInFlow,
-					SuperInFlow: &superInFlow,
-					BigInFlow:   &bigInFlow,
-					MidInFlow:   &midInFlow,
-					SmlInFlow:   &smlInFlow,
+	srv.RegisterHandler(3014, func(reqBody []byte) (proto.Message, error) {
+		name := "Tencent"
+		id1, nm1 := int64(1), "Citi"
+		pos1, vol1, oid1 := int32(1), int64(5000), int64(67890)
+		id2, nm2 := int64(2), "HSBC"
+		pos2, vol2, oid2 := int32(1), int64(6000), int64(67891)
+		return &qotgetbroker.Response{
+			RetType: okRet(),
+			S2C: &qotgetbroker.S2C{
+				Security: nil,
+				Name:     &name,
+				BrokerAskList: []*qotcommon.Broker{
+					{Id: &id1, Name: &nm1, Pos: &pos1, Volume: &vol1, OrderID: &oid1},
+				},
+				BrokerBidList: []*qotcommon.Broker{
+					{Id: &id2, Name: &nm2, Pos: &pos2, Volume: &vol2, OrderID: &oid2},
 				},
 			},
-			LastValidTime:      &lastValidTime,
-			LastValidTimestamp: &lastValidTs,
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetCapitalFlowRequest{
-		Security:   hkSecurity("00700"),
-		PeriodType: 1,
-		BeginTime:  "2026-01-01",
-		EndTime:    "2026-04-08",
-	}
-	result, err := GetCapitalFlow(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetCapitalFlow failed: %v", err)
-	}
-
-	if len(result.FlowItemList) != 1 {
-		t.Fatalf("expected 1 flow item, got %d", len(result.FlowItemList))
-	}
-	if result.FlowItemList[0].InFlow != 1000000.0 {
-		t.Errorf("expected InFlow 1000000.0, got %f", result.FlowItemList[0].InFlow)
-	}
-	if result.LastValidTime != "2026-04-08" {
-		t.Errorf("expected LastValidTime 2026-04-08, got %s", result.LastValidTime)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetCapitalFlow)
-}
-
-func TestGetCapitalFlow_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetCapitalFlow(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetCapitalFlow_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetCapitalFlow(ctx, cli, &GetCapitalFlowRequest{})
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestGetCapitalFlow_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetCapitalFlow, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetcapitalflow.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetCapitalFlow(ctx, cli, &GetCapitalFlowRequest{Security: hkSecurity("00700")})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-
-// =============================================================================
-// GetCapitalDistribution
-// =============================================================================
-
-func TestGetCapitalDistribution_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	capInSuper := 1000000.0
-	capInBig := 500000.0
-	capInMid := 300000.0
-	capInSmall := 200000.0
-	capOutSuper := 800000.0
-	capOutBig := 400000.0
-	capOutMid := 200000.0
-	capOutSmall := 100000.0
-	updateTime := "2026-04-08 15:00:00"
-	updateTimestamp := 1775635200.0
-
-	server.RegisterHandler(ProtoID_GetCapitalDistribution, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetcapitaldistribution.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetCapitalDistribution request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotgetcapitaldistribution.S2C{
-			CapitalInSuper:  &capInSuper,
-			CapitalInBig:    &capInBig,
-			CapitalInMid:    &capInMid,
-			CapitalInSmall:  &capInSmall,
-			CapitalOutSuper: &capOutSuper,
-			CapitalOutBig:   &capOutBig,
-			CapitalOutMid:   &capOutMid,
-			CapitalOutSmall: &capOutSmall,
-			UpdateTime:      &updateTime,
-			UpdateTimestamp: &updateTimestamp,
-		}), nil
-	})
-
-	ctx := context.Background()
-	result, err := GetCapitalDistribution(ctx, cli, hkSecurity("00700"))
-	if err != nil {
-		t.Fatalf("GetCapitalDistribution failed: %v", err)
-	}
-
-	if result.CapitalDistribution.CapitalInSuper != 1000000.0 {
-		t.Errorf("expected CapitalInSuper 1000000.0, got %f", result.CapitalDistribution.CapitalInSuper)
-	}
-	if result.CapitalDistribution.CapitalOutSmall != 100000.0 {
-		t.Errorf("expected CapitalOutSmall 100000.0, got %f", result.CapitalDistribution.CapitalOutSmall)
-	}
-
-	server.AssertProtoID(t, ProtoID_GetCapitalDistribution)
-}
-
-func TestGetCapitalDistribution_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetCapitalDistribution(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestGetCapitalDistribution_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetCapitalDistribution, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetcapitaldistribution.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetCapitalDistribution(ctx, cli, hkSecurity("00700"))
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-
-// =============================================================================
-// Subscribe
-// =============================================================================
-
-func TestSubscribe_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_Subscribe, func(reqBody []byte) (proto.Message, error) {
-		var req qotsub.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal Subscribe request failed: %v", err)
-		}
-		if req.C2S == nil {
-			t.Fatal("expected non-nil C2S")
-		}
-		return newSuccessResponse(&qotsub.S2C{}), nil
-	})
-
-	ctx := context.Background()
-	req := &SubscribeRequest{
-		SecurityList:     []*qotcommon.Security{hkSecurity("00700")},
-		SubTypeList:      []SubType{SubType_Basic, SubType_KL},
-		IsSubOrUnSub:     true,
-		IsRegOrUnRegPush: true,
-	}
-	err := Subscribe(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("Subscribe failed: %v", err)
-	}
-
-	server.AssertProtoID(t, ProtoID_Subscribe)
-}
-
-func TestSubscribe_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	err := Subscribe(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestSubscribe_EmptySecurityList(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	err := Subscribe(ctx, cli, &SubscribeRequest{SecurityList: []*qotcommon.Security{}, SubTypeList: []SubType{SubType_Basic}})
-	if err == nil {
-		t.Error("expected error for empty security list")
-	}
-}
-
-func TestSubscribe_EmptySubTypeList(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	err := Subscribe(ctx, cli, &SubscribeRequest{SecurityList: []*qotcommon.Security{hkSecurity("00700")}, SubTypeList: []SubType{}})
-	if err == nil {
-		t.Error("expected error for empty subtype list")
-	}
-}
-
-func TestSubscribe_WithAllFields(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_Subscribe, func(reqBody []byte) (proto.Message, error) {
-		var req qotsub.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal Subscribe request failed: %v", err)
-		}
-		if req.C2S.IsUnsubAll != nil && *req.C2S.IsUnsubAll {
-			t.Error("expected IsUnsubAll=false")
-		}
-		if req.C2S.IsFirstPush == nil || !*req.C2S.IsFirstPush {
-			t.Error("expected IsFirstPush=true")
-		}
-		return newSuccessResponse(&qotsub.S2C{}), nil
-	})
-
-	ctx := context.Background()
-	req := &SubscribeRequest{
-		SecurityList:         []*qotcommon.Security{hkSecurity("00700")},
-		SubTypeList:          []SubType{SubType_Basic, SubType_KL, SubType_OrderBook},
-		IsSubOrUnSub:         true,
-		IsRegOrUnRegPush:     true,
-		RegPushRehabTypeList: []int32{0},
-		IsFirstPush:          true,
-		IsUnsubAll:           false,
-		IsSubOrderBookDetail: true,
-		ExtendedTime:         true,
-	}
-	err := Subscribe(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("Subscribe with all fields failed: %v", err)
-	}
-
-	server.AssertProtoID(t, ProtoID_Subscribe)
-}
-
-func TestSubscribe_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_Subscribe, func(reqBody []byte) (proto.Message, error) {
-		return &qotsub.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	err := Subscribe(ctx, cli, &SubscribeRequest{
-		SecurityList: []*qotcommon.Security{hkSecurity("00700")},
-		SubTypeList:  []SubType{SubType_Basic},
-	})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
+	for _, tc := range []struct {
+		name     string
+		req      *GetBrokerRequest
+		wantErr  bool
+		wantAsks int
+		wantBids int
+	}{
+		{"basic", &GetBrokerRequest{Security: sec}, false, 1, 1},
+		{"nil req", nil, true, 0, 0},
+		{"nil security", &GetBrokerRequest{Security: nil}, true, 0, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetBroker(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantAsks > 0 && len(rsp.AskBrokerList) != tc.wantAsks {
+				t.Errorf("asks: want %d, got %d", tc.wantAsks, len(rsp.AskBrokerList))
+			}
+			if tc.wantBids > 0 && len(rsp.BidBrokerList) != tc.wantBids {
+				t.Errorf("bids: want %d, got %d", tc.wantBids, len(rsp.BidBrokerList))
+			}
+			srv.AssertProtoID(t, 3014)
+		})
 	}
 }
 
 // =============================================================================
-// RegQotPush
+// Subscribe (3001)
 // =============================================================================
 
-func TestRegQotPush_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestSubscribe_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_RegQotPush, func(reqBody []byte) (proto.Message, error) {
-		var req qotregqotpush.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal RegQotPush request failed: %v", err)
-		}
-		if req.C2S == nil {
-			t.Fatal("expected non-nil C2S")
-		}
-		return newSuccessResponse(&qotregqotpush.S2C{}), nil
+	srv.RegisterHandler(3001, func(reqBody []byte) (proto.Message, error) {
+		return &qotsub.Response{RetType: okRet(), S2C: &qotsub.S2C{}}, nil
 	})
 
-	ctx := context.Background()
-	req := &RegQotPushRequest{
-		SecurityList:  []*qotcommon.Security{hkSecurity("00700")},
-		SubTypeList:   []int32{1, 2},
-		RehabTypeList: []int32{0},
-		IsRegOrUnReg:  true,
-		IsFirstPush:   true,
-	}
-	err := RegQotPush(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("RegQotPush failed: %v", err)
-	}
-
-	server.AssertProtoID(t, ProtoID_RegQotPush)
-}
-
-func TestRegQotPush_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	err := RegQotPush(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestRegQotPush_EmptySecurityList(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	err := RegQotPush(ctx, cli, &RegQotPushRequest{SecurityList: []*qotcommon.Security{}, SubTypeList: []int32{1}})
-	if err == nil {
-		t.Error("expected error for empty security list")
+	for _, tc := range []struct {
+		name      string
+		req       *SubscribeRequest
+		wantErr   bool
+		errSubStr string
+	}{
+		{"basic", &SubscribeRequest{SecurityList: []*qotcommon.Security{sec}, SubTypeList: []SubType{SubType_Basic, SubType_KL}, IsSubOrUnSub: true}, false, ""},
+		{"nil req", nil, true, "request is nil"},
+		{"empty seclist", &SubscribeRequest{SecurityList: []*qotcommon.Security{}, SubTypeList: []SubType{SubType_Basic}, IsSubOrUnSub: true}, true, "security list is empty"},
+		{"empty subtypelist", &SubscribeRequest{SecurityList: []*qotcommon.Security{sec}, SubTypeList: []SubType{}, IsSubOrUnSub: true}, true, "subtype list is empty"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			err := Subscribe(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			srv.AssertProtoID(t, 3001)
+		})
 	}
 }
 
 // =============================================================================
-// GetSubInfo
+// RegQotPush (3002)
 // =============================================================================
 
-func TestGetSubInfo_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestRegQotPush_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	srv.RegisterHandler(3002, func(reqBody []byte) (proto.Message, error) {
+		return &qotregqotpush.Response{RetType: okRet(), S2C: &qotregqotpush.S2C{}}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	totalUsedQuota := int32(10)
-	remainQuota := int32(90)
-	subType := int32(1)
-	usedQuota := int32(5)
-	isOwnConnData := true
+	for _, tc := range []struct {
+		name      string
+		req       *RegQotPushRequest
+		wantErr   bool
+		errSubStr string
+	}{
+		{"basic", &RegQotPushRequest{SecurityList: []*qotcommon.Security{sec}, SubTypeList: []int32{1, 2}, RehabTypeList: []int32{0}, IsRegOrUnReg: true, IsFirstPush: true}, false, ""},
+		{"nil req", nil, true, "request is nil"},
+		{"empty seclist", &RegQotPushRequest{SecurityList: []*qotcommon.Security{}, SubTypeList: []int32{1}, IsRegOrUnReg: true, IsFirstPush: true}, true, "security list is empty"},
+		{"empty subtypelist", &RegQotPushRequest{SecurityList: []*qotcommon.Security{sec}, SubTypeList: []int32{}, IsRegOrUnReg: true, IsFirstPush: true}, true, "subtype list is empty"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			err := RegQotPush(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			srv.AssertProtoID(t, 3002)
+		})
+	}
+}
 
-	server.RegisterHandler(ProtoID_GetSubInfo, func(reqBody []byte) (proto.Message, error) {
-		return newSuccessResponse(&qotgetsubinfo.S2C{
-			ConnSubInfoList: []*qotcommon.ConnSubInfo{
-				{
-					SubInfoList: []*qotcommon.SubInfo{
-						{SubType: &subType},
-					},
-					UsedQuota:     &usedQuota,
-					IsOwnConnData: &isOwnConnData,
+// =============================================================================
+// GetSubInfo (3003)
+// =============================================================================
+
+func TestGetSubInfo_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3003, func(reqBody []byte) (proto.Message, error) {
+		totalUsed, remain := int32(10), int32(90)
+		subType, usedQuota := int32(1), int32(5)
+		isOwnConn := true
+		return &qotgetsubinfo.Response{
+			RetType: okRet(),
+			S2C: &qotgetsubinfo.S2C{
+				ConnSubInfoList: []*qotcommon.ConnSubInfo{
+					{SubInfoList: []*qotcommon.SubInfo{{SubType: &subType}}, UsedQuota: &usedQuota, IsOwnConnData: &isOwnConn},
 				},
+				TotalUsedQuota: &totalUsed,
+				RemainQuota:    &remain,
 			},
-			TotalUsedQuota: &totalUsedQuota,
-			RemainQuota:    &remainQuota,
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	result, err := GetSubInfo(ctx, cli)
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+
+	rsp, err := GetSubInfo(context.Background(), cli)
 	if err != nil {
-		t.Fatalf("GetSubInfo failed: %v", err)
+		t.Fatalf("unexpected: %v", err)
 	}
-
-	if result.TotalUsedQuota != 10 {
-		t.Errorf("expected TotalUsedQuota 10, got %d", result.TotalUsedQuota)
+	if rsp.TotalUsedQuota != 10 {
+		t.Errorf("TotalUsedQuota: want 10, got %d", rsp.TotalUsedQuota)
 	}
-	if result.RemainQuota != 90 {
-		t.Errorf("expected RemainQuota 90, got %d", result.RemainQuota)
+	if rsp.RemainQuota != 90 {
+		t.Errorf("RemainQuota: want 90, got %d", rsp.RemainQuota)
 	}
-	if len(result.ConnSubInfoList) != 1 {
-		t.Fatalf("expected 1 conn sub info, got %d", len(result.ConnSubInfoList))
+	if len(rsp.ConnSubInfoList) != 1 {
+		t.Fatalf("ConnSubInfoList: want 1, got %d", len(rsp.ConnSubInfoList))
 	}
-
-	server.AssertProtoID(t, ProtoID_GetSubInfo)
-}
-
-func TestGetSubInfo_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetSubInfo, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetsubinfo.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetSubInfo(ctx, cli)
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
+	srv.AssertProtoID(t, 3003)
 }
 
 // =============================================================================
-// GetSecuritySnapshot
+// GetSecuritySnapshot (3203)
 // =============================================================================
 
-func TestGetSecuritySnapshot_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetSecuritySnapshot_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_GetSecuritySnapshot, func(reqBody []byte) (proto.Message, error) {
+	srv.RegisterHandler(3203, func(reqBody []byte) (proto.Message, error) {
 		var req qotgetsecuritysnapshot.Request
 		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetSecuritySnapshot request failed: %v", err)
+			return nil, err
 		}
-		if req.C2S == nil || len(req.C2S.SecurityList) == 0 {
-			t.Fatal("expected non-empty security list")
-		}
-		return newSuccessResponse(&qotgetsecuritysnapshot.S2C{
-			SnapshotList: []*qotgetsecuritysnapshot.Snapshot{
-				{Security: hkSecurity("00700")},
-			},
-		}), nil
-	})
-
-	ctx := context.Background()
-	req := &GetSecuritySnapshotRequest{
-		SecurityList: []*qotcommon.Security{hkSecurity("00700")},
-	}
-	result, err := GetSecuritySnapshot(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetSecuritySnapshot failed: %v", err)
-	}
-
-	if len(result.SnapshotList) != 1 {
-		t.Errorf("expected 1 snapshot, got %d", len(result.SnapshotList))
-	}
-
-	server.AssertProtoID(t, ProtoID_GetSecuritySnapshot)
-}
-
-func TestGetSecuritySnapshot_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetSecuritySnapshot(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetSecuritySnapshot_EmptySecurityList(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetSecuritySnapshot(ctx, cli, &GetSecuritySnapshotRequest{SecurityList: []*qotcommon.Security{}})
-	if err == nil {
-		t.Error("expected error for empty security list")
-	}
-}
-
-func TestGetSecuritySnapshot_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetSecuritySnapshot, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetsecuritysnapshot.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetSecuritySnapshot(ctx, cli, &GetSecuritySnapshotRequest{
-		SecurityList: []*qotcommon.Security{hkSecurity("00700")},
-	})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-// =============================================================================
-// GetStaticInfo
-// =============================================================================
-
-func TestGetStaticInfo_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_GetStaticInfo, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetstaticinfo.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetStaticInfo request failed: %v", err)
-		}
-		if req.C2S == nil {
-			t.Fatal("expected non-nil C2S")
-		}
-		return newSuccessResponse(&qotgetstaticinfo.S2C{
-			StaticInfoList: []*qotcommon.SecurityStaticInfo{
-				{Basic: &qotcommon.SecurityStaticBasic{Security: hkSecurity("00700"), Name: proto.String("Tencent")}},
-			},
-		}), nil
-	})
-
-	ctx := context.Background()
-	req := &GetStaticInfoRequest{
-		Market:  1,
-		SecType: 1,
-		SecurityList: []*qotcommon.Security{
-			hkSecurity("00700"),
-		},
-	}
-	result, err := GetStaticInfo(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetStaticInfo failed: %v", err)
-	}
-
-	if len(result.StaticInfoList) != 1 {
-		t.Errorf("expected 1 static info, got %d", len(result.StaticInfoList))
-	}
-
-	server.AssertProtoID(t, ProtoID_GetStaticInfo)
-}
-
-func TestGetStaticInfo_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetStaticInfo(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetStaticInfo_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_GetStaticInfo, func(reqBody []byte) (proto.Message, error) {
-		return &qotgetstaticinfo.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := GetStaticInfo(ctx, cli, &GetStaticInfoRequest{
-		Market:       1,
-		SecType:      1,
-		SecurityList: []*qotcommon.Security{hkSecurity("00700")},
-	})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-// =============================================================================
-// RequestHistoryKL
-// =============================================================================
-
-func TestRequestHistoryKL_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	klTime := "2026-04-08 15:00:00"
-	klClosePrice := 350.50
-	klOpenPrice := 348.00
-	klHighPrice := 352.00
-	klLowPrice := 347.00
-	klLastClosePrice := 349.00
-	klVolume := int64(12345678)
-	klTurnover := 4321098765.00
-	klTimestamp := 1775635200.0
-	klIsBlank := false
-
-	server.RegisterHandler(ProtoID_RequestHistoryKL, func(reqBody []byte) (proto.Message, error) {
-		var req qotrequesthistorykl.Request
-		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal RequestHistoryKL request failed: %v", err)
-		}
-		if req.C2S == nil || req.C2S.Security == nil {
-			t.Fatal("expected non-nil security")
-		}
-		return newSuccessResponse(&qotrequesthistorykl.S2C{
-			Security: hkSecurity("00700"),
-			Name:     proto.String("Tencent"),
-			KlList: []*qotcommon.KLine{
-				{
-					Time:           &klTime,
-					ClosePrice:     &klClosePrice,
-					OpenPrice:      &klOpenPrice,
-					HighPrice:      &klHighPrice,
-					LowPrice:       &klLowPrice,
-					LastClosePrice: &klLastClosePrice,
-					Volume:         &klVolume,
-					Turnover:       &klTurnover,
-					Timestamp:      &klTimestamp,
-					IsBlank:        &klIsBlank,
+		sec := req.C2S.SecurityList[0]
+		name, secType := "Tencent", int32(1)
+		lotSize, listTime := int32(100), "2004-06-16"
+		isSuspend, priceSpread := false, 0.1
+		updateTime, highPrice := "2024-01-15 14:30:00", 352.0
+		openPrice, lowPrice := 348.0, 347.0
+		lastClose, curPrice := 349.0, 350.5
+		vol, turnover := int64(12345678), 4321098765.0
+		turnoverRate := 0.025
+		return &qotgetsecuritysnapshot.Response{
+			RetType: okRet(),
+			S2C: &qotgetsecuritysnapshot.S2C{
+				SnapshotList: []*qotgetsecuritysnapshot.Snapshot{
+					{Basic: &qotgetsecuritysnapshot.SnapshotBasicData{
+						Security: sec, Name: &name, Type: &secType, IsSuspend: &isSuspend,
+						ListTime: &listTime, LotSize: &lotSize, PriceSpread: &priceSpread,
+						UpdateTime: &updateTime, HighPrice: &highPrice, OpenPrice: &openPrice,
+						LowPrice: &lowPrice, LastClosePrice: &lastClose, CurPrice: &curPrice,
+						Volume: &vol, Turnover: &turnover, TurnoverRate: &turnoverRate,
+					}},
 				},
 			},
-			NextReqKey: []byte("nextkey"),
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &RequestHistoryKLRequest{
-		RehabType:   0,
-		KlType:      4,
-		Security:    hkSecurity("00700"),
-		BeginTime:   "2026-01-01",
-		EndTime:     "2026-04-08",
-		MaxAckKLNum: 100,
-	}
-	result, err := RequestHistoryKL(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("RequestHistoryKL failed: %v", err)
-	}
-
-	if len(result.KLList) != 1 {
-		t.Fatalf("expected 1 KLine, got %d", len(result.KLList))
-	}
-	if result.KLList[0].ClosePrice != 350.50 {
-		t.Errorf("expected ClosePrice 350.50, got %f", result.KLList[0].ClosePrice)
-	}
-	if string(result.NextReqKey) != "nextkey" {
-		t.Errorf("expected NextReqKey 'nextkey', got %s", result.NextReqKey)
-	}
-
-	server.AssertProtoID(t, ProtoID_RequestHistoryKL)
-}
-
-func TestRequestHistoryKL_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := RequestHistoryKL(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestRequestHistoryKL_NilSecurity(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := RequestHistoryKL(ctx, cli, &RequestHistoryKLRequest{})
-	if err == nil {
-		t.Error("expected error for nil security")
-	}
-}
-
-func TestRequestHistoryKL_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_RequestHistoryKL, func(reqBody []byte) (proto.Message, error) {
-		return &qotrequesthistorykl.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := RequestHistoryKL(ctx, cli, &RequestHistoryKLRequest{Security: hkSecurity("00700")})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
+	for _, tc := range []struct {
+		name      string
+		req       *GetSecuritySnapshotRequest
+		wantErr   bool
+		errSubStr string
+		wantSnaps int
+	}{
+		{"basic", &GetSecuritySnapshotRequest{SecurityList: []*qotcommon.Security{sec}}, false, "", 1},
+		{"nil req", nil, true, "request is nil", 0},
+		{"empty seclist", &GetSecuritySnapshotRequest{SecurityList: []*qotcommon.Security{}}, true, "security list is empty", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetSecuritySnapshot(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantSnaps > 0 && len(rsp.SnapshotList) != tc.wantSnaps {
+				t.Errorf("snaps: want %d, got %d", tc.wantSnaps, len(rsp.SnapshotList))
+			}
+			srv.AssertProtoID(t, 3203)
+		})
 	}
 }
 
 // =============================================================================
-// RequestHistoryKLQuota
+// GetStaticInfo (3202)
 // =============================================================================
 
-func TestRequestHistoryKLQuota_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetStaticInfo_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_RequestHistoryKLQuota, func(reqBody []byte) (proto.Message, error) {
-		var req qotrequesthistoryklquota.Request
+	srv.RegisterHandler(3202, func(reqBody []byte) (proto.Message, error) {
+		var req qotgetstaticinfo.Request
 		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal RequestHistoryKLQuota request failed: %v", err)
+			return nil, err
 		}
-		if req.C2S == nil {
-			t.Fatal("expected non-nil C2S")
-		}
-		usedQuota := int32(50)
-		remainQuota := int32(450)
-		return newSuccessResponse(&qotrequesthistoryklquota.S2C{
-			UsedQuota:   &usedQuota,
-			RemainQuota: &remainQuota,
-		}), nil
-	})
-
-	ctx := context.Background()
-	req := &RequestHistoryKLQuotaRequest{GetDetail: true}
-	result, err := RequestHistoryKLQuota(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("RequestHistoryKLQuota failed: %v", err)
-	}
-
-	if result.UsedQuota != 50 {
-		t.Errorf("expected UsedQuota 50, got %d", result.UsedQuota)
-	}
-	if result.RemainQuota != 450 {
-		t.Errorf("expected RemainQuota 450, got %d", result.RemainQuota)
-	}
-
-	server.AssertProtoID(t, ProtoID_RequestHistoryKLQuota)
-}
-
-func TestRequestHistoryKLQuota_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := RequestHistoryKLQuota(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestRequestHistoryKLQuota_Error(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	retType := int32(common.RetType_RetType_Unknown)
-	retMsg := "server error"
-	server.RegisterHandler(ProtoID_RequestHistoryKLQuota, func(reqBody []byte) (proto.Message, error) {
-		return &qotrequesthistoryklquota.Response{RetType: &retType, RetMsg: &retMsg}, nil
-	})
-
-	ctx := context.Background()
-	_, err := RequestHistoryKLQuota(ctx, cli, &RequestHistoryKLQuotaRequest{GetDetail: true})
-	if err == nil {
-		t.Fatal("expected error for non-success RetType")
-	}
-}
-
-// =============================================================================
-// GetOptionQuote
-// =============================================================================
-
-func TestGetOptionQuote_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_GetOptionQuote, func(reqBody []byte) (proto.Message, error) {
-		return newSuccessResponse(&qotgetoptionquote.S2C{
-			OptionQuoteList: []*qotgetoptionquote.OptionQuote{
-				{Code: proto.String("HSI2405C35000")},
+		sec := req.C2S.SecurityList[0]
+		name, id := "Tencent", int64(1)
+		secType, lotSize := int32(1), int32(100)
+		listTime := "2004-06-16"
+		return &qotgetstaticinfo.Response{
+			RetType: okRet(),
+			S2C: &qotgetstaticinfo.S2C{
+				StaticInfoList: []*qotcommon.SecurityStaticInfo{
+					{Basic: &qotcommon.SecurityStaticBasic{
+						Security: sec, Id: &id, Name: &name, SecType: &secType,
+						LotSize: &lotSize, ListTime: &listTime,
+					}},
+				},
 			},
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetOptionQuoteRequest{
-		MultiLegs: []*qotcommon.ComboLeg{
-			{Side: proto.Int32(1), Options: &qotcommon.Security{}},
-		},
-	}
-	result, err := GetOptionQuote(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetOptionQuote failed: %v", err)
-	}
-
-	if len(result.OptionQuoteList) != 1 {
-		t.Errorf("expected 1 option quote, got %d", len(result.OptionQuoteList))
-	}
-
-	server.AssertProtoID(t, ProtoID_GetOptionQuote)
-}
-
-func TestGetOptionQuote_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetOptionQuote(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetOptionQuote_EmptyMultiLegs(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetOptionQuote(ctx, cli, &GetOptionQuoteRequest{MultiLegs: []*qotcommon.ComboLeg{}})
-	if err == nil {
-		t.Error("expected error for empty MultiLegs")
+	for _, tc := range []struct {
+		name      string
+		req       *GetStaticInfoRequest
+		wantErr   bool
+		errSubStr string
+		wantInfos int
+	}{
+		{"by seclist", &GetStaticInfoRequest{Market: 1, SecType: 1, SecurityList: []*qotcommon.Security{sec}}, false, "", 1},
+		{"nil req", nil, true, "request is nil", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetStaticInfo(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantInfos > 0 && len(rsp.StaticInfoList) != tc.wantInfos {
+				t.Errorf("infos: want %d, got %d", tc.wantInfos, len(rsp.StaticInfoList))
+			}
+			srv.AssertProtoID(t, 3202)
+		})
 	}
 }
 
 // =============================================================================
-// GetOptionStrategy
+// GetKL (3006) — qotgetkl + qotcommon.KLine
 // =============================================================================
 
-func TestGetOptionStrategy_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestGetKL_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	server.RegisterHandler(ProtoID_GetOptionStrategy, func(reqBody []byte) (proto.Message, error) {
-		var req qotgetoptionstrategy.Request
+	srv.RegisterHandler(3006, func(reqBody []byte) (proto.Message, error) {
+		var req qotgetkl.Request
 		if err := proto.Unmarshal(reqBody, &req); err != nil {
-			t.Fatalf("unmarshal GetOptionStrategy request failed: %v", err)
+			return nil, err
 		}
-		if req.C2S == nil || req.C2S.Owner == nil {
-			t.Fatal("expected non-nil owner")
-		}
-		return newSuccessResponse(&qotgetoptionstrategy.S2C{
-			StrategyList: []*qotgetoptionstrategy.OptionStrategyItem{
-				{ExpireDate: proto.String("2026-04-30")},
+		name := "Tencent"
+		time1, time2 := "2024-01-15", "2024-01-16"
+		high, open, low, close := 352.0, 348.0, 347.0, 350.5
+		vol1, vol2 := int64(12345678), int64(13245678)
+		turn1, turn2 := 4321098765.0, 4600000000.0
+		ts1, ts2 := 1705312200.0, 1705398600.0
+		lastClose := 349.0
+		pe, changeRate := 25.5, 0.004
+		isBlank := false
+		return &qotgetkl.Response{
+			RetType: okRet(),
+			S2C: &qotgetkl.S2C{
+				Security: req.C2S.Security,
+				Name:     &name,
+				KlList: []*qotcommon.KLine{
+					{Time: &time1, HighPrice: &high, OpenPrice: &open, LowPrice: &low, ClosePrice: &close,
+						LastClosePrice: &lastClose, Volume: &vol1, Turnover: &turn1, Timestamp: &ts1,
+						IsBlank: &isBlank, ChangeRate: &changeRate, Pe: &pe},
+					{Time: &time2, HighPrice: &high, OpenPrice: &open, LowPrice: &low, ClosePrice: &close,
+						LastClosePrice: &lastClose, Volume: &vol2, Turnover: &turn2, Timestamp: &ts2,
+						IsBlank: &isBlank, ChangeRate: &changeRate, Pe: &pe},
+				},
 			},
-		}), nil
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetOptionStrategyRequest{
-		Owner:          hkSecurity("HSI"),
-		OptionStrategy: 1,
-		ExpireTime:     "2026-04-30",
-	}
-	result, err := GetOptionStrategy(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetOptionStrategy failed: %v", err)
-	}
-
-	if len(result.StrategyList) != 1 {
-		t.Errorf("expected 1 strategy, got %d", len(result.StrategyList))
-	}
-
-	server.AssertProtoID(t, ProtoID_GetOptionStrategy)
-}
-
-func TestGetOptionStrategy_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetOptionStrategy(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetOptionStrategy_NilOwner(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetOptionStrategy(ctx, cli, &GetOptionStrategyRequest{Owner: nil, OptionStrategy: 1})
-	if err == nil {
-		t.Error("expected error for nil owner")
+	for _, tc := range []struct {
+		name      string
+		req       *GetKLRequest
+		wantErr   bool
+		errSubStr string
+		wantKLs   int
+	}{
+		{"basic", &GetKLRequest{Security: sec, RehabType: 0, KLType: 0, ReqNum: 10}, false, "", 2},
+		{"nil req", nil, true, "request is nil", 0},
+		{"nil security", &GetKLRequest{Security: nil, RehabType: 0, KLType: 0, ReqNum: 10}, true, "Security is nil", 0},
+		{"zero reqnum", &GetKLRequest{Security: sec, RehabType: 0, KLType: 0, ReqNum: 0}, true, "ReqNum must be positive", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetKL(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				if tc.errSubStr != "" && !strContains(err.Error(), tc.errSubStr) {
+					t.Errorf("error %q does not contain %q", err.Error(), tc.errSubStr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantKLs > 0 && len(rsp.KLList) != tc.wantKLs {
+				t.Errorf("KLs: want %d, got %d", tc.wantKLs, len(rsp.KLList))
+			}
+			srv.AssertProtoID(t, 3006)
+		})
 	}
 }
 
 // =============================================================================
-// GetOptionStrategyAnalysis
+// CapitalFlow (3211) — qotgetcapitalflow + CapitalFlowItem
 // =============================================================================
 
-func TestGetOptionStrategyAnalysis_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestCapitalFlow_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	code := "STRATEGY001"
-	name := "Bull Spread"
-	bid1 := 2.5
-	ask1 := 2.6
-	maxProfit := 1000.0
-	maxLoss := -500.0
-	breakeven := 350.0
-	probProfit := 0.65
-	delta := 0.5
-	theta := -0.1
-
-	server.RegisterHandler(ProtoID_GetOptionStrategyAnalysis, func(reqBody []byte) (proto.Message, error) {
-		return newSuccessResponse(&qotgetoptionstrategyanalysis.S2C{
-			Code:            &code,
-			Name:            &name,
-			OptionStrategy:  proto.Int32(1),
-			Bid1:            &bid1,
-			Ask1:            &ask1,
-			MaxProfit:       &maxProfit,
-			MaxLoss:         &maxLoss,
-			BreakevenPoints: []float64{breakeven},
-			ProbOfProfit:    &probProfit,
-			Delta:           &delta,
-			Theta:           &theta,
-		}), nil
+	srv.RegisterHandler(3211, func(reqBody []byte) (proto.Message, error) {
+		inFlow := 1234567.0
+		time1, time2 := "10:00:00", "10:05:00"
+		ts1, ts2 := 1705312200.0, 1705312500.0
+		mainInFlow := 800000.0
+		lastTime := "15:00:00"
+		lastTS := 1705312200.0
+		return &qotgetcapitalflow.Response{
+			RetType: okRet(),
+			S2C: &qotgetcapitalflow.S2C{
+				FlowItemList: []*qotgetcapitalflow.CapitalFlowItem{
+					{InFlow: &inFlow, Time: &time1, Timestamp: &ts1, MainInFlow: &mainInFlow},
+					{InFlow: &inFlow, Time: &time2, Timestamp: &ts2, MainInFlow: &mainInFlow},
+				},
+				LastValidTime:      &lastTime,
+				LastValidTimestamp: &lastTS,
+			},
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetOptionStrategyAnalysisRequest{
-		MultiLegs: []*qotcommon.ComboLeg{
-			{Side: proto.Int32(1), Options: &qotcommon.Security{}},
-		},
-	}
-	result, err := GetOptionStrategyAnalysis(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetOptionStrategyAnalysis failed: %v", err)
-	}
-
-	if result.Code != "STRATEGY001" {
-		t.Errorf("expected Code STRATEGY001, got %s", result.Code)
-	}
-	if result.MaxProfit != 1000.0 {
-		t.Errorf("expected MaxProfit 1000.0, got %f", result.MaxProfit)
-	}
-	if len(result.BreakevenPoints) != 1 {
-		t.Errorf("expected 1 breakeven point, got %d", len(result.BreakevenPoints))
-	}
-
-	server.AssertProtoID(t, ProtoID_GetOptionStrategyAnalysis)
-}
-
-func TestGetOptionStrategyAnalysis_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetOptionStrategyAnalysis(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
-	}
-}
-
-func TestGetOptionStrategyAnalysis_EmptyMultiLegs(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	ctx := context.Background()
-	_, err := GetOptionStrategyAnalysis(ctx, cli, &GetOptionStrategyAnalysisRequest{MultiLegs: []*qotcommon.ComboLeg{}})
-	if err == nil {
-		t.Error("expected error for empty MultiLegs")
+	for _, tc := range []struct {
+		name     string
+		req      *GetCapitalFlowRequest
+		wantErr  bool
+		wantFlow int
+	}{
+		{"basic", &GetCapitalFlowRequest{Security: sec}, false, 2},
+		{"nil req", nil, true, 0},
+		{"nil security", &GetCapitalFlowRequest{Security: nil}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetCapitalFlow(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantFlow > 0 && len(rsp.FlowItemList) != tc.wantFlow {
+				t.Errorf("flows: want %d, got %d", tc.wantFlow, len(rsp.FlowItemList))
+			}
+			srv.AssertProtoID(t, 3211)
+		})
 	}
 }
 
 // =============================================================================
-// GetOptionStrategySpread
+// CapitalDistribution (3212) — qotgetcapitaldistribution
 // =============================================================================
 
-func TestGetOptionStrategySpread_Mock(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+func TestCapitalDistribution_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
-	defer cleanup()
-
-	spread1 := 0.5
-	spread2 := 1.0
-	spread3 := 2.0
-
-	server.RegisterHandler(ProtoID_GetOptionStrategySpread, func(reqBody []byte) (proto.Message, error) {
-		return newSuccessResponse(&qotgetoptionstrategyspreads.S2C{
-			SpreadList: []float64{spread1, spread2, spread3},
-		}), nil
+	srv.RegisterHandler(3212, func(reqBody []byte) (proto.Message, error) {
+		capInBig, capOutBig := 5000000.0, 3000000.0
+		capInMid, capOutMid := 2000000.0, 1500000.0
+		capInSmall, capOutSmall := 1000000.0, 800000.0
+		updateTime := "15:00:00"
+		updateTS := 1705312200.0
+		return &qotgetcapitaldistribution.Response{
+			RetType: okRet(),
+			S2C: &qotgetcapitaldistribution.S2C{
+				CapitalInBig:    &capInBig,
+				CapitalOutBig:   &capOutBig,
+				CapitalInMid:    &capInMid,
+				CapitalOutMid:   &capOutMid,
+				CapitalInSmall:  &capInSmall,
+				CapitalOutSmall: &capOutSmall,
+				UpdateTime:      &updateTime,
+				UpdateTimestamp: &updateTS,
+			},
+		}, nil
 	})
 
-	ctx := context.Background()
-	req := &GetOptionStrategySpreadRequest{
-		Owner:          hkSecurity("HSI"),
-		OptionStrategy: 1,
-		ExpireTime:     "2026-04-30",
-	}
-	result, err := GetOptionStrategySpread(ctx, cli, req)
-	if err != nil {
-		t.Fatalf("GetOptionStrategySpread failed: %v", err)
-	}
-
-	if len(result.SpreadList) != 3 {
-		t.Errorf("expected 3 spreads, got %d", len(result.SpreadList))
-	}
-	if result.SpreadList[0] != 0.5 {
-		t.Errorf("expected first spread 0.5, got %f", result.SpreadList[0])
-	}
-
-	server.AssertProtoID(t, ProtoID_GetOptionStrategySpread)
-}
-
-func TestGetOptionStrategySpread_NilRequest(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
-
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
 
-	ctx := context.Background()
-	_, err := GetOptionStrategySpread(ctx, cli, nil)
-	if err == nil {
-		t.Error("expected error for nil request")
+	for _, tc := range []struct {
+		name      string
+		security  *qotcommon.Security
+		wantErr   bool
+		wantCapIn float64
+	}{
+		{"basic", sec, false, 5000000.0},
+		{"nil security", nil, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetCapitalDistribution(context.Background(), cli, tc.security)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantCapIn > 0 && rsp.CapitalDistribution.CapitalInBig != tc.wantCapIn {
+				t.Errorf("CapitalInBig: want %.0f, got %.0f", tc.wantCapIn, rsp.CapitalDistribution.CapitalInBig)
+			}
+			srv.AssertProtoID(t, 3212)
+		})
 	}
 }
 
-func TestGetOptionStrategySpread_NilOwner(t *testing.T) {
-	server := futuapitestutil.NewMockServer(t)
-	if err := server.Start(); err != nil {
-		t.Fatalf("failed to start mock server: %v", err)
-	}
-	defer server.Stop()
+// =============================================================================
+// GetBasicQot (3004) — qotgetbasicqot + qotcommon.BasicQot (14 required fields)
+// =============================================================================
 
-	cli, cleanup := futuapitestutil.NewTestClient(t, server)
+func TestGetBasicQot_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3004, func(reqBody []byte) (proto.Message, error) {
+		isSuspend := false
+		listTime, updateTime := "2004-06-16", "2024-01-15 14:30:00"
+		priceSpread, highPrice := 0.1, 352.0
+		openPrice, lowPrice := 348.0, 347.0
+		curPrice, lastClose := 350.5, 349.0
+		vol := int64(12345678)
+		turnover := 4321098765.0
+		turnoverRate, amplitude := 0.025, 0.03
+		listTS, updateTS := 1087248000.0, 1705312200.0
+		secStatus := int32(0)
+		return &qotgetbasicqot.Response{
+			RetType: okRet(),
+			S2C: &qotgetbasicqot.S2C{
+				BasicQotList: []*qotcommon.BasicQot{
+					{Security: nil, IsSuspended: &isSuspend,
+						ListTime: &listTime, PriceSpread: &priceSpread, UpdateTime: &updateTime,
+						HighPrice: &highPrice, OpenPrice: &openPrice, LowPrice: &lowPrice,
+						CurPrice: &curPrice, LastClosePrice: &lastClose, Volume: &vol,
+						Turnover: &turnover, TurnoverRate: &turnoverRate, Amplitude: &amplitude,
+						SecStatus: &secStatus, ListTimestamp: &listTS, UpdateTimestamp: &updateTS},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name     string
+		secList  []*qotcommon.Security
+		wantErr  bool
+		wantQots int
+	}{
+		{"basic", []*qotcommon.Security{sec}, false, 1},
+		{"nil seclist", nil, true, 0},
+		{"empty seclist", []*qotcommon.Security{}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetBasicQot(context.Background(), cli, tc.secList)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantQots > 0 && len(rsp) != tc.wantQots {
+				t.Errorf("qots: want %d, got %d", tc.wantQots, len(rsp))
+			}
+			srv.AssertProtoID(t, 3004)
+		})
+	}
+}
+
+// =============================================================================
+// GetPlateSet (3204) — qotgetplateset + qotcommon.PlateInfo
+// =============================================================================
+
+func TestGetPlateSet_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3204, func(reqBody []byte) (proto.Message, error) {
+		plateCode1, plateName1 := "BK001", "Technology"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		plateType := int32(1)
+		return &qotgetplateset.Response{
+			RetType: okRet(),
+			S2C: &qotgetplateset.S2C{
+				PlateInfoList: []*qotcommon.PlateInfo{
+					{Plate: &qotcommon.Security{Market: &market, Code: &plateCode1}, Name: &plateName1, PlateType: &plateType},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
 	defer cleanup()
 
-	ctx := context.Background()
-	_, err := GetOptionStrategySpread(ctx, cli, &GetOptionStrategySpreadRequest{Owner: nil, OptionStrategy: 1})
-	if err == nil {
-		t.Error("expected error for nil owner")
+	for _, tc := range []struct {
+		name         string
+		market       int32
+		plateSetType int32
+		wantErr      bool
+		wantPlates   int
+	}{
+		{"hk main board", 1, 1, false, 1},
+		{"zero market", 0, 1, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetPlateSet(context.Background(), cli, &GetPlateSetRequest{Market: tc.market, PlateSetType: tc.plateSetType})
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantPlates > 0 && len(rsp.PlateSetList) != tc.wantPlates {
+				t.Errorf("plates: want %d, got %d", tc.wantPlates, len(rsp.PlateSetList))
+			}
+			srv.AssertProtoID(t, 3204)
+		})
+	}
+}
+
+// =============================================================================
+// GetOwnerPlate (3207) — qotgetownerplate + qotgetownerplate.SecurityOwnerPlate
+// =============================================================================
+
+func TestGetOwnerPlate_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3207, func(reqBody []byte) (proto.Message, error) {
+		secCode, secName := "00700", "Tencent"
+		plateCode, plateName := "BK001", "Technology"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		return &qotgetownerplate.Response{
+			RetType: okRet(),
+			S2C: &qotgetownerplate.S2C{
+				OwnerPlateList: []*qotgetownerplate.SecurityOwnerPlate{
+					{Security: &qotcommon.Security{Market: &market, Code: &secCode}, Name: &secName,
+						PlateInfoList: []*qotcommon.PlateInfo{
+							{Plate: &qotcommon.Security{Market: &market, Code: &plateCode}, Name: &plateName},
+						}},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name       string
+		req        *GetOwnerPlateRequest
+		wantErr    bool
+		wantPlates int
+	}{
+		{"basic", &GetOwnerPlateRequest{SecurityList: []*qotcommon.Security{sec}}, false, 1},
+		{"nil req", nil, true, 0},
+		{"empty seclist", &GetOwnerPlateRequest{SecurityList: []*qotcommon.Security{}}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetOwnerPlate(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantPlates > 0 && len(rsp.OwnerPlateList) != tc.wantPlates {
+				t.Errorf("plates: want %d, got %d", tc.wantPlates, len(rsp.OwnerPlateList))
+			}
+			srv.AssertProtoID(t, 3207)
+		})
+	}
+}
+
+// =============================================================================
+// GetMarketState (3223) — qotgetmarketstate + qotgetmarketstate.MarketInfo
+// =============================================================================
+
+func TestGetMarketState_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3223, func(reqBody []byte) (proto.Message, error) {
+		secCode, name := "00700", "Tencent"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		marketState := int32(1)
+		return &qotgetmarketstate.Response{
+			RetType: okRet(),
+			S2C: &qotgetmarketstate.S2C{
+				MarketInfoList: []*qotgetmarketstate.MarketInfo{
+					{Security: &qotcommon.Security{Market: &market, Code: &secCode}, Name: &name, MarketState: &marketState},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("00700")}
+
+	for _, tc := range []struct {
+		name      string
+		req       *GetMarketStateRequest
+		wantErr   bool
+		wantInfos int
+	}{
+		{"basic", &GetMarketStateRequest{SecurityList: []*qotcommon.Security{sec}}, false, 1},
+		{"nil req", nil, true, 0},
+		{"empty seclist", &GetMarketStateRequest{SecurityList: []*qotcommon.Security{}}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetMarketState(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantInfos > 0 && len(rsp.MarketInfoList) != tc.wantInfos {
+				t.Errorf("infos: want %d, got %d", tc.wantInfos, len(rsp.MarketInfoList))
+			}
+			srv.AssertProtoID(t, 3223)
+		})
+	}
+}
+
+// =============================================================================
+// GetReference (3206) — qotgetreference + qotcommon.SecurityStaticInfo
+// =============================================================================
+
+func TestGetReference_API(t *testing.T) {
+	srv := testutil.NewMockServer(t)
+	srv.Start()
+	defer srv.Stop()
+
+	srv.RegisterHandler(3206, func(reqBody []byte) (proto.Message, error) {
+		secCode := "00700"
+		market := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+		name, id := "Tencent", int64(1)
+		secType, lotSize := int32(1), int32(100)
+		listTime := "2004-06-16"
+		return &qotgetreference.Response{
+			RetType: okRet(),
+			S2C: &qotgetreference.S2C{
+				StaticInfoList: []*qotcommon.SecurityStaticInfo{
+					{Basic: &qotcommon.SecurityStaticBasic{
+						Security: &qotcommon.Security{Market: &market, Code: &secCode},
+						Id:       &id, Name: &name, SecType: &secType, LotSize: &lotSize, ListTime: &listTime,
+					}},
+				},
+			},
+		}, nil
+	})
+
+	cli, cleanup := testutil.NewTestClient(t, srv)
+	defer cleanup()
+	hkMkt := int32(qotcommon.QotMarket_QotMarket_HK_Security)
+	sec := &qotcommon.Security{Market: &hkMkt, Code: strPtr("HSI2405")}
+
+	for _, tc := range []struct {
+		name     string
+		req      *GetReferenceRequest
+		wantErr  bool
+		wantRefs int
+	}{
+		{"basic", &GetReferenceRequest{Security: sec, ReferenceType: 1}, false, 1},
+		{"nil req", nil, true, 0},
+		{"nil security", &GetReferenceRequest{Security: nil, ReferenceType: 1}, true, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv.ClearRequests()
+			rsp, err := GetReference(context.Background(), cli, tc.req)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected: %v", err)
+			}
+			if tc.wantRefs > 0 && len(rsp.StaticInfoList) != tc.wantRefs {
+				t.Errorf("refs: want %d, got %d", tc.wantRefs, len(rsp.StaticInfoList))
+			}
+			srv.AssertProtoID(t, 3206)
+		})
 	}
 }
