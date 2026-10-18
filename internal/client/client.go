@@ -1032,7 +1032,18 @@ func (c *Client) keepAlive() error {
 	}
 
 	serialNo := c.nextSerialNo()
-	if err := c.conn.WritePacket(ProtoID_KeepAlive, serialNo, body); err != nil {
+	// KeepAlive travels on the same encrypted channel as every other request.
+	// Sending it in the clear on an encrypted connection gets it rejected, and
+	// unmarshalling the encrypted reply directly fails with a wire-format error.
+	if atomic.LoadInt32(&c.isEncrypt) != 0 {
+		encBody, err := c.EncryptRequestBody(ProtoID_KeepAlive, body)
+		if err != nil {
+			return fmt.Errorf("AES encrypt: %w", err)
+		}
+		if err := c.conn.WritePacketEncrypted(ProtoID_KeepAlive, serialNo, encBody, sha1.Sum(body)); err != nil {
+			return err
+		}
+	} else if err := c.conn.WritePacket(ProtoID_KeepAlive, serialNo, body); err != nil {
 		return err
 	}
 
@@ -1041,8 +1052,18 @@ func (c *Client) keepAlive() error {
 		return err
 	}
 
+	plaintext, err := c.DecryptResponseBody(ProtoID_KeepAlive, respPkt.Body)
+	if err != nil {
+		return fmt.Errorf("keepalive decrypt: %w", err)
+	}
+	if atomic.LoadInt32(&c.isEncrypt) != 0 {
+		if err := VerifyBodySHA1(respPkt, plaintext); err != nil {
+			return fmt.Errorf("keepalive integrity: %w", err)
+		}
+	}
+
 	var rsp keepalive.Response
-	if err := proto.Unmarshal(respPkt.Body, &rsp); err != nil {
+	if err := proto.Unmarshal(plaintext, &rsp); err != nil {
 		return err
 	}
 
