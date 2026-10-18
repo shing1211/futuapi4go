@@ -172,7 +172,7 @@ const (
 // from 10.5.6508 through 10.10.7008) — clientVer is a client-side identifier
 // and OpenD does not require it to track the protocol version. Advancing it is
 // a local convention of this SDK.
-const handshakeClientVer int32 = 300 // matches the Python SDK; OpenD 10.11 stalls on a newer claim
+const handshakeClientVer int32 = 1100 // Futu OpenD protocol v10.10.7008
 
 // LogLevel constants for clarity.
 // Higher values suppress more verbose logging.
