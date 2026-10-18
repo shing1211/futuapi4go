@@ -66,6 +66,9 @@ type ConnInterface interface {
 	SetAPITimeout(time.Duration)
 	Dial(addr string) error
 	SetTLSConfig(cfg *tls.Config)
+	// ExpectEncryptedSHA1 marks inbound bodies as encrypted, so readOne leaves
+	// the SHA1 check to the decrypting caller.
+	ExpectEncryptedSHA1(bool)
 	readOne() (*Packet, error)
 }
 
@@ -81,6 +84,13 @@ type Conn struct {
 
 	pushHandler PacketHandler
 	apiTimeout  time.Duration
+
+	// expectEncryptedSHA1 records that inbound bodies are encrypted, so the
+	// header's SHA1 is over the PLAINTEXT (the protocol says SHA1(plaintext);
+	// the Python SDK verifies it after decrypting). readOne cannot check it
+	// there, and verifying the ciphertext against a plaintext digest makes every
+	// encrypted response look corrupt. Callers verify after decryption instead.
+	expectEncryptedSHA1 bool
 }
 
 // maxEarlyResponses bounds the buffer of responses that arrive before their
@@ -113,6 +123,14 @@ func (c *Conn) SetAPITimeout(timeout time.Duration) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.apiTimeout = timeout
+}
+
+// ExpectEncryptedSHA1 marks whether inbound bodies are encrypted. See the field
+// comment on expectEncryptedSHA1.
+func (c *Conn) ExpectEncryptedSHA1(v bool) {
+	c.mu.Lock()
+	c.expectEncryptedSHA1 = v
+	c.mu.Unlock()
 }
 
 // currentConn returns the underlying connection under the lock. Callers use the
@@ -292,13 +310,28 @@ func (c *Conn) readOne() (*Packet, error) {
 		}
 	}
 
-	// Verify SHA1 checksum
-	actualSHA1 := sha1.Sum(body)
-	if actualSHA1 != h.BodySHA1 {
-		return nil, NewError(CodeChecksumMismatch, "body integrity check failed")
+	// Verify SHA1 checksum. Encrypted bodies carry SHA1(plaintext), so the
+	// check belongs after decryption; doing it here would reject every
+	// encrypted response. VerifyBodySHA1 is called by the decrypting caller.
+	if !c.expectEncryptedSHA1 {
+		actualSHA1 := sha1.Sum(body)
+		if actualSHA1 != h.BodySHA1 {
+			return nil, NewError(CodeChecksumMismatch, "body integrity check failed")
+		}
 	}
 
 	return &Packet{Header: h, Body: body}, nil
+}
+
+// VerifyBodySHA1 checks a decrypted body against the header's SHA1. Callers that
+// decrypt a response must use this instead of trusting readOne's check, which is
+// skipped for encrypted connections.
+func VerifyBodySHA1(pkt *Packet, plaintext []byte) error {
+	actual := sha1.Sum(plaintext)
+	if actual != pkt.Header.BodySHA1 {
+		return NewError(CodeChecksumMismatch, "body integrity check failed")
+	}
+	return nil
 }
 
 func (c *Conn) ReadResponse(serial uint32, timeout time.Duration) (*Packet, error) {

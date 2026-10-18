@@ -269,6 +269,8 @@ func (m *mockConn) APITimeout() time.Duration { return m.apiTimeout }
 
 func (m *mockConn) SetAPITimeout(d time.Duration) { m.apiTimeout = d }
 
+func (m *mockConn) ExpectEncryptedSHA1(_ bool) {}
+
 func (m *mockConn) Dial(addr string) error { return nil }
 
 func (m *mockConn) SetTLSConfig(cfg *tls.Config) {}
