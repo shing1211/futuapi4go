@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.3] - 2026-10-19
+
+### Fixed
+
+- **Encrypted response integrity check missing** (`internal/client/client.go`):
+  `VerifyBodySHA1` was absent from `requestInternal` and `requestContextInternal`,
+  so encrypted API responses had no SHA1 integrity verification. Added after each
+  `DecryptResponseBody` call, gated by `isEncrypt=1`. (PR #53)
+- **Mock server AES scheme mismatch** (`internal/testutil/mock/server.go`): mock
+  was using FTAES (raw 16-byte key) for request decryption but the client encrypts
+  requests with AES-256-ECB (`SHA256(key)`). Corrected to `AES256Decrypt`.
+- **Mock response headers used wrong SHA1** (`internal/testutil/mock/server.go`):
+  response headers carried `SHA1(ciphertext)` instead of the spec-mandated
+  `SHA1(plaintext)`. Fixed `writePacket` to accept explicit SHA1.
+- **AES-256-ECB helpers made public** (`internal/client/aes.go`): `AES256Encrypt`
+  and `AES256Decrypt` exposed so the mock can use the same scheme as the client.
+
 ## [0.21.0] - 2026-09-29
 
 ### Fixed
