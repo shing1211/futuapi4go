@@ -3,6 +3,7 @@ package mock
 import (
 	"crypto/rand"
 	"crypto/sha1"
+	"crypto/sha256"
 	"fmt"
 	"net"
 	"reflect"
@@ -226,7 +227,10 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 			}
 		} else if cs != nil && cs.encryptEnabled {
 			if protoID != 1001 {
-				decrypted, err := futuapi.AESDecrypt(cs.aesKey, body)
+				// Client encrypts requests with AES-256-ECB (SHA256(key) as key).
+				// Use the same scheme so we can verify SHA1(plaintext) below.
+				key256 := sha256.Sum256(cs.aesKey)
+				decrypted, err := futuapi.AES256Decrypt(key256[:], body)
 				if err != nil {
 					s.t.Errorf("AES decrypt failed: %v", err)
 					return
@@ -250,8 +254,8 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 			s.sha1Results = append(s.sha1Results, result)
 			s.sha1ResultsMu.Unlock()
 
-			s.t.Logf("SHA1 check protoID=%d serialNo=%d: header=%x ciphertextMatch=%v plaintextMatch=%v",
-				protoID, serialNo, headerSHA1[:8], result.MatchedCiphertext, result.MatchedPlaintext)
+			s.t.Logf("SHA1 check protoID=%d serialNo=%d: matchedCiphertext=%v matchedPlaintext=%v",
+				protoID, serialNo, result.MatchedCiphertext, result.MatchedPlaintext)
 
 			if s.StrictSHA1 && !result.MatchedPlaintext {
 				s.t.Logf("protoID=%d: strict SHA1 check FAILED (closing connection)", protoID)
@@ -289,7 +293,12 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 			continue
 		}
 
-		// Encrypt response if needed
+		// Encrypt response if needed.
+		// For encrypted responses the wire carries ciphertext but the packet header
+		// must carry SHA1(plaintext) so the client can verify integrity after
+		// decryption — compute it here before AES encryption and pass it to
+		// writePacket explicitly.
+		plaintextSHA1 := sha1.Sum(respBody)
 		outBody := respBody
 		if cs != nil && cs.encryptEnabled {
 			encrypted, err := futuapi.AESEncrypt(cs.aesKey, respBody)
@@ -300,7 +309,7 @@ func (s *MockServer) handleConnection(conn net.Conn) {
 			outBody = encrypted
 		}
 
-		if err := s.writePacket(conn, protoID, serialNo, outBody); err != nil {
+		if err := s.writePacket(conn, protoID, serialNo, outBody, plaintextSHA1[:]); err != nil {
 			s.t.Errorf("Failed to write response: %v", err)
 			return
 		}
@@ -354,9 +363,12 @@ func (s *MockServer) handleInitConnectRequest(conn net.Conn, serialNo uint32, pl
 	}
 
 	// Encrypt response with RSA if in encryption mode
+	// When encrypted the wire carries ciphertext but the header must carry
+	// SHA1(plaintext) per the protocol spec, so we compute it here and pass
+	// it explicitly to writePacket.
+	plaintextSHA1 := sha1.Sum(respBody)
 	outBody := respBody
 	if s.privKeyPEM != "" {
-		// Use the public key to encrypt (same key pair)
 		encrypted, err := futuapi.RSAEncrypt(s.pubKeyPEM, respBody)
 		if err != nil {
 			return fmt.Errorf("RSA encrypt InitConnect response: %w", err)
@@ -364,7 +376,7 @@ func (s *MockServer) handleInitConnectRequest(conn net.Conn, serialNo uint32, pl
 		outBody = encrypted
 	}
 
-	if err := s.writePacket(conn, 1001, serialNo, outBody); err != nil {
+	if err := s.writePacket(conn, 1001, serialNo, outBody, plaintextSHA1[:]); err != nil {
 		return fmt.Errorf("write InitConnect response: %w", err)
 	}
 
@@ -456,7 +468,12 @@ func (s *MockServer) readPacket(conn net.Conn) (protoID uint32, serialNo uint32,
 	return protoID, serialNo, bodySHA1, body, nil
 }
 
-func (s *MockServer) writePacket(conn net.Conn, protoID, serialNo uint32, body []byte) error {
+// writePacket sends a Futu protocol packet. If bodySHA1 is nil the SHA1 is
+// computed over body (the historical behaviour). Passing a non-nil bodySHA1
+// overrides that derivation — needed when the caller knows the plaintext SHA1
+// but will send ciphertext over the wire (e.g. the RSA-encrypted InitConnect
+// response, where the header must carry SHA1(plaintext) per the protocol spec).
+func (s *MockServer) writePacket(conn net.Conn, protoID, serialNo uint32, body []byte, bodySHA1Arg ...[]byte) error {
 	header := make([]byte, 44)
 	header[0] = 'F'
 	header[1] = 'T'
@@ -465,7 +482,13 @@ func (s *MockServer) writePacket(conn net.Conn, protoID, serialNo uint32, body [
 	header[7] = 0
 	writeUint32LE(header[8:], serialNo)
 	writeUint32LE(header[12:], uint32(len(body)))
-	sha1Hash := sha1.Sum(body)
+	var sha1Hash [20]byte
+	if len(bodySHA1Arg) > 0 && bodySHA1Arg[0] != nil {
+		sha1Hash = sha1.Sum(nil) // zero the array
+		copy(sha1Hash[:], bodySHA1Arg[0])
+	} else {
+		sha1Hash = sha1.Sum(body)
+	}
 	copy(header[16:36], sha1Hash[:])
 
 	if _, err := conn.Write(header); err != nil {

@@ -1318,7 +1318,7 @@ func (c *Client) EncryptRequestBody(protoID uint32, body []byte) ([]byte, error)
 		return aesCBCEncrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
 	}
 	key256 := sha256.Sum256([]byte(c.getAESKey()))
-	return aes256Encrypt(key256[:], body)
+	return AES256Encrypt(key256[:], body)
 }
 
 // DecryptResponseBody decrypts the response body using FTAES_ECB when the
@@ -1347,7 +1347,7 @@ func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error
 	}
 
 	key256 := sha256.Sum256([]byte(c.getAESKey()))
-	plaintext, err = aes256Decrypt(key256[:], body)
+	plaintext, err = AES256Decrypt(key256[:], body)
 	if err == nil {
 		return plaintext, nil
 	}
@@ -1587,6 +1587,9 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
 		}
+		if err := VerifyBodySHA1(pkt, plaintext); err != nil {
+			return fmt.Errorf("body integrity: %w", err)
+		}
 	}
 
 	if err := proto.Unmarshal(plaintext, rsp); err != nil {
@@ -1665,6 +1668,9 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
+		}
+		if err := VerifyBodySHA1(pkt, plaintext); err != nil {
+			return fmt.Errorf("body integrity: %w", err)
 		}
 	}
 

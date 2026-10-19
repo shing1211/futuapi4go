@@ -172,7 +172,10 @@ func aesCBCEncrypt(key []byte, iv []byte, plaintext []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func aes256Encrypt(key []byte, plaintext []byte) ([]byte, error) {
+// AES256Encrypt encrypts plaintext using AES-256-ECB with the Futu trailer
+// format (identical padding scheme to FTAES_ECB). The key must be exactly 32
+// bytes; callers typically pass sha256.Sum256(rawKey).
+func AES256Encrypt(key []byte, plaintext []byte) ([]byte, error) {
 	if len(key) != 32 {
 		return nil, NewError(CodeEncryptionFailed, "AES-256 key must be 32 bytes")
 	}
@@ -195,7 +198,8 @@ func aes256Encrypt(key []byte, plaintext []byte) ([]byte, error) {
 	return append(ciphertext, trailer...), nil
 }
 
-func aes256Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
+// AES256Decrypt decrypts ciphertext encrypted by AES256Encrypt.
+func AES256Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	if len(key) != 32 {
 		return nil, NewError(CodeDecryptionFailed, "AES-256 key must be 32 bytes")
 	}
