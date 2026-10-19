@@ -36,7 +36,13 @@ func CancelAllOrders(ctx context.Context, c *futuapi.Client, accID uint64, marke
 		Header:        header,
 		ModifyOrderOp: proto.Int32(int32(constant.ModifyOrderOp_Cancel)),
 		ForAll:        proto.Bool(true),
+		PacketID: &common.PacketID{
+			ConnID: proto.Uint64(c.GetConnID()),
+		},
 	}
+	serialNo := c.NextSerialNo()
+	c2s.PacketID.SerialNo = &serialNo
+
 	pkt := &trdmodifyorder.Request{C2S: c2s}
 	var rsp trdmodifyorder.Response
 
