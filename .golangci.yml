@@ -1,76 +1,85 @@
-# golangci-lint configuration for futuapi4go
+# golangci-lint configuration for futuapi4go (v2 schema)
+#
+# Default-enabled in v2: errcheck, govet, ineffassign, staticcheck, unused.
+# Formatters (gofmt, goimports) live under `formatters`.
+version: "2"
+
+run:
+  modules-download-mode: readonly
+  tests: true
 
 linters:
   enable:
-    - govet      # Go compiler checks
-    - staticcheck # Static analysis checks
-    - unused    # Check for unused code
-    - errcheck   # Check for unchecked errors
-    - gofmt      # Check formatting
-    - goimports  # Check imports
-    - goheader   # Check source file headers
-    - misspell   # Check for misspellings
-    - unconvert  # Check for unnecessary type conversions
-    - unparam    # Check for unused function parameters
+    - goheader
+    - misspell
+    - unparam
+  disable:
+    # Proto-generated conversions trigger false positives (original intent).
+    - unconvert
+  settings:
+    govet:
+      enable:
+        - shadow
+    goheader:
+      template: |-
+        Copyright 2026 shing1211
 
-linters-settings:
-  govet:
-    check-shadowing: true
-  gofmt:
-    simplify: true
-  goimports:
-    local-prefixes: github.com/shing1211/futuapi4go
-  goheader:
-    template: |
-      Copyright 2026 shing1211
-      ->
-      Licensed under the Apache License, Version 2.0 (the "License");
-      ->
-      Licensed under the Apache License, Version 2.0 (the "License");
-    template-placeholder:
-      -
-        key: "->"
-        value: ""
-      -
-        key: "^Copyright"
-        value: "// Copyright {{.FormatYear}} shing1211"
-      -
-        key: "^Licensed"
-        value: "// Licensed under the Apache License, Version 2.0 (the \"License\");"
-  misspell:
-    locale: US
-  unconvert:
-    ignore-always: true
-    enabled: false # May have false positives with proto conversions
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - std-error-handling
+    paths:
+      - pkg/pb/
+      - test/
+      - third_party$
+      - builtin$
+      - examples$
+    rules:
+      # Test files and generated protobuf/markdown are excluded from
+      # errcheck/unchecked noise.
+      - path: _test\.go
+        text: "errcheck|unchecked"
+      - path: \.pb\.go$
+        text: "."
+      - path: \.md$
+        text: "."
 
 issues:
-  exclude-rules:
-    # Exclude generated protobuf code
-    - path: pkg/pb/
-    - path: _test\.go
-    - path: test/
-    - path: \.pb\.go$
-    
-    # Exclude documentation files
-    - path: \.md$
-    - path: _test\.go
-    
-    # Exclude common safe patterns
-    - text: "errcheck|unchecked"
-      # _ = err is acceptable in cleanup functions
-      
-  exclude-use-default: false
-  
+  # Only gate issues introduced since origin/main. The codebase carries ~60
+  # pre-existing findings (mostly dead helpers and header mismatches); gating
+  # on all of them would block every commit and train people to bypass the
+  # hook. New code is still held to the full ruleset.
+  new-from-rev: origin/main
   max-issues-per-linter: 0
   max-same-issues: 0
 
-run:
-  timeout: 5m
-  tests: true
-  modules-download-mode: readonly
-
-# Output settings  
-output:
-  format: colored-line-number
-  print-issued-lines: true
-  print-linter-name: true
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+    goimports:
+      local-prefixes:
+        - github.com/shing1211/futuapi4go
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

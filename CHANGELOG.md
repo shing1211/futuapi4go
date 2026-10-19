@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- **SHA1(plaintext) contract now cited against the official SDK**
+  (`internal/client/client.go`, `conn.go`, `ws.go`, all READMEs): the header
+  must carry the SHA1 of the plaintext, not the ciphertext. Evidence: the
+  official Futu Python SDK (`FutunnOpen/py-futu-api`,
+  `futu/common/utils.py :: _joint_head`) digests the serialized protobuf body
+  before encryption and places that digest in the header; `decrypt_rsp_body`
+  decrypts first and then verifies the SHA1 over the decrypted plaintext.
+  The 44-byte header layout (`MESSAGE_HEAD_FMT = "<1s1sI2B2I20s8s"`,
+  `API_PROTO_VER = 0`) is matched byte-for-byte. Previously the docs claimed
+  the SDK used SHA1(ciphertext); that is no longer true since v0.21.1.
+
 ## [0.21.3] - 2026-10-19
 
 ### Fixed

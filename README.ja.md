@@ -282,7 +282,7 @@ Application
 |-------|-------------|
 | `connection refused` | OpenD が起動していません。`FUTU_OPEND_ADDR` を確認してください。 |
 | no data from `GetQuote` (US stocks) | 米国市場では先に `Subscribe` を呼ぶ必要があります。香港は不要です。 |
-| `The packet body SHA1 signature is incorrect` (very old OpenD) | OpenD を v10.5+ にアップグレードしてください。SDK は SHA1(ciphertext) を使用しており、OpenD はこれを受け入れます。 |
+| `The packet body SHA1 signature is incorrect` (very old OpenD) | OpenD を v10.5+ にアップグレードしてください。SDK は Futu プロトコル仕様に従い SHA1(plaintext) で署名します（公式 Python SDK と同一）。 |
 | `解析protobuf协议失败` | リクエスト本文に必須の C2S フィールドがありません。 |
 | `模拟交易不支持` | シミュレートモードでは利用できない機能です。`WithTradeEnv(TrdEnv_Real)` を使用してください。 |
 

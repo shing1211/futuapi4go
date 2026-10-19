@@ -282,7 +282,7 @@ Application
 |-------|-------------|
 | `connection refused` | OpenD가 실행 중이 아닙니다. `FUTU_OPEND_ADDR`를 확인하십시오. |
 | no data from `GetQuote` (US stocks) | 미국 시장에서는 먼저 `Subscribe`를 호출해야 합니다. 홍콩은 필요하지 않습니다. |
-| `The packet body SHA1 signature is incorrect` (very old OpenD) | OpenD를 v10.5+로 업그레이드하십시오. SDK는 OpenD가 허용하는 SHA1(ciphertext)을 사용합니다. |
+| `The packet body SHA1 signature is incorrect` (very old OpenD) | OpenD를 v10.5+로 업그레이드하십시오. SDK는 Futu 프로토콜 사양에 따라 SHA1(plaintext)로 서명합니다(공식 Python SDK와 동일). |
 | `解析protobuf协议失败` | 요청 본문에 필수 C2S 필드가 누락되었습니다. |
 | `模拟交易不支持` | 모의 모드에서는 사용할 수 없는 기능입니다. `WithTradeEnv(TrdEnv_Real)`을 사용하십시오. |
 
