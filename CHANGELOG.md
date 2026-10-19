@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.4] - 2026-10-19
+
+### Fixed
+
+- **`CancelAllOrders` was non-functional** (`pkg/trd/convenience.go`): the
+  `Trd_ModifyOrder.C2S` request was built without the required `PacketID`
+  field, so every call failed with `required field Trd_ModifyOrder.C2S.packetID
+  not set` before a request was sent. Now mirrors `ModifyOrder`: sets
+  `PacketID.ConnID` and `PacketID.SerialNo`. (PR #55, fixes #49)
+
 ### Documentation
 
 - **SHA1(plaintext) contract now cited against the official SDK**
