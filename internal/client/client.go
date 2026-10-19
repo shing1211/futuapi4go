@@ -1553,9 +1553,21 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 	}
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that).
-	// The header carries SHA1 of the PLAINTEXT, as the Python SDK does: OpenD
-	// decrypts first and then verifies it. Signing the ciphertext makes every
+	//
+	// The packet header carries SHA1 of the PLAINTEXT, not the ciphertext.
+	// This matches the official Futu Python SDK exactly:
+	//
+	//	futu/common/utils.py :: _joint_head()
+	//	    sha20 = hashlib.sha1(str_body).digest()   # plaintext
+	//	    if is_encrypt: str_body = encrypt(str_body)
+	//	    bin_head = struct.pack(..., sha20, ...)
+	//
+	// OpenD decrypts the body first and then verifies the header SHA1 against
+	// the decrypted plaintext. Signing the ciphertext instead makes every
 	// encrypted request fail with 「包体数据SHA1签名不正确」.
+	//
+	// The response path mirrors decrypt_rsp_body(): decrypt, then verify the
+	// SHA1 over the decrypted plaintext (see VerifyBodySHA1).
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)
@@ -1627,9 +1639,21 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 	}
 
 	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that).
-	// The header carries SHA1 of the PLAINTEXT, as the Python SDK does: OpenD
-	// decrypts first and then verifies it. Signing the ciphertext makes every
+	//
+	// The packet header carries SHA1 of the PLAINTEXT, not the ciphertext.
+	// This matches the official Futu Python SDK exactly:
+	//
+	//	futu/common/utils.py :: _joint_head()
+	//	    sha20 = hashlib.sha1(str_body).digest()   # plaintext
+	//	    if is_encrypt: str_body = encrypt(str_body)
+	//	    bin_head = struct.pack(..., sha20, ...)
+	//
+	// OpenD decrypts the body first and then verifies the header SHA1 against
+	// the decrypted plaintext. Signing the ciphertext instead makes every
 	// encrypted request fail with 「包体数据SHA1签名不正确」.
+	//
+	// The response path mirrors decrypt_rsp_body(): decrypt, then verify the
+	// SHA1 over the decrypted plaintext (see VerifyBodySHA1).
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)

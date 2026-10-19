@@ -287,7 +287,7 @@ All communication is via Protocol Buffers over TCP. See [DESIGN.md](DESIGN.md) f
 |-------|-------------|
 | `connection refused` | OpenD not running. Check `FUTU_OPEND_ADDR`. |
 | no data from `GetQuote` (US stocks) | Must call `Subscribe` first for US market. HK does not need it. |
-| `The packet body SHA1 signature is incorrect` (very old OpenD) | Upgrade OpenD to v10.5+. The SDK uses SHA1(ciphertext) which OpenD accepts. |
+| `The packet body SHA1 signature is incorrect` (very old OpenD) | Upgrade OpenD to v10.5+. The SDK signs SHA1(plaintext) per the Futu protocol spec, matching the official Python SDK. |
 | `解析protobuf协议失败` | Missing required C2S fields in request body. |
 | `模拟交易不支持` | Feature not available in simulate mode; use `WithTradeEnv(TrdEnv_Real)`. |
 

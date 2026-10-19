@@ -282,7 +282,7 @@ Application
 |-------|-------------|
 | `connection refused` | OpenD 未运行。检查 `FUTU_OPEND_ADDR`。 |
 | 美股 `GetQuote` 无数据 | 美股市场必须先调用 `Subscribe`。港股则不需要。 |
-| `The packet body SHA1 signature is incorrect`（非常旧的 OpenD） | 将 OpenD 升级到 v10.5+。SDK 使用 SHA1(ciphertext)，OpenD 可接受。 |
+| `The packet body SHA1 signature is incorrect`（非常旧的 OpenD） | 将 OpenD 升级到 v10.5+。SDK 按 Futu 协议规范使用 SHA1(plaintext) 签名（与官方 Python SDK 一致）。 |
 | `解析protobuf协议失败` | 请求体中缺少必需的 C2S 字段。 |
 | `模拟交易不支持` | 模拟模式下该功能不可用；请使用 `WithTradeEnv(TrdEnv_Real)`。 |
 

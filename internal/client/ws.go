@@ -262,13 +262,11 @@ func (c *wsConn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byt
 }
 
 // WritePacketEncrypted writes a packet where the body is already AES-encrypted.
-// encryptedBodySHA1 is the SHA1 of the encrypted body.
-// Note: The protocol spec says SHA1(plaintext), and the official Python SDK
-// (futu/common/utils.py) does exactly that. Both SHA1(plaintext) and
-// SHA1(ciphertext) are accepted by OpenD (it is lenient). We use the latter
-// for historical compatibility since v0.5.15. See internal/testutil/mock/
-// sha1_test.go for the empirical proof.
-func (c *wsConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, encryptedBodySHA1 [20]byte) error {
+// bodySHA1 must be the SHA1 of the PLAINTEXT, not of the encrypted body.
+// This matches the official Futu Python SDK (futu/common/utils.py ::
+// _joint_head), which digests the plaintext before encrypting and places that
+// digest directly in the header.
+func (c *wsConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, bodySHA1 [20]byte) error {
 	if len(encryptedBody) > MaxPacketSize {
 		return fmt.Errorf("body too large: %d", len(encryptedBody))
 	}
@@ -276,7 +274,7 @@ func (c *wsConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encrypted
 		return fmt.Errorf("empty body")
 	}
 
-	pkt := c.writePacketCommon(protoID, serialNo, encryptedBody, encryptedBodySHA1)
+	pkt := c.writePacketCommon(protoID, serialNo, encryptedBody, bodySHA1)
 	return c.conn.WriteMessage(websocket.BinaryMessage, pkt)
 }
 

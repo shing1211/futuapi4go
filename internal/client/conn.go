@@ -56,7 +56,7 @@ type ConnInterface interface {
 	io.Closer
 	WritePacket(protoID uint32, serialNo uint32, body []byte) error
 	WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte, bodySHA1 [20]byte) error
-	WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, encryptedBodySHA1 [20]byte) error
+	WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, bodySHA1 [20]byte) error
 	ReadResponse(serialNo uint32, timeout time.Duration) (*Packet, error)
 	ReadResponseContext(ctx context.Context, serialNo uint32, timeout time.Duration) (*Packet, error)
 	SetPushHandler(handler PacketHandler)
@@ -418,14 +418,20 @@ func (c *Conn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []byte,
 }
 
 // WritePacketEncrypted writes a packet where the body is already AES-encrypted.
-// encryptedBodySHA1 is the SHA1 of the encrypted body.
-// Note: The protocol spec says SHA1(plaintext), and the official Python SDK
-// (futu/common/utils.py) does exactly that. Both SHA1(plaintext) and
-// SHA1(ciphertext) are accepted by OpenD (it is lenient). We use the latter
-// for historical compatibility since v0.5.15. See internal/testutil/mock/
-// sha1_test.go for the empirical proof.
-func (c *Conn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, encryptedBodySHA1 [20]byte) error {
-	return c.writePacketCommon(protoID, serialNo, encryptedBody, encryptedBodySHA1)
+// bodySHA1 must be the SHA1 of the PLAINTEXT, not of the encrypted body.
+//
+// Authority: the official Futu Python SDK computes the digest before
+// encryption and places it directly in the header:
+//
+//	futu/common/utils.py :: _joint_head()
+//	    sha20 = hashlib.sha1(str_body).digest()   # plaintext
+//	    if is_encrypt: str_body = encrypt(str_body)
+//
+// OpenD decrypts first, then verifies the header SHA1 against the decrypted
+// plaintext (futu/common/utils.py :: decrypt_rsp_body). Signing the ciphertext
+// makes encrypted requests fail with 「包体数据SHA1签名不正确」.
+func (c *Conn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, bodySHA1 [20]byte) error {
+	return c.writePacketCommon(protoID, serialNo, encryptedBody, bodySHA1)
 }
 
 func (c *Conn) writePacketCommon(protoID uint32, serialNo uint32, body []byte, sha1Hash [20]byte) error {

@@ -244,7 +244,7 @@ func (m *mockConn) WritePacketWithSHA1(protoID uint32, serialNo uint32, body []b
 	return m.WritePacket(protoID, serialNo, body)
 }
 
-func (m *mockConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, encryptedBodySHA1 [20]byte) error {
+func (m *mockConn) WritePacketEncrypted(protoID uint32, serialNo uint32, encryptedBody []byte, bodySHA1 [20]byte) error {
 	return m.WritePacket(protoID, serialNo, encryptedBody)
 }
 
