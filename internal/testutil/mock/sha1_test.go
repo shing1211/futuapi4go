@@ -2,6 +2,7 @@ package mock
 
 import (
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/binary"
 	"net"
 	"testing"
@@ -14,16 +15,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// TestSDKSendsCiphertextSHA1 verifies that the SDK sends SHA1(ciphertext)
-// in packet headers for encrypted API requests. This confirms the current
-// SDK behavior.
-//
-// Empirical result: OpenD is lenient and accepts both SHA1(plaintext) and
-// SHA1(ciphertext). The official Python SDK
-// (futu/common/utils.py:_joint_head()) uses SHA1(plaintext) per the spec.
-// We use SHA1(ciphertext) for historical compatibility since v0.5.15.
-// See WritePacketEncrypted comments in conn.go and ws.go for details.
-func TestSDKSendsCiphertextSHA1(t *testing.T) {
+// TestSDKVerifiesPlaintextSHA1 verifies that the SDK sends SHA1(plaintext)
+// in packet headers for encrypted API requests. This is the protocol spec
+// (confirmed by the Python SDK: futu/common/utils.py:_joint_head()) and
+// the change from ciphertext to plaintext signing was introduced in the
+// "verify SHA1 over plaintext and honour the negotiated AES mode" commit.
+// OpenD is lenient and accepts both; this tests the spec-compliant path.
+func TestSDKVerifiesPlaintextSHA1(t *testing.T) {
 	srv := NewMockServer(t)
 	srv.WithRSA()
 	if err := srv.Start(); err != nil {
@@ -59,8 +57,10 @@ func TestSDKSendsCiphertextSHA1(t *testing.T) {
 		t.Logf("protoID=%d serialNo=%d: matchedCiphertext=%v matchedPlaintext=%v",
 			r.ProtoID, r.SerialNo, r.MatchedCiphertext, r.MatchedPlaintext)
 
-		if !r.MatchedCiphertext {
-			t.Errorf("protoID=%d: expected SHA1(ciphertext) match, got header=%x ciphertext=%x plaintext=%x",
+		// After the SHA1(plaintext) fix the InitConnect response carries
+		// SHA1(plaintext) so MatchedPlaintext is true and MatchedCiphertext is false.
+		if !r.MatchedPlaintext {
+			t.Errorf("protoID=%d: expected SHA1(plaintext) match, got header=%x ciphertext=%x plaintext=%x",
 				r.ProtoID, r.HeaderSHA1[:8], r.CiphertextSHA1[:8], r.PlaintextSHA1[:8])
 		}
 	}
@@ -128,16 +128,18 @@ func TestSHA1PlaintextWouldWork(t *testing.T) {
 		t.Fatalf("marshal getglobalstate: %v", err)
 	}
 
-	// Encrypt the body
-	encBody, err := futuapi.AESEncrypt(aesKey, gBody)
+	// Encrypt the body using the same scheme as the client:
+	// AES-256-ECB with SHA256(key) — matches EncryptRequestBody.
+	key256 := sha256.Sum256(aesKey)
+	encBody, err := futuapi.AES256Encrypt(key256[:], gBody)
 	if err != nil {
-		t.Fatalf("AES encrypt: %v", err)
+		t.Fatalf("AES256 encrypt: %v", err)
 	}
 
 	// Compute SHA1 of plaintext (the spec-compliant way)
 	sendPacket(t, conn, 1002, 2, encBody, true, sha1.Sum(gBody))
 
-	// Verify we get a response
+	// Verify we get a response (response is FTAES-encrypted with raw key)
 	respBody2 := readResponse(t, conn)
 	decrypted2, err := futuapi.AESDecrypt(aesKey, respBody2)
 	if err != nil {
@@ -156,9 +158,9 @@ func TestSHA1PlaintextWouldWork(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal getuserinfo: %v", err)
 	}
-	uEncBody, err := futuapi.AESEncrypt(aesKey, uBody)
+	uEncBody, err := futuapi.AES256Encrypt(key256[:], uBody)
 	if err != nil {
-		t.Fatalf("AES encrypt userinfo: %v", err)
+		t.Fatalf("AES256 encrypt userinfo: %v", err)
 	}
 	// Send with SHA1(ciphertext) — this should be REJECTED by strict mode
 	sendPacket(t, conn, 1005, 3, uEncBody, false, sha1.Sum(uEncBody))

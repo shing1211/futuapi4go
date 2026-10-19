@@ -214,6 +214,10 @@ func (c *wsConn) SetAPITimeout(timeout time.Duration) {
 
 func (c *wsConn) SetTLSConfig(_ *tls.Config) {}
 
+// ExpectEncryptedSHA1 is a no-op on the WebSocket transport: it does not share
+// the TCP packet framing, so the SHA1-over-plaintext rule does not apply.
+func (c *wsConn) ExpectEncryptedSHA1(_ bool) {}
+
 func (c *wsConn) ErrCh() <-chan error {
 	return c.errCh
 }

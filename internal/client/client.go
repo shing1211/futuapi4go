@@ -252,7 +252,8 @@ type ClientOptions struct {
 	RSAPrivateKey constant.SensitiveString // RSA private key in PEM format (required for encryption mode)
 
 	// Encryption
-	EncryptionEnabled bool // Enable FTAES encryption for all packets after InitConnect
+	EncryptionEnabled bool  // Enable packet encryption for all packets after InitConnect
+	PacketEncAlgo     int32 // Packet encryption algorithm: 0=FTAES_ECB (default), 1=AES_ECB, 2=AES_CBC
 
 	// Resilience
 	RateLimiter *ratelimit.ProtoLimiter // Rate limiter for API calls
@@ -362,6 +363,17 @@ func WithRSAPublicKey(pem string) Option {
 // so WithRSAPublicKey is not needed when using a private key PEM.
 func WithRSAPrivateKey(pem string) Option {
 	return func(o *ClientOptions) { o.RSAPrivateKey = constant.SensitiveString(pem) }
+}
+
+// WithPacketEncAlgo selects the packet encryption algorithm negotiated in
+// InitConnect: 0 = FTAES_ECB (the SDK default), 1 = AES_ECB, 2 = AES_CBC.
+//
+// OpenD honours the requested algorithm, and the Python SDK ships AES_CBC (2)
+// as its default. FTAES_ECB (0) is the older Futu-specific mode; some OpenD
+// builds stall in DoInitConnect when it is requested, so callers talking to
+// those builds must use WithPacketEncAlgo(2).
+func WithPacketEncAlgo(algo int32) Option {
+	return func(o *ClientOptions) { o.PacketEncAlgo = algo }
 }
 
 // WithEncryption enables FTAES encryption for all packets after InitConnect.
@@ -785,6 +797,12 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		rsaEncryptPEM = c.opts.RSAPrivateKey.Raw() // RSAEncrypt extracts public key from private key PEM
 	}
 
+	// If the InitConnect body is RSA-encrypted, the response is too, and its
+	// header SHA1 is over the plaintext. Tell readOne before it reads anything.
+	if rsaEncryptPEM != "" || useEncryption {
+		c.conn.ExpectEncryptedSHA1(true)
+	}
+
 	if c.opts.TLSConfig != nil {
 		c.conn.SetTLSConfig(c.opts.TLSConfig)
 	}
@@ -804,7 +822,7 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 
 	var packetEncAlgo int32 = -1 // Default: no encryption
 	if useEncryption {
-		packetEncAlgo = 0 // FTAES_ECB
+		packetEncAlgo = c.opts.PacketEncAlgo
 	}
 
 	c2s := &initconnect.C2S{
@@ -892,6 +910,15 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		}
 		rspBody = decryptedBody
 		c.logInfo("[%s] ConnectWithRSA: RSA decrypt OK: %d bytes -> %d bytes", c.ts(), len(respPkt.Body), len(rspBody))
+	}
+
+	// The body is plaintext now; this is where the protocol's SHA1 belongs.
+	if rsaEncryptPEM != "" || useEncryption {
+		if err := VerifyBodySHA1(respPkt, rspBody); err != nil {
+			c.conn.Close()
+			c.logError("[%s] ConnectWithRSA: body SHA1 FAILED after decrypt: %v", c.ts(), err)
+			return fmt.Errorf("init connect response integrity: %w", err)
+		}
 	}
 
 	var rsp initconnect.Response
@@ -1005,7 +1032,18 @@ func (c *Client) keepAlive() error {
 	}
 
 	serialNo := c.nextSerialNo()
-	if err := c.conn.WritePacket(ProtoID_KeepAlive, serialNo, body); err != nil {
+	// KeepAlive travels on the same encrypted channel as every other request.
+	// Sending it in the clear on an encrypted connection gets it rejected, and
+	// unmarshalling the encrypted reply directly fails with a wire-format error.
+	if atomic.LoadInt32(&c.isEncrypt) != 0 {
+		encBody, err := c.EncryptRequestBody(ProtoID_KeepAlive, body)
+		if err != nil {
+			return fmt.Errorf("AES encrypt: %w", err)
+		}
+		if err := c.conn.WritePacketEncrypted(ProtoID_KeepAlive, serialNo, encBody, sha1.Sum(body)); err != nil {
+			return err
+		}
+	} else if err := c.conn.WritePacket(ProtoID_KeepAlive, serialNo, body); err != nil {
 		return err
 	}
 
@@ -1014,8 +1052,18 @@ func (c *Client) keepAlive() error {
 		return err
 	}
 
+	plaintext, err := c.DecryptResponseBody(ProtoID_KeepAlive, respPkt.Body)
+	if err != nil {
+		return fmt.Errorf("keepalive decrypt: %w", err)
+	}
+	if atomic.LoadInt32(&c.isEncrypt) != 0 {
+		if err := VerifyBodySHA1(respPkt, plaintext); err != nil {
+			return fmt.Errorf("keepalive integrity: %w", err)
+		}
+	}
+
 	var rsp keepalive.Response
-	if err := proto.Unmarshal(respPkt.Body, &rsp); err != nil {
+	if err := proto.Unmarshal(plaintext, &rsp); err != nil {
 		return err
 	}
 
@@ -1270,7 +1318,7 @@ func (c *Client) EncryptRequestBody(protoID uint32, body []byte) ([]byte, error)
 		return aesCBCEncrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
 	}
 	key256 := sha256.Sum256([]byte(c.getAESKey()))
-	return aes256Encrypt(key256[:], body)
+	return AES256Encrypt(key256[:], body)
 }
 
 // DecryptResponseBody decrypts the response body using FTAES_ECB when the
@@ -1282,6 +1330,14 @@ func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error
 		return body, nil
 	}
 
+	// The negotiated IV is the mode selector. AES_CBC must be tried first:
+	// FTAES_ECB "succeeds" on any 16-byte-aligned ciphertext — it has no
+	// plaintext validation — so trying it first returns garbage that only
+	// surfaces later as an unmarshal error.
+	if c.aesCBCIV != "" {
+		return aesCBCDecrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
+	}
+
 	plaintext, err := ftaesDecrypt([]byte(c.getAESKey()), body)
 	if err == nil {
 		return plaintext, nil
@@ -1290,15 +1346,8 @@ func (c *Client) DecryptResponseBody(protoID uint32, body []byte) ([]byte, error
 		return body, nil
 	}
 
-	if c.aesCBCIV != "" && len(body) > 16 && len(body)%16 == 0 {
-		plaintext, err = aesCBCDecrypt([]byte(c.getAESKey()), []byte(c.aesCBCIV), body)
-		if err == nil {
-			return plaintext, nil
-		}
-	}
-
 	key256 := sha256.Sum256([]byte(c.getAESKey()))
-	plaintext, err = aes256Decrypt(key256[:], body)
+	plaintext, err = AES256Decrypt(key256[:], body)
 	if err == nil {
 		return plaintext, nil
 	}
@@ -1503,17 +1552,17 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		return fmt.Errorf("marshal request: %w", err)
 	}
 
-	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
-	// SHA1 is computed over ciphertext for historical compatibility (v0.5.15).
-	// OpenD accepts both SHA1(plaintext) and SHA1(ciphertext) — see WritePacketEncrypted doc.
+	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that).
+	// The header carries SHA1 of the PLAINTEXT, as the Python SDK does: OpenD
+	// decrypts first and then verifies it. Signing the ciphertext makes every
+	// encrypted request fail with 「包体数据SHA1签名不正确」.
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
 			return fmt.Errorf("AES encrypt: %w", err)
 		}
-		encSHA1 := sha1.Sum(encBody)
-		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, encSHA1); err != nil {
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, sha1.Sum(body)); err != nil {
 			return fmt.Errorf("write packet: %w", err)
 		}
 	} else {
@@ -1537,6 +1586,9 @@ func (c *Client) requestInternal(protoID uint32, req proto.Message, rsp proto.Me
 		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
+		}
+		if err := VerifyBodySHA1(pkt, plaintext); err != nil {
+			return fmt.Errorf("body integrity: %w", err)
 		}
 	}
 
@@ -1574,17 +1626,17 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		return err
 	}
 
-	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that)
-	// SHA1 is computed over ciphertext for historical compatibility (v0.5.15).
-	// OpenD accepts both SHA1(plaintext) and SHA1(ciphertext) — see WritePacketEncrypted doc.
+	// Encrypt body if connection is encrypted (skip InitConnect — RSA handles that).
+	// The header carries SHA1 of the PLAINTEXT, as the Python SDK does: OpenD
+	// decrypts first and then verifies it. Signing the ciphertext makes every
+	// encrypted request fail with 「包体数据SHA1签名不正确」.
 	serialNo := c.nextSerialNo()
 	if atomic.LoadInt32(&c.isEncrypt) != 0 && protoID != ProtoID_InitConnect {
 		encBody, err := c.EncryptRequestBody(protoID, body)
 		if err != nil {
 			return fmt.Errorf("AES encrypt: %w", err)
 		}
-		encSHA1 := sha1.Sum(encBody)
-		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, encSHA1); err != nil {
+		if err := c.conn.WritePacketEncrypted(protoID, serialNo, encBody, sha1.Sum(body)); err != nil {
 			return fmt.Errorf("write packet: %w", err)
 		}
 	} else {
@@ -1616,6 +1668,9 @@ func (c *Client) requestContextInternal(ctx context.Context, protoID uint32, req
 		plaintext, err = c.DecryptResponseBody(protoID, pkt.Body)
 		if err != nil {
 			return fmt.Errorf("AES decrypt: %w", err)
+		}
+		if err := VerifyBodySHA1(pkt, plaintext); err != nil {
+			return fmt.Errorf("body integrity: %w", err)
 		}
 	}
 

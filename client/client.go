@@ -406,6 +406,17 @@ func WithEncryption(enable bool) Option {
 	return futuapi.WithEncryption(enable)
 }
 
+// WithPacketEncAlgo selects the packet encryption algorithm negotiated in
+// InitConnect: 0 = FTAES_ECB (the SDK default), 1 = AES_ECB, 2 = AES_CBC.
+//
+// OpenD honours the requested algorithm, and the Python SDK ships AES_CBC (2)
+// as its default. FTAES_ECB (0) is the older Futu-specific mode; some OpenD
+// builds stall in DoInitConnect when it is requested, so callers talking to
+// those builds must use WithPacketEncAlgo(2).
+func WithPacketEncAlgo(algo int32) Option {
+	return futuapi.WithPacketEncAlgo(algo)
+}
+
 // WithOnStateChange sets a callback that is invoked when the connection state changes.
 func WithOnStateChange(fn func(oldState, newState futuapi.ConnState)) Option {
 	return func(o *futuapi.ClientOptions) { o.OnStateChange = fn }
