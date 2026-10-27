@@ -724,13 +724,33 @@ func (c *Client) connectWebSocket(addr string, tls bool) error {
 		defer span.End()
 
 		c.recordPush()
+
+		// Decrypt push body if the connection is encrypted. The response
+		// path decrypts (DecryptResponseBody in requestContextInternal),
+		// but without this the push path hands ciphertext to every
+		// registered handler and proto.Unmarshal fails 100%.
+		body := pkt.Body
+		decrypted := false
+		if atomic.LoadInt32(&c.isEncrypt) != 0 {
+			plaintext, err := c.DecryptResponseBody(pkt.Header.ProtoID, pkt.Body)
+			if err != nil {
+				c.logWarn("push decrypt failed for proto %d: %v", pkt.Header.ProtoID, err)
+				return
+			}
+			body = plaintext
+			decrypted = true
+		}
+
 		c.handlersMu.RLock()
 		handler, ok := c.handlers[pkt.Header.ProtoID]
 		c.handlersMu.RUnlock()
 		if ok {
-			handler(pkt.Header.ProtoID, pkt.Body)
+			handler(pkt.Header.ProtoID, body)
 		}
 		if c.opts.PushHandler != nil {
+			if decrypted {
+				pkt = &Packet{Header: pkt.Header, Body: body}
+			}
 			c.opts.PushHandler(pkt)
 		}
 	})
@@ -973,13 +993,33 @@ func (c *Client) ConnectWithRSA(addr string, rsaPublicKeyPEM string) error {
 		c.recordPush()
 		protoStr := fmt.Sprintf("%d", pkt.Header.ProtoID)
 		metrics.RecordPushMessage(protoStr)
+
+		// Decrypt push body if the connection is encrypted. The response
+		// path decrypts (DecryptResponseBody in requestContextInternal),
+		// but without this the push path hands ciphertext to every
+		// registered handler and proto.Unmarshal fails 100%.
+		body := pkt.Body
+		decrypted := false
+		if atomic.LoadInt32(&c.isEncrypt) != 0 {
+			plaintext, err := c.DecryptResponseBody(pkt.Header.ProtoID, pkt.Body)
+			if err != nil {
+				c.logWarn("push decrypt failed for proto %d: %v", pkt.Header.ProtoID, err)
+				return
+			}
+			body = plaintext
+			decrypted = true
+		}
+
 		c.handlersMu.RLock()
 		handler, ok := c.handlers[pkt.Header.ProtoID]
 		c.handlersMu.RUnlock()
 		if ok {
-			handler(pkt.Header.ProtoID, pkt.Body)
+			handler(pkt.Header.ProtoID, body)
 		}
 		if c.opts.PushHandler != nil {
+			if decrypted {
+				pkt = &Packet{Header: pkt.Header, Body: body}
+			}
 			c.opts.PushHandler(pkt)
 		}
 	})
